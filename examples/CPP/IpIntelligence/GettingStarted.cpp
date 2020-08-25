@@ -1,0 +1,215 @@
+#include <string>
+#include <iostream>
+#include "../../../src/EngineIpi.hpp"
+#include "ExampleBase.hpp"
+
+using namespace std;
+using namespace FiftyoneDegrees::Common;
+using namespace FiftyoneDegrees::IpIntelligence;
+using namespace FiftyoneDegrees::Examples::IpIntelligence;
+
+/**
+@example IpIntelligence/GettingStarted.cpp
+Getting started example of using 51Degrees IP intelligence.
+
+The example shows how to user 51Degrees on-premise IP intelligence to
+determine the country of a given IP address.
+
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/GettingStarted.cpp).
+
+@include{doc} example-ipi-require-datafile.txt
+
+@include{doc} example-ipi-how-to-run.txt
+
+Expected output:
+
+```
+Result
+```
+
+In detail, the example shows how to:
+
+1. Specify the name of the data file, properties the data set should be
+initialised with, and the configuration.
+```
+using namespace FiftyoneDegrees;
+
+string fileName = "51Degrees-V4.1.ipi";
+string propertiesString = "RangeStart,RangeEnd,Country,City,AverageLocation";
+Common::RequiredPropertiesConfig *properties =
+	new Common::RequiredPropertiesConfig(&propertiesString);
+IpIntelligence::ConfigIpi *config =
+	new IpIntelligence::ConfigIpi();
+```
+
+2. Construct a new engine from the specified data file with the required
+properties and the specified configuration.
+```
+using namespace FiftyoneDegrees;
+
+IpIntelligence::EngineIpi *engine =
+	new IpIntelligence::EngineIpi(
+	dataFilePath,
+	config,
+	properties);
+```
+
+3. Create a evidence instance and add a single IP intelligence string to be
+processed.
+```
+using namespace FiftyoneDegrees;
+
+IpIntelligence::EvidenceIpi *evidence =
+	new IpIntelligence::EvidenceIpi();
+evidence->operator[]("ipiv4.ip") = ipv4;
+```
+
+4. Process the evidence using the engine to retrieve the values associated
+with the User-Agent for the selected properties.
+```
+using namespace FiftyoneDegrees;
+
+IpIntelligence::ResultsIpi *results = engine->process(evidence);
+```
+
+5. Extract the value of a property as a weighted string from the results.
+```
+Value<vector<WeightedValue<string>>> value = results->getValuesAsWeightedStringList("Country");
+for (WeightedValue<string> w : value.getValue()) {
+	cout << "   Country: " <<
+		w.getValue() <<
+		", Percentage: " <<
+		w.getWeight() << "\n";
+}
+```
+
+6. Release the memory used by the results and the evidence.
+```
+delete results;
+delete evidence;
+```
+
+7. Finally release the memory used by the engine.
+```
+delete engine;
+```
+
+*/
+
+namespace FiftyoneDegrees {
+	namespace Examples {
+		namespace IpIntelligence {
+			/**
+			 * Hash Getting Started Example.
+			 */
+			class GettingStarted : public ExampleBase {
+			public:
+				/**
+				 * @copydoc ExampleBase::ExampleBase(string)
+				 */
+				GettingStarted(string dataFilePath)
+					: ExampleBase(dataFilePath) {
+				};
+
+				/**
+				 * @copydoc ExampleBase::run
+				 */
+				void run() {
+					try {
+					ResultsIpi *results;
+
+					// Create an evidence instance to store and process
+					// IP Address.
+					EvidenceIpi *evidence =
+						new EvidenceIpi();
+					IpAddress ipv4(ipv4Address);
+					IpAddress ipv6(ipv6Address);
+
+					cout << "Starting Getting Started Example.\n";
+
+					// Carries out a match for a ipv4 address.
+					cout << "\nIpv4 Address: " << ipv4Address << "\n";
+					evidence->operator[]("ipv4.ip")
+							= ipv4;
+					results = engine->process(evidence);
+					Common::Value<vector<WeightedValue<string>>> ipv4Value
+						= results->getValuesAsWeightedStringList("Country");
+					for (WeightedValue<string> w : ipv4Value.getValue()) {
+						cout << "   Country: " <<
+							w.getValue() <<
+							", Percentage: " <<
+							w.getWeight() << "\n";
+					}
+					delete results;
+
+					// Carries out a match for a ipv4 address.
+					cout << "\nIpv6 Address: " << ipv6Address << "\n";
+					evidence->operator[]("ipv6.ip")
+							= ipv6;
+					results = engine->process(evidence);
+					Common::Value<vector<WeightedValue<string>>> ipv6Value
+						= results->getValuesAsWeightedStringList("Country");
+					for (WeightedValue<string> w : ipv4Value.getValue()) {
+						cout << "   Country: " <<
+							w.getValue() <<
+							", Percentage: " <<
+							w.getWeight() << "\n";
+					}
+					delete results;
+
+					// Free the evidence.
+					delete evidence;
+					}
+					catch (bad_alloc& e) {
+						cout << "Failed to create IpAddress object\n";
+						cout << e.what() << "\n";
+					}
+				}
+			};
+		}
+	}
+}
+
+int main(int argc, char *argv[]) {
+	fiftyoneDegreesStatusCode status = FIFTYONE_DEGREES_STATUS_SUCCESS;
+	char dataFilePath[FIFTYONE_DEGREES_FILE_MAX_PATH];
+	if (argc > 1) {
+		strcpy(dataFilePath, argv[1]);
+	}
+	else {
+		status = fiftyoneDegreesFileGetPath(
+				dataDir,
+				dataFileName,
+				dataFilePath,
+				sizeof(dataFilePath));
+	}
+	if (status != FIFTYONE_DEGREES_STATUS_SUCCESS) {
+		ExampleBase::reportStatus(status, dataFileName);
+		fgetc(stdin);
+		return 1;
+	}
+
+
+#ifdef _DEBUG
+	#ifndef _MSC_VER
+	dmalloc_debug_setup("log-stats,log-non-free,check-fence,log=dmalloc.log");
+#endif
+#endif
+
+	GettingStarted *gettingStarted = new GettingStarted(dataFilePath);
+	gettingStarted->run();
+	delete gettingStarted;
+
+#ifdef _DEBUG
+	#ifdef _MSC_VER
+	_CrtDumpMemoryLeaks();
+#else
+	printf("Log file is %s\r\n", dmalloc_logpath);
+#endif
+#endif
+
+	// Wait for a character to be pressed.
+	fgetc(stdin);
+
+	return 0;
+}

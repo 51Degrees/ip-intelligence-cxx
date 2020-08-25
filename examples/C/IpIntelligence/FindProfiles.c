@@ -1,0 +1,228 @@
+/**
+@example IpIntelligence/FindProfiles.c
+Getting started example of using 51Degrees IP intelligence.
+
+The example shows how to use 51Degrees on-premise IP intelligence to iterate
+over all profiles in the data set which match a specified property value pair.
+
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/FindProfiles.c).
+
+@include{doc} example-ipi-require-datafile.txt
+
+@include{doc} example-ipi-how-to-run.txt
+
+Expected output:
+
+```
+Result
+```
+
+In detail, the example shows how to:
+
+1. Specify the name of the data file and properties the data set should be
+initialised with.
+```
+const char* fileName = argv[1];
+fiftyoneDegreesPropertiesRequired properties =
+	fiftyoneDegreesPropertiesDefault;
+properties.string = "Country";
+```
+
+2. Instantiate the 51Degrees data set within a resource manager from the
+specified data file with the required properties and the specified
+configuration.
+```
+fiftyoneDegreesStatusCode status =
+	fiftyoneDegreesIpiInitManagerFromFile(
+		&manager,
+		&config,
+		&properties,
+		dataFilePath,
+		exception);
+```
+
+3. Iterate over all the profiles in the data set which match a specified
+property value pair.
+```
+fiftyoneDegreesIpiIterateProfilesForPropertyAndValue(
+	manager,
+	"Country",
+	"Italy",
+	&isItaly,
+	count,
+	exception);
+```
+
+4. Finally release the memory used by the data set resource.
+```
+fiftyoneDegreesResourceManagerFree(&manager);
+```
+
+*/
+
+#ifdef _DEBUG
+#ifdef _MSC_VER
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#else
+#include "dmalloc.h"
+#endif
+#endif
+
+#include <stdio.h>
+#include "../../../src/ipi.h"
+#include "../../../src/fiftyone.h"
+
+static const char* dataDir = "ip-intelligence-data";
+
+static const char* dataFileName = "51Degrees-LiteV4.1.ipi";
+
+/**
+ * CHOOSE THE DEFAULT MEMORY CONFIGURATION BY UNCOMMENTING ONE OF THE FOLLOWING
+ * MACROS.
+ */
+
+#define CONFIG fiftyoneDegreesIpiInMemoryConfig
+// #define CONFIG fiftyoneDegreesIpiHighPerformanceConfig
+// #define CONFIG fiftyoneDegreesIpiLowMemoryConfig
+// #define CONFIG fiftyoneDegreesIpiBalancedConfig
+// #define CONFIG fiftyoneDegreesIpiBalancedTempConfig
+
+#ifdef _MSC_VER
+#pragma warning (disable:4100)
+#endif
+static bool count(void* state, Item* item) {
+	(*(uint32_t*)state) += 1;
+	return true;
+}
+#ifdef _MSC_VER
+#pragma warning (default:4100) 
+#endif
+
+void run(ResourceManager* manager) {
+	EXCEPTION_CREATE;
+	uint32_t isGermany = 0;
+	uint32_t isItaly = 0;
+
+	printf("Starting Find Profiles Example.\n\n");
+
+	IpiIterateProfilesForPropertyAndValue(
+		manager,
+		"Country",
+		"Italy",
+		&isItaly,
+		count,
+		exception);
+	printf("There are '%d' country in the data set named Italy.\n", isItaly);
+
+	IpiIterateProfilesForPropertyAndValue(
+		manager,
+		"Country",
+		"Germany",
+		&isGermany,
+		count,
+		exception);
+	printf("There are '%d' country in the data set named Germany.\n",
+		isGermany);
+}
+
+/**
+ * Reports the status of the data file initialization.
+ */
+static void reportStatus(
+	StatusCode status,
+	const char* fileName) {
+	const char* message = StatusGetMessage(status, fileName);
+	printf("%s\n", message);
+	Free((void*)message);
+}
+
+void fiftyoneDegreesIpiFindProfiles(
+	const char* dataFilePath,
+	ConfigIpi config) {
+	EXCEPTION_CREATE;
+	ResourceManager manager;
+
+	// Set the properties to be returned for each IP Address.
+	PropertiesRequired properties = PropertiesDefault;
+	properties.string = "Country";
+
+	// Initialise the manager for device detection.
+	StatusCode status = IpiInitManagerFromFile(
+		&manager,
+		&config,
+		&properties,
+		dataFilePath,
+		exception);
+	if (status != SUCCESS) {
+		reportStatus(status, dataFilePath);
+		fgetc(stdin);
+		return;
+	}
+
+	run(&manager);
+
+	// Free the manager and related data structures.
+	ResourceManagerFree(&manager);
+
+#ifdef _DEBUG
+#ifdef _MSC_VER
+	_CrtDumpMemoryLeaks();
+#else
+	printf("Log file is %s\r\n", dmalloc_logpath);
+#endif
+#endif
+}
+
+#ifndef TEST
+
+int main(int argc, char* argv[]) {
+
+#ifdef _DEBUG
+#ifndef _MSC_VER
+	dmalloc_debug_setup("log-stats,log-non-free,check-fence,log=dmalloc.log");
+#endif
+#endif
+
+	StatusCode status = SUCCESS;
+	char dataFilePath[FILE_MAX_PATH];
+	if (argc > 1) {
+		strcpy(dataFilePath, argv[1]);
+	}
+	else {
+		status = FileGetPath(
+			dataDir,
+			dataFileName,
+			dataFilePath,
+			sizeof(dataFilePath));
+	}
+	if (status != SUCCESS) {
+		reportStatus(status, dataFileName);
+		fgetc(stdin);
+		return 1;
+	}
+
+#ifdef _DEBUG
+#ifndef _MSC_VER
+	dmalloc_debug_setup("log-stats,log-non-free,check-fence,log=dmalloc.log");
+#endif
+#endif
+
+	fiftyoneDegreesIpiFindProfiles(dataFilePath, CONFIG);
+
+#ifdef _DEBUG
+#ifdef _MSC_VER
+	_CrtDumpMemoryLeaks();
+#else
+	printf("Log file is %s\r\n", dmalloc_logpath);
+#endif
+#endif
+
+	// Wait for a character to be pressed.
+	fgetc(stdin);
+
+	return 0;
+}
+
+#endif

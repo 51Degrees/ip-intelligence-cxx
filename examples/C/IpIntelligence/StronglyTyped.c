@@ -1,0 +1,304 @@
+/**
+@example IpIntelligence/StronglyTyped.c
+Strongly Typed example of using 51Degrees IP intelligence.
+
+The example shows how to extract the strongly typed value from the
+returned results of the 51Degrees on-premise IP intelligence.
+
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/StronglyTyped.c).
+
+@include{doc} example-ipi-require-datafile.txt
+
+@include{doc} example-ipi-how-to-run.txt
+
+Expected output:
+
+```
+Result
+```
+
+In detail, the example shows how to:
+
+1. Specify the name of the data file and properties the data set should be
+initialised with.
+```
+const char* fileName = argv[1];
+fiftyoneDegreesPropertiesRequired properties =
+	fiftyoneDegreesPropertiesDefault;
+properties.string = "RangeStart,RangeEnd,Property1,AverageLocation";
+```
+
+2. Instantiate the 51Degrees data set within a resource manager from the
+specified data file with the required properties and the specified
+configuration.
+```
+fiftyoneDegreesStatusCode status =
+	fiftyoneDegreesIpiInitManagerFromFile(
+		&manager,
+		&config,
+		&properties,
+		dataFilePath,
+		exception);
+```
+
+3. Create a results instance ready to be populated by the data set.
+```
+fiftyoneDegreesResultsIpi *results =
+	fiftyoneDegreesResultsIpiCreate(
+		&manager);
+```
+
+4. Process a single IP Address string to retrieve the values associated
+with the IP Address for the selected properties.
+```
+fiftyoneDegreesResultsIpiFromIpAddressString(
+	results,
+	ipv4Address,
+	strlen(ipv4Address),
+	exception);
+```
+
+5. Check the type of values the property returns.
+```
+fiftyoneDegreesProperty *property = fiftyoneDegreesPropertyGetByName(
+	dataSet->properties,
+	dataSet->strings,
+	propertyName,
+	&item,
+	exception);
+fiftyoneDegreesPropertyValueType type = property->valueType;
+```
+
+6. Extract the value of a property as a coordinate from the results.
+```
+requiredPropertyIndex =
+	PropertiesGetRequiredPropertyIndexFromName(
+		dataSet->available,
+		propertyName);
+if (requiredPropertyIndex >= 0) {
+	if (ResultsIpiGetValues(
+		results,
+		requiredPropertyIndex,
+		exception) != NULL && EXCEPTION_OKAY) {
+		value = IpiGetCoordinate(
+			&results->values.items[0].item,
+			exception);
+	}
+}
+```
+
+7. Release the memory used by the results.
+```
+fiftyoneDegreesResultsIpiFree(results);
+```
+
+8. Finally release the memory used by the data set resource.
+```
+fiftyoneDegreesResourceManagerFree(&manager);
+```
+
+*/
+
+#ifdef _DEBUG
+#ifdef _MSC_VER
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#else
+#include "dmalloc.h"
+#endif
+#endif
+
+#include <stdio.h>
+#include "../../../src/ipi.h"
+#include "../../../src/fiftyone.h"
+
+static const char* dataDir = "ip-intelligence-data";
+
+static const char* dataFileName = "51Degrees-LiteV4.1.ipi";
+
+static bool getPropertyIsCoordinate(
+	ResultsIpi* results,
+	const char* propertyName) {
+	EXCEPTION_CREATE;
+	Item item;
+	DataReset(&item.data);
+
+	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
+	Property* property = PropertyGetByName(
+		dataSet->properties,
+		dataSet->strings,
+		propertyName,
+		&item,
+		exception);
+	EXCEPTION_THROW;
+	bool isCoordinate = property->valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE;
+	COLLECTION_RELEASE(item.collection, &item);
+	return isCoordinate;
+}
+
+static fiftyoneDegreesCoordinate getPropertyValueAsCoordinate(
+	ResultsIpi* results,
+	const char* propertyName) {
+	EXCEPTION_CREATE;
+	fiftyoneDegreesCoordinate value = { 0, 0 };
+	int requiredPropertyIndex;
+	DataSetBase* dataSet = (DataSetBase*)results->b.dataSet;
+	if (getPropertyIsCoordinate(results, propertyName) == true) {
+		requiredPropertyIndex =
+			PropertiesGetRequiredPropertyIndexFromName(
+				dataSet->available,
+				propertyName);
+		if (requiredPropertyIndex >= 0) {
+			if (ResultsIpiGetValues(
+				results,
+				requiredPropertyIndex,
+				exception) != NULL && EXCEPTION_OKAY) {
+				value = IpiGetCoordinate(
+					&results->values.items[0].item,
+					exception);
+			}
+		}
+	}
+	return value;
+}
+
+static void printCoordinateValues(ResultsIpi* results) {
+	uint32_t i;
+	const char* propertyName;
+	fiftyoneDegreesCoordinate coordinate;
+	DataSetBase* dataSet = (DataSetBase*)results->b.dataSet;
+	for (i = 0; i < dataSet->available->count; i++) {
+		propertyName = STRING(
+			dataSet->available->items[i].name.data.ptr);
+		coordinate = getPropertyValueAsCoordinate(results, propertyName);
+		printf("   %s: %f,%f\n",
+			propertyName,
+			coordinate.lat,
+			coordinate.lon);
+	}
+}
+
+/**
+ * Reports the status of the data file initialization.
+ */
+static void reportStatus(StatusCode status,
+	const char* fileName) {
+	const char* message = StatusGetMessage(status, fileName);
+	printf("%s\n", message);
+	Free((void*)message);
+}
+
+void fiftyoneDegreesIpiStronglyTyped(
+	const char* dataFilePath,
+	ConfigIpi* config) {
+	EXCEPTION_CREATE;
+	ResourceManager manager;
+
+	// Set the properties to be returned for each IP Address.
+	PropertiesRequired properties = PropertiesDefault;
+	properties.string = "Country,AverageLocation";
+
+	// Initialise the manager for IP intelligence.
+	StatusCode status = IpiInitManagerFromFile(
+		&manager,
+		config,
+		&properties,
+		dataFilePath,
+		exception);
+	if (status != SUCCESS) {
+		reportStatus(status, dataFilePath);
+		fgetc(stdin);
+		return;
+	}
+
+	// Create a results instance to store and process IP Addresses.
+	ResultsIpi* results = ResultsIpiCreate(&manager);
+
+	// Ipv4 Address.
+	const char* ipv4Address = "111.222.333.4444";
+
+	// Ipv6 Address.
+	const char* ipv6Address = "0000:1111:2222:3333:4444:5555:6666:7777";
+
+
+	printf("Starting Getting Started Example.\n");
+
+	// Carries out a match for a Ipv4 Address.
+	printf("\nIpv4 Address: %s\n", ipv4Address);
+	ResultsIpiFromIpAddressString(
+		results,
+		ipv4Address,
+		strlen(ipv4Address),
+		exception);
+	printCoordinateValues(results);
+
+	// Carries out a match for a Ipv6 Address.
+	printf("\nIpv6 Address: %s\n", ipv6Address);
+	ResultsIpiFromIpAddressString(
+		results,
+		ipv6Address,
+		strlen(ipv6Address),
+		exception);
+	printCoordinateValues(results);
+
+	// Ensure the results are freed to avoid memory leaks.
+	ResultsIpiFree(results);
+
+	// Free the resources used by the manager.
+	ResourceManagerFree(&manager);
+}
+
+#ifndef TEST
+
+int main(int argc, char* argv[]) {
+	StatusCode status = SUCCESS;
+	ConfigIpi config = IpiDefaultConfig;
+	char dataFilePath[FILE_MAX_PATH];
+	if (argc > 1) {
+		strcpy(dataFilePath, argv[1]);
+	}
+	else {
+		status = FileGetPath(
+			dataDir,
+			dataFileName,
+			dataFilePath,
+			sizeof(dataFilePath));
+	}
+	if (status != SUCCESS) {
+		reportStatus(status, dataFileName);
+		fgetc(stdin);
+		return 1;
+	}
+	if (CollectionGetIsMemoryOnly()) {
+		config = IpiInMemoryConfig;
+	}
+
+#ifdef _DEBUG
+#ifndef _MSC_VER
+	dmalloc_debug_setup("log-stats,log-non-free,check-fence,log=dmalloc.log");
+#else
+	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+	_CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
+#endif
+#endif
+
+	fiftyoneDegreesIpiStronglyTyped(
+		dataFilePath,
+		&config);
+
+#ifdef _DEBUG
+#ifdef _MSC_VER
+	_CrtDumpMemoryLeaks();
+#else
+	printf("Log file is %s\r\n", dmalloc_logpath);
+#endif
+#endif
+
+	// Wait for a character to be pressed.
+	fgetc(stdin);
+
+	return 0;
+}
+
+#endif
