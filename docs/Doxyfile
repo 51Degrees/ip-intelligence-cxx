@@ -829,6 +829,7 @@ INPUT                  = ../ \
                          ../examples/CPP/IpIntelligence/StronglyTyped.cpp \
                          ../examples/C/IpIntelligence/GettingStarted.c \
                          ../examples/C/IpIntelligence/OfflineProcessing.c \
+                         ../examples/C/IpIntelligence/PerfIpi.c \
                          ../examples/C/IpIntelligence/ReloadFromFile.c \
                          ../examples/C/IpIntelligence/ReloadFromMemory.c \
                          ../examples/C/IpIntelligence/StronglyTyped.c
