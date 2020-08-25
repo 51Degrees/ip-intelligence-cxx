@@ -1,3 +1,29 @@
+/**
+@example IpIntelligence/PerfIpi.c
+Getting started example of using 51Degrees IP intelligence.
+
+The example shows how to run a performance test on 51Degrees on-premise
+IP intelligence APIs.
+
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/PerfIpi.c).
+
+@include{doc} example-ipi-require-datafile.txt
+
+@include{doc} example-ipi-how-to-run.txt
+
+Expected output:
+
+```
+Result
+```
+
+In detail, the example performs two separate measurements. One
+does not do any actual detections and one does. The difference
+is then taken to calculate the actual performance of the detection
+work.
+
+*/
+
 #ifdef _DEBUG
 #define PASSES 1
 #ifdef _MSC_VER
