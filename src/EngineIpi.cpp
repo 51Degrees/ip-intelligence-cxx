@@ -199,7 +199,9 @@ IpIntelligence::ResultsIpi* EngineIpi::process(
 		results, 
 		evidence == nullptr ? nullptr : evidence->get(),
 		exception);
-	EXCEPTION_THROW;
+	if (exception->status != FIFTYONE_DEGREES_STATUS_INCORRECT_FORMAT) {
+		EXCEPTION_THROW;
+	}
 
 	return new ResultsIpi(results, manager);
 }
@@ -214,7 +216,9 @@ IpIntelligence::ResultsIpi* EngineIpi::process(
 		ipAddress,
 		ipAddress == nullptr ? 0 : strlen(ipAddress),
 		exception);
-	EXCEPTION_THROW;
+	if (exception->status != FIFTYONE_DEGREES_STATUS_INCORRECT_FORMAT) {
+		EXCEPTION_THROW;
+	}
 	return new ResultsIpi(results, manager);
 }
 
@@ -228,7 +232,9 @@ IpIntelligence::ResultsIpi *EngineIpi::process(unsigned char ipAddress[], long l
         length == FIFTYONE_DEGREES_IPV4_LENGTH ? FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4
             : FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6,
 		exception);
-	EXCEPTION_THROW;
+	if (exception->status != FIFTYONE_DEGREES_STATUS_INCORRECT_FORMAT) {
+		EXCEPTION_THROW;
+	}
 	return new ResultsIpi(results, manager);
 }
 
@@ -242,7 +248,9 @@ Common::ResultsBase* EngineIpi::processBase(
 		results, 
 		evidence == nullptr ? nullptr : evidence->get(),
 		exception);
-	EXCEPTION_THROW;
+	if (exception->status != FIFTYONE_DEGREES_STATUS_INCORRECT_FORMAT) {
+		EXCEPTION_THROW;
+	}
 	return new ResultsIpi(results, manager);
 }
 

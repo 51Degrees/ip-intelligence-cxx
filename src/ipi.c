@@ -1486,7 +1486,6 @@ static bool setResultFromEvidence(
 	result = &((ResultIpi*)results->items)[results->count];
 	resultIpiReset(result);
 	results->items[0].ipRangeOffset = NULL_PROFILE_OFFSET; // Default IP range offset
-	result->targetIpAddress.type = ipState->type;
 	result->targetIpAddress.length = 
 		ipState->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ? FIFTYONE_DEGREES_IPV4_LENGTH : FIFTYONE_DEGREES_IPV6_LENGTH;
 	if (ipState->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
@@ -1498,6 +1497,8 @@ static bool setResultFromEvidence(
 		// We only get the exact length of ipv6
 		memcpy(result->targetIpAddress.value, pair->parsedValue, FIFTYONE_DEGREES_IPV6_LENGTH);
 	}
+	result->targetIpAddress.type = ipState->type;
+	result->type = ipState->type;
 	results->count++;
 
 	setResultFromIpAddress(

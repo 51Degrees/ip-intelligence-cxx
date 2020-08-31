@@ -20,9 +20,93 @@ IpIntelligence::ResultsIpi::~ResultsIpi() {
 	ResultsIpiFree(results);
 }
 
+/* 
+ * This is used to hold the string value of the item
+ * Maximum size of an IP address string is 39
+ * Maximum single precision floating point is ~ 3.4 * 10^38
+ * 128 should be adequate to hold the string value
+ * for a pair of coordinate:percentage
+ * or ipaddress:percentage
+ */
+#define MAX_PROFILE_PERCENTAGE_STRING_LENGTH 128
+
+/*
+ * This will returns the profile percentages results
+ * for a required property index in string form.
+ * @param requiredPropertyIndex the required property index
+ * @param values the array which will hold the returned value string
+ */
 void 
 IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<string> &values) {
-    // Do nothing
+    EXCEPTION_CREATE;
+	uint32_t i;
+	ProfilePercentage *valuesItems;
+	fiftyoneDegreesPropertyValueType valueType;
+
+    // We should not have any undefined data type in the data file
+    // If there is, the data file is not good to use so terminates.
+    valueType = getPropertyValueType(requiredPropertyIndex, exception);
+    EXCEPTION_THROW;
+
+	// Get a pointer to the first value item for the property.
+	valuesItems = ResultsIpiGetValues(
+		results,
+		requiredPropertyIndex,
+		exception);
+	EXCEPTION_THROW;
+
+	if (valuesItems == NULL) {
+		// No pointer to values was returned. 
+		throw NoValuesAvailableException();
+	}
+
+	// Set enough space in the vector for all the strings that will be 
+	// inserted.
+	values.reserve(results->values.count);
+
+    stringstream stream;
+    char buffer[MAX_PROFILE_PERCENTAGE_STRING_LENGTH];
+    fiftyoneDegreesCoordinate coordinate;
+	// Add the values in their original form to the result.
+	for (i = 0; i < results->values.count; i++) {
+        // Clear the string stream
+        stream.str("");
+        // Check value type to appropriately retrieve the string value of
+        // the item
+        switch(valueType) {
+        case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE:
+            coordinate = IpiGetCoordinate(&valuesItems[i].item, exception);
+            if (EXCEPTION_OKAY) {
+                stream << FLOAT_TO_NATIVE(coordinate.lat);
+                stream << ",";
+                stream << FLOAT_TO_NATIVE(coordinate.lon);
+            }
+            break;
+        case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_RANGE:
+            IpiGetIpRangeAsString(
+                &valuesItems[i].item,
+                results->items[0].type,
+                buffer,
+                MAX_PROFILE_PERCENTAGE_STRING_LENGTH,
+                exception);
+            if (EXCEPTION_OKAY) {
+                stream << buffer;
+            }
+            break;
+        default:
+            stream << STRING((String*)valuesItems[i].item.data.ptr);
+            break;
+        }
+        if (EXCEPTION_OKAY) {
+            stream << ":";
+            stream << FLOAT_TO_NATIVE(valuesItems[i].percentage);
+            values.push_back(stream.str());
+        }
+	}
+    // The value format in the data file should never be
+    // in incorrect. If it happens the data file or
+    // the memory is corrupted and we should terminate
+    EXCEPTION_THROW
 }
 
 fiftyoneDegreesPropertyValueType
@@ -174,41 +258,48 @@ IpIntelligence::ResultsIpi::getValuesAsIpAddress(const string *propertyName) {
         ResultsBase::getRequiredPropertyIndex(propertyName->c_str()));
 }
 
-Common::Value<string>
-IpIntelligence::ResultsIpi::getValueAsString(int requiredPropertyIndex) {
-    EXCEPTION_CREATE;
-    uint32_t i;
-    ProfilePercentage *valuesItems;
-    Common::Value<string> result;
-    fiftyoneDegreesPropertyValueType valueType;
+/*
+ * Override the default getValueAsBool function.
+ * Since for each property, we will always get a list of profile percentage pairs,
+ * it is not appropriate to process the value as boolean here.
+ * Thus always return #FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES
+ */
+Common::Value<bool> 
+IpIntelligence::ResultsIpi::getValueAsBool(int requiredPropertyIndex) {
+    Common::Value<bool> result;
+    result.setNoValueReason(
+        FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
+        nullptr);
+    return result;
+}
 
-    valueType = getPropertyValueType(requiredPropertyIndex, exception);
-    if (EXCEPTION_OKAY
-        && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE
-        && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_RANGE) {
-        // Get a pointer to the first value item for the property.
-        valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
-        EXCEPTION_THROW;
+/*
+ * Override the default getValueAsInteger function.
+ * Since for each property, we will always get a list of profile percentage pairs,
+ * it is not appropriate to process the value as integer here.
+ * Thus always return #FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES
+ */
+Common::Value<int>
+IpIntelligence::ResultsIpi::getValueAsInteger(int requiredPropertyIndex) {
+    Common::Value<int> result;
+    result.setNoValueReason(
+        FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
+        nullptr);
+    return result;
+}
 
-        if (valuesItems == NULL) {
-            // No pointer to values was returned.
-            throw NoValuesAvailableException();
-        }
-
-        // Add the values in their original form to the result.
-        if (results->values.count > 0) {
-            stringstream stream;
-            for (i = 0; i < results->values.count; i++) {
-                if (i != 0) {
-                    stream << "|";
-                }
-                stream << STRING((String *)valuesItems[i].item.data.ptr);
-                stream << ":";
-                stream << valuesItems[i].percentage;
-            }
-            result.setValue(stream.str());
-        }
-    }
+/*
+ * Override the default getValueAsDouble function.
+ * Since for each property, we will always get a list of profile percentage pairs,
+ * it is not appropriate to process the value as double here.
+ * Thus always return #FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES
+ */
+Common::Value<double> 
+IpIntelligence::ResultsIpi::getValueAsDouble(int requiredPropertyIndex) {
+    Common::Value<double> result;
+    result.setNoValueReason(
+        FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
+        nullptr);
     return result;
 }
 

@@ -418,6 +418,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\BinaryValue.hpp" />
     <ClInclude Include="..\..\src\ComponentMetaDataBuilderIpi.hpp" />
     <ClInclude Include="..\..\src\ComponentMetaDataCollectionIpi.hpp" />
     <ClInclude Include="..\..\src\ConfigIpi.hpp" />
@@ -437,9 +438,11 @@
     <ClInclude Include="..\..\src\ValueMetaDataCollectionForProfileIpi.hpp" />
     <ClInclude Include="..\..\src\ValueMetaDataCollectionForPropertyIpi.hpp" />
     <ClInclude Include="..\..\src\ValueMetaDataCollectionIpi.hpp" />
+    <ClInclude Include="..\..\src\ValueMetaDataKeyIpi.hpp" />
     <ClInclude Include="..\..\src\WeightedValue.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\BinaryValue.cpp" />
     <ClCompile Include="..\..\src\ComponentMetaDataBuilderIpi.cpp" />
     <ClCompile Include="..\..\src\ComponentMetaDataCollectionIpi.cpp" />
     <ClCompile Include="..\..\src\ConfigIpi.cpp" />
@@ -459,6 +462,7 @@
     <ClCompile Include="..\..\src\ValueMetaDataCollectionForProfileIpi.cpp" />
     <ClCompile Include="..\..\src\ValueMetaDataCollectionForPropertyIpi.cpp" />
     <ClCompile Include="..\..\src\ValueMetaDataCollectionIpi.cpp" />
+    <ClCompile Include="..\..\src\ValueMetaDataKeyIpi.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

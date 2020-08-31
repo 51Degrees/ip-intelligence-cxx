@@ -119,7 +119,15 @@ namespace FiftyoneDegrees {
 			
 			Common::Value<IpAddress> getValuesAsIpAddress(int requiredPropertyIndex);
 
-			Common::Value<string> getValueAsString(int requiredPropertyIndex);
+			Common::Value<bool> getValueAsBool(int requiredPropertyIndex) override;
+
+			Common::Value<int> getValueAsInteger(int requiredPropertyIndex) override;
+
+			Common::Value<double> getValueAsDouble(int requiredPropertyIndex) override;
+
+
+
+			//Common::Value<string> getValueAsString(int requiredPropertyIndex) override;
 
 			/**
 			 * @}

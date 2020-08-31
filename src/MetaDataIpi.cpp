@@ -3,6 +3,9 @@
 using namespace FiftyoneDegrees::Common;
 using namespace FiftyoneDegrees::IpIntelligence;
 
+// Define the default profile id of a dynamic component
+#define DYNAMIC_COMPONENT_DEFAULT_PROFILE_ID 0
+
 MetaDataIpi::MetaDataIpi(
 	shared_ptr<fiftyoneDegreesResourceManager> manager)
 	: MetaData(manager) {
@@ -74,7 +77,10 @@ ProfileMetaData* MetaDataIpi::getDefaultProfileForComponent(
 	ProfileMetaData *result = nullptr;
 	Collection<uint32_t, ProfileMetaData> *profiles = getProfiles();
 	if (profiles != nullptr) {
-		result = profiles->getByKey(component->getDefaultProfileId());
+		// Make sure that it is not a dynamic component
+		if (!component->isDynamic()) {
+			result = profiles->getByKey(component->getDefaultProfileId());
+		}
 		delete profiles;
 	}
 	return result;

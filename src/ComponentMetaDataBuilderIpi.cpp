@@ -13,18 +13,31 @@ ComponentMetaData* ComponentMetaDataBuilderIpi::build(
 	Item item;
 	Profile *profile;
 	DataReset(&item.data);
-	profile = (Profile*)dataSet->profiles->get(
-		dataSet->profiles, 
-		component->defaultProfileOffset,
-		&item,
-		exception);
-	EXCEPTION_THROW;
-	if (profile != nullptr) {
+
+	if (component->defaultProfileOffset == -1) {
+		// The component is a dynamic component
+		// so create it with profileId = 0
+		// This can then be check if a component
+		// is dynamic through metadata class
 		result = new ComponentMetaData(
 			component->componentId,
 			getString(dataSet->strings, component->nameOffset),
-			profile->profileId);
-		COLLECTION_RELEASE(dataSet->profiles, &item);
+			0);
+	}
+	else {
+		profile = (Profile*)dataSet->profiles->get(
+			dataSet->profiles, 
+			component->defaultProfileOffset,
+			&item,
+			exception);
+		EXCEPTION_THROW;
+		if (profile != nullptr) {
+			result = new ComponentMetaData(
+				component->componentId,
+				getString(dataSet->strings, component->nameOffset),
+				profile->profileId);
+			COLLECTION_RELEASE(dataSet->profiles, &item);
+		}
 	}
 	return result;
 }
