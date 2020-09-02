@@ -87,6 +87,18 @@ namespace FiftyoneDegrees {
 			Common::Value<vector<WeightedValue<string>>>
                         getValuesAsWeightedStringList(const string &propertyName);
 			
+			Common::Value<vector<WeightedValue<int>>>
+						getValuesAsWeightedIntegerList(const char *propertyName);
+
+			Common::Value<vector<WeightedValue<int>>>
+                        getValuesAsWeightedIntegerList(const string *propertyName);
+			
+			Common::Value<vector<WeightedValue<int>>>
+						getValuesAsWeightedIntegerList(const string &propertyName);
+
+			Common::Value<vector<WeightedValue<int>>>
+                        getValuesAsWeightedIntegerList(int requiredPropertyIndex);
+
 			Common::Value<vector<WeightedValue<double>>>
 						getValuesAsWeightedDoubleList(const char *propertyName);
 
@@ -100,24 +112,24 @@ namespace FiftyoneDegrees {
                         getValuesAsWeightedDoubleList(int requiredPropertyIndex);
 			
 			Common::Value<pair<float, float>>
-						getValuesAsCoordinate(const char *propertyName);
+						getValueAsCoordinate(const char *propertyName);
 
 			Common::Value<pair<float, float>>
-						getValuesAsCoordinate(const string *propertyName);
+						getValueAsCoordinate(const string *propertyName);
 
 			Common::Value<pair<float, float>>
-						getValuesAsCoordinate(const string &propertyName);
+						getValueAsCoordinate(const string &propertyName);
 			
 			Common::Value<pair<float, float>>
-						getValuesAsCoordinate(int requiredPropertyIndex);
+						getValueAsCoordinate(int requiredPropertyIndex);
 
-			Common::Value<IpAddress> getValuesAsIpAddress(const char *propertyName);
+			Common::Value<IpAddress> getValueAsIpAddress(const char *propertyName);
 
-			Common::Value<IpAddress> getValuesAsIpAddress(const string &propertyName);
+			Common::Value<IpAddress> getValueAsIpAddress(const string &propertyName);
 
-			Common::Value<IpAddress> getValuesAsIpAddress(const string *propertyName);
+			Common::Value<IpAddress> getValueAsIpAddress(const string *propertyName);
 			
-			Common::Value<IpAddress> getValuesAsIpAddress(int requiredPropertyIndex);
+			Common::Value<IpAddress> getValueAsIpAddress(int requiredPropertyIndex);
 
 			Common::Value<bool> getValueAsBool(int requiredPropertyIndex) override;
 

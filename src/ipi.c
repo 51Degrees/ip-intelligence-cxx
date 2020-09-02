@@ -259,8 +259,10 @@ static int compareToIpv4Range(
 				}
 			}
 		}
-		else {
+		else if (curIndex > 0) {
 			// The IP address is out of range
+			// NOTE: If the current index is 0
+			// There is no more item lower so return the current
 			result = 1;
 		}
 	}
@@ -321,8 +323,10 @@ static int compareToIpv6Range(
 				}
 			}
 		}
-		else {
+		else if (curIndex > 0) {
 			// The IP address is out of range
+			// NOTE: There is no more item lower
+			// so return the current
 			result = 1;
 		}
 	}
@@ -1635,14 +1639,15 @@ static uint32_t addValuesFromIpRanges(
 	profilePercentage.percentage = NATIVE_TO_FLOAT(1);
 	
 	offset = result->ipRangeOffset;
-	if (strcmp("RangeEnd", propertyName) == 0) {
-		// IpRanges item is fized size so offset is actually the index
-		// Thus just increase by 1 to point to the next item.
-		offset++;
-	}
 
 	DataReset(&ipRangeItem.data);
 	if (result->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
+		// If offset is the last item then don't increase
+		if (strcmp("RangeEnd", propertyName) == 0
+			&& offset < dataSet->ipv4Ranges->count - 1) {
+			offset++;
+		}
+
 		Ipv4Range* ipv4Range = dataSet->ipv4Ranges->get(
 			dataSet->ipv4Ranges,
 			offset,
@@ -1656,6 +1661,12 @@ static uint32_t addValuesFromIpRanges(
 		}
 	}
 	else {
+		// If offset is the last item then don't increase
+		if (strcmp("RangeEnd", propertyName) == 0
+			&& offset < dataSet->ipv6Ranges->count - 1) {
+			offset++;
+		}
+
 		Ipv6Range* ipv6Range = dataSet->ipv6Ranges->get(
 			dataSet->ipv6Ranges,
 			offset,

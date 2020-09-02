@@ -136,7 +136,7 @@ IpIntelligence::ResultsIpi::getPropertyValueType(
 }
 
 Common::Value<pair<float, float>>
-IpIntelligence::ResultsIpi::getValuesAsCoordinate(
+IpIntelligence::ResultsIpi::getValueAsCoordinate(
     int requiredPropertyIndex) {
     EXCEPTION_CREATE;
     ProfilePercentage *valuesItems;
@@ -144,31 +144,36 @@ IpIntelligence::ResultsIpi::getValuesAsCoordinate(
     fiftyoneDegreesPropertyValueType valueType;
 
     valueType = getPropertyValueType(requiredPropertyIndex, exception);
-    if (EXCEPTION_OKAY
-        && valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE) {
-        // Get a pointer to the first value item for the property.
-        valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
-        EXCEPTION_THROW;
-        
-        if (valuesItems == NULL) {
-            // No pointer to values was returned.
-            throw NoValuesAvailableException();
-        }
-        
-        // Add the values in their original form to the result.
-        if (results->values.count > 1) {
-            result.setNoValueReason(
-                FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
-                nullptr);
+    if (EXCEPTION_OKAY) {
+        if (valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE) {
+            // Get a pointer to the first value item for the property.
+            valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
+            EXCEPTION_THROW;
+            
+            if (valuesItems == NULL) {
+                // No pointer to values was returned.
+                throw NoValuesAvailableException();
+            }
+            
+            // Add the values in their original form to the result.
+            if (results->values.count > 1) {
+                result.setNoValueReason(
+                    FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
+                    nullptr);
+            }
+            else {
+                fiftyoneDegreesCoordinate coordinate = IpiGetCoordinate(&valuesItems[0].item, exception);
+                EXCEPTION_THROW;
+
+                pair<float, float> floatPair;
+                floatPair.first = coordinate.lat;
+                floatPair.second = coordinate.lon;
+                result.setValue(floatPair);
+            }
         }
         else {
-            fiftyoneDegreesCoordinate coordinate = IpiGetCoordinate(&valuesItems[0].item, exception);
-            EXCEPTION_THROW;
-
-            pair<float, float> floatPair;
-            floatPair.first = coordinate.lat;
-            floatPair.second = coordinate.lon;
-            result.setValue(floatPair);
+            // Default to 0,0 if not coordinate type
+            result.setValue(pair<float, float>(0, 0));
         }
     }
 
@@ -176,64 +181,74 @@ IpIntelligence::ResultsIpi::getValuesAsCoordinate(
 }
 
 Common::Value<pair<float, float>>
-IpIntelligence::ResultsIpi::getValuesAsCoordinate(
+IpIntelligence::ResultsIpi::getValueAsCoordinate(
     const char *propertyName) {
-    return getValuesAsCoordinate(
+    return getValueAsCoordinate(
         ResultsBase::getRequiredPropertyIndex(propertyName));
 }
 
 Common::Value<pair<float, float>>
-IpIntelligence::ResultsIpi::getValuesAsCoordinate(
+IpIntelligence::ResultsIpi::getValueAsCoordinate(
 	const string &propertyName) {
-    return getValuesAsCoordinate(
+    return getValueAsCoordinate(
         ResultsBase::getRequiredPropertyIndex(propertyName.c_str()));
 }
 
 Common::Value<pair<float, float>>
-IpIntelligence::ResultsIpi::getValuesAsCoordinate(
+IpIntelligence::ResultsIpi::getValueAsCoordinate(
     const string *propertyName) {
-    return getValuesAsCoordinate(
+    return getValueAsCoordinate(
         ResultsBase::getRequiredPropertyIndex(propertyName->c_str()));
 }
 
 Common::Value<IpAddress> 
-IpIntelligence::ResultsIpi::getValuesAsIpAddress(int requiredPropertyIndex) {
+IpIntelligence::ResultsIpi::getValueAsIpAddress(int requiredPropertyIndex) {
     EXCEPTION_CREATE;
     ProfilePercentage *valuesItems;
     Common::Value<IpAddress> result;
     fiftyoneDegreesPropertyValueType valueType;
 
     valueType = getPropertyValueType(requiredPropertyIndex, exception);
-    if (EXCEPTION_OKAY
-        && valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_RANGE) {
-        // Get a pointer to the first value item for the property.
-        valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
-        EXCEPTION_THROW;
-        
-        if (valuesItems == NULL) {
-            // No pointer to values was returned.
-            throw NoValuesAvailableException();
-        }
-        
-        // Add the values in their original form to the result.
-        if (results->values.count > 1) {
-            result.setNoValueReason(
-                FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
-                nullptr);
-        }
-        else {
-            IpAddress ipAddress;
-            if (results->items[0].type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
-                ipAddress = IpAddress(
-                    ((Ipv4Range *)valuesItems[0].item.data.ptr)->start,
-                    FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4);
+    if (EXCEPTION_OKAY) {
+        if (valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_RANGE) {
+            // Get a pointer to the first value item for the property.
+            valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
+            EXCEPTION_THROW;
+            
+            if (valuesItems == NULL) {
+                // No pointer to values was returned.
+                throw NoValuesAvailableException();
+            }
+            
+            // Add the values in their original form to the result.
+            if (results->values.count > 1) {
+                result.setNoValueReason(
+                    FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
+                    nullptr);
             }
             else {
-                ipAddress = IpAddress(
-                    ((Ipv6Range *)valuesItems[0].item.data.ptr)->start,
-                    FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6);
+                IpAddress ipAddress;
+                if (results->items[0].type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
+                    ipAddress = IpAddress(
+                        ((Ipv4Range *)valuesItems[0].item.data.ptr)->start,
+                        FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4);
+                }
+                else {
+                    ipAddress = IpAddress(
+                        ((Ipv6Range *)valuesItems[0].item.data.ptr)->start,
+                        FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6);
+                }
+                result.setValue(ipAddress);
             }
-            result.setValue(ipAddress);
+        }
+        else {
+            // Default to the smallest IP address
+            if (results->items[0].type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
+                result.setValue(IpAddress("0.0.0.0"));
+            }
+            else {
+                result.setValue(IpAddress("0000:0000:0000:0000:0000:0000:0000:0000"));
+            }
         }
     }
 
@@ -241,20 +256,20 @@ IpIntelligence::ResultsIpi::getValuesAsIpAddress(int requiredPropertyIndex) {
 }
 
 Common::Value<IpAddress>
-IpIntelligence::ResultsIpi::getValuesAsIpAddress(const char *propertyName) {
-    return getValuesAsIpAddress(
+IpIntelligence::ResultsIpi::getValueAsIpAddress(const char *propertyName) {
+    return getValueAsIpAddress(
         ResultsBase::getRequiredPropertyIndex(propertyName));
 }
 
 Common::Value<IpAddress>
-IpIntelligence::ResultsIpi::getValuesAsIpAddress(const string &propertyName) {
-    return getValuesAsIpAddress(
+IpIntelligence::ResultsIpi::getValueAsIpAddress(const string &propertyName) {
+    return getValueAsIpAddress(
         ResultsBase::getRequiredPropertyIndex(propertyName.c_str()));
 }
 
 Common::Value<IpAddress>
-IpIntelligence::ResultsIpi::getValuesAsIpAddress(const string *propertyName) {
-    return getValuesAsIpAddress(
+IpIntelligence::ResultsIpi::getValueAsIpAddress(const string *propertyName) {
+    return getValueAsIpAddress(
         ResultsBase::getRequiredPropertyIndex(propertyName->c_str()));
 }
 
@@ -314,8 +329,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedBoolList(
     fiftyoneDegreesPropertyValueType valueType;
 
     valueType = getPropertyValueType(requiredPropertyIndex, exception);
-    if (EXCEPTION_OKAY
-        && valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_BOOLEAN) {
+    if (EXCEPTION_OKAY) {
         // Get a pointer to the first value item for the property.
         valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
         EXCEPTION_THROW;
@@ -332,7 +346,15 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedBoolList(
         // Add the values in their original form to the result.
         for (i = 0; i < results->values.count; i++) {
             WeightedValue<bool> weightedBool;
-            weightedBool.setValue(strcmp(STRING((String *)valuesItems[i].item.data.ptr), "True") == 0 ? true : false);
+            if (valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE
+                && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_RANGE) {
+                weightedBool.setValue(
+                    strcmp(STRING((String *)valuesItems[i].item.data.ptr), "True") == 0 ? true : false);
+            }
+            else {
+                // Coordinate and IP range cannot be converted to boolean so default to false
+                weightedBool.setValue(false);
+            }
             weightedBool.setWeight(valuesItems[i].percentage);
             values.push_back(weightedBool);
         }
@@ -373,9 +395,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
     fiftyoneDegreesPropertyValueType valueType;
 
     valueType = getPropertyValueType(requiredPropertyIndex, exception);
-    if (EXCEPTION_OKAY
-        && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE
-        && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_RANGE) {
+    if (EXCEPTION_OKAY) {
         // Get a pointer to the first value item for the property.
         valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
         EXCEPTION_THROW;
@@ -389,11 +409,37 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
         // inserted.
         values.reserve(results->values.count);
 
+        stringstream stream;
+        char buffer[MAX_PROFILE_PERCENTAGE_STRING_LENGTH];
+        fiftyoneDegreesCoordinate coordinate;
         // Add the values in their original form to the result.
         for (i = 0; i < results->values.count; i++) {
             WeightedValue<string> weightedString;
-            weightedString.setValue(
-                string(STRING((String *)valuesItems[i].item.data.ptr)));
+            switch(valueType) {
+            case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE:
+                coordinate = IpiGetCoordinate(&valuesItems[i].item, exception);
+                if (EXCEPTION_OKAY) {
+                    stream << FLOAT_TO_NATIVE(coordinate.lat);
+                    stream << ",";
+                    stream << FLOAT_TO_NATIVE(coordinate.lon);
+                }
+                break;
+            case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_RANGE:
+                IpiGetIpRangeAsString(
+                    &valuesItems[i].item,
+                    results->items[0].type,
+                    buffer,
+                    MAX_PROFILE_PERCENTAGE_STRING_LENGTH,
+                    exception);
+                if (EXCEPTION_OKAY) {
+                    stream << buffer;
+                }
+                break;
+            default:
+                stream << STRING((String*)valuesItems[i].item.data.ptr);
+                break;
+            }
+            weightedString.setValue(stream.str());
             weightedString.setWeight(valuesItems[i].percentage);
             values.push_back(weightedString);
         }
@@ -423,6 +469,73 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
         ResultsBase::getRequiredPropertyIndex(propertyName->c_str()));
 }
 
+Common::Value<vector<WeightedValue<int>>>
+IpIntelligence::ResultsIpi::getValuesAsWeightedIntegerList(
+    int requiredPropertyIndex) {
+    EXCEPTION_CREATE;
+    uint32_t i;
+    ProfilePercentage *valuesItems;
+    Common::Value<vector<WeightedValue<int>>> result;
+    vector<WeightedValue<int>> values;
+    fiftyoneDegreesPropertyValueType valueType;
+
+    valueType = getPropertyValueType(requiredPropertyIndex, exception);
+    if (EXCEPTION_OKAY) {
+        // Get a pointer to the first value item for the property.
+        valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
+        EXCEPTION_THROW;
+
+        if (valuesItems == NULL) {
+            // No pointer to values was returned.
+            throw NoValuesAvailableException();
+        }
+
+        // Set enough space in the vector for all the strings that will be
+        // inserted.
+        values.reserve(results->values.count);
+
+        // Add the values in their original form to the result.
+        for (i = 0; i < results->values.count; i++) {
+            WeightedValue<int> weightedInteger;
+            if (valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE
+                && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_RANGE) {
+                weightedInteger.setValue(
+                    atoi(STRING((String *)valuesItems[i].item.data.ptr)));
+            }
+            else {
+                // Coordinate and IP address cannot be converted to int
+                // so default to 0
+                weightedInteger.setValue(0);
+            }
+            weightedInteger.setWeight(valuesItems[i].percentage);
+            values.push_back(weightedInteger);
+        }
+        result.setValue(values);
+    }
+    return result;
+}
+
+Common::Value<vector<WeightedValue<int>>>
+IpIntelligence::ResultsIpi::getValuesAsWeightedIntegerList(
+    const char *propertyName) {
+    return getValuesAsWeightedIntegerList(
+        ResultsBase::getRequiredPropertyIndex(propertyName));
+}
+
+Common::Value<vector<WeightedValue<int>>>
+IpIntelligence::ResultsIpi::getValuesAsWeightedIntegerList(
+    const string &propertyName) {
+    return getValuesAsWeightedIntegerList(
+        ResultsBase::getRequiredPropertyIndex(propertyName.c_str()));
+}
+
+Common::Value<vector<WeightedValue<int>>>
+IpIntelligence::ResultsIpi::getValuesAsWeightedIntegerList(
+    const string *propertyName) {
+    return getValuesAsWeightedIntegerList(
+        ResultsBase::getRequiredPropertyIndex(propertyName->c_str()));
+}
+
 Common::Value<vector<WeightedValue<double>>>
 IpIntelligence::ResultsIpi::getValuesAsWeightedDoubleList(
     int requiredPropertyIndex) {
@@ -434,8 +547,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedDoubleList(
     fiftyoneDegreesPropertyValueType valueType;
 
     valueType = getPropertyValueType(requiredPropertyIndex, exception);
-    if (EXCEPTION_OKAY
-        && valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_DOUBLE) {
+    if (EXCEPTION_OKAY) {
         // Get a pointer to the first value item for the property.
         valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
         EXCEPTION_THROW;
@@ -452,8 +564,16 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedDoubleList(
         // Add the values in their original form to the result.
         for (i = 0; i < results->values.count; i++) {
             WeightedValue<double> weightedDouble;
-            weightedDouble.setValue(
-                strtod((STRING((String *)valuesItems[i].item.data.ptr)), nullptr));
+            if (valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE
+                && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_RANGE) {
+                weightedDouble.setValue(
+                    strtod((STRING((String *)valuesItems[i].item.data.ptr)), nullptr));
+            }
+            else {
+                // Coordinate and IP address cannot be converted to double
+                // so default to 0
+                weightedDouble.setValue(0);
+            }
             weightedDouble.setWeight(valuesItems[i].percentage);
             values.push_back(weightedDouble);
         }
