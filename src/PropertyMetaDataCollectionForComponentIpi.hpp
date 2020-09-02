@@ -6,7 +6,7 @@
 #include "common-cxx/ComponentMetaData.hpp"
 #include "ComponentMetaDataBuilderIpi.hpp"
 #include "PropertyMetaDataCollectionIpi.hpp"
-#include "Ipi.h"
+#include "ipi.h"
 #include <memory>
 
 using namespace std;

@@ -1,4 +1,5 @@
-#include "algorithm"
+#include <algorithm>
+#include <cstring>
 #include "BinaryValue.hpp"
 
 using namespace std;

@@ -12,7 +12,7 @@
 #include "PropertyMetaDataCollectionForComponentIpi.hpp"
 #include "PropertyMetaDataCollectionForPropertyIpi.hpp"
 #include "PropertyMetaDataBuilderIpi.hpp"
-#include "Ipi.h"
+#include "ipi.h"
 
 using namespace FiftyoneDegrees::Common;
 
