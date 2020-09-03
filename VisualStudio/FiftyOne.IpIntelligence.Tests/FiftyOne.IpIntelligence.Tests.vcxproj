@@ -435,6 +435,8 @@
     <ClCompile Include="..\..\src\common-cxx\tests\ExampleTests.cpp" />
     <ClCompile Include="..\..\src\common-cxx\textfile.c" />
     <ClCompile Include="..\..\test\EngineIpIntelligenceTests.cpp" />
+    <ClCompile Include="..\..\test\EngineIpiTestsFile.cpp" />
+    <ClCompile Include="..\..\test\EngineIpiTestsMemory.cpp" />
     <ClCompile Include="..\..\test\ExampleFindProfilesTests.cpp" />
     <ClCompile Include="..\..\test\ExampleGettingStartedTests.cpp" />
     <ClCompile Include="..\..\test\ExampleIpIntelligenceTests.cpp" />

@@ -61,8 +61,9 @@ namespace FiftyoneDegrees {
              * To get the actual pointer, the getIpAddress
              * should be used.
              * @param copy which will hold an copy of the byte array
+             * @size size of the copy buffer
              */
-            void getCopyOfIpAddress(unsigned char copy[FIFTYONE_DEGREES_IPV6_LENGTH]);
+            void getCopyOfIpAddress(unsigned char copy[], uint32_t size);
 
             /**
              * Get the type of the IP address

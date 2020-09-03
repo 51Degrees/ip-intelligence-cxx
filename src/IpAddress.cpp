@@ -48,6 +48,8 @@ void IpAddress::init(unsigned char *ipAddress,
     this->type = type;
 }
 
-void IpAddress::getCopyOfIpAddress(unsigned char copy[FIFTYONE_DEGREES_IPV6_LENGTH]) {
-    memcpy(copy, this->ipAddress, FIFTYONE_DEGREES_IPV6_LENGTH);
+void IpAddress::getCopyOfIpAddress(unsigned char copy[], uint32_t size) {
+	uint32_t copySize = type > FIFTYONE_DEGREES_IPV6_LENGTH ?
+	    size : FIFTYONE_DEGREES_IPV6_LENGTH;
+	memcpy(copy, this->ipAddress, copySize);
 }
