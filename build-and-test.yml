@@ -1,0 +1,237 @@
+name: Build and Test IP Intelligence C++
+
+pr:
+- master
+- develop
+
+trigger: none
+
+stages:
+
+- stage: Data
+  jobs:
+  - job: Get_Enterprise_DataFile
+    pool:
+      name: Hosted Ubuntu 1604
+
+    steps:
+    
+    - script: |
+        curl "https://distributor.51degrees.com/api/v2/download?LicenseKeys=$(licensekey)&Type=IpiV41&Download=True&Product=V4Enterprise" --output Enterprise-IpiV41.ipi.gz
+      displayName: 'Download Latest Data File'
+
+    - task: ExtractFiles@1
+      displayName: 'Extract Data File'
+      inputs:
+        archiveFilePatterns: 'Enterprise-IpiV41.ipi.gz'
+        cleanDestinationFolder: false
+
+    - script: |
+          mv $(Build.SourcesDirectory)/Enterprise-IpiV41.ipi  $(Build.ArtifactStagingDirectory)/51Degrees-EnterpriseV4.1.ipi
+      displayName: 'Move Data File'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'enterpriseFile'
+        publishLocation: 'Container'
+
+
+- stage: Windows
+  dependsOn: [Data]
+  pool:
+    name: Hosted VS2017
+    demands:
+    - msbuild
+    - vstest
+
+  jobs:
+ 
+  - job: Build_VisualStudio
+
+    timeoutInMinutes: 120
+
+    steps:
+
+    - checkout: self
+      submodules: recursive
+      lfs: true
+      persistCredentials: true
+
+    - powershell: |
+        git lfs install
+        ls
+        git -c http.https://51degrees.visualstudio.com.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" lfs fetch
+        git -c http.https://51degrees.visualstudio.com.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" lfs checkout
+        ls
+      workingDirectory: 'ip-intelligence-data'
+      displayName: 'Fetch LFS Data Files'
+
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download Enterprise Data File'
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'enterpriseFile'
+        downloadPath: '$(System.ArtifactsDirectory)'
+
+    - script: |
+          mv $(System.ArtifactsDirectory)\enterpriseFile\51Degrees-EnterpriseV4.1.ipi  $(Build.SourcesDirectory)\ip-intelligence-data\51Degrees-EnterpriseV4.1.ipi
+      displayName: 'Move Data File'
+
+    - task: NuGetCommand@2
+      inputs:
+        command: 'restore'
+        restoreSolution: 'VisualStudio/IpIntelligence.sln'
+        feedsToUse: 'select'
+        vstsFeed: 'd2431f86-c1e6-4d8b-8d27-311cf3614847'
+
+    - task: MSBuild@1
+      displayName: 'Build Visual Studio Solution x64'
+      inputs:
+        solution: 'VisualStudio/IpIntelligence.sln'
+        msbuildArchitecture: x64
+        platform: x64
+        configuration: Release
+        clean: true
+
+    - bash: './FiftyOne.IpIntelligence.Tests.exe --gtest_filter="-*TestMem*:*TestPerf*:*TestOfflineProcessing*" --gtest_catch_exceptions=1 --gtest_break_on_failure=0 --gtest_output=xml:testoutput.xml'
+      workingDirectory: VisualStudio/FiftyOne.IpIntelligence.Tests/x64/Release
+      failOnStderr: true
+      displayName: 'Run IP Intelligence Tests'
+
+    - task: PublishTestResults@2
+      condition: true
+      inputs:
+        testResultsFormat: 'JUnit'
+        testRunTitle: 'Visual Studio x64 IP Intelligence'
+        testResultsFiles: 'VisualStudio\FiftyOne.IpIntelligence.Tests\x64\Release\testoutput.xml'
+
+  - job: Build_And_Test_Ip_Intelligence
+
+    timeoutInMinutes: 120
+
+    steps:
+
+    - checkout: self
+      submodules: recursive
+      lfs: true
+      persistCredentials: true
+
+    - powershell: |
+        git lfs install
+        ls
+        git -c http.https://51degrees.visualstudio.com.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" lfs fetch
+        git -c http.https://51degrees.visualstudio.com.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" lfs checkout
+        ls
+      workingDirectory: 'ip-intelligence-data'
+      displayName: 'Fetch LFS Data Files'
+
+    - task: Bash@3
+      displayName: 'Create Build Directory'
+      inputs:
+        targetType: 'inline'
+        script: 'mkdir build'
+
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download Enterprise Data File'
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'enterpriseFile'
+        downloadPath: '$(System.ArtifactsDirectory)'
+
+    - script: |
+          mv $(System.ArtifactsDirectory)\enterpriseFile\51Degrees-EnterpriseV4.1.ipi  $(Build.SourcesDirectory)\ip-intelligence-data\51Degrees-EnterpriseV4.1.ipi
+      displayName: 'Move Data File'
+
+    - task: CMake@1
+      displayName: 'CMake Configure'
+      inputs:
+        workingDirectory: build
+        cmakeArgs: '.. -A x64'
+
+    - task: CMake@1
+      displayName: 'CMake Build'
+      inputs:
+        workingDirectory: build
+        cmakeArgs: '--build . --config Release'
+
+    - bash: 'ctest -R ".*Ipi.*" -E ".*TestMem|TestPerf|TestOfflineProcessing.*" -T test --no-compress-output'
+      workingDirectory: build
+      failOnStderr: true
+      displayName: 'Run Tests'
+
+    - task: PublishTestResults@2
+      condition: true
+      inputs:
+        testResultsFormat: 'CTest'
+        testRunTitle: 'Windows CTest IP Intelligence'
+        testResultsFiles: '**/Test.xml'
+
+- stage: Linux
+  dependsOn: [Data]
+  jobs:
+  - job: Build_And_Test
+
+    strategy:
+      matrix:
+        ubuntu-18:
+          imageName: ubuntu-18.04
+        ubuntu-16:
+          imageName: ubuntu-16.04
+        macOS-10:
+          imageName: macOS-10.14
+
+    timeoutInMinutes: 120
+
+    pool:
+      vmImage: $(imageName)
+
+    steps:
+
+    - checkout: self
+      submodules: recursive
+      lfs: true
+
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download Enterprise Data File'
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'enterpriseFile'
+        downloadPath: '$(System.ArtifactsDirectory)'
+
+    - script: |
+          mv $(System.ArtifactsDirectory)/enterpriseFile/51Degrees-EnterpriseV4.1.ipi  $(Build.SourcesDirectory)/ip-intelligence-data/51Degrees-EnterpriseV4.1.ipi
+      displayName: 'Move Data File'
+
+    - task: Bash@3
+      displayName: 'Create Build Directory'
+      inputs:
+        targetType: 'inline'
+        script: 'mkdir build'
+
+    - task: CMake@1
+      displayName: 'CMake Configure'
+      inputs:
+        workingDirectory: build
+        cmakeArgs: '..'
+
+    - task: CMake@1
+      displayName: 'CMake Build'
+      inputs:
+        workingDirectory: build
+        cmakeArgs: '--build .'
+
+    - bash: 'ctest -E ".*TestMem|TestPerf|TestOfflineProcessing.*" -T test --no-compress-output'
+      workingDirectory: build
+      failOnStderr: true
+      displayName: 'Run Tests'
+
+    - task: PublishTestResults@2
+      condition: true
+      inputs:
+        testResultsFormat: 'CTest'
+        testRunTitle: '${{ variables.vmImage }} CTest'
+        testResultsFiles: '**/Test.xml'
