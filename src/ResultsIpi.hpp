@@ -389,6 +389,13 @@ namespace FiftyoneDegrees {
 		private:
 			/**
 			 * Utility function to check the property value type
+			 * Consumers of this function should always checked for
+			 * exception status before using the returned value.
+			 * @param requiredPropertyIndex index in the required
+			 * properties list
+			 * @param exception object which is used when an exception
+			 * occurs
+			 * @return the value type of the property
 			 */
 			fiftyoneDegreesPropertyValueType getPropertyValueType(
 				int requiredPropertyIndex,

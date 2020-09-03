@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <sstream>
 #include <algorithm>
+#include "common-cxx/ip.h"
 #include "common-cxx/EngineBase.hpp"
 #include "common-cxx/resource.h"
 #include "common-cxx/RequiredPropertiesConfig.hpp"
@@ -173,7 +174,7 @@ namespace FiftyoneDegrees {
 			ResultsIpi *process(
 				unsigned char ipAddress[],
 				long length,
-				EvidenceIpType type);
+				fiftyoneDegreesEvidenceIpType type);
 
 			/**
 			 * @}
