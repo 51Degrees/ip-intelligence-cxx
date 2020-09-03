@@ -1,8 +1,9 @@
 %include "common-cxx/EngineBase.i"
-%include "common-cxx/EvidenceBase.i"
 %include "ResultsIpi.i"
 %include "ConfigIpi.i"
+%include "common-cxx/EvidenceBase.i"
 %include "EvidenceIpi.i"
+%include "ip.i"
 
 %newobject process;
 
@@ -30,6 +31,9 @@ public:
     void refreshData(unsigned char data[], long length);
     ResultsIpi* process(EvidenceIpi *evidence);
     ResultsIpi* process(const char *ipAddress);
-    ResultsIpi* process(unsigned char ipAddress[], long length);
+    ResultsIpi* process(
+        unsigned char ipAddress[],
+        long length,
+        fiftyoneDegreesEvidenceIpType type);
     ResultsBase* processBase(EvidenceBase *evidence);
 };
