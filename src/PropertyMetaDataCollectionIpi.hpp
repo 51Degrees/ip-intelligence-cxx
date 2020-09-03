@@ -11,8 +11,8 @@ using namespace FiftyoneDegrees::Common;
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
 		/**
-		 * A collection of all property meta data contained in a Hash
-		 * engine.
+		 * A collection of all property meta data contained in an IP 
+		 * Intelligence engine.
 		 */
 		class PropertyMetaDataCollectionIpi
 			: public Collection<string, PropertyMetaData> {

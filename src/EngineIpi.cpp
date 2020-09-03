@@ -222,15 +222,17 @@ IpIntelligence::ResultsIpi* EngineIpi::process(
 	return new ResultsIpi(results, manager);
 }
 
-IpIntelligence::ResultsIpi *EngineIpi::process(unsigned char ipAddress[], long length) {
+IpIntelligence::ResultsIpi *EngineIpi::process(
+	unsigned char ipAddress[], 
+	long length,
+	EvidenceIpType type) {
 	EXCEPTION_CREATE;
 	fiftyoneDegreesResultsIpi *results = ResultsIpiCreate(manager.get());
 	ResultsIpiFromIpAddress(
 		results, 
 		ipAddress,
 		length,
-        length == FIFTYONE_DEGREES_IPV4_LENGTH ? FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4
-            : FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6,
+        type,
 		exception);
 	if (exception->status != FIFTYONE_DEGREES_STATUS_INCORRECT_FORMAT) {
 		EXCEPTION_THROW;

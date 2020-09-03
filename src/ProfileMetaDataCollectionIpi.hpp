@@ -1,5 +1,5 @@
-#ifndef FIFTYONE_DEGREES_PROFILE_META_DATA_COLLECTION_HASH_HPP
-#define FIFTYONE_DEGREES_PROFILE_META_DATA_COLLECTION_HASH_HPP
+#ifndef FIFTYONE_DEGREES_PROFILE_META_DATA_COLLECTION_IPI_HPP
+#define FIFTYONE_DEGREES_PROFILE_META_DATA_COLLECTION_IPI_HPP
 
 #include "common-cxx/Collection.hpp"
 #include "ProfileMetaDataBuilderIpi.hpp"
@@ -11,8 +11,8 @@ using namespace FiftyoneDegrees::Common;
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
 		/**
-		 * A collection of all profile meta data contained in a Hash
-		 * engine.
+		 * A collection of all profile meta data contained in an IP
+		 * Intelligence engine.
 		 */
 		class ProfileMetaDataCollectionIpi
 			: public Collection<uint32_t, ProfileMetaData> {

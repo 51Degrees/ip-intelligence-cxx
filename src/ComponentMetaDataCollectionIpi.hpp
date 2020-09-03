@@ -11,7 +11,7 @@ using namespace FiftyoneDegrees::Common;
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
 		/**
-		 * A collection of component meta data contained in a Hash
+		 * A collection of component meta data contained in a IP Intelligence
 		 * engine.
 		 */
 		class ComponentMetaDataCollectionIpi

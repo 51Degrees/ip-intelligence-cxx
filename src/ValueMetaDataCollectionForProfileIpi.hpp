@@ -14,7 +14,7 @@ namespace FiftyoneDegrees {
 	namespace IpIntelligence {
 		/**
 		 * A collection of value meta data relating to a profile contained
-		 * in a Hash engine.
+		 * in an IP Intelligence engine.
 		 */
 		class ValueMetaDataCollectionForProfileIpi
 			: public ValueMetaDataCollectionBaseIpi {

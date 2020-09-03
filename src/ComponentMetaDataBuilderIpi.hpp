@@ -13,7 +13,8 @@ namespace FiftyoneDegrees {
 	namespace IpIntelligence {
 		/**
 		 * Meta data builder class contains static helper methods used when
-		 * building component meta data instances from a Hash data set.
+		 * building component meta data instances from an IP Intelligence
+		 * data set.
 		 */
 		class ComponentMetaDataBuilderIpi : EntityMetaDataBuilder {
 		public:

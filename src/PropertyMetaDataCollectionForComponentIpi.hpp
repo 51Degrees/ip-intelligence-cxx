@@ -16,7 +16,7 @@ namespace FiftyoneDegrees {
 	namespace IpIntelligence {
 		/**
 		 * A collection of property meta data relating to a component
-		 * contained in a Hash engine.
+		 * contained in an IP Intelligence engine.
 		 */
 		class PropertyMetaDataCollectionForComponentIpi
 			: public Collection<string, PropertyMetaData> {

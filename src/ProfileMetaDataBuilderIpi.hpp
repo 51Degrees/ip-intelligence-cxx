@@ -1,5 +1,5 @@
-#ifndef FIFTYONE_DEGREES_PROFILE_META_DATA_BUILDER_HASH_HPP
-#define FIFTYONE_DEGREES_PROFILE_META_DATA_BUILDER_HASH_HPP
+#ifndef FIFTYONE_DEGREES_PROFILE_META_DATA_BUILDER_IPI_HPP
+#define FIFTYONE_DEGREES_PROFILE_META_DATA_BUILDER_IPI_HPP
 
 #include <vector>
 #include "common-cxx/ProfileMetaData.hpp"
@@ -13,7 +13,7 @@ namespace FiftyoneDegrees {
 	namespace IpIntelligence {
 		/**
 		 * Meta data builder class contains static helper methods used when
-		 * building profile meta data instances from a Hash data set.
+		 * building profile meta data instances from an IP Intelligence data set.
 		 */
 		class ProfileMetaDataBuilderIpi : EntityMetaDataBuilder {
 		public:

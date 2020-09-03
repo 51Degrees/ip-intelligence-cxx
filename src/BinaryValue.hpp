@@ -5,6 +5,11 @@
 
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
+		/**
+		 * Binary value class, used to hold the raw data
+		 * This is mainly used in ValueMetaDataKey but
+		 * not limited to it.
+		 */
 		class BinaryValue {
 		public:
 			/**

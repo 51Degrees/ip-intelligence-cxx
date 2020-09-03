@@ -1,5 +1,5 @@
-#ifndef FIFTYONE_DEGREES_CONFIG_HASH_HPP
-#define FIFTYONE_DEGREES_CONFIG_HASH_HPP
+#ifndef FIFTYONE_DEGREES_CONFIG_IPI_HPP
+#define FIFTYONE_DEGREES_CONFIG_IPI_HPP
 
 #include <cstddef>
 #include "common-cxx/CollectionConfig.hpp"
@@ -12,10 +12,10 @@ using namespace FiftyoneDegrees::Common;
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
 		/**
-		 * C++ class wrapper for the #fiftyoneDegreesConfigHash
-		 * configuration structure. See hash.h.
+		 * C++ class wrapper for the #fiftyoneDegreesConfigIpi
+		 * configuration structure. See ipi.h.
 		 *
-		 * This extends the ConfigDeviceDetection class to add Hash
+		 * This extends the ConfigBase class to add IP Intelligence
 		 * specific configuration options.
 		 *
 		 * Configuration options are set using setter methods and fetched
@@ -26,22 +26,15 @@ namespace FiftyoneDegrees {
 		 *
 		 * ```
 		 * using namespace FiftyoneDegrees::Common;
-		 * using namespace FiftyoneDegrees::DeviceDetection::Hash;
+		 * using namespace FiftyoneDegrees::IpIntelligence;
 		 * string dataFilePath;
 		 * RequiredPropertiesConfig *properties;
 		 *
 		 * // Construct a new configuration
-		 * ConfigHash *config = new ConfigHash();
-		 *
-		 * // Configure the engine to load the entire data set into memory
-		 * // for maximum performance, and set the maximum drift and
-		 * // difference to allow when finding substring hashes
-		 * config->setMaxPerformance();
-		 * config->setDrift(2);
-		 * config->setDifference(10);
+		 * ConfigIpi *config = new ConfigIpi();
 		 *
 		 * // Use the configuration when constructing an engine
-		 * EngineHash *engine = new EngineHash(
+		 * EngineIpi *engine = new EngineIpi(
 		 *     dataFilePath,
 		 *     config,
 		 *     properties);
@@ -56,7 +49,7 @@ namespace FiftyoneDegrees {
 
 			/**
 			 * Construct a new instance using the default configuration
-			 * #fiftyoneDegreesHashDefaultConfig.
+			 * #fiftyoneDegreesIpiDefaultConfig.
 			 */
 			ConfigIpi();
 
@@ -77,32 +70,32 @@ namespace FiftyoneDegrees {
 			/**
 			 * Set the collections to use the high performance
 			 * configuration.
-			 * See #fiftyoneDegreesHashHighPerformanceConfig
+			 * See #fiftyoneDegreesIpiHighPerformanceConfig
 			 */
 			void setHighPerformance();
 
 			/**
 			 * Set the collections to use the balanced configuration.
-			 * See #fiftyoneDegreesHashBalancedConfig
+			 * See #fiftyoneDegreesIpiBalancedConfig
 			 */
 			void setBalanced();
 
 			/**
 			 * Set the collections to use the balanced temp configuration.
-			 * See #fiftyoneDegreesHashBalancedTempConfig
+			 * See #fiftyoneDegreesIpiBalancedTempConfig
 			 */
 			void setBalancedTemp();
 
 			/**
 			 * Set the collections to use the low memory configuration.
-			 * See #fiftyoneDegreesHashLowMemoryConfig
+			 * See #fiftyoneDegreesIpiLowMemoryConfig
 			 */
 			void setLowMemory();
 
 			/**
 			 * Set the collections to use the entirely in memory
 			 * configuration.
-			 * See #fiftyoneDegreesHashInMemoryConfig
+			 * See #fiftyoneDegreesIpiInMemoryConfig
 			 */
 			void setMaxPerformance();
 
@@ -148,13 +141,21 @@ namespace FiftyoneDegrees {
 			CollectionConfig getProfiles();
 
 			/**
-			 * Get the configuration for the nodes collection.
-			 * @return nodes collection configuration
+			 * Get the configuration for the ipv4Ranges collection.
+			 * @return ipv4 ranges collection configuration
 			 */
 			CollectionConfig getIpv4Ranges();
 
+			/**
+			 * Get the configuration for the ipv6Ranges collection.
+			 * @return ipv6 ranges collection configuration
+			 */
 			CollectionConfig getIpv6Ranges();
 
+			/**
+			 * Get the configuration for the profilesCombinations collection.
+			 * @return profiles combinations collection configuration
+			 */
 			CollectionConfig getProfileCombinations();
 
 			/**
@@ -197,11 +198,13 @@ namespace FiftyoneDegrees {
 			/** The underlying profiles configuration structure */
 			CollectionConfig profiles;
 
-			/** The underlying nodes configuration structure */
+			/** The underlying ipv4 ranges configuration structure */
 			CollectionConfig ipv4Ranges;
 
+			/** The underlyig ipv6 ranges configuration structure */
 			CollectionConfig ipv6Ranges;
 
+			/** The underlying profile combinations configuration structure */
 			CollectionConfig profileCombinations;
 
 			/** The underlying profile offsets configuration structure */
@@ -215,7 +218,7 @@ namespace FiftyoneDegrees {
 
 			/**
 			 * Initialise the collection configurations by creating
-			 * instances from the Hash configuration structure.
+			 * instances from the IP Intelligence configuration structure.
 			 */
 			void initCollectionConfig();
 

@@ -11,8 +11,6 @@ IpIntelligence::ResultsIpi::ResultsIpi(
 	shared_ptr<fiftyoneDegreesResourceManager> manager)
 	: ResultsBase(&results->b, manager) {
 	this->results = results;
-  _jsHardwareProfileRequiredIndex = PropertiesGetRequiredPropertyIndexFromName(
-      this->available, "javascripthardwareprofile");
 }
 
 

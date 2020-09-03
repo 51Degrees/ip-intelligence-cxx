@@ -1,5 +1,5 @@
-#ifndef FIFTYONE_DEGREES_ENGINE_HASH_HPP
-#define FIFTYONE_DEGREES_ENGINE_HASH_HPP
+#ifndef FIFTYONE_DEGREES_ENGINE_IPI_HPP
+#define FIFTYONE_DEGREES_ENGINE_IPI_HPP
 
 #include <string>
 #include <vector>
@@ -23,9 +23,9 @@ using namespace FiftyoneDegrees::Common;
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
 		/**
-		 * Encapsulates the Hash engine class which implements
-		 * #EngineDeviceDetection. This carries out processing using a
-		 * Hash data set.
+		 * Encapsulates the IP Intelligence engine class which implements
+		 * #EngineBase. This carries out processing using an IP 
+		 * Intelligence data set.
 		 *
 		 * An engine is constructed with a configuration, and either a
 		 * data file, or an in memory data set, then used to process
@@ -37,34 +37,37 @@ namespace FiftyoneDegrees {
 		 *
 		 * ```
 		 * using namespace FiftyoneDegrees::Common;
-		 * using namespace FiftyoneDegrees::DeviceDetection;
-		 * using namespace FiftyoneDegrees::DeviceDetection::Hash;
-		 * ConfigHash *config;
+		 * using namespace FiftyoneDegrees::IpIntelligence;
+		 * ConfigIpi *config;
 		 * string dataFilePath;
 		 * void *inMemoryDataSet;
 		 * long inMemoryDataSetLength;
 		 * RequiredPropertiesConfig *properties;
-		 * EvidenceDeviceDetection *evidence;
+		 * EvidenceIpi *evidence;
+		 * unsigned char ipv4Address[4];
 		 *
 		 * // Construct the engine from a data file
-		 * EngineHash *engine = new EngineHash(
+		 * EngineIpi *engine = new EngineIpi(
 		 *     dataFilePath,
 		 *     config,
 		 *     properties);
 		 *
 		 * // Or from a data file which has been loaded into continuous
 		 * // memory
-		 * EngineHash *engine = new EngineHash(
+		 * EngineIpi *engine = new EngineIpi(
 		 *     inMemoryDataSet,
 		 *     inMemoryDataSetLength,
 		 *     config,
 		 *     properties);
 		 *
 		 * // Process some evidence
-		 * ResultsHash *results = engine->process(evidence);
+		 * ResultsIpi *results = engine->process(evidence);
 		 *
-		 * // Or just process a single User-Agent string
-		 * ResultsHash *results = engine->process("some User-Agent");
+		 * // Or just process a single IP address string
+		 * ResultsIpi *results = engine->process("some IP address");
+		 *
+		 * // Or a raw IP address byte array
+		 * ResultsIpi *results = engine->process(ipv4Address, 4);
 		 *
 		 * // Do something with the results
 		 * // ...
@@ -137,17 +140,40 @@ namespace FiftyoneDegrees {
 			 */
 
 			/**
-			 * @copydoc EngineDeviceDetection::processDeviceDetection(EvidenceDeviceDetection*)
+			 * Processes the evidence provided and returns the results.
+			 * @param evidence to process. The keys in getKeys() will be
+			 * the only ones considered by the engine.
+			 * @return a new results instance with the values for all requested
+			 * properties
 			 */
 			ResultsIpi* process(EvidenceIpi *evidence);
 
 			/**
-			 * @copydoc EngineDeviceDetection::processDeviceDetection(const char*)
+			 * Processes the IP address string provided and returns the results.
+			 * This will auto detect the type of IP being used
+			 * @param ipAddress the IP address string to process
+			 * @return a new results instance with the values for all requested
+			 * properties
 			 */
 			ResultsIpi* process(const char *ipAddress);
 
-			ResultsIpi *process(unsigned char ipAddress[],
-                                                   long length);
+			/**
+			 * Processes the raw IP address byte array and returns the results.
+			 * This will rely on user input length and IP type to determine
+			 * the amount of data that it need to process.
+			 * If the data is provided is smaller than the expected size for
+			 * the IP type (4 for ipv4 and 16 for ipv6) and incorrect format
+			 * exception will be thrown.
+			 * @param ipAddress the IP address byte array to process
+			 * @param length the size of the byte array
+			 * @param type of the IP
+			 * @return a new results instance with the value for all requested
+			 * properties
+			 */
+			ResultsIpi *process(
+				unsigned char ipAddress[],
+				long length,
+				EvidenceIpType type);
 
 			/**
 			 * @}
@@ -184,7 +210,9 @@ namespace FiftyoneDegrees {
 
 		protected:
 			/**
-			 * @copydoc EngineDeviceDetection::init
+			 * Initialise the engine with the data set provided. This is the
+			 * data set which carries out all the processing in the engine.
+			 * @param dataSet pointer to the data used by the engine
 			 */
 			void init(fiftyoneDegreesDataSetIpi *dataSet);
 

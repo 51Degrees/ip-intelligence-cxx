@@ -5,6 +5,21 @@
 
 namespace FiftyoneDegrees {
     namespace IpIntelligence {
+        /**
+         * A class which represents an IP address.
+         *
+         * IP address in its simplest form is a byte array
+         * whose type cannot be determined easily. Also
+         * when being passed between managed and unmanaged
+         * code via an Evidence object (inheritance of type
+         * std::map) there is not a convinient way to store
+         * the byte array directly to the map value.
+         *
+         * This class is to give the IP address byte array
+         * a more concrete and 'easy to work with' form so
+         * that it can be used in objects of types such as
+         * std::map.
+         */
     	class IpAddress {
         public:
             /**
