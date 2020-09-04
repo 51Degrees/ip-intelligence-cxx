@@ -209,14 +209,6 @@ namespace FiftyoneDegrees {
 			 * @}
 			 */
 
-		protected:
-			/**
-			 * Initialise the engine with the data set provided. This is the
-			 * data set which carries out all the processing in the engine.
-			 * @param dataSet pointer to the data used by the engine
-			 */
-			void init(fiftyoneDegreesDataSetIpi *dataSet);
-
 		private:
 			void initMetaData();
 

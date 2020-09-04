@@ -1643,7 +1643,7 @@ static uint32_t addValuesFromIpRanges(
 	DataReset(&ipRangeItem.data);
 	if (result->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
 		// If offset is the last item then don't increase
-		if (strcmp("RangeEnd", propertyName) == 0
+		if (StringCompare("RangeEnd", propertyName) == 0
 			&& offset < dataSet->ipv4Ranges->count - 1) {
 			offset++;
 		}
@@ -1662,7 +1662,7 @@ static uint32_t addValuesFromIpRanges(
 	}
 	else {
 		// If offset is the last item then don't increase
-		if (strcmp("RangeEnd", propertyName) == 0
+		if (StringCompare("RangeEnd", propertyName) == 0
 			&& offset < dataSet->ipv6Ranges->count - 1) {
 			offset++;
 		}
@@ -1804,14 +1804,14 @@ static uint32_t addValuesFromLocations(
 			// The Locations are grouped in a ordered set at
 			// the end of the profile combinations
 			// i.e. (AverageLocation, LocationBoundSouthEast, LocationBoundNortWest)
-			if (strcmp("AverageLocation", propertyName) == 0) {
+			if (StringCompare("AverageLocation", propertyName) == 0) {
 				// AverageLocation
 				firstIndex = 0;
 			}
-			else if (strcmp("LocationBoundSouthEast", propertyName) == 0) {
+			else if (StringCompare("LocationBoundSouthEast", propertyName) == 0) {
 				firstIndex = 1;
 			}
-			else if (strcmp("LocationBoundNorthWest", propertyName) == 0) {
+			else if (StringCompare("LocationBoundNorthWest", propertyName) == 0) {
 				firstIndex = 2;
 			}
 
@@ -1852,14 +1852,14 @@ static uint32_t addValuesFromDynamicProperty(
 		&stringItem,
 		exception);
 	if (propertyName != NULL && EXCEPTION_OKAY) {
-		if (strncmp("Range", &propertyName->value, strlen("Range")) == 0) {
+		if (StringCompareLength("Range", &propertyName->value, strlen("Range")) == 0) {
 			count = addValuesFromIpRanges(
 				results,
 				result,
 				&propertyName->value,
 				exception);
 		}
-		else if (strstr(&propertyName->value, "Location") != NULL) {
+		else if (StringSubString(&propertyName->value, "Location") != NULL) {
 			count = addValuesFromLocations(
 				results,
 				result,
@@ -2100,7 +2100,7 @@ static bool resultGetHasValidPropertyValueOffset(
 			dataSet->b.b.available,
 			requiredPropertyIndex));
 	if (propertyName != NULL && EXCEPTION_OKAY) {
-		if (strncmp("Range", propertyName, strlen("Range")) == 0) {
+		if (StringCompareLength("Range", propertyName, strlen("Range")) == 0) {
 			if (results->count == 0)
 				return false;
 			else
@@ -2131,19 +2131,19 @@ static bool resultGetHasValidPropertyValueOffset(
 					profiles = (offsetPercentage*)(indices + dataSet->componentsList.count);
 					// Set pointer to the values list in the profile combination block
 					values = profiles + profileCombination->profileCount;
-					if (strstr(propertyName, "Location") != NULL) {
+					if (StringSubString(propertyName, "Location") != NULL) {
 						// Location is a pair of lat and long values
 						// The Locations are grouped in a ordered set at
 						// the end of the profile combinations
 						// i.e. (AverageLocation, LocationBoundSouthEast, LocationBoundNortWest)
-						if (strcmp("AverageLocation", propertyName) == 0) {
+						if (StringCompare("AverageLocation", propertyName) == 0) {
 							// AverageLocation
 							firstIndex = 0;
 						}
-						else if (strcmp("LocationBoundSouthEast", propertyName) == 0) {
+						else if (StringCompare("LocationBoundSouthEast", propertyName) == 0) {
 							firstIndex = 1;
 						}
-						else if (strcmp("LocationBoundNorthWest", propertyName) == 0) {
+						else if (StringCompare("LocationBoundNorthWest", propertyName) == 0) {
 							firstIndex = 2;
 						}
 						if (values[firstIndex].offset != NULL_VALUE_OFFSET) {
@@ -2400,7 +2400,7 @@ static size_t fiftyoneDegreesResultsIpiGetValuesStringInternal(
 			requiredPropertyIndex,
 			exception);
 		if (profilePercentage != NULL && EXCEPTION_OKAY) {
-			if (strncmp("Range", propertyName, strlen("Range")) == 0) {
+			if (StringCompareLength("Range", propertyName, strlen("Range")) == 0) {
 				charactersAdded = getRangeString(
 					profilePercentage,
 					results->values.count,
@@ -2408,7 +2408,7 @@ static size_t fiftyoneDegreesResultsIpiGetValuesStringInternal(
 					buffer,
 					bufferLength);
 			}
-			else if(strstr(propertyName, "Location") != NULL) {
+			else if(StringSubString(propertyName, "Location") != NULL) {
 				charactersAdded = getLocationString(
 					profilePercentage,
 					results->values.count,

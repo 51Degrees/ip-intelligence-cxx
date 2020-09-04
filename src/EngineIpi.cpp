@@ -68,13 +68,8 @@ EngineIpi::EngineIpi(
 
 void EngineIpi::init() {
 	DataSetIpi *dataSet = DataSetIpiGet(manager.get());
-	init(dataSet);
-	DataSetIpiRelease(dataSet);
-}
-
-void EngineIpi::init(
-	fiftyoneDegreesDataSetIpi *dataSet) {
 	initMetaData();
+	DataSetIpiRelease(dataSet);
 }
 
 void* EngineIpi::copyData(void *data, size_t length) {
@@ -243,7 +238,6 @@ IpIntelligence::ResultsIpi *EngineIpi::process(
 Common::ResultsBase* EngineIpi::processBase(
 	Common::EvidenceBase *evidence) {
 	EXCEPTION_CREATE;
-	uint32_t size = evidence == nullptr ? 0 : (uint32_t)evidence->size();
 	fiftyoneDegreesResultsIpi *results = ResultsIpiCreate(
 		manager.get());
 	ResultsIpiFromEvidence(
