@@ -134,7 +134,7 @@ typedef struct shared_state_t {
 typedef struct thread_state_t {
 	ResourceManager *manager; /**< Pointer to the manager containing the data
 							  set */
-	int hashCode; /**< Running hash code for the processing being carried out.
+	unsigned long hashCode; /**< Running hash code for the processing being carried out.
 				  This is used to verify the work carried out */
 } threadState;
 

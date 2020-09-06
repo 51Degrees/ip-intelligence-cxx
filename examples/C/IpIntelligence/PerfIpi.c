@@ -175,7 +175,9 @@ static void executeTest(const char* ipAddress, void* state) {
 			ResultsIpiFromIpAddress(
 				threadState->results,
 				eIpAddress->address,
-				eIpAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ? FIFTYONE_DEGREES_IPV4_LENGTH : FIFTYONE_DEGREES_IPV6_LENGTH,
+				eIpAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ? 
+					FIFTYONE_DEGREES_IPV4_LENGTH : 
+					FIFTYONE_DEGREES_IPV6_LENGTH,
 				eIpAddress->type,
 				exception);
 			EXCEPTION_THROW;

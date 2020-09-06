@@ -216,10 +216,10 @@ void fiftyoneDegreesIpiStronglyTyped(
 	ResultsIpi* results = ResultsIpiCreate(&manager);
 
 	// Ipv4 Address.
-	const char* ipv4Address = "111.222.333.4444";
+	const char* ipv4Address = "8.8.8.8";
 
 	// Ipv6 Address.
-	const char* ipv6Address = "0000:1111:2222:3333:4444:5555:6666:7777";
+	const char* ipv6Address = "2001:4860:4860::8888";
 
 
 	printf("Starting Getting Started Example.\n");
