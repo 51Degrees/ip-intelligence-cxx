@@ -92,7 +92,6 @@ stages:
         cmakeArgs: '--build . --config Release'
 
 - stage: Linux
-  dependsOn: [Data]
   jobs:
   - job: Build_And_Test
 
