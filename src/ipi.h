@@ -109,8 +109,8 @@
  * Default value for the profile combination cache loaded size used in the default collection
  * configuration.
  */
-#ifndef FIFTYONE_DEGREES_PROFILE_COMBINATION_RANGE_LOADED
-#define FIFTYONE_DEGREES_PROFILE_COMBINATION_RANGE_LOADED 100
+#ifndef FIFTYONE_DEGREES_PROFILE_COMBINATION_LOADED
+#define FIFTYONE_DEGREES_PROFILE_COMBINATION_LOADED 100
 #endif
 /**
  * Default value for the profile cache size used in the default collection

@@ -54,7 +54,7 @@ static const string *NullPointer = nullptr;
 static const char* ipv4Address = "8.8.8.8";
 
 // An ipv6 address string.
-static const char* ipv6Address = "2001:4860:4860:8888:2001:4860:4860:8844";
+static const char* ipv6Address = "2001:4860:4860::8888";
 
 // An invalid ipv4 address
 static const char* badIpv4Address = "a.b.c.d";
@@ -100,8 +100,9 @@ public:
 	void randomWithEvidence(int count);
 	void ipAddressPresent(const char *ipAddress);
 	void boundIpAddressPresent(const char *ipAddress);
+	void randomIpAddressPresent(int count);
 	void verifyNetworkId(const char *ipAddress);
-	void verifyCoordinate(const char *ipAddress);
+	void verifyCoordinate();
 	void validateIndex(ResultsBase *results, int index) override;
 	void validateName(ResultsBase *results, string *name) override;
 	void verifyWithEvidence();
@@ -189,21 +190,21 @@ TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestIpAddress) { \
 	ipAddressPresent(ipv4Address); \
 	ipAddressPresent(lowerBoundIpv4Address); \
 	boundIpAddressPresent(upperBoundIpv4Address); \
-	boundIpAddressPresent(outOfRangeIpv4Address); }
-	//ipAddressPresent(ipv6Address); \
-	//ipAddressPresent(lowerBoundIpv6Address); \
-	//boundIpAddressPresent(upperBoundIpv6Address); \
-	//boundIpAddressPresent(outOfRangeIpv4Address); }
+	boundIpAddressPresent(outOfRangeIpv4Address); \
+	ipAddressPresent(ipv6Address); \
+	ipAddressPresent(lowerBoundIpv6Address); \
+	boundIpAddressPresent(upperBoundIpv6Address); \
+	randomIpAddressPresent(50); }
+	//boundIpAddressPresent(outOfRangeIpv6Address); \ /* This is gonna be undefined behaviour */
 
 #define ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e,t,c,p) \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestNetworkId) { \
-	verifyNetworkId(ipv4Address); }
-	//ipAddressPresent(ipv6Address); }
+	verifyNetworkId(ipv4Address); \
+	verifyNetworkId(ipv6Address); }
 
 #define ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e,t,c,p) \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestCoordinate) { \
-	verifyCoordinate(ipv4Address); }
-	//ipAddressPresent(ipv6Address); }
+	verifyCoordinate(); }
 
 #define ENGINE_TEST_CONFIGS(e) \
 fiftyoneDegreesConfig##e *ENGINE_CLASS_NAME_CONFIG_POINTER(e, Null) = nullptr; \

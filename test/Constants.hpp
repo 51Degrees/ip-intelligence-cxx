@@ -3,15 +3,14 @@
 
 const static char _dataFolderName[] = "ip-intelligence-data";
 
-const static char* _IpiFileNames[] = {"51Degrees-EnterpriseV4.1.ipi",
-                                       "51Degrees-LiteV4.1.ipi"};
+const static char* _IpiFileNames[] = {"51Degrees-LiteV4.1.ipi"};
 
-const static int _IpiFileNamesLength = 2;
+const static int _IpiFileNamesLength = 1;
 
 const static char _IpiProduct[] = "IpiV41";
 
-const static char _ipAddressesFileName[] = "20000 Ip Addresses.csv";
+const static char _ipAddressesFileName[] = "20000 IP Addresses.csv";
 
-const static char* _fileTypes[] = {"Enterprise", "Lite"};
+const static char* _fileTypes[] = {"Lite"};
 
 #endif

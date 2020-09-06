@@ -280,13 +280,13 @@ void EngineIpIntelligenceTests::verify() {
 	EngineTests::verify();
 	verifyWithEvidence();
 	verifyWithIpv4Address();
-	//verifyWithIpv6Address();
+	verifyWithIpv6Address();
 	verifyWithBadIpv4Address();
-	//verifyWithBadIpv6Address();
+	verifyWithBadIpv6Address();
 	verifyWithBoundIpv4Address();
-	//verifyWithBoundIpv6Address();
+	verifyWithBoundIpv6Address();
 	verifyWithOutOfRangeIpv4Address();
-	//verifyWithOutOfRangeIpv6Address();
+	verifyWithOutOfRangeIpv6Address();
 	verifyWithEmptyEvidence();
 	verifyWithEmptyIpAddress();
 	verifyWithNullIpAddress();
@@ -366,6 +366,28 @@ void EngineIpIntelligenceTests::boundIpAddressPresent(const char *ipAddress) {
 	delete results;
 }
 
+void EngineIpIntelligenceTests::randomIpAddressPresent(int count) {
+	EngineIpi *engine = (EngineIpi*)getEngine();
+
+	for (int i = 0; i < count; i++) {
+		string ipAddress = ipAddresses[rand() % ipAddresses.size()];
+		ResultsIpi *results = engine->process(
+			ipAddress.c_str());
+
+		Value<IpAddress> rangeStart = results->getValueAsIpAddress("RangeStart");
+		Value<IpAddress> rangeEnd = results->getValueAsIpAddress("RangeEnd");
+		uint32_t addressLength = 
+			rangeStart.getValue().getType() == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ?
+			FIFTYONE_DEGREES_IPV4_LENGTH :
+			FIFTYONE_DEGREES_IPV6_LENGTH;
+
+		verifyIpAddressValue(ipAddress.c_str(), rangeStart);
+		verifyIpAddressValue(ipAddress.c_str(), rangeEnd);
+
+		delete results;
+	}
+}
+
 void EngineIpIntelligenceTests::verifyNetworkId(const char *ipAddress) {
 	EngineIpi *engine = (EngineIpi*)getEngine();
 	ResultsIpi *results = engine->process(ipAddress);
@@ -382,25 +404,45 @@ void EngineIpIntelligenceTests::verifyNetworkId(const char *ipAddress) {
 	delete results;
 }
 
-void EngineIpIntelligenceTests::verifyCoordinate(const char *ipAddress) {
+void EngineIpIntelligenceTests::verifyCoordinate() {
 	EngineIpi *engine = (EngineIpi*)getEngine();
-	ResultsIpi *results = engine->process(ipAddress);
-	Value<pair<float, float>> value = results->getValueAsCoordinate("AverageLocation");
-	pair<float, float> coordinate;
+	uint32_t defaultCount = 0;
+	// Use a constant to make sure it is always
+	// testing a decent number of IP addresses
+	const int count = 50;
 
-	EXPECT_EQ(true, value.hasValue()) << "Could not find an IP range that matches"
-		"the IP address: " << ipAddress;
+	for (int i = 0; i < count; i++) {
+		string ipAddress = ipAddresses[rand() % ipAddresses.size()];
+		ResultsIpi *results = engine->process(
+			ipAddress.c_str());
+		Value<pair<float, float>> value = results->getValueAsCoordinate("AverageLocation");
+		pair<float, float> coordinate;
 
-	coordinate = value.getValue();
-	EXPECT_EQ(true, (coordinate.first >= -90.0f && coordinate.first <= 90.0f)) << "An "
-		"invalid latitude has been returned, where it should be for IP address: " 
-		<< ipAddress;
+		EXPECT_EQ(true, value.hasValue()) << "Could not find an IP range that matches"
+			"the IP address: " << ipAddress;
 
-	EXPECT_EQ(true, (coordinate.second >= -180.0f && coordinate.second <= 180.0f)) << "An "
-		"invalid longitude has been returned, where it should be for IP address: "
-		<< ipAddress;
+		coordinate = value.getValue();
+		EXPECT_EQ(true, (coordinate.first >= -90.0f && coordinate.first <= 90.0f)) << "An "
+			"invalid latitude has been returned, where it should be for IP address: " 
+			<< ipAddress;
 
-	delete results;
+		EXPECT_EQ(true, (coordinate.second >= -180.0f && coordinate.second <= 180.0f)) << "An "
+			"invalid longitude has been returned, where it should be for IP address: "
+			<< ipAddress;
+
+		if (coordinate.first == 0 && coordinate.second == 0) {
+			// Counting the number of default coordinate returned
+			// This is to ensure we won't run into the case where
+			// the default value is always returned.
+			defaultCount++;
+		}
+
+		delete results;
+	}
+
+	EXPECT_EQ(true, defaultCount < count) << "A special case has occurs where all test "
+		"addresses have returned a default coordinate of (0, 0). This need to be verified "
+		"that it is not a coincidence.";
 }
 
 void EngineIpIntelligenceTests::randomWithIpAddress(int count) {
@@ -431,7 +473,6 @@ void EngineIpIntelligenceTests::randomWithEvidence(int count) {
 	IpAddress ipAddress1;
 	IpAddress ipAddress2;
 	EngineIpi *engine = (EngineIpi*)getEngine();
-	vector<string> *keys = engine->getKeys();
 	for (int i = 0; i < count; i++) {
 		EvidenceIpi evidence;
 		try{

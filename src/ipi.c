@@ -7,12 +7,17 @@ MAP_TYPE(Collection)
  * GENERAL MACROS TO IMPROVE READABILITY
  */
 
- /** Offset used for a null profile. */
+/** Offset used for a null profile. */
 #define NULL_PROFILE_OFFSET UINT32_MAX
 /** Offset does not have value. */
 #define NULL_VALUE_OFFSET UINT32_MAX
 /** Dynamic component */
 #define DYNAMIC_COMPONENT_OFFSET UINT32_MAX
+
+/** Default value and percentage separator */
+#define DEFAULT_VALUE_PERCENTAGE_SEPARATOR ":"
+/** Default valus separator */
+#define DEFAULT_VALUES_SEPARATOR "|"
 
 #define MAX_CONCURRENCY(t) if (config->t.concurrency > concurrency) { \
 concurrency = config->t.concurrency; }
@@ -164,7 +169,7 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig = {
 { FIFTYONE_DEGREES_PROFILE_LOADED, FIFTYONE_DEGREES_PROFILE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Profiles */ \
 { FIFTYONE_DEGREES_IP_V4_RANGE_LOADED, FIFTYONE_DEGREES_IP_V4_RANGE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Ipv4 Ranges */ \
 { FIFTYONE_DEGREES_IP_V6_RANGE_LOADED, FIFTYONE_DEGREES_IP_V6_RANGE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Ipv6 Ranges */ \
-{ FIFTYONE_DEGREES_PROFILE_COMBINATION_RANGE_LOADED, FIFTYONE_DEGREES_PROFILE_COMBINATION_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Profile Combinations */ \
+{ FIFTYONE_DEGREES_PROFILE_COMBINATION_LOADED, FIFTYONE_DEGREES_PROFILE_COMBINATION_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Profile Combinations */ \
 { FIFTYONE_DEGREES_PROFILE_LOADED, FIFTYONE_DEGREES_PROFILE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY } /* ProfileOffsets */ \
 
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiBalancedConfig = {
@@ -1409,8 +1414,9 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 	results->items[0].ipRangeOffset = NULL_PROFILE_OFFSET; // Default IP range offset
 	results->items[0].targetIpAddress.type = type;
 	results->items[0].type = type;
+
+	memset(results->items[0].targetIpAddress.value, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
 	if (type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
-		memset(results->items[0].targetIpAddress.value, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
 		// We only get the exact length of ipv4
 		memcpy(results->items[0].targetIpAddress.value, ipAddress, FIFTYONE_DEGREES_IPV4_LENGTH);
 		// Make sure we only operate on the valid range
@@ -2237,17 +2243,19 @@ static size_t getIpv6RangeString(
 	for (int i = 0; i < FIFTYONE_DEGREES_IPV6_LENGTH; i += 2) {
 		for (int j = 0; j < 2; j++) {
 			if (charactersAdded + charLen < bufferLength) {
-				memcpy(buffer + charactersAdded, &hex[((int)ipRange->start[i + j]) & 0x0F], charLen);
+				// Get the first character of hex representation of the byte
+				memcpy(buffer + charactersAdded, &hex[(((int)ipRange->start[i + j]) >> 4) & 0x0F], charLen);
 				charactersAdded += charLen;
 			}
 			if (charactersAdded + charLen < bufferLength) {
+				// Get the second character of hex representation of the byte
 				memcpy(buffer + charactersAdded, &hex[((int)ipRange->start[i + j]) & 0x0F], charLen);
 				charactersAdded += charLen;
 			}
 		}
 		if (i != FIFTYONE_DEGREES_IPV6_LENGTH - 2) {
 			if (charactersAdded + separatorLen < bufferLength) {
-				memcpy(buffer + charactersAdded, ":", separatorLen);
+				memcpy(buffer + charactersAdded, separator, separatorLen);
 				charactersAdded += separatorLen;
 			}
 		}
@@ -2255,7 +2263,7 @@ static size_t getIpv6RangeString(
 
 	// Terminate the string buffer if characters were added
 	if (charactersAdded < bufferLength) {
-		buffer[charactersAdded - 1] = '\0';
+		buffer[charactersAdded] = '\0';
 	}
 	return charactersAdded;
 }
