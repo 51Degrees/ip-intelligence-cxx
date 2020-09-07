@@ -1,7 +1,7 @@
 %module "IpIntelligenceEngineModule"
 
 %{
-#include "ip-intelligence-cxx-v2/src/EngineIpi.hpp"
+#include "ip-intelligence-cxx/src/EngineIpi.hpp"
 
 using namespace FiftyoneDegrees::Common;
 using namespace FiftyoneDegrees::IpIntelligence;
