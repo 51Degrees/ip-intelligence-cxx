@@ -235,7 +235,7 @@ static void runRequestsSingle(sharedState *state) {
 		sizeof(ipAddress),
 		&thread,
 		executeTest);
-	printf("Finished with hashcode '%i'\r\n", thread.hashCode);
+	printf("Finished with hashcode '%li'\r\n", thread.hashCode);
 }
 
 static void runRequestsMulti(void *state) {
