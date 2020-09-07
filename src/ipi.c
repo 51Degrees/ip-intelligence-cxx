@@ -2275,31 +2275,46 @@ static size_t getRangeString(
 	char *buffer,
 	size_t bufferLength) {
 	size_t charactersAdded = 0, tempAdded = 0;
+	const size_t quoteLen = strlen("\"");
 	
 	if (count > 0) {
+		// Add the opening quote
+		if (charactersAdded + quoteLen < bufferLength) {
+			tempAdded = sprintf(buffer, "\"");
+			if (tempAdded > 0) {
+				charactersAdded += tempAdded;
+			}
+		}
 		if (type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
 			Ipv4Range *ipRange = (Ipv4Range *)profilePercentage[0].item.data.ptr;
 			charactersAdded += getIpv4RangeString(
 				ipRange,
-				buffer,
-				bufferLength);
+				buffer + charactersAdded,
+				bufferLength - charactersAdded);
 		}
 		else {
 			Ipv6Range *ipRange = (Ipv6Range *)profilePercentage[0].item.data.ptr;
 			charactersAdded += getIpv6RangeString(
 				ipRange,
-				buffer,
-				bufferLength);
+				buffer + charactersAdded,
+				bufferLength - charactersAdded);
+		}
+		// Add the closing quote
+		if (charactersAdded + quoteLen < bufferLength) {
+			tempAdded = sprintf(buffer + charactersAdded, "\"");
+			if (tempAdded > 0) {
+				charactersAdded += tempAdded;
+			}
 		}
 		if (charactersAdded < bufferLength) {
 			tempAdded = snprintf(
 				buffer + charactersAdded,
 				bufferLength - charactersAdded,
-				":%f",
+				":\"%f\"",
 				FLOAT_TO_NATIVE(profilePercentage[0].percentage));
 			if (tempAdded > 0) {
 				charactersAdded += tempAdded;
-				buffer[charactersAdded - 1] = '\0';
+				buffer[charactersAdded] = '\0';
 			}
 		}
 	}
@@ -2312,25 +2327,42 @@ static size_t getLocationString(
 	char *buffer,
 	size_t bufferLength) {
 	size_t charactersAdded = 0, tempAdded = 0;
+	const size_t quoteLen = strlen("\"");
+
 	if (count > 0) {
 		floatPair *location =
 			(floatPair *)profilePercentage[0].item.data.ptr;
+		
+		// Add the opening quote
+		if (charactersAdded + quoteLen < bufferLength) {
+			tempAdded = sprintf(buffer, "\"");
+			if (tempAdded > 0) {
+				charactersAdded += tempAdded;
+			}
+		}
 		tempAdded = snprintf(
-			buffer,
-			bufferLength,
+			buffer + charactersAdded,
+			bufferLength - charactersAdded,
 			"%f,%f",
 			FLOAT_TO_NATIVE(location->first),
 			FLOAT_TO_NATIVE(location->second));
 		if (tempAdded > 0) {
 			charactersAdded += tempAdded;
+			// Add the closing quote
+			if (charactersAdded + quoteLen < bufferLength) {
+				tempAdded = sprintf(buffer + charactersAdded, "\"");
+				if (tempAdded > 0) {
+					charactersAdded += tempAdded;
+				}
+			}
 			tempAdded = snprintf(
 				buffer + charactersAdded,
 				bufferLength - charactersAdded,
-				":%f",
+				":\"%f\"",
 				FLOAT_TO_NATIVE(profilePercentage[0].percentage));
 			if (tempAdded > 0) {
 				charactersAdded += tempAdded;
-				buffer[charactersAdded - 1] = '\0';
+				buffer[charactersAdded] = '\0';
 			}
 		}
 	}
@@ -2344,6 +2376,7 @@ static size_t getNormalString(
 	size_t bufferLength,
 	const char *separator) {
 	String *string;
+	const size_t quoteLen = strlen("\"");
 	size_t charactersAdded = 0,
 		separatorLen = strlen(separator),
 		stringLen,
@@ -2351,6 +2384,19 @@ static size_t getNormalString(
 
 	// Loop through the values adding them to the string buffer.
 	for (uint32_t i = 0; i < count;  i++) {
+		// Append the separator
+		if (i > 0 && charactersAdded + separatorLen < bufferLength) {
+			memcpy(buffer + charactersAdded, separator, separatorLen);
+			charactersAdded += separatorLen;
+		}
+
+		// Add the opening quote
+		if (charactersAdded + quoteLen < bufferLength) {
+			tempAdded = sprintf(buffer + charactersAdded, "\"");
+			if (tempAdded > 0) {
+				charactersAdded += tempAdded;
+			}
+		}
 
 		// Get the string for the value index.
 		string = (String*)profilePercentage[i].item.data.ptr;
@@ -2367,26 +2413,29 @@ static size_t getNormalString(
 			}
 			charactersAdded += stringLen;
 		}
+
+		// Add the closing quote
+		if (charactersAdded + quoteLen < bufferLength) {
+			tempAdded = sprintf(buffer + charactersAdded, "\"");
+			if (tempAdded > 0) {
+				charactersAdded += tempAdded;
+			}
+		}
+
 		// Append the percentage
 		tempAdded = snprintf(
 			buffer + charactersAdded,
 			bufferLength - charactersAdded,
-			":%f",
+			":\"%f\"",
 			FLOAT_TO_NATIVE(profilePercentage[i].percentage));
 		if (tempAdded > 0) {
 			charactersAdded += tempAdded;
 		}
-
-		// Append the separator
-		if (charactersAdded + separatorLen < bufferLength) {
-			memcpy(buffer + charactersAdded, separator, separatorLen);
-		}
-		charactersAdded += separatorLen;
 	}
 
 	// Terminate the string buffer if characters were added.
 	if (charactersAdded < bufferLength) {
-		buffer[charactersAdded - 1] = '\0';
+		buffer[charactersAdded] = '\0';
 	}
 	return charactersAdded;
 }
