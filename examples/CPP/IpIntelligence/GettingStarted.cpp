@@ -133,7 +133,7 @@ namespace FiftyoneDegrees {
 							= ipv4;
 					results = engine->process(evidence);
 					Common::Value<vector<WeightedValue<string>>> ipv4Value
-						= results->getValuesAsWeightedStringList("Country");
+						= results->getValuesAsWeightedStringList("Countries");
 					for (WeightedValue<string> w : ipv4Value.getValue()) {
 						cout << "   Country: " <<
 							w.getValue() <<
@@ -148,7 +148,7 @@ namespace FiftyoneDegrees {
 							= ipv6;
 					results = engine->process(evidence);
 					Common::Value<vector<WeightedValue<string>>> ipv6Value
-						= results->getValuesAsWeightedStringList("Country");
+						= results->getValuesAsWeightedStringList("Countries");
 					for (WeightedValue<string> w : ipv4Value.getValue()) {
 						cout << "   Country: " <<
 							w.getValue() <<

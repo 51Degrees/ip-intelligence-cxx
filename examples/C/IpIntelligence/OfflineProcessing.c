@@ -128,7 +128,7 @@ static char* getPropertyValueAsString(
 // #define CONFIG fiftyoneDegreesIpiInMemoryConfig
 // #define CONFIG fiftyoneDegreesIpiHighPerformanceConfig
 // #define CONFIG fiftyoneDegreesIpiLowMemoryConfig
-#define CONFIG fiftyoneDegreesIpihBalancedConfig
+#define CONFIG fiftyoneDegreesIpiBalancedConfig
 // #define CONFIG fiftyoneDegreesIpiBalancedTempConfig
 
  /**

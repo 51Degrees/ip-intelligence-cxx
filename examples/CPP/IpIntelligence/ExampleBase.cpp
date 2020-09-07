@@ -5,13 +5,13 @@ using namespace FiftyoneDegrees::Examples::IpIntelligence;
 
 const char *ExampleBase::ipv4Address = "8.8.8.8";
 
-const char *ExampleBase::ipv6Address = "2001:4860:4860::8888::2001:4860:4860::8844";
+const char *ExampleBase::ipv6Address = "2001:4860:4860::8888";
 
 ExampleBase::ExampleBase(byte *data, long length, ConfigIpi *config) {
   this->config = config;
 
   // Set the properties to be returned for each Ip Address.
-  string propertiesString = "RangeStart,RangeEnd,Country,City,AverageLocation";
+  string propertiesString = "RangeStart,RangeEnd,Countries,Cities,AverageLocation";
   properties = new RequiredPropertiesConfig(propertiesString);
 
   // Initialise the engine for device detection.
@@ -22,7 +22,7 @@ ExampleBase::ExampleBase(string dataFilePath, ConfigIpi *config) {
   this->config = config;
 
   // Set the properties to be returned for each Ip Address.
-  string propertiesString = "RangeStart,RangeEnd,Country,City,AverageLocation";
+  string propertiesString = "RangeStart,RangeEnd,Countries,Cities,AverageLocation";
   properties = new RequiredPropertiesConfig(propertiesString);
 
   // Initialise the engine for ip intelligence.

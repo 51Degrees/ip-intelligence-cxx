@@ -144,7 +144,7 @@ namespace FiftyoneDegrees {
 						evidence->operator[]("ipv6.ip")
 								= ipv6;
 						results = engine->process(evidence);
-						Common::Value<pair<float, float>> ipv6Value = results->getValuesAsCoordinate("AverageLocation");
+						Common::Value<pair<float, float>> ipv6Value = results->getValueAsCoordinate("AverageLocation");
 						cout << "   AverageLocation: " <<
 							ipv4Value.getValue().first <<
 							"," <<
