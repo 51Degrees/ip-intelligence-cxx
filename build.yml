@@ -9,15 +9,16 @@ trigger: none
 stages:
 
 - stage: Windows
-  pool:
-    vmImage: windows-2019
-    demands:
-    - msbuild
-    - vstest
 
   jobs:
  
   - job: Build_VisualStudio
+
+    pool:
+      vmImage: windows-2019
+      demands:
+      - msbuild
+      - vstest
 
     timeoutInMinutes: 120
 
@@ -55,7 +56,20 @@ stages:
 
   - job: Build_And_Test_Ip_Intelligence
 
+    strategy:
+      matrix:
+        microsofthosted:
+          poolName: Azure Pipelines
+          imageName: windows-2019
+        selfhosted:
+          poolName: Hosted VS2017
+          imageName:
+
     timeoutInMinutes: 120
+
+    pool:
+      name: $(poolName)
+      vmImage: $(imageName)
 
     steps:
 
