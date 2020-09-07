@@ -30,24 +30,24 @@ public:
     std::string getNetworkId();
     std::string getNetworkId(uint32_t resultsIndex);
 
-    Value<std::vector<WeightedValue<std::string>>> getValuesAsStringList(
+    Value<std::vector<WeightedValue<std::string>>> getValuesAsWeightedStringList(
         const std::string &propertyName);
-    Value<std::vector<WeightedValue<std::string>>> getValuesAsStringList(
+    Value<std::vector<WeightedValue<std::string>>> getValuesAsWeightedStringList(
         int requiredPropertyIndex);
 
-    Value<std::vector<WeightedValue<bool>>> getValuesAsBoolList(
+    Value<std::vector<WeightedValue<bool>>> getValuesAsWeightedBoolList(
         const std::string &propertyName);
-    Value<std::vector<WeightedValue<bool>>> getValuesAsBoolList(
+    Value<std::vector<WeightedValue<bool>>> getValuesAsWeightedBoolList(
         int requiredPropertyIndex);
     
-    Value<std::vector<WeightedValue<int>>> getValuesAsIntegerList(
+    Value<std::vector<WeightedValue<int>>> getValuesAsWeightedIntegerList(
         const std::string &propertyName);
-    Value<std::vector<WeightedValue<int>>> getValuesAsIntegerList(
+    Value<std::vector<WeightedValue<int>>> getValuesAsWeightedIntegerList(
         int requiredPropertyIndex);
 
-    Value<std::vector<WeightedValue<double>>> getValuesAsDoubleList(
+    Value<std::vector<WeightedValue<double>>> getValuesAsWeightedDoubleList(
         const std::string &propertyName);
-    Value<std::vector<WeightedValue<double>>> getValuesAsDoubleList(
+    Value<std::vector<WeightedValue<double>>> getValuesAsWeightedDoubleList(
         int requiredPropertyIndex);
 
     Value<std::pair<float, float>> getValueAsCoordinate(

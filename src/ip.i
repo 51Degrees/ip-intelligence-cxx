@@ -1,5 +1,5 @@
 %{
-#include "common-cxx/ip.h"
+#include "ip-intelligence-cxx/src/common-cxx/ip.h"
 %}
 
 %rename (fiftyoneDegreesEvidenceIpTypeSwig) fiftyoneDegreesEvidenceIpType;

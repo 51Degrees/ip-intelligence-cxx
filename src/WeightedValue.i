@@ -9,7 +9,7 @@ public:
     T getValue();
     void setValue(T v);
     float getWeight();
-    void setWeight();
+    void setWeight(float w);
 };
 
 %template(WeightedValueStringSwig) WeightedValue<std::string>;
