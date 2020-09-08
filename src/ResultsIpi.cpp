@@ -202,7 +202,7 @@ IpIntelligence::ResultsIpi::getValueAsCoordinate(
             }
             else {
                 // Default to 0,0 if not coordinate type
-                result.setValue(pair<float, float>(0, 0));
+                result.setValue(pair<float, float>(0.0f, 0.0f));
             }
         }
     }
@@ -470,6 +470,8 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
             // Add the values in their original form to the result.
             for (i = 0; i < results->values.count; i++) {
                 WeightedValue<string> weightedString;
+                // Clear stream before the construction
+                stream.str("");
                 switch(valueType) {
                 case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE:
                     coordinate = IpiGetCoordinate(&valuesItems[i].item, exception);
