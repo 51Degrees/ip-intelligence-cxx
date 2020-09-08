@@ -54,6 +54,18 @@ stages:
         configuration: Release
         clean: true
 
+    - bash: './FiftyOne.IpIntelligence.Tests.exe --gtest_filter="-*TestMem*:*TestPerf*:*TestOfflineProcessing*" --gtest_catch_exceptions=1 --gtest_break_on_failure=0 --gtest_output=xml:testoutput.xml'
+      workingDirectory: VisualStudio/FiftyOne.IpIntelligence.Tests/x64/Release
+      failOnStderr: true
+      displayName: 'Run IP Intelligence Tests'
+
+    - task: PublishTestResults@2
+      condition: true
+      inputs:
+        testResultsFormat: 'JUnit'
+        testRunTitle: 'Visual Studio x64 IP Intelligence'
+        testResultsFiles: 'VisualStudio\FiftyOne.IpIntelligence.Tests\x64\Release\testoutput.xml'
+
   - job: Build_And_Test_Ip_Intelligence
 
     strategy:
@@ -105,6 +117,18 @@ stages:
         workingDirectory: build
         cmakeArgs: '--build . --config Release'
 
+    - bash: 'ctest -R ".*Ipi.*" -E ".*TestMem|TestPerf|TestOfflineProcessing.*" -T test --no-compress-output'
+      workingDirectory: build
+      failOnStderr: true
+      displayName: 'Run Tests'
+
+    - task: PublishTestResults@2
+      condition: true
+      inputs:
+        testResultsFormat: 'CTest'
+        testRunTitle: '${{ variables.vmImage }} CTest IP Intelligence'
+        testResultsFiles: '**/Test.xml'
+
 - stage: Linux
   jobs:
   - job: Build_And_Test
@@ -146,3 +170,15 @@ stages:
       inputs:
         workingDirectory: build
         cmakeArgs: '--build .'
+
+    - bash: 'ctest -E ".*TestMem|TestPerf|TestOfflineProcessing.*" -T test --no-compress-output'
+      workingDirectory: build
+      failOnStderr: true
+      displayName: 'Run Tests'
+
+    - task: PublishTestResults@2
+      condition: true
+      inputs:
+        testResultsFormat: 'CTest'
+        testRunTitle: '${{ variables.vmImage }} CTest'
+        testResultsFiles: '**/Test.xml'
