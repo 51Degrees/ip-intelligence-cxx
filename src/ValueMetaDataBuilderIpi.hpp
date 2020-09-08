@@ -26,7 +26,6 @@
 #include <vector>
 #include "common-cxx/ValueMetaData.hpp"
 #include "common-cxx/EntityMetaDataBuilder.hpp"
-#include "BinaryValue.hpp"
 #include "ipi.h"
 
 using namespace std;
@@ -54,15 +53,6 @@ namespace FiftyoneDegrees {
 			static ValueMetaData* build(
 				fiftyoneDegreesDataSetIpi *dataSet,
 				fiftyoneDegreesValue *value);
-		private:
-			/**
-			 * Get the binary value from the strings collection
-			 * @param stringsCollection the string collection
-			 * @param offset the offset in the string collection
-			 */
-			static BinaryValue getBinaryValue(
-				fiftyoneDegreesCollection *stringsCollection,
-				uint32_t offset);
 		};
 	}
 }

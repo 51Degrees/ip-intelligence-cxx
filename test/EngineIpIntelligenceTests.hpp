@@ -44,32 +44,19 @@ static const vector<string> *n##Pointer = &n;
 static const vector<string> n = { v1, v2, v3 }; \
 static const vector<string> *n##Pointer = &n;
 
-// Common device detection properties in arrays and strings.
-//ENGINE_PROPERTIES_STRING(OnePropertyString, "Country")
-//ENGINE_PROPERTIES_STRING(TwoPropertyStrings, "Country,City")
-//ENGINE_PROPERTIES_STRING(DuplicatePropertyStrings, "Country,Country")
-//ENGINE_PROPERTIES_STRING(InvalidPropertyStrings, "INVALID,PROPERTIES PROVIDED")
-//ENGINE_PROPERTIES_STRING(MixedPropertyStrings, "INVALID,Country")
-//ENGINE_PROPERTIES_ARRAY_ONE(OnePropertyArray, "Country")
-//ENGINE_PROPERTIES_ARRAY_TWO(TwoPropertyArray, "Country", "City")
-//ENGINE_PROPERTIES_ARRAY_TWO(DuplicatePropertyArray, "Country", "Country")
-//ENGINE_PROPERTIES_ARRAY_TWO(InvalidPropertyArray, "INVALID1", "INVALID2")
-//ENGINE_PROPERTIES_ARRAY_TWO(MixedPropertyArray, "Country", "Invalid")
-ENGINE_PROPERTIES_STRING(OnePropertyString, "Property1")
-//ENGINE_PROPERTIES_STRING(OnePropertyString, "RangeStart")
-ENGINE_PROPERTIES_STRING(TwoPropertyStrings, "Property1,Property2")
-ENGINE_PROPERTIES_STRING(DuplicatePropertyStrings, "Property1,Property1")
+// Common IP intelligence properties in arrays and strings.
+ENGINE_PROPERTIES_STRING(OnePropertyString, "Countries")
+ENGINE_PROPERTIES_STRING(TwoPropertyStrings, "Countries,Cities")
+ENGINE_PROPERTIES_STRING(DuplicatePropertyStrings, "Countries,Countries")
 ENGINE_PROPERTIES_STRING(InvalidPropertyStrings, "INVALID,PROPERTIES PROVIDED")
-ENGINE_PROPERTIES_STRING(MixedPropertyStrings, "INVALID,Property1")
+ENGINE_PROPERTIES_STRING(MixedPropertyStrings, "INVALID,Countries")
 ENGINE_PROPERTIES_STRING(AllEdgePropertyStrings, "RangeStart,RangeEnd,AverageLocation")
-//ENGINE_PROPERTIES_STRING(AllEdgePropertyStrings, "RangeStart,RangeEnd,AverageLocation,LocationBoundSouthEast,LocationBoundNorthWest")
-ENGINE_PROPERTIES_ARRAY_ONE(OnePropertyArray, "Property1")
-ENGINE_PROPERTIES_ARRAY_TWO(TwoPropertyArray, "Property1", "Property2")
-ENGINE_PROPERTIES_ARRAY_TWO(DuplicatePropertyArray, "Property1", "Property1")
+ENGINE_PROPERTIES_ARRAY_ONE(OnePropertyArray, "Countries")
+ENGINE_PROPERTIES_ARRAY_TWO(TwoPropertyArray, "Countries", "Cities")
+ENGINE_PROPERTIES_ARRAY_TWO(DuplicatePropertyArray, "Countries", "Countries")
 ENGINE_PROPERTIES_ARRAY_TWO(InvalidPropertyArray, "INVALID1", "INVALID2")
-ENGINE_PROPERTIES_ARRAY_TWO(MixedPropertyArray, "Property1", "Invalid")
+ENGINE_PROPERTIES_ARRAY_TWO(MixedPropertyArray, "Countries", "Invalid")
 ENGINE_PROPERTIES_ARRAY_THREE(AllEdgePropertyArray, "RangeStart", "RangeEnd", "AverageLocation")
-//ENGINE_PROPERTIES_STRING(AllEdgePropertyStrings, "RangeStart", "RangeEnd", "AverageLocation", "LocationBoundSouthEast", "LocationBoundNorthWest")
 static const string *NullPointer = nullptr;
 
 // An ipv4 address string.

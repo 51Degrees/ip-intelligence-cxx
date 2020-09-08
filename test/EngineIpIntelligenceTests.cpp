@@ -47,7 +47,7 @@ EngineIpIntelligenceTests::EngineIpIntelligenceTests(
 	const char *ipAddressesFileName)
 	: EngineTests(requiredProperties, directory, fileNames, fileNamesLength) {
 	char ipAddressesFullName[FIFTYONE_DEGREES_FILE_MAX_PATH];
-	const char ipAddress[40] = "";
+	const char ipAddress[50] = "";
 	fiftyoneDegreesFileGetPath(
 		directory,
 		ipAddressesFileName,
@@ -91,8 +91,8 @@ void EngineIpIntelligenceTests::metaData() {
 	EngineTests::verifyMetaData(getEngine());
 }
 void EngineIpIntelligenceTests::availableProperties() {
-	// TODO: This mainly check the evidence property in Device Detection
-	// therefore probably not required for this test
+	// TODO: This mainly check the evidence property which is 
+	// not yet applicable to IP intelligence
 }
 
 string EngineIpIntelligenceTests::getExpectedFileType() {

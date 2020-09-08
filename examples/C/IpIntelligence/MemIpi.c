@@ -128,8 +128,8 @@ static const char* getPropertyValueAsString(
  */
 void reportProgress(memoryThreadState* state) {
 	EXCEPTION_CREATE;
-	char rangeStart[40] = "";
-	char rangeEnd[40] = "";
+	char rangeStart[50] = "";
+	char rangeEnd[50] = "";
 
 	// Update the user interface.
 	printLoadBar(state);
@@ -179,7 +179,7 @@ static void executeTest(const char* ipAddress, void* state) {
  * @param mainState state information about the main test
  */
 static void runMemoryThread(void* mainState) {
-	const char ipAddress[40] = "";
+	const char ipAddress[50] = "";
 	memoryThreadState threadState;
 	threadState.main = (memoryState*)mainState;
 
@@ -269,7 +269,7 @@ static void ipAddressCount(const char* ipAddress, void* state) {
  */
 static int getIpAddressesCount(const char* ipAddressFilePath) {
 	int count = 0;
-	char ipAddress[40];
+	char ipAddress[50];
 	TextFileIterate(
 		ipAddressFilePath,
 		ipAddress,

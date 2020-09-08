@@ -246,7 +246,7 @@ static void executeTest(const char *ipAddress, void *state) {
 }
 
 static void runRequestsSingle(sharedState *state) {
-	const char ipAddress[40] = "";
+	const char ipAddress[50] = "";
 	sharedState *shared = (sharedState*)state;
 	threadState thread;
 	thread.hashCode = 0;
@@ -465,7 +465,7 @@ int main(int argc, char* argv[]) {
 	fiftyoneDegreesIpiReloadFromMemoryRun(
 		dataFilePath,
 		ipAddressFilePath,
-		argc > 3 ? argv[3] : "RangeStart,RangeEnd,AverageLocation",
+		argc > 3 ? argv[3] : "Countries,Cities",
 		CONFIG);
 
 #ifdef _DEBUG

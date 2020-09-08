@@ -462,7 +462,7 @@ void fiftyoneDegreesPerfIpiRun(
 
 	// Configure to return the Country property.
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "Country";
+	properties.string = "Countries";
 
 	ResourceManager manager;
 	EXCEPTION_CREATE;

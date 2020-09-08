@@ -35,7 +35,7 @@ static void buildString(
 	EXCEPTION_CREATE;
 	int i;
 	const char* property, * value;
-	char ipAddress[40];
+	char ipAddress[50];
 	float percentage;
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 	for (i = 0; i < (int)dataSet->b.b.available->count; i++) {
@@ -55,7 +55,7 @@ static void buildString(
 						&results->values.items[0].item,
 						FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4,
 						ipAddress,
-						40,
+						50,
 						exception);
 				}
 				else if (results->items[0].type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6) {
@@ -63,7 +63,7 @@ static void buildString(
 						&results->values.items[0].item,
 						FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6,
 						ipAddress,
-						40,
+						50,
 						exception);
 				};
 				percentage = 1;
@@ -73,28 +73,29 @@ static void buildString(
 					percentage);
 			}
 			else if (strstr(property, "Location") != NULL) {
-				// The location will be an array whose size is power of base 2 as
-				// there are 2 values, one for lat and one for lon
-				// These values are 51Degrees Float type
-				for (uint32_t i = 0; i < results->values.count; i += 2) {
-					fiftyoneDegreesCoordinate coordinate = IpiGetCoordinate(&results->values.items[i].item, exception);
-					percentage = FLOAT_TO_NATIVE(results->values.items[i].percentage);
-					output = output + sprintf(output, "%s: %f,%f,%f\n",
-						property,
-						coordinate.lat,
-						coordinate.lon,
-						percentage);
-				}
+				fiftyoneDegreesCoordinate coordinate = IpiGetCoordinate(&results->values.items[i].item, exception);
+				percentage = FLOAT_TO_NATIVE(results->values.items[i].percentage);
+				output = output + sprintf(output, "%s: %f,%f,%f\n",
+					property,
+					coordinate.lat,
+					coordinate.lon,
+					percentage);
 			}
 			else {
 				for (uint32_t i = 0; i < results->values.count; i++) {
+					if (i > 0) {
+						// Add separator for multiple values
+						output = output + sprintf(output, " | ");
+					}
 					value = STRING(results->values.items[0].item.data.ptr);
 					percentage = FLOAT_TO_NATIVE(results->values.items[0].percentage);
-					output = output + sprintf(output, "%s: %s,%f\n",
+					output = output + sprintf(output, "\"%s\" : \"%s,%f\"",
 						property,
 						value,
 						percentage);
 				}
+				// Add line feed
+				output = output + sprintf(output, "\n");
 			}
 		}
 	}
@@ -115,7 +116,7 @@ static void reportStatus(
 
 static int run(fiftyoneDegreesResourceManager *manager) {
 	EXCEPTION_CREATE;
-	char ipAddress[40], output[50000];
+	char ipAddress[50], output[50000];
 	int count = 0;
 	ResultsIpi *results = ResultsIpiCreate(manager);
 	while (fgets(ipAddress, sizeof(ipAddress), stdin) != 0) {
@@ -197,7 +198,8 @@ int main(int argc, char* argv[]) {
 	// Capture input from standard in and display property value.
 	fiftyoneDegreesProcIpiRun(
 		dataFilePath,
-		argc > 2 ? argv[2] : "Country,City,ContactEmail",
+		//argc > 2 ? argv[2] : "Countries,Cities,ContactEmails",
+		"RangeStart,RangeEnd,Countries,AverageLocation",
 		& config);
 
 		return 0;

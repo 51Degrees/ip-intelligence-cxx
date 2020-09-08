@@ -47,7 +47,7 @@ initialised with.
 const char* fileName = argv[1];
 fiftyoneDegreesPropertiesRequired properties =
 	fiftyoneDegreesPropertiesDefault;
-properties.string = "RangeStart,RangeEnd,Country,City,AverageLocation";
+properties.string = "RangeStart,RangeEnd,Countries,AverageLocation";
 ```
 
 2. Instantiate the 51Degrees data set within a resource manager from the
@@ -156,7 +156,7 @@ void fiftyoneDegreesIpiGettingStarted(
 
 	// Set the properties to be returned for each ip
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "RangeStart,RangeEnd,Country,City,AverageLocation";
+	properties.string = "RangeStart,RangeEnd,Countries,AverageLocation";
 
 	StatusCode status = IpiInitManagerFromFile(
 		&manager,
@@ -178,7 +178,8 @@ void fiftyoneDegreesIpiGettingStarted(
 	const char* ipv4Address = "8.8.8.8";
 
 	// an ipv6 address string
-	const char* ipv6Address = "2001:4860:4860::8888::2001:4860:4860::8844";
+	//const char* ipv6Address = "2001:4860:4860::8888";
+	const char* ipv6Address = "::626a:e2d1:4";
 
 	printf("Starting Getting Started Example.\n");
 
@@ -192,7 +193,9 @@ void fiftyoneDegreesIpiGettingStarted(
 	if (EXCEPTION_FAILED) {
 		printf("%s\n", ExceptionGetMessage(exception));
 	}
-	printf("Countries: %s\n", getPropertyValueAsString(results, "Country"));
+	printf("RangeStart: %s\n", getPropertyValueAsString(results, "RangeStart"));
+	printf("Countries: %s\n", getPropertyValueAsString(results, "Countries"));
+	printf("AverageLocation: %s\n", getPropertyValueAsString(results, "AverageLocation"));
 
 	// Carries out a match for the ipv6 address
 	printf("\nIpv6 Address: %s\n", ipv6Address);
@@ -204,7 +207,9 @@ void fiftyoneDegreesIpiGettingStarted(
 	if (EXCEPTION_FAILED) {
 		printf("%s\n", ExceptionGetMessage(exception));
 	}
-	printf("Countries: %s\n", getPropertyValueAsString(results, "Country"));
+	printf("RangeStart: %s\n", getPropertyValueAsString(results, "RangeStart"));
+	printf("Countries: %s\n", getPropertyValueAsString(results, "Countries"));
+	printf("AverageLocation: %s\n", getPropertyValueAsString(results, "AverageLocation"));
 
 	// Ensure the results are freed to avoid memory leaks.
 	ResultsIpiFree(results);

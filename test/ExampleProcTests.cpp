@@ -36,10 +36,8 @@ public:
         testing::internal::CaptureStdout();
 
         // Start to process Ip Addresses.
-        //int count =
-        //    fiftyoneDegreesProcIpiRun(dataFilePath.c_str(), "Country", &config);
         int count =
-            fiftyoneDegreesProcIpiRun(dataFilePath.c_str(), "AverageLocation", &config);
+            fiftyoneDegreesProcIpiRun(dataFilePath.c_str(), "Countries", &config);
 
         // Get the output from the processing.
         stringstream output = stringstream(testing::internal::GetCapturedStdout());

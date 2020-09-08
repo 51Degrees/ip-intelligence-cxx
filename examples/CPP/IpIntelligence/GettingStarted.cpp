@@ -57,7 +57,7 @@ initialised with, and the configuration.
 using namespace FiftyoneDegrees;
 
 string fileName = "51Degrees-V4.1.ipi";
-string propertiesString = "RangeStart,RangeEnd,Country,City,AverageLocation";
+string propertiesString = "RangeStart,RangeEnd,Countries,Cities,AverageLocation";
 Common::RequiredPropertiesConfig *properties =
 	new Common::RequiredPropertiesConfig(&propertiesString);
 IpIntelligence::ConfigIpi *config =
@@ -96,7 +96,7 @@ IpIntelligence::ResultsIpi *results = engine->process(evidence);
 
 5. Extract the value of a property as a weighted string from the results.
 ```
-Value<vector<WeightedValue<string>>> value = results->getValuesAsWeightedStringList("Country");
+Value<vector<WeightedValue<string>>> value = results->getValuesAsWeightedStringList("Countries");
 for (WeightedValue<string> w : value.getValue()) {
 	cout << "   Country: " <<
 		w.getValue() <<

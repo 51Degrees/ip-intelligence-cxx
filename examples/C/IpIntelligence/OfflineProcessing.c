@@ -48,7 +48,7 @@ initialised with.
 const char* fileName = argv[1];
 fiftyoneDegreesPropertiesRequired properties =
 	fiftyoneDegreesPropertiesDefault;
-properties.string = "Country";
+properties.string = "Countries";
 ```
 
 2. Instantiate the 51Degrees data set within a resource manager from the
@@ -213,7 +213,7 @@ void run(
 	const char* ipAddressFilePath,
 	const char* outputFilePath) {
 	uint32_t i;
-	char ipAddress[40];
+	char ipAddress[50];
 	offlineProcessState state;
 	DataSetIpi* dataSet;
 
@@ -384,8 +384,8 @@ int main(int argc, char* argv[]) {
 		dataFilePath,
 		ipAddressFilePath,
 		outputFilePath,
-		argc > 4 ? argv[4] : "Country,City,AverageLocation,"
-		"RangeStart,RangeEnd",
+		argc > 4 ? argv[4] : "RangeStart,RangeEnd,"
+		"Countries,AverageLocation",
 		CONFIG);
 
 #ifdef _DEBUG

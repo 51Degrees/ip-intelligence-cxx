@@ -39,29 +39,29 @@ MAP_TYPE(Ipv4Range)
 MAP_TYPE(Ipv6Range)
 
 // Methods
-#define ResultsIpiCreate fiftyoneDegreesResultsIpiCreate
-#define ResultsIpiFree fiftyoneDegreesResultsIpiFree
-#define ResultsIpiFromIpAddress fiftyoneDegreesResultsIpiFromIpAddress
-#define ResultsIpiFromIpAddressString fiftyoneDegreesResultsIpiFromIpAddressString
-#define ResultsIpiFromEvidence fiftyoneDegreesResultsIpiFromEvidence
-#define ResultsIpiGetValues fiftyoneDegreesResultsIpiGetValues
-#define ResultsIpiGetValuesString fiftyoneDegreesResultsIpiGetValuesString
-#define ResultsIpiGetValuesStringByRequiredPropertyIndex fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex
-#define ResultsIpiGetHasValues fiftyoneDegreesResultsIpiGetHasValues
-#define ResultsIpiGetNoValueReason fiftyoneDegreesResultsIpiGetNoValueReason
-#define ResultsIpiGetNoValueReasonMessage fiftyoneDegreesResultsIpiGetNoValueReasonMessage
-#define IpiInitManagerFromFile fiftyoneDegreesIpiInitManagerFromFile
-#define IpiInitManagerFromMemory fiftyoneDegreesIpiInitManagerFromMemory
-#define DataSetIpiGet fiftyoneDegreesDataSetIpiGet
-#define DataSetIpiRelease fiftyoneDegreesDataSetIpiRelease
-#define IpiReloadManagerFromOriginalFile fiftyoneDegreesIpiReloadManagerFromOriginalFile
-#define IpiReloadManagerFromFile fiftyoneDegreesIpiReloadManagerFromFile
-#define IpiReloadManagerFromMemory fiftyoneDegreesIpiReloadManagerFromMemory
-#define IpiGetNetworkIdFromResult fiftyoneDegreesIpiGetNetworkIdFromResult
-#define IpiGetNetworkIdFromResults fiftyoneDegreesIpiGetNetworkIdFromResults
-#define IpiGetCoordinate fiftyoneDegreesIpiGetCoordinate
-#define IpiGetIpRangeAsString fiftyoneDegreesIpiGetIpRangeAsString
-#define IpiIterateProfilesForPropertyAndValue fiftyoneDegreesIpiIterateProfilesForPropertyAndValue
+#define ResultsIpiCreate fiftyoneDegreesResultsIpiCreate /**< Synonym for #fiftyoneDegreesResultsIpiCreate function. */
+#define ResultsIpiFree fiftyoneDegreesResultsIpiFree /**< Synonym for #fiftyoneDegreesResultsIpiFree function. */
+#define ResultsIpiFromIpAddress fiftyoneDegreesResultsIpiFromIpAddress /**< Synonym for #fiftyoneDegreesResultsIpiFromIpAddress function. */
+#define ResultsIpiFromIpAddressString fiftyoneDegreesResultsIpiFromIpAddressString /**< Synonym for #fiftyoneDegreesResultsIpiFromIpAddressString function. */
+#define ResultsIpiFromEvidence fiftyoneDegreesResultsIpiFromEvidence /**< Synonym for #fiftyoneDegreesResultsIpiFromEvidence function. */
+#define ResultsIpiGetValues fiftyoneDegreesResultsIpiGetValues /**< Synonym for #fiftyoneDegreesResultsIpiGetValues function. */
+#define ResultsIpiGetValuesString fiftyoneDegreesResultsIpiGetValuesString /**< Synonym for #fiftyoneDegreesResultsIpiGetValuesString function. */
+#define ResultsIpiGetValuesStringByRequiredPropertyIndex fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex /**< Synonym for #fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex function. */
+#define ResultsIpiGetHasValues fiftyoneDegreesResultsIpiGetHasValues /**< Synonym for #fiftyoneDegreesResultsIpiGetHasValues function. */
+#define ResultsIpiGetNoValueReason fiftyoneDegreesResultsIpiGetNoValueReason /**< Synonym for #fiftyoneDegreesResultsIpiGetNoValueReason function. */
+#define ResultsIpiGetNoValueReasonMessage fiftyoneDegreesResultsIpiGetNoValueReasonMessage /**< Synonym for #fiftyoneDegreesResultsIpiGetNoValueReasonMessage function. */
+#define IpiInitManagerFromFile fiftyoneDegreesIpiInitManagerFromFile /**< Synonym for #fiftyoneDegreesIpiInitManagerFromFile function. */
+#define IpiInitManagerFromMemory fiftyoneDegreesIpiInitManagerFromMemory /**< Synonym for #fiftyoneDegreesIpiInitManagerFromMemory function. */
+#define DataSetIpiGet fiftyoneDegreesDataSetIpiGet /**< Synonym for #fiftyoneDegreesDataSetIpiGet function. */
+#define DataSetIpiRelease fiftyoneDegreesDataSetIpiRelease /**< Synonym for #fiftyoneDegreesDataSetIpiRelease function. */
+#define IpiReloadManagerFromOriginalFile fiftyoneDegreesIpiReloadManagerFromOriginalFile /**< Synonym for #fiftyoneDegreesIpiReloadManagerFromOriginalFile function. */
+#define IpiReloadManagerFromFile fiftyoneDegreesIpiReloadManagerFromFile /**< Synonym for #fiftyoneDegreesIpiReloadManagerFromFile function. */
+#define IpiReloadManagerFromMemory fiftyoneDegreesIpiReloadManagerFromMemory /**< Synonym for #fiftyoneDegreesIpiReloadManagerFromMemory function. */
+#define IpiGetNetworkIdFromResult fiftyoneDegreesIpiGetNetworkIdFromResult /**< Synonym for #fiftyoneDegreesIpiGetNetworkIdFromResult function. */
+#define IpiGetNetworkIdFromResults fiftyoneDegreesIpiGetNetworkIdFromResults /**< Synonym for #fiftyoneDegreesIpiGetNetworkIdFromResults function. */
+#define IpiGetCoordinate fiftyoneDegreesIpiGetCoordinate /**< Synonym for #fiftyoneDegreesIpiGetCoordinate function. */
+#define IpiGetIpRangeAsString fiftyoneDegreesIpiGetIpRangeAsString /**< Synonym for #fiftyoneDegreesIpiGetIpRangeAsString function. */
+#define IpiIterateProfilesForPropertyAndValue fiftyoneDegreesIpiIterateProfilesForPropertyAndValue /**< Synonym for #fiftyoneDegreesIpiIterateProfilesForPropertyAndValue function. */
 
 // Config
 #define IpiInMemoryConfig fiftyoneDegreesIpiInMemoryConfig /**< Synonym for #fiftyoneDegreesIpiInMemoryConfig config. */
