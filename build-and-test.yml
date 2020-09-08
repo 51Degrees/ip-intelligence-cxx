@@ -8,46 +8,17 @@ trigger: none
 
 stages:
 
-- stage: Data
-  jobs:
-  - job: Get_Enterprise_DataFile
-    pool:
-      name: Hosted Ubuntu 1604
-
-    steps:
-    
-    - script: |
-        curl "https://distributor.51degrees.com/api/v2/download?LicenseKeys=$(licensekey)&Type=IpiV41&Download=True&Product=V4Enterprise" --output Enterprise-IpiV41.ipi.gz
-      displayName: 'Download Latest Data File'
-
-    - task: ExtractFiles@1
-      displayName: 'Extract Data File'
-      inputs:
-        archiveFilePatterns: 'Enterprise-IpiV41.ipi.gz'
-        cleanDestinationFolder: false
-
-    - script: |
-          mv $(Build.SourcesDirectory)/Enterprise-IpiV41.ipi  $(Build.ArtifactStagingDirectory)/51Degrees-EnterpriseV4.1.ipi
-      displayName: 'Move Data File'
-
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'enterpriseFile'
-        publishLocation: 'Container'
-
-
 - stage: Windows
-  dependsOn: [Data]
-  pool:
-    name: Hosted VS2017
-    demands:
-    - msbuild
-    - vstest
 
   jobs:
  
   - job: Build_VisualStudio
+
+    pool:
+      vmImage: windows-2019
+      demands:
+      - msbuild
+      - vstest
 
     timeoutInMinutes: 120
 
@@ -66,18 +37,6 @@ stages:
         ls
       workingDirectory: 'ip-intelligence-data'
       displayName: 'Fetch LFS Data Files'
-
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download Enterprise Data File'
-      inputs:
-        buildType: 'current'
-        downloadType: 'single'
-        artifactName: 'enterpriseFile'
-        downloadPath: '$(System.ArtifactsDirectory)'
-
-    - script: |
-          mv $(System.ArtifactsDirectory)\enterpriseFile\51Degrees-EnterpriseV4.1.ipi  $(Build.SourcesDirectory)\ip-intelligence-data\51Degrees-EnterpriseV4.1.ipi
-      displayName: 'Move Data File'
 
     - task: NuGetCommand@2
       inputs:
@@ -109,7 +68,20 @@ stages:
 
   - job: Build_And_Test_Ip_Intelligence
 
+    strategy:
+      matrix:
+        microsofthosted:
+          poolName: Azure Pipelines
+          imageName: windows-2019
+        selfhosted:
+          poolName: Hosted VS2017
+          imageName:
+
     timeoutInMinutes: 120
+
+    pool:
+      name: $(poolName)
+      vmImage: $(imageName)
 
     steps:
 
@@ -133,18 +105,6 @@ stages:
         targetType: 'inline'
         script: 'mkdir build'
 
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download Enterprise Data File'
-      inputs:
-        buildType: 'current'
-        downloadType: 'single'
-        artifactName: 'enterpriseFile'
-        downloadPath: '$(System.ArtifactsDirectory)'
-
-    - script: |
-          mv $(System.ArtifactsDirectory)\enterpriseFile\51Degrees-EnterpriseV4.1.ipi  $(Build.SourcesDirectory)\ip-intelligence-data\51Degrees-EnterpriseV4.1.ipi
-      displayName: 'Move Data File'
-
     - task: CMake@1
       displayName: 'CMake Configure'
       inputs:
@@ -166,11 +126,10 @@ stages:
       condition: true
       inputs:
         testResultsFormat: 'CTest'
-        testRunTitle: 'Windows CTest IP Intelligence'
+        testRunTitle: '${{ variables.vmImage }} CTest IP Intelligence'
         testResultsFiles: '**/Test.xml'
 
 - stage: Linux
-  dependsOn: [Data]
   jobs:
   - job: Build_And_Test
 
@@ -180,8 +139,6 @@ stages:
           imageName: ubuntu-18.04
         ubuntu-16:
           imageName: ubuntu-16.04
-        macOS-10:
-          imageName: macOS-10.14
 
     timeoutInMinutes: 120
 
@@ -193,18 +150,6 @@ stages:
     - checkout: self
       submodules: recursive
       lfs: true
-
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download Enterprise Data File'
-      inputs:
-        buildType: 'current'
-        downloadType: 'single'
-        artifactName: 'enterpriseFile'
-        downloadPath: '$(System.ArtifactsDirectory)'
-
-    - script: |
-          mv $(System.ArtifactsDirectory)/enterpriseFile/51Degrees-EnterpriseV4.1.ipi  $(Build.SourcesDirectory)/ip-intelligence-data/51Degrees-EnterpriseV4.1.ipi
-      displayName: 'Move Data File'
 
     - task: Bash@3
       displayName: 'Create Build Directory'
