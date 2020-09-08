@@ -138,49 +138,49 @@ namespace FiftyoneDegrees {
 				 */
 				void run() {
 					try {
-					ResultsIpi *results;
+						ResultsIpi *results;
 
-					// Create an evidence instance to store and process
-					// IP Address.
-					EvidenceIpi *evidence =
-						new EvidenceIpi();
-					IpAddress ipv4(ipv4Address);
-					IpAddress ipv6(ipv6Address);
+						// Create an evidence instance to store and process
+						// IP Address.
+						EvidenceIpi *evidence =
+							new EvidenceIpi();
+						IpAddress ipv4(ipv4Address);
+						IpAddress ipv6(ipv6Address);
 
-					cout << "Starting Getting Started Example.\n";
+						cout << "Starting Getting Started Example.\n";
 
-					// Carries out a match for a ipv4 address.
-					cout << "\nIpv4 Address: " << ipv4Address << "\n";
-					evidence->operator[]("ipv4.ip")
-							= ipv4;
-					results = engine->process(evidence);
-					Common::Value<vector<WeightedValue<string>>> ipv4Value
-						= results->getValuesAsWeightedStringList("Countries");
-					for (WeightedValue<string> w : ipv4Value.getValue()) {
-						cout << "   Country: " <<
-							w.getValue() <<
-							", Percentage: " <<
-							w.getWeight() << "\n";
-					}
-					delete results;
+						// Carries out a match for a ipv4 address.
+						cout << "\nIpv4 Address: " << ipv4Address << "\n";
+						evidence->operator[]("ipv4.ip")
+								= ipv4;
+						results = engine->process(evidence);
+						Common::Value<vector<WeightedValue<string>>> ipv4Value
+							= results->getValuesAsWeightedStringList("Countries");
+						for (WeightedValue<string> w : ipv4Value.getValue()) {
+							cout << "   Country: " <<
+								w.getValue() <<
+								", Percentage: " <<
+								w.getWeight() << "\n";
+						}
+						delete results;
 
-					// Carries out a match for a ipv4 address.
-					cout << "\nIpv6 Address: " << ipv6Address << "\n";
-					evidence->operator[]("ipv6.ip")
-							= ipv6;
-					results = engine->process(evidence);
-					Common::Value<vector<WeightedValue<string>>> ipv6Value
-						= results->getValuesAsWeightedStringList("Countries");
-					for (WeightedValue<string> w : ipv4Value.getValue()) {
-						cout << "   Country: " <<
-							w.getValue() <<
-							", Percentage: " <<
-							w.getWeight() << "\n";
-					}
-					delete results;
+						// Carries out a match for a ipv4 address.
+						cout << "\nIpv6 Address: " << ipv6Address << "\n";
+						evidence->operator[]("ipv6.ip")
+								= ipv6;
+						results = engine->process(evidence);
+						Common::Value<vector<WeightedValue<string>>> ipv6Value
+							= results->getValuesAsWeightedStringList("Countries");
+						for (WeightedValue<string> w : ipv4Value.getValue()) {
+							cout << "   Country: " <<
+								w.getValue() <<
+								", Percentage: " <<
+								w.getWeight() << "\n";
+						}
+						delete results;
 
-					// Free the evidence.
-					delete evidence;
+						// Free the evidence.
+						delete evidence;
 					}
 					catch (bad_alloc& e) {
 						cout << "Failed to create IpAddress object\n";
