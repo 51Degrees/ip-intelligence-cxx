@@ -187,13 +187,6 @@ TEST_F(ENGINE_CLASS_NAME(e,t,c,p), MultiThreadRandom) { \
 	uint16_t c = config->getConcurrency(); \
 	multiThreadRandom(c == 0 ? 4 : c); } /* Use 4 threads if no concurrency */
 
-//TEST_F(ENGINE_CLASS_NAME(e,t,c,p), Attributes) { \
-//	testType(_##e##Product); \
-//	testProduct(getExpectedFileType()); \
-//	testPublishedDate(); \
-//	testUpdateDate(); \
-//	properties(); }
-
 #define ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e,t,c,p) \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestIpAddress) { \
 	ipAddressPresent(ipv4Address); \
@@ -204,7 +197,7 @@ TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestIpAddress) { \
 	ipAddressPresent(lowerBoundIpv6Address); \
 	boundIpAddressPresent(upperBoundIpv6Address); \
 	randomIpAddressPresent(50); }
-	//boundIpAddressPresent(outOfRangeIpv6Address); \ /* This is gonna be undefined behaviour */
+	//boundIpAddressPresent(outOfRangeIpv6Address); \ /* This will give undefined behaviour */
 
 #define ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e,t,c,p) \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestNetworkId) { \
