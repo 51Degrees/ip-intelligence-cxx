@@ -178,8 +178,7 @@ void fiftyoneDegreesIpiGettingStarted(
 	const char* ipv4Address = "8.8.8.8";
 
 	// an ipv6 address string
-	//const char* ipv6Address = "2001:4860:4860::8888";
-	const char* ipv6Address = "::626a:e2d1:4";
+	const char* ipv6Address = "2001:4860:4860::8888";
 
 	printf("Starting Getting Started Example.\n");
 
