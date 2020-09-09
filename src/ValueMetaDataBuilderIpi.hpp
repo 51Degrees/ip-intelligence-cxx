@@ -53,6 +53,15 @@ namespace FiftyoneDegrees {
 			static ValueMetaData* build(
 				fiftyoneDegreesDataSetIpi *dataSet,
 				fiftyoneDegreesValue *value);
+		private:
+			/**
+			 * Get the binary value from the strings collection
+			 * @param stringsCollection the string collection
+			 * @param offset the offset in the string collection
+			 */
+			static string getBinaryValue(
+				fiftyoneDegreesCollection *stringsCollection,
+				uint32_t offset);
 		};
 	}
 }

@@ -82,7 +82,7 @@ static void buildString(
 					percentage);
 			}
 			else {
-				for (uint32_t i = 0; i < results->values.count; i++) {
+				for (i = 0; i < (int)results->values.count; i++) {
 					if (i > 0) {
 						// Add separator for multiple values
 						output = output + sprintf(output, " | ");

@@ -26,6 +26,31 @@
 
 using namespace FiftyoneDegrees::IpIntelligence;
 
+string ValueMetaDataBuilderIpi::getBinaryValue(
+	fiftyoneDegreesCollection *stringsCollection,
+	uint32_t offset) {
+	FIFTYONE_DEGREES_EXCEPTION_CREATE;
+	string result;
+	fiftyoneDegreesCollectionItem item;
+	fiftyoneDegreesString *str;
+	fiftyoneDegreesDataReset(&item.data);
+	str = fiftyoneDegreesStringGet(
+		stringsCollection,
+		offset,
+		&item,
+		exception);
+	FIFTYONE_DEGREES_EXCEPTION_THROW;
+		if (str != nullptr) {
+			// This will make sure all raw data are added
+			// regardless of type
+			result.append(&str->value, str->size);
+		}
+		FIFTYONE_DEGREES_COLLECTION_RELEASE(
+			stringsCollection,
+			&item);
+	return result;
+}
+
 ValueMetaData* ValueMetaDataBuilderIpi::build(
 	fiftyoneDegreesDataSetIpi *dataSet,
 	fiftyoneDegreesValue *value) {
@@ -44,7 +69,7 @@ ValueMetaData* ValueMetaDataBuilderIpi::build(
 		result = new ValueMetaData(
 			ValueMetaDataKey(
 				getString(dataSet->strings, property->nameOffset),
-				getString(dataSet->strings, property->nameOffset)),
+				getBinaryValue(dataSet->strings, property->nameOffset)),
 			value->descriptionOffset == -1 ?
 			"" :
 			getString(dataSet->strings, value->descriptionOffset),
