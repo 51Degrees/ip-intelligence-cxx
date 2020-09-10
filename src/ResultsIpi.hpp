@@ -54,9 +54,9 @@ namespace FiftyoneDegrees {
 		 * using namespace FiftyoneDegrees::IpIntelligence;
 		 * ResultsIpi *results;
 		 *
-		 * // Get property value as a coordinate for property "RangeStart"
-		 * Value<pair<float, float>> coordinate =
-		 *	getValueAsCoordinate("RangeStart");
+		 * // Get property value as a coordinate for property "AverageLocation"
+		 * Value<fiftyoneDegreesCoordinate> coordinate =
+		 *	getValueAsCoordinate("AverageLocation");
 		 *
 		 * // Get the network id for the IP range
 		 * string networkId = results->getNetworkId();
@@ -269,9 +269,9 @@ namespace FiftyoneDegrees {
 			 * required property name. If the property name is not valid then
 			 * hasValue returns false with NoValueReason and its message.
 			 * @param propertyName string containing the property name
-			 * @return a float pair representation of the value for the property
+			 * @return a coordinate representation of the value for the property
 			 */
-			Common::Value<pair<float, float>>
+			Common::Value<fiftyoneDegreesCoordinate>
 						getValueAsCoordinate(const char *propertyName);
 
 			/**
@@ -279,9 +279,9 @@ namespace FiftyoneDegrees {
 			 * required property name. If the property name is not valid then
 			 * hasValue returns false with NoValueReason and its message.
 			 * @param propertyName string containing the property name
-			 * @return a float pair representation of the value for the property
+			 * @return a coordinate representation of the value for the property
 			 */
-			Common::Value<pair<float, float>>
+			Common::Value<fiftyoneDegreesCoordinate>
 						getValueAsCoordinate(const string *propertyName);
 
 			/**
@@ -289,9 +289,9 @@ namespace FiftyoneDegrees {
 			 * required property name. If the property name is not valid then
 			 * hasValue returns false with NoValueReason and its message.
 			 * @param propertyName string containing the property name
-			 * @return a float pair representation of the value for the property
+			 * @return a coordinate representation of the value for the property
 			 */
-			Common::Value<pair<float, float>>
+			Common::Value<fiftyoneDegreesCoordinate>
 						getValueAsCoordinate(const string &propertyName);
 			
 			/**
@@ -299,9 +299,9 @@ namespace FiftyoneDegrees {
 			 * required property index. If the index is not valid then
 			 * hasValue returns false with NoValueReason and its message.
 			 * @param propertyName string containing the property name
-			 * @return a float pair representation of the value for the property
+			 * @return a coordinate representation of the value for the property
 			 */
-			Common::Value<pair<float, float>>
+			Common::Value<fiftyoneDegreesCoordinate>
 						getValueAsCoordinate(int requiredPropertyIndex);
 
 			/**

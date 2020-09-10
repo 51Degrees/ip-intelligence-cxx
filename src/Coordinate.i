@@ -20,13 +20,13 @@
  * such notice(s) shall fulfill the requirements of that article.
  * ********************************************************************* */
 
-%include "common-cxx/EvidenceBase.i"
+%{
+#include "ip-intelligence-cxx/src/ipi.h"
+%}
 
-%nodefaultctor EvidenceIpi;
+%rename (CoordinateSwig) fiftyoneDegreesCoordinate;
 
-%rename (EvidenceIpiSwig) EvidenceIpi;
-
-class EvidenceIpi : public EvidenceBase {
-public:
-    EvidenceIpi();
-};
+typedef struct fiftyone_degrees_ipi_coordinate_t {
+	float lat;
+	float lon;
+} fiftyoneDegreesCoordinate;

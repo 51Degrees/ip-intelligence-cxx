@@ -206,20 +206,6 @@ static unsigned long getHashCode(ResultsIpi *results) {
 	return hashCode;
 }
 
-static fiftyoneDegreesEvidencePrefix getIpAddressEvidencePrefix(const char* ipAddress) {
-	fiftyoneDegreesEvidenceIpAddress* evidenceIpAddress = fiftyoneDegreesIpParseAddress(
-		malloc,
-		ipAddress,
-		ipAddress + strlen(ipAddress) - 1);
-	fiftyoneDegreesEvidencePrefix prefix = 
-		evidenceIpAddress->type == 
-		FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 
-		? FIFTYONE_DEGREES_EVIDENCE_IPV4 
-		: FIFTYONE_DEGREES_EVIDENCE_IPV6;
-	free(evidenceIpAddress);
-	return prefix;
-}
-
 /**
  * Runs the performance test for the IP address provided. Called from the text
  * file iterator.
@@ -231,11 +217,10 @@ static void executeTest(const char *ipAddress, void *state) {
 	ResultsIpi* results = ResultsIpiCreate(
 		thread->manager);
 	EvidenceKeyValuePairArray* evidence = EvidenceCreate(1);
-	fiftyoneDegreesEvidencePrefix prefix = getIpAddressEvidencePrefix(ipAddress);
 	EvidenceAddString(
 		evidence,
-		prefix,
-		prefix == FIFTYONE_DEGREES_EVIDENCE_IPV4 ? "ipv4.ip" : "ipv6:ip",
+		FIFTYONE_DEGREES_EVIDENCE_QUERY,
+		"query.ip",
 		ipAddress);
 	EXCEPTION_CREATE;
 	ResultsIpiFromEvidence(results, evidence, exception);

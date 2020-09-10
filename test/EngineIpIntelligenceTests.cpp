@@ -215,8 +215,7 @@ void EngineIpIntelligenceTests::verifyWithEmptyEvidence() {
 
 void EngineIpIntelligenceTests::verifyWithEvidence() {
 	EvidenceIpi evidence;
-	IpAddress ipv4(ipv4Address);
-	evidence["ipv4.ip"] = ipv4;
+	evidence["query.ip"] = ipv4Address;
 	verifyWithEvidence(&evidence);
 }
 
@@ -398,10 +397,6 @@ void EngineIpIntelligenceTests::randomIpAddressPresent(int count) {
 
 		Value<IpAddress> rangeStart = results->getValueAsIpAddress("RangeStart");
 		Value<IpAddress> rangeEnd = results->getValueAsIpAddress("RangeEnd");
-		uint32_t addressLength = 
-			rangeStart.getValue().getType() == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ?
-			FIFTYONE_DEGREES_IPV4_LENGTH :
-			FIFTYONE_DEGREES_IPV6_LENGTH;
 
 		verifyIpAddressValue(ipAddress.c_str(), rangeStart);
 		verifyIpAddressValue(ipAddress.c_str(), rangeEnd);
@@ -437,22 +432,22 @@ void EngineIpIntelligenceTests::verifyCoordinate() {
 		string ipAddress = ipAddresses[rand() % ipAddresses.size()];
 		ResultsIpi *results = engine->process(
 			ipAddress.c_str());
-		Value<pair<float, float>> value = results->getValueAsCoordinate("AverageLocation");
-		pair<float, float> coordinate;
+		Value<fiftyoneDegreesCoordinate> value = results->getValueAsCoordinate("AverageLocation");
+		fiftyoneDegreesCoordinate coordinate;
 
 		EXPECT_EQ(true, value.hasValue()) << "Could not find an IP range that matches"
 			"the IP address: " << ipAddress;
 
 		coordinate = value.getValue();
-		EXPECT_EQ(true, (coordinate.first >= -90.0f && coordinate.first <= 90.0f)) << "An "
+		EXPECT_EQ(true, (coordinate.lat >= -90.0f && coordinate.lat <= 90.0f)) << "An "
 			"invalid latitude has been returned, where it should be for IP address: " 
 			<< ipAddress;
 
-		EXPECT_EQ(true, (coordinate.second >= -180.0f && coordinate.second <= 180.0f)) << "An "
+		EXPECT_EQ(true, (coordinate.lon >= -180.0f && coordinate.lon <= 180.0f)) << "An "
 			"invalid longitude has been returned, where it should be for IP address: "
 			<< ipAddress;
 
-		if (coordinate.first == 0 && coordinate.second == 0) {
+		if (coordinate.lat == 0 && coordinate.lon == 0) {
 			// Counting the number of default coordinate returned
 			// This is to ensure we won't run into the case where
 			// the default value is always returned.
@@ -490,34 +485,14 @@ string EngineIpIntelligenceTests::getRandomKeyWithMatchingPrefix(
 }
 
 void EngineIpIntelligenceTests::randomWithEvidence(int count) {
-	string ipv4Key = "ipv4.ip";
-	string ipv6Key = "ipv6.ip";
-	IpAddress ipAddress1;
-	IpAddress ipAddress2;
+	string ipKey = "query.ip";
 	EngineIpi *engine = (EngineIpi*)getEngine();
 	for (int i = 0; i < count; i++) {
 		EvidenceIpi evidence;
-		try{
-			ipAddress1 = IpAddress(
-				ipAddresses[rand() % ipAddresses.size()].c_str());
-			ASSERT_NE(FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID, ipAddress1.getType());
-
-			if (ipAddress1.getType() == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
-				evidence[ipv4Key] = ipAddress1;
-			} 
-			else {
-				evidence[ipv6Key] = ipAddress1;
-			}
-			
-			ResultsIpi *results = engine->process(&evidence);
-			validateQuick(results);
-			delete results;
-		}
-		catch (bad_alloc& e) {
-			cout << "Failed to create IpAddress object\n";
-			cout << e.what() << "\n";
-			FAIL();
-		}
+		evidence[ipKey] = ipAddresses[rand() % ipAddresses.size()].c_str();
+		ResultsIpi *results = engine->process(&evidence);
+		validateQuick(results);
+		delete results;
 	}
 }
 

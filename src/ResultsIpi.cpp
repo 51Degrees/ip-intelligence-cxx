@@ -156,12 +156,12 @@ IpIntelligence::ResultsIpi::getPropertyValueType(
     return valueType;
 }
 
-Common::Value<pair<float, float>>
+Common::Value<fiftyoneDegreesCoordinate>
 IpIntelligence::ResultsIpi::getValueAsCoordinate(
     int requiredPropertyIndex) {
     EXCEPTION_CREATE;
     ProfilePercentage *valuesItems;
-    Common::Value<pair<float, float>> result;
+    Common::Value<fiftyoneDegreesCoordinate> result;
     if (!(hasValuesInternal(requiredPropertyIndex)))
     {
         fiftyoneDegreesResultsNoValueReason reason =
@@ -194,15 +194,12 @@ IpIntelligence::ResultsIpi::getValueAsCoordinate(
                     fiftyoneDegreesCoordinate coordinate = IpiGetCoordinate(&valuesItems[0].item, exception);
                     EXCEPTION_THROW;
 
-                    pair<float, float> floatPair;
-                    floatPair.first = coordinate.lat;
-                    floatPair.second = coordinate.lon;
-                    result.setValue(floatPair);
+                    result.setValue(coordinate);
                 }
             }
             else {
                 // Default to 0,0 if not coordinate type
-                result.setValue(pair<float, float>(0.0f, 0.0f));
+                result.setValue({ 0.0f, 0.0f });
             }
         }
     }
@@ -210,21 +207,21 @@ IpIntelligence::ResultsIpi::getValueAsCoordinate(
     return result;
 }
 
-Common::Value<pair<float, float>>
+Common::Value<fiftyoneDegreesCoordinate>
 IpIntelligence::ResultsIpi::getValueAsCoordinate(
     const char *propertyName) {
     return getValueAsCoordinate(
         ResultsBase::getRequiredPropertyIndex(propertyName));
 }
 
-Common::Value<pair<float, float>>
+Common::Value<fiftyoneDegreesCoordinate>
 IpIntelligence::ResultsIpi::getValueAsCoordinate(
 	const string &propertyName) {
     return getValueAsCoordinate(
         ResultsBase::getRequiredPropertyIndex(propertyName.c_str()));
 }
 
-Common::Value<pair<float, float>>
+Common::Value<fiftyoneDegreesCoordinate>
 IpIntelligence::ResultsIpi::getValueAsCoordinate(
     const string *propertyName) {
     return getValueAsCoordinate(

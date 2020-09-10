@@ -138,48 +138,39 @@ namespace FiftyoneDegrees {
 				 * @copydoc ExampleBase::run
 				 */
 				void run() {
-					try {
-						ResultsIpi *results;
+					ResultsIpi *results;
 
-						// Create an evidence instance to store and process Ip Addresses.
-						EvidenceIpi *evidence = new EvidenceIpi();
+					// Create an evidence instance to store and process Ip Addresses.
+					EvidenceIpi *evidence = new EvidenceIpi();
 
-						IpAddress ipv4(ipv4Address);
-						IpAddress ipv6(ipv6Address);
+					cout << "Starting Strongly Typed Example.\n";
 
-						cout << "Starting Strongly Typed Example.\n";
+					// Carries out a match for a ipv4 address.
+					cout << "\nIpv4 Address: " << ipv4Address << "\n";
+					evidence->operator[]("query.ip")
+							= ipv4Address;
+					results = engine->process(evidence);
+					Common::Value<fiftyoneDegreesCoordinate> ipv4Value = results->getValueAsCoordinate("AverageLocation");
+					cout << "   AverageLocation: " <<
+						ipv4Value.getValue().lat <<
+						"," <<
+						ipv4Value.getValue().lon << "\n";
+					delete results;
 
-						// Carries out a match for a ipv4 address.
-						cout << "\nIpv4 Address: " << ipv4Address << "\n";
-						evidence->operator[]("ipv4.ip")
-								= ipv4;
-						results = engine->process(evidence);
-						Common::Value<pair<float, float>> ipv4Value = results->getValueAsCoordinate("AverageLocation");
-						cout << "   AverageLocation: " <<
-							ipv4Value.getValue().first <<
-							"," <<
-							ipv4Value.getValue().second << "\n";
-						delete results;
+					// Carries out a match for a ipv6 address.
+					cout << "\nIpv6 Address: " << ipv6Address << "\n";
+					evidence->operator[]("query.ip")
+							= ipv6Address;
+					results = engine->process(evidence);
+					Common::Value<fiftyoneDegreesCoordinate> ipv6Value = results->getValueAsCoordinate("AverageLocation");
+					cout << "   AverageLocation: " <<
+						ipv4Value.getValue().lat <<
+						"," <<
+						ipv4Value.getValue().lon << "\n";
+					delete results;
 
-						// Carries out a match for a ipv6 address.
-						cout << "\nIpv6 Address: " << ipv6Address << "\n";
-						evidence->operator[]("ipv6.ip")
-								= ipv6;
-						results = engine->process(evidence);
-						Common::Value<pair<float, float>> ipv6Value = results->getValueAsCoordinate("AverageLocation");
-						cout << "   AverageLocation: " <<
-							ipv4Value.getValue().first <<
-							"," <<
-							ipv4Value.getValue().second << "\n";
-						delete results;
-
-						// Free the evidence.
-						delete evidence;
-					}
-					catch (bad_alloc& e) {
-						cout << "Failed to create IpAddress class\n";
-						cout << e.what() << "\n";
-					}
+					// Free the evidence.
+					delete evidence;
 				}
 			};
 		}

@@ -82,11 +82,6 @@ typedef struct state_with_percentage_t {
 	Float percentage;
 } stateWithPercentage;
 
-typedef struct state_with_ip_version_t {
-	void* subState; /* Pointer to a data set or other information */
-	fiftyoneDegreesEvidenceIpType type; /* Version of IP */
-} stateWithIpVersion;
-
 typedef struct profile_combination_component_index_t {
 	uint16_t index; /* Index to the first profile of the component
 					in the profiles list */
@@ -1506,32 +1501,48 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 static bool setResultFromEvidence(
 	void* state,
 	EvidenceKeyValuePair* pair) {
-	stateWithIpVersion *ipState = (stateWithIpVersion *)((stateWithException*)state)->state;
 	ResultIpi* result;
 	ResultsIpi* results =
-		(ResultsIpi*)ipState->subState;
+		(ResultsIpi*)((stateWithException*)state)->state;
 	DataSetIpi* dataSet =
 		(DataSetIpi*)results->b.dataSet;
 	Exception* exception = ((stateWithException*)state)->exception;
 
+	// Get the parsed Value
+	const char *ipAddressString = (const char *)pair->parsedValue;
+	// Obtain the byte array first
+	fiftyoneDegreesEvidenceIpAddress *ipAddress = 
+		fiftyoneDegreesIpParseAddress(malloc, ipAddressString, ipAddressString + strlen(ipAddressString));
+	// Check if the IP address was successfully created
+	if (ipAddress == NULL) {
+		EXCEPTION_SET(INSUFFICIENT_MEMORY);
+		return false;
+	}
+	else if(ipAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID) {
+		free(ipAddress);
+		EXCEPTION_SET(INCORRECT_FORMAT);
+		return false;
+	}
+
+	// Obtain the correct IP address
+	int ipLength = 
+		ipAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ?
+		FIFTYONE_DEGREES_IPV4_LENGTH : 
+		FIFTYONE_DEGREES_IPV6_LENGTH;
 	// Configure the next result in the array of results.
 	result = &((ResultIpi*)results->items)[results->count];
 	resultIpiReset(result);
 	results->items[0].ipRangeOffset = NULL_PROFILE_OFFSET; // Default IP range offset
-	result->targetIpAddress.length = 
-		ipState->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ? FIFTYONE_DEGREES_IPV4_LENGTH : FIFTYONE_DEGREES_IPV6_LENGTH;
-	if (ipState->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
-		memset(result->targetIpAddress.value, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
-		// We only get the exact length of ipv4
-		memcpy(result->targetIpAddress.value, pair->parsedValue, FIFTYONE_DEGREES_IPV4_LENGTH);
-	}
-	else {
-		// We only get the exact length of ipv6
-		memcpy(result->targetIpAddress.value, pair->parsedValue, FIFTYONE_DEGREES_IPV6_LENGTH);
-	}
-	result->targetIpAddress.type = ipState->type;
-	result->type = ipState->type;
+	result->targetIpAddress.length = ipLength;
+	memset(result->targetIpAddress.value, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
+	memcpy(result->targetIpAddress.value, ipAddress->address, ipLength);
+	memcpy(result->targetIpAddress.value, ipAddress->address, FIFTYONE_DEGREES_IPV6_LENGTH);
+	result->targetIpAddress.type = ipAddress->type;
+	result->type = ipAddress->type;
 	results->count++;
+
+	// Freed the allocated memory for ipAddress
+	free(ipAddress);
 
 	setResultFromIpAddress(
 		result,
@@ -1549,39 +1560,21 @@ void fiftyoneDegreesResultsIpiFromEvidence(
 	fiftyoneDegreesEvidenceKeyValuePairArray* evidence,
 	fiftyoneDegreesException* exception) {
 	stateWithException state;
-	stateWithIpVersion ipState;
-	ipState.subState = results;
-	state.state = &ipState;
+	state.state = results;
 	state.exception = exception;
 
 	if (evidence != (EvidenceKeyValuePairArray*)NULL) {
 		// Reset the results data before iterating the evidence.
 		results->count = 0;
 
-		// Check the Ipv4 prefixed evidence keys before the Ipv6 prefixed
-		// evidence keys.
-		ipState.type = FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4;
+		// Check the IP prefixed evidence keys 
 		EvidenceIterate(
 			evidence,
-			FIFTYONE_DEGREES_EVIDENCE_IPV4,
+			FIFTYONE_DEGREES_EVIDENCE_QUERY,
 			&state,
 			setResultFromEvidence);
 		if (EXCEPTION_FAILED) {
 			return;
-		}
-
-		// If no results were obtained from the Ipv4 evidence prefix then use
-		// the Ipv6 prefix to populate the results.
-		ipState.type = FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6;
-		if (results->count == 0) {
-			EvidenceIterate(
-				evidence,
-				FIFTYONE_DEGREES_EVIDENCE_IPV6,
-				&state,
-				setResultFromEvidence);
-			if (EXCEPTION_FAILED) {
-				return;
-			}
 		}
 	}
 }
