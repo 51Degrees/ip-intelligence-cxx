@@ -142,8 +142,8 @@ string PropertyMetaDataBuilderIpi::getPropertyType(
 		return string("double");
     case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE:
 		return string("coordinate");
-	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_RANGE:
-		return string("iprange");
+	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS:
+		return string("ipaddress");
 	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_JAVASCRIPT:
 		return string("javascript");
 	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING:

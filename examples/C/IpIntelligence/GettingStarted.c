@@ -156,7 +156,8 @@ void fiftyoneDegreesIpiGettingStarted(
 
 	// Set the properties to be returned for each ip
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "RangeStart,RangeEnd,Countries,AverageLocation";
+	properties.string = "RangeStart,RangeEnd,Countries,"
+		"AverageLocation,LocationBoundNorthWest,LocationBoundSouthEast";
 
 	StatusCode status = IpiInitManagerFromFile(
 		&manager,
@@ -193,8 +194,11 @@ void fiftyoneDegreesIpiGettingStarted(
 		printf("%s\n", ExceptionGetMessage(exception));
 	}
 	printf("RangeStart: %s\n", getPropertyValueAsString(results, "RangeStart"));
+	printf("RangeEnd: %s\n", getPropertyValueAsString(results, "RangeEnd"));
 	printf("Countries: %s\n", getPropertyValueAsString(results, "Countries"));
 	printf("AverageLocation: %s\n", getPropertyValueAsString(results, "AverageLocation"));
+	printf("LocationBoundNorthWest: %s\n", getPropertyValueAsString(results, "LocationBoundNorthWest"));
+	printf("LocationBoundSouthEast: %s\n", getPropertyValueAsString(results, "LocationBoundSouthEast"));
 
 	// Carries out a match for the ipv6 address
 	printf("\nIpv6 Address: %s\n", ipv6Address);
@@ -207,8 +211,11 @@ void fiftyoneDegreesIpiGettingStarted(
 		printf("%s\n", ExceptionGetMessage(exception));
 	}
 	printf("RangeStart: %s\n", getPropertyValueAsString(results, "RangeStart"));
+	printf("RangeEnd: %s\n", getPropertyValueAsString(results, "RangeEnd"));
 	printf("Countries: %s\n", getPropertyValueAsString(results, "Countries"));
 	printf("AverageLocation: %s\n", getPropertyValueAsString(results, "AverageLocation"));
+	printf("LocationBoundNorthWest: %s\n", getPropertyValueAsString(results, "LocationBoundNorthWest"));
+	printf("LocationBoundSouthEast: %s\n", getPropertyValueAsString(results, "LocationBoundSouthEast"));
 
 	// Ensure the results are freed to avoid memory leaks.
 	ResultsIpiFree(results);

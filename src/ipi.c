@@ -36,10 +36,15 @@ MAP_TYPE(Collection)
 /** Dynamic component */
 #define DYNAMIC_COMPONENT_OFFSET UINT32_MAX
 
+/** Unique Header */
+#define UNIQUE_HEADER "ip"
 /** Default value and percentage separator */
 #define DEFAULT_VALUE_PERCENTAGE_SEPARATOR ":"
 /** Default valus separator */
 #define DEFAULT_VALUES_SEPARATOR "|"
+
+#define COMPONENT(d, i) i < d->componentsList.count ? \
+(Component*)d->componentsList.items[i].data.ptr : NULL
 
 #define MAX_CONCURRENCY(t) if (config->t.concurrency > concurrency) { \
 concurrency = config->t.concurrency; }
@@ -82,28 +87,49 @@ typedef struct state_with_percentage_t {
 	Float percentage;
 } stateWithPercentage;
 
+/**
+ * Used to represent the structure within a profile combination item
+ */
+#pragma pack(push, 2)
 typedef struct profile_combination_component_index_t {
 	uint16_t index; /* Index to the first profile of the component
 					in the profiles list */
 	uint16_t count; /* The number of profiles presents for that
 					component */
 } componentIndex;
+#pragma pack(pop)
 
+#pragma pack(push, 1)
 typedef struct offset_percentage_t {
 	uint32_t offset; /* Offset to a collection item */
 	Float percentage; /* The weight of the item in the matched IP range */
 } offsetPercentage;
+#pragma pack(pop)
 
 /*
  * The structure of a string item containing
  * a pair of float values
  */
-typedef struct float_pair_t {
+#pragma pack(push, 1)
+typedef struct string_coordinate_t {
 	uint16_t length; /* Length of the data block */
 	unsigned char type; /* Type of the data block */
-	Float first; /* First float value */
-	Float second; /* Second float value */
-} floatPair;
+	Float lat; /* First float value */
+	Float lon; /* Second float value */
+} stringCoordinate;
+#pragma pack(pop)
+
+/*
+ * The structure of a string item containing
+ * a byte array representation of an IP address
+ */
+#pragma pack(push, 1)
+typedef struct string_ip_address_t {
+	uint16_t length; /* Length of the data block */
+	unsigned char type; /* Type of the data block */
+	unsigned char firstByte; /* First byte of the array */
+} stringIpAddress;
+#pragma pack(pop)
 
 /**
  * PRESET IP INTELLIGENCE CONFIGURATIONS
@@ -359,11 +385,12 @@ static void setResultFromIpAddress(
 	ResultIpi* result,
 	DataSetIpi* dataSet,
 	Exception* exception) {
+	long rangeOffset = -1;
 	Item item;
 	DataReset(&item.data);
 	switch (result->targetIpAddress.type) {
 	case FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4:
-		result->ipRangeOffset = CollectionBinarySearch(
+		rangeOffset = CollectionBinarySearch(
 			dataSet->ipv4Ranges,
 			&item,
 			0,
@@ -375,7 +402,7 @@ static void setResultFromIpAddress(
 		break;
 	case FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6:
 	default:
-		result->ipRangeOffset = CollectionBinarySearch(
+		rangeOffset = CollectionBinarySearch(
 			dataSet->ipv6Ranges,
 			&item,
 			0,
@@ -385,7 +412,9 @@ static void setResultFromIpAddress(
 			exception);
 		COLLECTION_RELEASE(dataSet->ipv6Ranges, &item);
 		break;
-		break;
+	}
+	if (rangeOffset >= 0 && EXCEPTION_OKAY) {
+		result->ipRangeOffset = rangeOffset;
 	}
 }
 
@@ -1508,48 +1537,51 @@ static bool setResultFromEvidence(
 		(DataSetIpi*)results->b.dataSet;
 	Exception* exception = ((stateWithException*)state)->exception;
 
-	// Get the parsed Value
-	const char *ipAddressString = (const char *)pair->parsedValue;
-	// Obtain the byte array first
-	fiftyoneDegreesEvidenceIpAddress *ipAddress = 
-		fiftyoneDegreesIpParseAddress(malloc, ipAddressString, ipAddressString + strlen(ipAddressString));
-	// Check if the IP address was successfully created
-	if (ipAddress == NULL) {
-		EXCEPTION_SET(INSUFFICIENT_MEMORY);
-		return false;
-	}
-	else if(ipAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID) {
+	// Only proceed if match the unique header "ip"
+	if (strcmp(UNIQUE_HEADER, pair->field) == 0) {
+		// Get the parsed Value
+		const char *ipAddressString = (const char *)pair->parsedValue;
+		// Obtain the byte array first
+		fiftyoneDegreesEvidenceIpAddress *ipAddress = 
+			fiftyoneDegreesIpParseAddress(malloc, ipAddressString, ipAddressString + strlen(ipAddressString));
+		// Check if the IP address was successfully created
+		if (ipAddress == NULL) {
+			EXCEPTION_SET(INSUFFICIENT_MEMORY);
+			return false;
+		}
+		else if(ipAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID) {
+			free(ipAddress);
+			EXCEPTION_SET(INCORRECT_FORMAT);
+			return false;
+		}
+
+		// Obtain the correct IP address
+		int ipLength = 
+			ipAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ?
+			FIFTYONE_DEGREES_IPV4_LENGTH : 
+			FIFTYONE_DEGREES_IPV6_LENGTH;
+		// Configure the next result in the array of results.
+		result = &((ResultIpi*)results->items)[results->count];
+		resultIpiReset(result);
+		results->items[0].ipRangeOffset = NULL_PROFILE_OFFSET; // Default IP range offset
+		result->targetIpAddress.length = ipLength;
+		memset(result->targetIpAddress.value, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
+		memcpy(result->targetIpAddress.value, ipAddress->address, ipLength);
+		memcpy(result->targetIpAddress.value, ipAddress->address, FIFTYONE_DEGREES_IPV6_LENGTH);
+		result->targetIpAddress.type = ipAddress->type;
+		result->type = ipAddress->type;
+		results->count++;
+
+		// Freed the allocated memory for ipAddress
 		free(ipAddress);
-		EXCEPTION_SET(INCORRECT_FORMAT);
-		return false;
-	}
 
-	// Obtain the correct IP address
-	int ipLength = 
-		ipAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ?
-		FIFTYONE_DEGREES_IPV4_LENGTH : 
-		FIFTYONE_DEGREES_IPV6_LENGTH;
-	// Configure the next result in the array of results.
-	result = &((ResultIpi*)results->items)[results->count];
-	resultIpiReset(result);
-	results->items[0].ipRangeOffset = NULL_PROFILE_OFFSET; // Default IP range offset
-	result->targetIpAddress.length = ipLength;
-	memset(result->targetIpAddress.value, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
-	memcpy(result->targetIpAddress.value, ipAddress->address, ipLength);
-	memcpy(result->targetIpAddress.value, ipAddress->address, FIFTYONE_DEGREES_IPV6_LENGTH);
-	result->targetIpAddress.type = ipAddress->type;
-	result->type = ipAddress->type;
-	results->count++;
-
-	// Freed the allocated memory for ipAddress
-	free(ipAddress);
-
-	setResultFromIpAddress(
-		result,
-		dataSet,
-		exception);
-	if (EXCEPTION_FAILED) {
-		return false;
+		setResultFromIpAddress(
+			result,
+			dataSet,
+			exception);
+		if (EXCEPTION_FAILED) {
+			return false;
+		}
 	}
 
 	return EXCEPTION_OKAY;
@@ -1575,6 +1607,19 @@ void fiftyoneDegreesResultsIpiFromEvidence(
 			setResultFromEvidence);
 		if (EXCEPTION_FAILED) {
 			return;
+		}
+
+		// If no results were obtained from the query evidence prefix then use
+		// the HTTP headers to populate the results.
+		if (results->count == 0) {
+			EvidenceIterate(
+				evidence,
+				FIFTYONE_DEGREES_EVIDENCE_SERVER,
+				&state,
+				setResultFromEvidence);
+			if (EXCEPTION_FAILED) {
+				return;
+			}
 		}
 	}
 }
@@ -1647,62 +1692,6 @@ static uint32_t addValuesFromProfile(
 	return count;
 }
 
-static uint32_t addValuesFromIpRanges(
-	ResultsIpi *results,
-	ResultIpi *result,
-	const char *propertyName,
-	Exception *exception) {
-	uint32_t offset;
-	uint32_t count = 0;
-	Item ipRangeItem;
-	ProfilePercentage profilePercentage;
-	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
-	profilePercentage.percentage = NATIVE_TO_FLOAT(1);
-	
-	offset = result->ipRangeOffset;
-
-	DataReset(&ipRangeItem.data);
-	if (result->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
-		// If offset is the last item then don't increase
-		if (StringCompare("RangeEnd", propertyName) == 0
-			&& offset < dataSet->ipv4Ranges->count - 1) {
-			offset++;
-		}
-
-		Ipv4Range* ipv4Range = dataSet->ipv4Ranges->get(
-			dataSet->ipv4Ranges,
-			offset,
-			&ipRangeItem,
-			exception);
-		if (ipv4Range != NULL && EXCEPTION_OKAY) {
-			// The capacity of the list should be at least 1
-			profilePercentage.item = ipRangeItem;
-			addIpiListItem(&results->values, &profilePercentage);
-			count = 1;
-		}
-	}
-	else {
-		// If offset is the last item then don't increase
-		if (StringCompare("RangeEnd", propertyName) == 0
-			&& offset < dataSet->ipv6Ranges->count - 1) {
-			offset++;
-		}
-
-		Ipv6Range* ipv6Range = dataSet->ipv6Ranges->get(
-			dataSet->ipv6Ranges,
-			offset,
-			&ipRangeItem,
-			exception);
-		if (ipv6Range != NULL && EXCEPTION_OKAY) {
-			// The capacity of the list should be at least 1
-			profilePercentage.item = ipRangeItem;
-			addIpiListItem(&results->values, &profilePercentage);
-			count = 1;
-		}
-	}
-	return count;
-}
-
 /*
  * Caller should check for EXCEPTION_OKAY before accessing
  * the returned item
@@ -1751,146 +1740,123 @@ static Item getStringItemByValueOffset(
  * @param result the matched result
  * @param exception the exception object which will be used
  * when an exception occurs
- * @return offset
+ * @return offset -1 if not be found
  */
 static uint32_t getProfileCombinationOffset(
 	ResultsIpi* results,
 	ResultIpi* result,
 	Exception *exception) {
-	uint32_t offset = 0;
+	uint32_t offset = NULL_PROFILE_OFFSET;
 	Item item;
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 
-	DataReset(&item.data);
-	if (result->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
-		Ipv4Range* ipv4Range = dataSet->ipv4Ranges->get(
-			dataSet->ipv4Ranges,
-			result->ipRangeOffset,
-			&item,
-			exception);
-		if (ipv4Range != NULL && EXCEPTION_OKAY) {
-			offset = ipv4Range->profileCombinationOffset;
-			COLLECTION_RELEASE(dataSet->ipv4Ranges, &item);
+	if (result->ipRangeOffset >= 0) {
+		DataReset(&item.data);
+		if (result->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
+			Ipv4Range* ipv4Range = dataSet->ipv4Ranges->get(
+				dataSet->ipv4Ranges,
+				result->ipRangeOffset,
+				&item,
+				exception);
+			if (ipv4Range != NULL && EXCEPTION_OKAY) {
+				offset = ipv4Range->profileCombinationOffset;
+				COLLECTION_RELEASE(dataSet->ipv4Ranges, &item);
+			}
 		}
-	}
-	else {
-		Ipv6Range* ipv6Range = dataSet->ipv6Ranges->get(
-			dataSet->ipv6Ranges,
-			result->ipRangeOffset,
-			&item,
-			exception);
-		if (ipv6Range != NULL && EXCEPTION_OKAY) {
-			offset = ipv6Range->profileCombinationOffset;
-			COLLECTION_RELEASE(dataSet->ipv4Ranges, &item);
+		else {
+			Ipv6Range* ipv6Range = dataSet->ipv6Ranges->get(
+				dataSet->ipv6Ranges,
+				result->ipRangeOffset,
+				&item,
+				exception);
+			if (ipv6Range != NULL && EXCEPTION_OKAY) {
+				offset = ipv6Range->profileCombinationOffset;
+				COLLECTION_RELEASE(dataSet->ipv4Ranges, &item);
+			}
 		}
 	}
 	return offset;
 }
 
-static uint32_t addValuesFromLocations(
+static uint32_t addValuesFromDynamicProperty(
 	ResultsIpi* results,
-	ResultIpi* result,
-	const char* propertyName,
+	Property *property,
+	ProfileCombination *profileCombination,
 	Exception* exception) {
-	uint32_t offset;
 	uint32_t count = 0;
-	Item item;
-	ProfileCombination* profileCombination;
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 
-	// Obtain the profile combination offset from the returned result
-	offset = getProfileCombinationOffset(results, result, exception);
-
-	// We will only execute this step if successfully obtained the
-	// profile combination offset from the previous step
-	if (EXCEPTION_OKAY) {
-		DataReset(&item.data);
-		profileCombination = dataSet->profileCombinations->get(
-			dataSet->profileCombinations,
-			offset,
-			&item,
-			exception);
-		if (profileCombination != NULL && EXCEPTION_OKAY) {
-			componentIndex* index;
-			offsetPercentage* profiles;
-			offsetPercentage* values;
-			uint32_t firstIndex = 0;
-			// Set pointer to the component index list in the profile combination block
-			index = (componentIndex*)&profileCombination->firstByte;
-			// Set pointer to the profiles list in the profile combination block
-			profiles = (offsetPercentage*)(index + dataSet->componentsList.count);
-			// Set pointer to the values list in the profile combination block
-			values = profiles + profileCombination->profileCount;
-			// Location is a pair of lat and long values
-			// The Locations are grouped in a ordered set at
-			// the end of the profile combinations
-			// i.e. (AverageLocation, LocationBoundSouthEast, LocationBoundNortWest)
-			if (StringCompare("AverageLocation", propertyName) == 0) {
-				// AverageLocation
-				firstIndex = 0;
+	offsetPercentage* values;
+	// Set pointer to the values list in the profile combination block
+	// The structure  of the profile combination block is
+	// an array of componentIndexes,
+	// an array of profile offsets and percentages,
+	// an array of values offsets and percentages
+	// where the first 3 value offsets are locations
+	values = (offsetPercentage*)(&profileCombination->firstByte +
+		sizeof(componentIndex) * dataSet->componentsList.count +
+		sizeof(offsetPercentage) * profileCombination->profileCount);
+	for (int i = 0; i < profileCombination->valueCount; i++) {
+		if (values[i].offset >= property->firstValueIndex &&
+			values[i].offset <= property->lastValueIndex) {
+			Item stringItem = getStringItemByValueOffset(
+				results,
+				values[i].offset,
+				exception);
+			if (EXCEPTION_OKAY) {
+				ProfilePercentage profilePercentage;
+				profilePercentage.item = stringItem;
+				profilePercentage.percentage = values[i].percentage;
+				addIpiListItem(&results->values, &profilePercentage);
+				count++;
+				break;
 			}
-			else if (StringCompare("LocationBoundSouthEast", propertyName) == 0) {
-				firstIndex = 1;
-			}
-			else if (StringCompare("LocationBoundNorthWest", propertyName) == 0) {
-				firstIndex = 2;
-			}
-
-			// Get the number of locations group
-			if (firstIndex < (uint32_t)profileCombination->valueCount) {
-				Item coordinate = getStringItemByValueOffset(
-					results,
-					values[firstIndex].offset,
-					exception);
-				if (EXCEPTION_OKAY) {
-					ProfilePercentage coordProfilePercentage;
-					coordProfilePercentage.item = coordinate;
-					coordProfilePercentage.percentage = values[firstIndex].percentage;
-					addIpiListItem(&results->values, &coordProfilePercentage);
-					count = 1;
-				}
-			}
-			COLLECTION_RELEASE(dataSet->profileCombinations, &item);
 		}
 	}
 	return count;
 }
 
-static uint32_t addValuesFromDynamicProperty(
+static uint32_t addValuesFromNormalProperty(
 	ResultsIpi* results,
-	ResultIpi* result,
-	Property* property,
+	Property *property,
+	ProfileCombination *profileCombination,
 	Exception* exception) {
 	uint32_t count = 0;
-	String* propertyName;
-	Item stringItem;
+	Item profileItem;
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 
-	DataReset(&stringItem.data);
-	propertyName = StringGet(
-		dataSet->strings,
-		property->nameOffset,
-		&stringItem,
-		exception);
-	if (propertyName != NULL && EXCEPTION_OKAY) {
-		if (StringCompareLength("Range", &propertyName->value, strlen("Range")) == 0) {
-			count = addValuesFromIpRanges(
-				results,
-				result,
-				&propertyName->value,
+	// Get the profiles array and values array
+	componentIndex* index = (componentIndex*)&profileCombination->firstByte;
+	offsetPercentage* profiles = (offsetPercentage*)(index + dataSet->componentsList.count);
+
+	// Add values from profiles
+	Profile* profile;
+	uint32_t profileOffset;
+	uint16_t cur = index[property->componentIndex].index;
+	uint16_t end = cur + index[property->componentIndex].count;
+	// Loop through the list of profiles and their percentage
+	DataReset(&profileItem.data);
+	for (; cur < end; cur++) {
+		profileOffset = profiles[cur].offset;
+		profile = NULL;
+		if (profileOffset != NULL_PROFILE_OFFSET) {
+			profile = (Profile*)dataSet->profiles->get(
+				dataSet->profiles,
+				profileOffset,
+				&profileItem,
 				exception);
+			// If profile is found
+			if (profile != NULL && EXCEPTION_OKAY) {
+				count += addValuesFromProfile(
+					dataSet,
+					results,
+					profile,
+					property,
+					profiles[cur].percentage,
+					exception);
+				COLLECTION_RELEASE(dataSet->profiles, &profileItem);
+			}
 		}
-		else if (StringSubString(&propertyName->value, "Location") != NULL) {
-			count = addValuesFromLocations(
-				results,
-				result,
-				&propertyName->value,
-				exception);
-		}
-		else {
-			EXCEPTION_SET(CORRUPT_DATA);
-		}
-		COLLECTION_RELEASE(dataSet->strings, &stringItem);
 	}
 	return count;
 }
@@ -1902,75 +1868,45 @@ static uint32_t addValuesFromResult(
 	Exception* exception) {
 	uint32_t count = 0;
 	ProfileCombination* profileCombination;
-	componentIndex* index;
-	offsetPercentage* profiles;
-	Item profileCombinationItem, profileItem;
+	Item profileCombinationItem;
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 
-	Component* component = (Component*)dataSet->componentsList.items[
-		property->componentIndex].data.ptr;
-	if (component->defaultProfileOffset == DYNAMIC_COMPONENT_OFFSET) {
-		// This is a dynamic component so check property name
-		// and get data from profileCombination instead
-		count = addValuesFromDynamicProperty(
+	// Get the profile combination
+	DataReset(&profileCombinationItem.data);
+	if (results->count > 0) {
+		uint32_t profileCombinationOffset = getProfileCombinationOffset(
 			results,
 			result,
-			property,
 			exception);
-	}
-	else {
-		// Get the profile combination
-		DataReset(&profileCombinationItem.data);
-		if (results->count > 0) {
-			uint32_t profileCombinationOffset = getProfileCombinationOffset(
-				results,
-				result,
+
+		if (profileCombinationOffset != NULL_PROFILE_OFFSET
+			&& EXCEPTION_OKAY) {
+			profileCombination = (ProfileCombination*)dataSet->profileCombinations->get(
+				dataSet->profileCombinations,
+				profileCombinationOffset,
+				&profileCombinationItem,
 				exception);
 
-			if (profileCombinationOffset != -1
-				&& EXCEPTION_OKAY) {
-				profileCombination = (ProfileCombination*)dataSet->profileCombinations->get(
-					dataSet->profileCombinations,
-					profileCombinationOffset,
-					&profileCombinationItem,
-					exception);
-
-				if (profileCombination != NULL && EXCEPTION_OKAY) {
-					// Get the profiles array and values array
-					index = (componentIndex*)&profileCombination->firstByte;
-					profiles = (offsetPercentage*)(index + dataSet->componentsList.count);
-
-					// Add values from profiles
-					Profile* profile;
-					uint32_t profileOffset;
-					uint16_t cur = index[property->componentIndex].index;
-					uint16_t end = cur + index[property->componentIndex].count;
-					// Loop through the list of profiles and their percentage
-					DataReset(&profileItem.data);
-					for (; cur < end; cur++) {
-						profileOffset = profiles[cur].offset;
-						profile = NULL;
-						if (profileOffset != NULL_PROFILE_OFFSET) {
-							profile = (Profile*)dataSet->profiles->get(
-								dataSet->profiles,
-								profileOffset,
-								&profileItem,
-								exception);
-							// If profile is found
-							if (profile != NULL && EXCEPTION_OKAY) {
-								count += addValuesFromProfile(
-									dataSet,
-									results,
-									profile,
-									property,
-									profiles[cur].percentage,
-									exception);
-								COLLECTION_RELEASE(dataSet->profiles, &profileItem);
-							}
-						}
-					}
-					COLLECTION_RELEASE(dataSet->profileCombinations, &profileCombinationItem);
+			if (profileCombination != NULL && EXCEPTION_OKAY) {
+				Component* component = (Component*)dataSet->componentsList.items[
+					property->componentIndex].data.ptr;
+				if (component->defaultProfileOffset == DYNAMIC_COMPONENT_OFFSET) {
+					// This is a dynamic component so check property name
+					// and get data from profileCombination instead
+					count = addValuesFromDynamicProperty(
+						results,
+						property,
+						profileCombination,
+						exception);
 				}
+				else {
+					count = addValuesFromNormalProperty(
+						results,
+						property,
+						profileCombination,
+						exception);
+				}
+				COLLECTION_RELEASE(dataSet->profileCombinations, &profileCombinationItem);
 			}
 		}
 	}
@@ -1994,7 +1930,6 @@ fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	fiftyoneDegreesResultsIpi* results,
 	int requiredPropertyIndex,
 	fiftyoneDegreesException* exception) {
-	ResultIpi* result;
 	Property* property;
 	DataSetIpi* dataSet;
 	ProfilePercentage* firstValue = NULL;
@@ -2009,31 +1944,31 @@ fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 		dataSet->b.b.available,
 		requiredPropertyIndex);
 
-	// Set the property that will be available in the results structure. 
-	// This may also be needed to work out which of a selection of results 
-	// are used to obtain the values.
-	property = PropertyGet(
-		dataSet->properties,
-		propertyIndex,
-		&results->propertyItem,
-		exception);
+	if (propertyIndex >= 0) {
+		// Set the property that will be available in the results structure. 
+		// This may also be needed to work out which of a selection of results 
+		// are used to obtain the values.
+		property = PropertyGet(
+			dataSet->properties,
+			propertyIndex,
+			&results->propertyItem,
+			exception);
 
-	// There will only one result for each IP address
-	result = &results->items[0];
+		if (property != NULL && EXCEPTION_OKAY) {
+			// Ensure there is a collection available to the property item so
+			// that it can be freed when the results are freed.
+			if (results->propertyItem.collection == NULL) {
+				results->propertyItem.collection = dataSet->properties;
+			}
 
-	if (property != NULL && EXCEPTION_OKAY) {
-		// Ensure there is a collection available to the property item so
-		// that it can be freed when the results are freed.
-		if (results->propertyItem.collection == NULL) {
-			results->propertyItem.collection = dataSet->properties;
-		}
-
-		if (result != NULL && EXCEPTION_OKAY) {
-			firstValue = getValuesFromResult(
-				results,
-				result,
-				property,
-				exception);
+			// There will be only result so make sure we have more than 1
+			if (results->count > 0 && EXCEPTION_OKAY) {
+				firstValue = getValuesFromResult(
+					results,
+					results->items,
+					property,
+					exception);
+			}
 		}
 	}
 
@@ -2049,6 +1984,7 @@ bool fiftyoneDegreesResultsIpiGetHasValues(
 	fiftyoneDegreesResultsIpi* results,
 	int requiredPropertyIndex,
 	fiftyoneDegreesException* exception) {
+	ProfilePercentage *profilePercentage = NULL;
 	DataSetIpi *dataSet = (DataSetIpi*)results->b.dataSet;
 	// Ensure any previous uses of the results to get values are released.
 	resultsIpiRelease(results);
@@ -2068,20 +2004,23 @@ bool fiftyoneDegreesResultsIpiGetHasValues(
 		dataSet->b.b.available,
 		requiredPropertyIndex);
 
-	// Set the property that will be available in the results structure. 
-	// This may also be needed to work out which of a selection of results 
-	// are used to obtain the values.
-	Property *property = PropertyGet(
-		dataSet->properties,
-		propertyIndex,
-		&results->propertyItem,
-		exception);
+	if (propertyIndex >= 0) {
+		// Set the property that will be available in the results structure. 
+		// This may also be needed to work out which of a selection of results 
+		// are used to obtain the values.
+		Property *property = PropertyGet(
+			dataSet->properties,
+			propertyIndex,
+			&results->propertyItem,
+			exception);
 
-	ProfilePercentage *profilePercentage = getValuesFromResult(
-		results,
-		&results->items[0],
-		property,
-		exception);
+		// There will only be one result
+		profilePercentage = getValuesFromResult(
+			results,
+			results->items,
+			property,
+			exception);
+	}
 
 	if (profilePercentage == NULL) {
 		// There is no value for the required property.
@@ -2107,33 +2046,27 @@ static bool resultGetHasValidPropertyValueOffset(
 		dataSet->b.b.available,
 		requiredPropertyIndex);
 
-	// Set the property that will be available in the results structure. 
-	// This may also be needed to work out which of a selection of results 
-	// are used to obtain the values.
-	Property *property = PropertyGet(
-		dataSet->properties,
-		propertyIndex,
-		&results->propertyItem,
-		exception);
+	if (propertyIndex >= 0) {
+		// Set the property that will be available in the results structure. 
+		// This may also be needed to work out which of a selection of results 
+		// are used to obtain the values.
+		Property *property = PropertyGet(
+			dataSet->properties,
+			propertyIndex,
+			&results->propertyItem,
+			exception);
 
-	const char *propertyName = STRING(
-		PropertiesGetNameFromRequiredIndex(
-			dataSet->b.b.available,
-			requiredPropertyIndex));
-	if (propertyName != NULL && EXCEPTION_OKAY) {
-		if (StringCompareLength("Range", propertyName, strlen("Range")) == 0) {
-			if (results->count == 0)
-				return false;
-			else
-				return true;
-		}
-		else {
+		const char *propertyName = STRING(
+			PropertiesGetNameFromRequiredIndex(
+				dataSet->b.b.available,
+				requiredPropertyIndex));
+		if (propertyName != NULL && EXCEPTION_OKAY) {
 			// Obtain the profile combination offset from the returned result
 			uint32_t offset = getProfileCombinationOffset(results, result, exception);
 
 			// We will only execute this step if successfully obtained the
 			// profile combination offset from the previous step
-			if (EXCEPTION_OKAY) {
+			if (offset != NULL_PROFILE_OFFSET && EXCEPTION_OKAY) {
 				DataReset(&item.data);
 				profileCombination = dataSet->profileCombinations->get(
 					dataSet->profileCombinations,
@@ -2145,36 +2078,31 @@ static bool resultGetHasValidPropertyValueOffset(
 					componentIndex* indices;
 					offsetPercentage* profiles;
 					offsetPercentage* values;
-					uint32_t firstIndex = 0;
 					// Set pointer to the component index list in the profile combination block
 					indices = (componentIndex*)&profileCombination->firstByte;
 					// Set pointer to the profiles list in the profile combination block
 					profiles = (offsetPercentage*)(indices + dataSet->componentsList.count);
 					// Set pointer to the values list in the profile combination block
 					values = profiles + profileCombination->profileCount;
-					if (StringSubString(propertyName, "Location") != NULL) {
-						// Location is a pair of lat and long values
-						// The Locations are grouped in a ordered set at
-						// the end of the profile combinations
-						// i.e. (AverageLocation, LocationBoundSouthEast, LocationBoundNortWest)
-						if (StringCompare("AverageLocation", propertyName) == 0) {
-							// AverageLocation
-							firstIndex = 0;
-						}
-						else if (StringCompare("LocationBoundSouthEast", propertyName) == 0) {
-							firstIndex = 1;
-						}
-						else if (StringCompare("LocationBoundNorthWest", propertyName) == 0) {
-							firstIndex = 2;
-						}
-						if (values[firstIndex].offset != NULL_VALUE_OFFSET) {
-							hasValidOffset = true;
+
+					Component* component = (Component*)dataSet->componentsList.items[
+					property->componentIndex].data.ptr;
+					if (component->defaultProfileOffset == DYNAMIC_COMPONENT_OFFSET) {
+						for (int i = 0; i < profileCombination->valueCount; i++) {
+							if (values[i].offset >= property->firstValueIndex &&
+								values[i].offset <= property->lastValueIndex) {
+								if (values[i].offset != NULL_PROFILE_OFFSET) {
+									hasValidOffset = true;
+									break;
+								}
+							}
 						}
 					}
 					else {
 						for (int i = 0; i < indices[property->componentIndex].count; i++) {
 							if (profiles[indices[property->componentIndex].index + i].offset != NULL_PROFILE_OFFSET) {
 								hasValidOffset = true;
+								break;
 							}
 						}
 					}
@@ -2206,9 +2134,10 @@ fiftyoneDegreesResultsNoValueReason fiftyoneDegreesResultsIpiGetNoValueReason(
 		return FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_NO_RESULTS;
 	}
 
+	// There will only be one result
 	bool hasValidOffset = resultGetHasValidPropertyValueOffset(
 		results,
-		&results->items[0],
+		results->items,
 		requiredPropertyIndex,
 		exception);
 	if (EXCEPTION_OKAY && !hasValidOffset) {
@@ -2233,22 +2162,22 @@ const char* fiftyoneDegreesResultsIpiGetNoValueReasonMessage(
 }
 
 static size_t getIpv4RangeString(
-	Ipv4Range *ipRange,
+	unsigned char ipAddress[FIFTYONE_DEGREES_IPV4_LENGTH],
 	char *buffer,
 	size_t bufferLength) {
 	size_t charactersAdded = snprintf(
 		buffer,
 		bufferLength,
 		"%d.%d.%d.%d",
-		(int)ipRange->start[0],
-		(int)ipRange->start[1],
-		(int)ipRange->start[2],
-		(int)ipRange->start[3]);
+		(int)ipAddress[0],
+		(int)ipAddress[1],
+		(int)ipAddress[2],
+		(int)ipAddress[3]);
 	return charactersAdded > 0 ? charactersAdded : 0;
 }
 
 static size_t getIpv6RangeString(
-	Ipv6Range *ipRange,
+	unsigned char ipAddress[FIFTYONE_DEGREES_IPV6_LENGTH],
 	char *buffer,
 	size_t bufferLength) {
 	const char *separator = ":";
@@ -2259,12 +2188,12 @@ static size_t getIpv6RangeString(
 		for (int j = 0; j < 2; j++) {
 			if (charactersAdded + charLen < bufferLength) {
 				// Get the first character of hex representation of the byte
-				memcpy(buffer + charactersAdded, &hex[(((int)ipRange->start[i + j]) >> 4) & 0x0F], charLen);
+				memcpy(buffer + charactersAdded, &hex[(((int)ipAddress[i + j]) >> 4) & 0x0F], charLen);
 				charactersAdded += charLen;
 			}
 			if (charactersAdded + charLen < bufferLength) {
 				// Get the second character of hex representation of the byte
-				memcpy(buffer + charactersAdded, &hex[((int)ipRange->start[i + j]) & 0x0F], charLen);
+				memcpy(buffer + charactersAdded, &hex[((int)ipAddress[i + j]) & 0x0F], charLen);
 				charactersAdded += charLen;
 			}
 		}
@@ -2289,9 +2218,10 @@ static size_t getRangeString(
 	fiftyoneDegreesEvidenceIpType type,
 	char *buffer,
 	size_t bufferLength) {
+	stringIpAddress *ipAddress;
 	size_t charactersAdded = 0, tempAdded = 0;
 	const size_t quoteLen = strlen("\"");
-	
+
 	if (count > 0) {
 		// Add the opening quote
 		if (charactersAdded + quoteLen < bufferLength) {
@@ -2300,17 +2230,17 @@ static size_t getRangeString(
 				charactersAdded += tempAdded;
 			}
 		}
+
+		ipAddress = (stringIpAddress *)profilePercentage->item.data.ptr;
 		if (type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
-			Ipv4Range *ipRange = (Ipv4Range *)profilePercentage[0].item.data.ptr;
 			charactersAdded += getIpv4RangeString(
-				ipRange,
+				&ipAddress->firstByte,
 				buffer + charactersAdded,
 				bufferLength - charactersAdded);
 		}
 		else {
-			Ipv6Range *ipRange = (Ipv6Range *)profilePercentage[0].item.data.ptr;
 			charactersAdded += getIpv6RangeString(
-				ipRange,
+				&ipAddress->firstByte,
 				buffer + charactersAdded,
 				bufferLength - charactersAdded);
 		}
@@ -2326,7 +2256,7 @@ static size_t getRangeString(
 				buffer + charactersAdded,
 				bufferLength - charactersAdded,
 				":\"%f\"",
-				FLOAT_TO_NATIVE(profilePercentage[0].percentage));
+				FLOAT_TO_NATIVE(profilePercentage->percentage));
 			if (tempAdded > 0) {
 				charactersAdded += tempAdded;
 				buffer[charactersAdded] = '\0';
@@ -2345,8 +2275,8 @@ static size_t getLocationString(
 	const size_t quoteLen = strlen("\"");
 
 	if (count > 0) {
-		floatPair *location =
-			(floatPair *)profilePercentage[0].item.data.ptr;
+		stringCoordinate *location =
+			(stringCoordinate *)profilePercentage->item.data.ptr;
 		
 		// Add the opening quote
 		if (charactersAdded + quoteLen < bufferLength) {
@@ -2359,8 +2289,8 @@ static size_t getLocationString(
 			buffer + charactersAdded,
 			bufferLength - charactersAdded,
 			"%f,%f",
-			FLOAT_TO_NATIVE(location->first),
-			FLOAT_TO_NATIVE(location->second));
+			FLOAT_TO_NATIVE(location->lat),
+			FLOAT_TO_NATIVE(location->lon));
 		if (tempAdded > 0) {
 			charactersAdded += tempAdded;
 			// Add the closing quote
@@ -2374,7 +2304,7 @@ static size_t getLocationString(
 				buffer + charactersAdded,
 				bufferLength - charactersAdded,
 				":\"%f\"",
-				FLOAT_TO_NATIVE(profilePercentage[0].percentage));
+				FLOAT_TO_NATIVE(profilePercentage->percentage));
 			if (tempAdded > 0) {
 				charactersAdded += tempAdded;
 				buffer[charactersAdded] = '\0';
@@ -2457,7 +2387,6 @@ static size_t getNormalString(
 
 static size_t fiftyoneDegreesResultsIpiGetValuesStringInternal(
 	fiftyoneDegreesResultsIpi* results,
-	const char* propertyName,
 	int requiredPropertyIndex,
 	char* buffer,
 	size_t bufferLength,
@@ -2465,36 +2394,56 @@ static size_t fiftyoneDegreesResultsIpiGetValuesStringInternal(
 	fiftyoneDegreesException* exception) {
 	ProfilePercentage *profilePercentage;
 	size_t charactersAdded = 0;
+	Item propertyItem;
+	Property *property;
+	DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
 
-	if (requiredPropertyIndex >= 0) {
-		profilePercentage = fiftyoneDegreesResultsIpiGetValues(
-			results,
-			requiredPropertyIndex,
-			exception);
-		if (profilePercentage != NULL && EXCEPTION_OKAY) {
-			if (StringCompareLength("Range", propertyName, strlen("Range")) == 0) {
-				charactersAdded = getRangeString(
-					profilePercentage,
-					results->values.count,
-					results->items[0].type,
-					buffer,
-					bufferLength);
+	uint32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
+		dataSet->b.b.available,
+		requiredPropertyIndex);
+
+	if (propertyIndex >= 0) {
+		DataReset(&propertyItem.data);
+		property = (Property*)dataSet->properties->get(
+				dataSet->properties,
+				propertyIndex,
+				&propertyItem,
+				exception);
+		if (property != NULL && EXCEPTION_OKAY) {
+			if (requiredPropertyIndex >= 0) {
+				profilePercentage = fiftyoneDegreesResultsIpiGetValues(
+					results,
+					requiredPropertyIndex,
+					exception);
+				if (profilePercentage != NULL && EXCEPTION_OKAY) {
+					switch(property->valueType) {
+					case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS:
+						charactersAdded = getRangeString(
+							profilePercentage,
+							results->values.count,
+							results->items->type,
+							buffer,
+							bufferLength);
+						break;
+					case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE:
+						charactersAdded = getLocationString(
+							profilePercentage,
+							results->values.count,
+							buffer,
+							bufferLength);
+						break;
+					default:
+						charactersAdded = getNormalString(
+							profilePercentage,
+							results->values.count,
+							buffer,
+							bufferLength,
+							separator);
+						break;
+					}
+				}
 			}
-			else if(StringSubString(propertyName, "Location") != NULL) {
-				charactersAdded = getLocationString(
-					profilePercentage,
-					results->values.count,
-					buffer,
-					bufferLength);
-			}
-			else {
-				charactersAdded = getNormalString(
-					profilePercentage,
-					results->values.count,
-					buffer,
-					bufferLength,
-					separator);
-			}
+			COLLECTION_RELEASE(dataSet->properties, &propertyItem);
 		}
 	}
 	return charactersAdded;
@@ -2508,18 +2457,20 @@ size_t fiftyoneDegreesResultsIpiGetValuesString(
 	const char* separator,
 	fiftyoneDegreesException* exception) {
 	DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
+	size_t charactersAdded = 0;
 	int requiredPropertyIndex = PropertiesGetRequiredPropertyIndexFromName(
 		dataSet->b.b.available,
 		propertyName);
-
-	return fiftyoneDegreesResultsIpiGetValuesStringInternal(
-		results,
-		propertyName,
-		requiredPropertyIndex,
-		buffer,
-		bufferLength,
-		separator,
-		exception);
+	if (requiredPropertyIndex >= 0) {
+		charactersAdded = fiftyoneDegreesResultsIpiGetValuesStringInternal(
+			results,
+			requiredPropertyIndex,
+			buffer,
+			bufferLength,
+			separator,
+			exception);
+	}
+	return charactersAdded;
 }
 
 size_t fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex(
@@ -2529,15 +2480,8 @@ size_t fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex(
 	size_t bufferLength,
 	const char* separator,
 	fiftyoneDegreesException* exception) {
-	DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
-	const char *propertyName = STRING(
-		PropertiesGetNameFromRequiredIndex(
-			dataSet->b.b.available,
-			requiredPropertyIndex));
-
 	return fiftyoneDegreesResultsIpiGetValuesStringInternal(
 		results,
-		propertyName,
 		requiredPropertyIndex,
 		buffer,
 		bufferLength,
@@ -2569,7 +2513,7 @@ char* fiftyoneDegreesIpiGetNetworkIdFromResult(
 
 	// We will only execute this step if successfully obtained the
 	// profile combination offset from the previous step
-	if (EXCEPTION_OKAY) {
+	if (offset != NULL_PROFILE_OFFSET  && EXCEPTION_OKAY) {
 		DataReset(&profileCombinationItem.data);
 		profileCombination = dataSet->profileCombinations->get(
 			dataSet->profileCombinations,
@@ -2622,22 +2566,25 @@ char* fiftyoneDegreesIpiGetNetworkIdFromResults(
 	char* destination,
 	size_t size,
 	fiftyoneDegreesException* exception) {
-	return fiftyoneDegreesIpiGetNetworkIdFromResult(
-		results,
-		&results->items[0],
-		destination,
-		size,
-		exception);
+	if (results->count > 0) {
+		fiftyoneDegreesIpiGetNetworkIdFromResult(
+			results,
+			results->items,
+			destination,
+			size,
+			exception);
+	}
+	return destination;
 }
 
 fiftyoneDegreesCoordinate fiftyoneDegreesIpiGetCoordinate(
 	fiftyoneDegreesCollectionItem *item,
 	fiftyoneDegreesException *exception) {
-	floatPair *fPair = (floatPair *)item->data.ptr;
+	stringCoordinate *fPair = (stringCoordinate *)item->data.ptr;
 	fiftyoneDegreesCoordinate coordinate = { 0, 0 };
-	if (fPair->type == 1) {
-		coordinate.lat = FLOAT_TO_NATIVE(fPair->first);
-		coordinate.lon = FLOAT_TO_NATIVE(fPair->second);
+	if (fPair->type == FIFTYONE_DEGREES_STRING_COORDINATE) {
+		coordinate.lat = FLOAT_TO_NATIVE(fPair->lat);
+		coordinate.lon = FLOAT_TO_NATIVE(fPair->lon);
 	}
 	else {
 		EXCEPTION_SET(INCORRECT_FORMAT);
@@ -2645,26 +2592,60 @@ fiftyoneDegreesCoordinate fiftyoneDegreesIpiGetCoordinate(
 	return coordinate;
 }
 
-size_t fiftyoneDegreesIpiGetIpRangeAsString(
+size_t fiftyoneDegreesIpiGetIpAddressAsString(
 	fiftyoneDegreesCollectionItem *item,
 	fiftyoneDegreesEvidenceIpType type,
 	char *buffer,
 	uint32_t bufferLength,
 	fiftyoneDegreesException *exception) {
-	size_t charactersAdded =  0;
-	if (type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
-		Ipv4Range *ipRange = (Ipv4Range *)item->data.ptr;
-		charactersAdded += getIpv4RangeString(
-			ipRange,
-			buffer,
-			bufferLength);
+	size_t charactersAdded = 0;
+	stringIpAddress *ipAddress = (stringIpAddress *)item->data.ptr;
+	int32_t ipLength = 
+		type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ?
+		FIFTYONE_DEGREES_IPV4_LENGTH :
+		FIFTYONE_DEGREES_IPV6_LENGTH;
+	// Get the actual length of the byte array
+	int32_t actualLength = ipAddress->length - 1;
+
+	// Make sure the ipAddress item and everything is in correct
+	// format
+	if (ipAddress->type == FIFTYONE_DEGREES_STRING_IP_ADDRESS
+		&& ipLength == actualLength
+		&& type != FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID) {
+
+		if (type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
+			charactersAdded += getIpv4RangeString(
+				&ipAddress->firstByte,
+				buffer,
+				bufferLength);
+		}
+		else {
+			charactersAdded += getIpv6RangeString(
+				&ipAddress->firstByte,
+				buffer,
+				bufferLength);
+		}
 	}
-	else if (type ==  FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6) {
-		Ipv6Range *ipRange = (Ipv6Range *)item->data.ptr;
-		charactersAdded += getIpv6RangeString(
-			ipRange,
-			buffer,
-			bufferLength);
+	else {
+		EXCEPTION_SET(INCORRECT_FORMAT);
+	}
+	return charactersAdded;
+}
+
+uint32_t fiftyoneDegreesIpiGetIpAddressAsByteArray(
+	fiftyoneDegreesCollectionItem *item,
+	unsigned char *buffer,
+	uint32_t bufferLength,
+	fiftyoneDegreesException *exception) {
+	uint32_t charactersAdded = 0;
+	stringIpAddress *ipAddress = (stringIpAddress *)item->data.ptr;
+	if (ipAddress->type == FIFTYONE_DEGREES_STRING_IP_ADDRESS) {
+		uint32_t copyLength = ipAddress->length - 1;
+		if (copyLength > bufferLength) {
+			copyLength = bufferLength;
+		}
+		memcpy(buffer, &ipAddress->firstByte, copyLength);
+		charactersAdded = copyLength;
 	}
 	else {
 		EXCEPTION_SET(INCORRECT_FORMAT);

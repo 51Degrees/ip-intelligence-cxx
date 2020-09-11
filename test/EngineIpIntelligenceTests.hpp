@@ -101,6 +101,7 @@ public:
 	~EngineIpIntelligenceTests();
 	void SetUp();
 	void TearDown();
+	void verifyValueMetaData();
 	void metaData();
 	void availableProperties();
 	string getExpectedFileType();
@@ -115,6 +116,7 @@ public:
 	void validateIndex(ResultsBase *results, int index) override;
 	void validateName(ResultsBase *results, string *name) override;
 	void verifyWithEvidence();
+	void verifyMixedPrefixesEvidence();
 	void verifyWithIpv4Address();
 	void verifyWithIpv6Address();
 	void verifyWithBadIpv4Address();
@@ -196,7 +198,8 @@ TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestIpAddress) { \
 	ipAddressPresent(ipv6Address); \
 	ipAddressPresent(lowerBoundIpv6Address); \
 	boundIpAddressPresent(upperBoundIpv6Address); \
-	randomIpAddressPresent(50); }
+	randomIpAddressPresent(50); \
+	verifyMixedPrefixesEvidence(); }
 	//boundIpAddressPresent(outOfRangeIpv6Address); \ /* This will give undefined behaviour */
 
 #define ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e,t,c,p) \

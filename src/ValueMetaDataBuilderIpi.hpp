@@ -55,11 +55,12 @@ namespace FiftyoneDegrees {
 				fiftyoneDegreesValue *value);
 		private:
 			/**
-			 * Get the binary value from the strings collection
+			 * Get the string representation of the data stored in
+			 * the strings collection
 			 * @param stringsCollection the string collection
 			 * @param offset the offset in the string collection
 			 */
-			static string getBinaryValue(
+			static string getDynamicString(
 				fiftyoneDegreesCollection *stringsCollection,
 				uint32_t offset);
 		};

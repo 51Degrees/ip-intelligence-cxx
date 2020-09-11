@@ -143,6 +143,19 @@ namespace FiftyoneDegrees {
                         delete property;
 					}
 					delete properties;
+
+
+					ValueMetaData *value;
+					Collection<ValueMetaDataKey, ValueMetaData> *values;
+					cout << "\n\nGet specific property value\n";
+					values = engine->getMetaData()->getValues();
+					value = values->getByKey(ValueMetaDataKey("RangeStart", "0.0.0.0"));
+					if (value != nullptr) {
+						cout << value->getKey().getPropertyName() << " - " << value->getName() 
+							<< " - " << value->getDescription() << "\n";
+						delete value;
+					}
+					delete values;
 				}
 			};
 		}

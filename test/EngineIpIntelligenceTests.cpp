@@ -87,8 +87,34 @@ void EngineIpIntelligenceTests::TearDown() {
 	EngineTests::TearDown();
 }
 
+void EngineIpIntelligenceTests::verifyValueMetaData() {
+	EngineIpi *engineIpi = (EngineIpi *)getEngine();
+	ValueMetaData *value;
+	Collection<ValueMetaDataKey, ValueMetaData> *values = 
+		engineIpi->getMetaData()->getValues();
+	value = values->getByKey(ValueMetaDataKey("RangeStart", lowerBoundIpv4Address));
+	EXPECT_TRUE(value != nullptr) << "Value meta data is not found"
+		"where it should be at IP address: " << lowerBoundIpv4Address;
+	EXPECT_EQ(0, strcmp(lowerBoundIpv4Address, value->getName().c_str()))
+		<< "Value meta data is not correct where it should be at IP address: "
+		<< lowerBoundIpv4Address;
+	delete value;
+
+	value = values->getByKey(ValueMetaDataKey("RangeStart", lowerBoundIpv6Address));
+	EXPECT_TRUE(value != nullptr) << "Value meta data is not found"
+		"where it should be at IP address: " << lowerBoundIpv6Address;
+	EXPECT_EQ(0, strcmp(lowerBoundIpv6Address, value->getName().c_str()))
+		<< "Value meta data is not correct where it should be at IP address: "
+		<< lowerBoundIpv6Address;
+	delete value;
+	delete values;
+}
+
 void EngineIpIntelligenceTests::metaData() {
 	EngineTests::verifyMetaData(getEngine());
+	// Verify additional cases where the value
+	// is not string
+	verifyValueMetaData();
 }
 void EngineIpIntelligenceTests::availableProperties() {
 	// TODO: This mainly check the evidence property which is 
@@ -213,15 +239,36 @@ void EngineIpIntelligenceTests::verifyWithEmptyEvidence() {
 	verifyWithEvidence(&evidence);
 }
 
+void EngineIpIntelligenceTests::verifyMixedPrefixesEvidence() {
+	EvidenceIpi mixedEvidence;
+	// To make sure query.ip is pick up first
+	mixedEvidence["query.ip"] = lowerBoundIpv4Address;
+	mixedEvidence["server.ip"] = upperBoundIpv4Address;
+	ResultsIpi *results = ((EngineIpi*)getEngine())->process(&mixedEvidence);
+	Value<IpAddress> rangeStart = results->getValueAsIpAddress("RangeStart");
+	unsigned char lowerBoundIpAddress[FIFTYONE_DEGREES_IPV4_LENGTH];
+	memset(lowerBoundIpAddress, 0, FIFTYONE_DEGREES_IPV4_LENGTH);
+	EXPECT_EQ(0,
+		memcmp(rangeStart.getValue().getIpAddress(),
+			lowerBoundIpAddress,
+			FIFTYONE_DEGREES_IPV4_LENGTH)) << "The RangeStart IP address is not "
+		"at the lower bound where it should be.";
+
+	delete results;
+}
+
 void EngineIpIntelligenceTests::verifyWithEvidence() {
-	EvidenceIpi evidence;
-	evidence["query.ip"] = ipv4Address;
-	verifyWithEvidence(&evidence);
+	EvidenceIpi queryEvidence, serverEvidence;
+	queryEvidence["query.ip"] = ipv4Address;
+	verifyWithEvidence(&queryEvidence);
+
+	serverEvidence["server.ip"] = ipv6Address;
+	verifyWithEvidence(&serverEvidence);
 }
 
 void EngineIpIntelligenceTests::verifyWithIpAddressString(const char *ipAddress) {
-	EngineIpi *engine = (EngineIpi*)getEngine();
-	ResultsIpi *results = engine->process(
+	EngineIpi *engineIpi = (EngineIpi*)getEngine();
+	ResultsIpi *results = engineIpi->process(
 		ipAddress);
 	validate(results);
 	delete results;
@@ -266,10 +313,10 @@ void EngineIpIntelligenceTests::verifyWithInvalidInput() {
 	int character;
 	char userAgent[2];
 	userAgent[1] = '\0';
-	EngineIpi *engine = (EngineIpi*)getEngine();
+	EngineIpi *engineIpi = (EngineIpi*)getEngine();
 	for (character = CHAR_MIN; character <= CHAR_MAX; character++) {
 		userAgent[0] = (char)character;
-		ResultsIpi *results = engine->process(
+		ResultsIpi *results = engineIpi->process(
 		userAgent);
 		validate(results);
 		delete results;
@@ -281,16 +328,16 @@ void EngineIpIntelligenceTests::verifyWithNullEvidence() {
 }
  
 void EngineIpIntelligenceTests::verifyWithNullIpAddress() {
-	EngineIpi*engine = (EngineIpi*)getEngine();
-	ResultsIpi *results = engine->process(
+	EngineIpi*engineIpi = (EngineIpi*)getEngine();
+	ResultsIpi *results = engineIpi->process(
 		(const char *)nullptr);
 	validate(results);
 	delete results;
 }
  
 void EngineIpIntelligenceTests::verifyWithEmptyIpAddress() {
-	EngineIpi *engine = (EngineIpi*)getEngine();
-	ResultsIpi *results = engine->process(
+	EngineIpi *engineIpi = (EngineIpi*)getEngine();
+	ResultsIpi *results = engineIpi->process(
 		"");
 	validate(results);
 	delete results;
@@ -354,8 +401,8 @@ void EngineIpIntelligenceTests::verifyIpAddressValue(
 }
 
 void EngineIpIntelligenceTests::ipAddressPresent(const char *ipAddress) {
-	EngineIpi *engine = (EngineIpi*)getEngine();
-	ResultsIpi *results = engine->process(ipAddress);
+	EngineIpi *engineIpi = (EngineIpi*)getEngine();
+	ResultsIpi *results = engineIpi->process(ipAddress);
 	Value<IpAddress> rangeStart = results->getValueAsIpAddress("RangeStart");
 	Value<IpAddress> rangeEnd = results->getValueAsIpAddress("RangeEnd");
 
@@ -366,33 +413,58 @@ void EngineIpIntelligenceTests::ipAddressPresent(const char *ipAddress) {
 }
 
 void EngineIpIntelligenceTests::boundIpAddressPresent(const char *ipAddress) {
-	EngineIpi *engine = (EngineIpi*)getEngine();
-	ResultsIpi *results = engine->process(ipAddress);
+	unsigned char lowerBoundIpAddress[FIFTYONE_DEGREES_IPV6_LENGTH];
+	unsigned char upperBoundIpAddress[FIFTYONE_DEGREES_IPV6_LENGTH];
+	memset(lowerBoundIpAddress, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
+	memset(upperBoundIpAddress, 0xff, FIFTYONE_DEGREES_IPV6_LENGTH);
+	upperBoundIpAddress[0] = 0xfe;
+
+	EngineIpi *engineIpi = (EngineIpi*)getEngine();
+	ResultsIpi *results = engineIpi->process(ipAddress);
 	Value<IpAddress> rangeStart = results->getValueAsIpAddress("RangeStart");
 	Value<IpAddress> rangeEnd = results->getValueAsIpAddress("RangeEnd");
-	uint32_t addressLength = 
-		rangeStart.getValue().getType() == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ?
-		FIFTYONE_DEGREES_IPV4_LENGTH :
-		FIFTYONE_DEGREES_IPV6_LENGTH;
 
 	verifyIpAddressValue(ipAddress, rangeStart);
 	verifyIpAddressValue(ipAddress, rangeEnd);
 
-	EXPECT_EQ(0, 
-		memcmp(rangeStart.getValue().getIpAddress(), 
-			rangeEnd.getValue().getIpAddress(), 
-			addressLength)) << "RangeStart are not the same as RangeEnd, "
-		"where it should be at IP address: " << ipAddress;
+	EXPECT_EQ(rangeStart.getValue().getType(), rangeEnd.getValue().getType())
+			<< "RangeStart and RangeEnd types are not the same, where it should"
+			"be at IP address: " << ipAddress;
+
+	if (rangeStart.getValue().getType() == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
+		EXPECT_TRUE(
+			memcmp(
+				lowerBoundIpAddress,
+				rangeStart.getValue().getIpAddress(),
+				FIFTYONE_DEGREES_IPV4_LENGTH) == 0 ||
+			memcmp(
+				upperBoundIpAddress,
+				rangeEnd.getValue().getIpAddress(),
+				FIFTYONE_DEGREES_IPV4_LENGTH) == 0) << "RangeStart or RangeEnd are not"
+			"at the bound where it should be at IP address: " << ipAddress;
+	}
+	else {
+		EXPECT_TRUE(
+			memcmp(
+				lowerBoundIpAddress,
+				rangeStart.getValue().getIpAddress(),
+				FIFTYONE_DEGREES_IPV6_LENGTH) == 0 ||
+			memcmp(
+				upperBoundIpAddress,
+				rangeEnd.getValue().getIpAddress(),
+				FIFTYONE_DEGREES_IPV6_LENGTH) == 0) << "RangeStart or RangeEnd are not"
+			"at the bound where it should be at IP address: " << ipAddress;
+	}
 
 	delete results;
 }
 
 void EngineIpIntelligenceTests::randomIpAddressPresent(int count) {
-	EngineIpi *engine = (EngineIpi*)getEngine();
+	EngineIpi *engineIpi = (EngineIpi*)getEngine();
 
 	for (int i = 0; i < count; i++) {
 		string ipAddress = ipAddresses[rand() % ipAddresses.size()];
-		ResultsIpi *results = engine->process(
+		ResultsIpi *results = engineIpi->process(
 			ipAddress.c_str());
 
 		Value<IpAddress> rangeStart = results->getValueAsIpAddress("RangeStart");
@@ -401,13 +473,17 @@ void EngineIpIntelligenceTests::randomIpAddressPresent(int count) {
 		verifyIpAddressValue(ipAddress.c_str(), rangeStart);
 		verifyIpAddressValue(ipAddress.c_str(), rangeEnd);
 
+		EXPECT_EQ(rangeStart.getValue().getType(), rangeEnd.getValue().getType())
+			<< "RangeStart and RangeEnd types are not the same, where it should"
+			"be at IP address: " << ipAddress;
+
 		delete results;
 	}
 }
 
 void EngineIpIntelligenceTests::verifyNetworkId(const char *ipAddress) {
-	EngineIpi *engine = (EngineIpi*)getEngine();
-	ResultsIpi *results = engine->process(ipAddress);
+	EngineIpi *engineIpi = (EngineIpi*)getEngine();
+	ResultsIpi *results = engineIpi->process(ipAddress);
 	string networkId = results->getNetworkId();
 	// By default regex use ECMAScript regex
 	// For special pattern character such as '\d'
@@ -422,7 +498,7 @@ void EngineIpIntelligenceTests::verifyNetworkId(const char *ipAddress) {
 }
 
 void EngineIpIntelligenceTests::verifyCoordinate() {
-	EngineIpi *engine = (EngineIpi*)getEngine();
+	EngineIpi *engineIpi = (EngineIpi*)getEngine();
 	uint32_t defaultCount = 0;
 	// Use a constant to make sure it is always
 	// testing a decent number of IP addresses
@@ -430,7 +506,7 @@ void EngineIpIntelligenceTests::verifyCoordinate() {
 
 	for (int i = 0; i < count; i++) {
 		string ipAddress = ipAddresses[rand() % ipAddresses.size()];
-		ResultsIpi *results = engine->process(
+		ResultsIpi *results = engineIpi->process(
 			ipAddress.c_str());
 		Value<fiftyoneDegreesCoordinate> value = results->getValueAsCoordinate("AverageLocation");
 		fiftyoneDegreesCoordinate coordinate;
@@ -463,34 +539,23 @@ void EngineIpIntelligenceTests::verifyCoordinate() {
 }
 
 void EngineIpIntelligenceTests::randomWithIpAddress(int count) {
-	EngineIpi *engine = (EngineIpi*)getEngine();
+	EngineIpi *engineIpi = (EngineIpi*)getEngine();
 	for (int i = 0; i < count; i++) {
 		string ipAddress = ipAddresses[rand() % ipAddresses.size()];
-		ResultsIpi *results = engine->process(
+		ResultsIpi *results = engineIpi->process(
 			ipAddress.c_str());
 		validateQuick(results);
 		delete results;
 	}
 }
 
-string EngineIpIntelligenceTests::getRandomKeyWithMatchingPrefix(
-	vector<string> *keys,
-	string prefix) {
-	string key;
-	do {
-		key = keys->at(rand() % (keys->size() - 1));
-	} while (fiftyoneDegreesEvidenceMapPrefix(key.c_str())->prefixEnum !=
-		fiftyoneDegreesEvidenceMapPrefix(prefix.c_str())->prefixEnum);
-	return key;
-}
-
 void EngineIpIntelligenceTests::randomWithEvidence(int count) {
 	string ipKey = "query.ip";
-	EngineIpi *engine = (EngineIpi*)getEngine();
+	EngineIpi *engineIpi = (EngineIpi*)getEngine();
 	for (int i = 0; i < count; i++) {
 		EvidenceIpi evidence;
 		evidence[ipKey] = ipAddresses[rand() % ipAddresses.size()].c_str();
-		ResultsIpi *results = engine->process(&evidence);
+		ResultsIpi *results = engineIpi->process(&evidence);
 		validateQuick(results);
 		delete results;
 	}
@@ -545,11 +610,11 @@ bool EngineIpIntelligenceTests::fileReadToByteArray() {
 }
  
 void EngineIpIntelligenceTests::reloadFile() {
-	EngineIpi *engine = (EngineIpi*)getEngine();
-	ResultsIpi *results1 = engine->process(
+	EngineIpi *engineIpi = (EngineIpi*)getEngine();
+	ResultsIpi *results1 = engineIpi->process(
 		ipv4Address);
-	engine->refreshData();
-	ResultsIpi *results2 = engine->process(
+	engineIpi->refreshData();
+	ResultsIpi *results2 = engineIpi->process(
 		ipv4Address);
 	compareResults(results1, results2);
 	delete results1;
@@ -557,8 +622,8 @@ void EngineIpIntelligenceTests::reloadFile() {
 }
  
 void EngineIpIntelligenceTests::reloadMemory() {
-	EngineIpi *engine = (EngineIpi*)getEngine();
-	ResultsIpi *results1 = engine->process(
+	EngineIpi *engineIpi = (EngineIpi*)getEngine();
+	ResultsIpi *results1 = engineIpi->process(
 		ipv4Address);
 	fiftyoneDegreesMemoryReader newData;
 	fiftyoneDegreesStatusCode status = fiftyoneDegreesFileReadToByteArray(
@@ -568,8 +633,8 @@ void EngineIpIntelligenceTests::reloadMemory() {
 		"not be loaded into memory from '" << fullName << "'";
 	EXPECT_NE(newData.current, nullptr) << "New data could "
 		"not be loaded into memory from '" << fullName << "'";
-	engine->refreshData(newData.current, newData.length);
-	ResultsIpi *results2 = engine->process(
+	engineIpi->refreshData(newData.current, newData.length);
+	ResultsIpi *results2 = engineIpi->process(
 		ipv4Address);
 	compareResults(results1, results2);
 	delete results1;

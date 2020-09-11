@@ -255,7 +255,7 @@ typedef struct fiftyone_degrees_config_ipi_t {
  * APIs.
  */
 typedef struct fiftyone_degrees_dataset_ipi_base_t {
-	fiftyoneDegreesDataSetBase b;
+	fiftyoneDegreesDataSetBase b; /**< Base structure members */
 } fiftyoneDegreesDataSetIpiBase;
 
 /**
@@ -289,16 +289,6 @@ typedef struct fiftyone_degrees_dataset_ipi_t {
 											   profiles in the profiles
 											   collection */
 } fiftyoneDegreesDataSetIpi;
-
-/**
- * The number of bytes in an Ipv4 Address
- */
-#define FIFTYONE_DEGREES_IPV4_LENGTH 4
-
-/**
- * The number of bytes in an Ipv6 Address
- */
-#define FIFTYONE_DEGREES_IPV6_LENGTH 16
 
 /**
  * The structure to hold a IP Address in byte array format
@@ -928,8 +918,8 @@ EXTERNAL fiftyoneDegreesCoordinate fiftyoneDegreesIpiGetCoordinate(
  * Get the ipaddress string from the collection item. This should
  * be used on the item returned from #fiftyoneDegreesResultsIpiGetValues
  * where the property is 'RangeStart', 'RangeEnd'.
- * @param item the collection item pointing to the IP range item in
- * string collection
+ * @param item the collection item pointing to the strings item in
+ * strings collection
  * @param type the verion of IP which can be check from result
  * @param buffer the preallocated buffer to hold the returned string
  * @param bufferLength the number of bytes allocated for the buffer
@@ -937,10 +927,30 @@ EXTERNAL fiftyoneDegreesCoordinate fiftyoneDegreesIpiGetCoordinate(
  * exception occurs. See exceptions.h
  * @return the number of characters added to the buffer
  */
-EXTERNAL size_t fiftyoneDegreesIpiGetIpRangeAsString(
+EXTERNAL size_t fiftyoneDegreesIpiGetIpAddressAsString(
 	fiftyoneDegreesCollectionItem *item,
 	fiftyoneDegreesEvidenceIpType type,
 	char *buffer,
+	uint32_t bufferLength,
+	fiftyoneDegreesException *exception);
+
+/**
+ * Get the ipaddress byte array from the collection item. This should
+ * be used on the item returned from #fiftyoneDegreesResultsIpiGetValues
+ * where the property is 'RangeStart', 'RangeEnd'.
+ * This copy the IP address byte array in the collection to the input
+ * buffer
+ * @param item the collection item pointing to the strings item in
+ * strings collection
+ * @param buffer the pre-allocated buffer
+ * @param bufferLength the length of the buffer
+ * @param exception pointer to an exception data structure to be used if an
+ * exception occurs. See exceptions.h
+ * @return the number of characters added to the buffer
+ */
+EXTERNAL uint32_t fiftyoneDegreesIpiGetIpAddressAsByteArray(
+	fiftyoneDegreesCollectionItem *item,
+	unsigned char *buffer,
 	uint32_t bufferLength,
 	fiftyoneDegreesException *exception);
 

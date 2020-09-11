@@ -51,7 +51,7 @@ static void buildString(
 				// The collection item is and ipRange which has ipAddress byte array at the start
 				// and a offset to the profileCombination collection item
 				if (results->items[0].type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
-					IpiGetIpRangeAsString(
+					IpiGetIpAddressAsString(
 						&results->values.items[0].item,
 						FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4,
 						ipAddress,
@@ -59,7 +59,7 @@ static void buildString(
 						exception);
 				}
 				else if (results->items[0].type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6) {
-					IpiGetIpRangeAsString(
+					IpiGetIpAddressAsString(
 						&results->values.items[0].item,
 						FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6,
 						ipAddress,

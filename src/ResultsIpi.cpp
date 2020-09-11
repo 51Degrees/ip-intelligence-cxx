@@ -100,8 +100,8 @@ IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<
                 stream << coordinate.lat << "," << coordinate.lon;
             }
             break;
-        case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_RANGE:
-            IpiGetIpRangeAsString(
+        case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS:
+            IpiGetIpAddressAsString(
                 &valuesItems[i].item,
                 results->items[0].type,
                 buffer,
@@ -245,7 +245,7 @@ IpIntelligence::ResultsIpi::getValueAsIpAddress(int requiredPropertyIndex) {
         fiftyoneDegreesPropertyValueType valueType = 
             getPropertyValueType(requiredPropertyIndex, exception);
         if (EXCEPTION_OKAY) {
-            if (valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_RANGE) {
+            if (valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS) {
                 // Get a pointer to the first value item for the property.
                 valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
                 EXCEPTION_THROW;
@@ -263,15 +263,16 @@ IpIntelligence::ResultsIpi::getValueAsIpAddress(int requiredPropertyIndex) {
                 }
                 else {
                     IpAddress ipAddress;
-                    if (results->items[0].type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
-                        ipAddress = IpAddress(
-                            ((Ipv4Range *)valuesItems[0].item.data.ptr)->start,
-                            FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4);
-                    }
-                    else {
-                        ipAddress = IpAddress(
-                            ((Ipv6Range *)valuesItems[0].item.data.ptr)->start,
-                            FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6);
+                    unsigned char ipAddressBytes[FIFTYONE_DEGREES_IPV6_LENGTH];
+                    uint32_t charactersAdded = IpiGetIpAddressAsByteArray(
+                        &valuesItems->item,
+                        ipAddressBytes,
+                        FIFTYONE_DEGREES_IPV6_LENGTH,
+                        exception);
+                    EXCEPTION_THROW;
+
+                    if (charactersAdded) {
+                        ipAddress = IpAddress(ipAddressBytes, results->items[0].type);
                     }
                     result.setValue(ipAddress);
                 }
@@ -390,7 +391,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedBoolList(
             for (i = 0; i < results->values.count; i++) {
                 WeightedValue<bool> weightedBool;
                 if (valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE
-                    && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_RANGE) {
+                    && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS) {
                     weightedBool.setValue(
                         strcmp(STRING((String *)valuesItems[i].item.data.ptr), "True") == 0 ? true : false);
                 }
@@ -476,8 +477,8 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
                         stream << coordinate.lat << "," << coordinate.lon;
                     }
                     break;
-                case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_RANGE:
-                    IpiGetIpRangeAsString(
+                case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS:
+                    IpiGetIpAddressAsString(
                         &valuesItems[i].item,
                         results->items[0].type,
                         buffer,
@@ -559,7 +560,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedIntegerList(
             for (i = 0; i < results->values.count; i++) {
                 WeightedValue<int> weightedInteger;
                 if (valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE
-                    && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_RANGE) {
+                    && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS) {
                     weightedInteger.setValue(
                         atoi(STRING((String *)valuesItems[i].item.data.ptr)));
                 }
@@ -635,7 +636,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedDoubleList(
             for (i = 0; i < results->values.count; i++) {
                 WeightedValue<double> weightedDouble;
                 if (valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE
-                    && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_RANGE) {
+                    && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS) {
                     weightedDouble.setValue(
                         strtod((STRING((String *)valuesItems[i].item.data.ptr)), nullptr));
                 }

@@ -60,7 +60,7 @@ ValueMetaData* ValueMetaDataCollectionBaseIpi::getByKey(
 			dataSet->values,
 			dataSet->strings,
 			property,
-			key.getValueName().data(),
+			key.getValueName().c_str(),
 			&valueItem,
 			exception);
 		EXCEPTION_THROW;

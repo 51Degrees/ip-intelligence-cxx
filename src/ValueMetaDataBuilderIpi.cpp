@@ -20,16 +20,20 @@
  * such notice(s) shall fulfill the requirements of that article.
  * ********************************************************************* */
 
+#include <sstream>
 #include "ValueMetaDataBuilderIpi.hpp"
 #include "common-cxx/Exceptions.hpp"
 #include "fiftyone.h"
 
 using namespace FiftyoneDegrees::IpIntelligence;
 
-string ValueMetaDataBuilderIpi::getBinaryValue(
+/* Maximum buffer length to hold an IP address string */
+#define IP_ADDRESS_STRING_MAX_LENGTH 50
+
+string ValueMetaDataBuilderIpi::getDynamicString(
 	fiftyoneDegreesCollection *stringsCollection,
 	uint32_t offset) {
-	FIFTYONE_DEGREES_EXCEPTION_CREATE;
+	EXCEPTION_CREATE;
 	string result;
 	fiftyoneDegreesCollectionItem item;
 	fiftyoneDegreesString *str;
@@ -39,17 +43,55 @@ string ValueMetaDataBuilderIpi::getBinaryValue(
 		offset,
 		&item,
 		exception);
-	FIFTYONE_DEGREES_EXCEPTION_THROW;
-		if (str != nullptr) {
-			// This will make sure all raw data are added
-			// regardless of type
-			result.append(&str->value, str->size);
+	EXCEPTION_THROW;
+
+	stringstream stream;
+	if (str != nullptr) {
+		switch(str->value) {
+		case FIFTYONE_DEGREES_STRING_COORDINATE:
+			{
+				Coordinate coordinate = IpiGetCoordinate(&item, exception);
+				EXCEPTION_THROW;
+				stream << coordinate.lat << "," << coordinate.lon;
+			}
+			break;
+		case FIFTYONE_DEGREES_STRING_IP_ADDRESS:
+			{
+				char buffer[IP_ADDRESS_STRING_MAX_LENGTH];
+				memset(buffer, 0, IP_ADDRESS_STRING_MAX_LENGTH);
+
+				// Get the actual address size
+				uint16_t addressSize = str->size - 1;
+				// Get the type of the IP address
+				fiftyoneDegreesEvidenceIpType type = 
+					addressSize == FIFTYONE_DEGREES_IPV4_LENGTH ?
+					FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 :
+					FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6;
+				// Get the string representation of the IP address
+				IpiGetIpAddressAsString(
+					&item, 
+					type, 
+					buffer, 
+					IP_ADDRESS_STRING_MAX_LENGTH, 
+					exception);
+				EXCEPTION_THROW;
+
+				stream << buffer;
+			}
+			break;
+		default:
+			stream << &str->value;
+			break;
 		}
-		FIFTYONE_DEGREES_COLLECTION_RELEASE(
-			stringsCollection,
-			&item);
+		result.append(stream.str());
+	}
+	FIFTYONE_DEGREES_COLLECTION_RELEASE(
+		stringsCollection,
+		&item);
 	return result;
 }
+
+
 
 ValueMetaData* ValueMetaDataBuilderIpi::build(
 	fiftyoneDegreesDataSetIpi *dataSet,
@@ -69,7 +111,7 @@ ValueMetaData* ValueMetaDataBuilderIpi::build(
 		result = new ValueMetaData(
 			ValueMetaDataKey(
 				getString(dataSet->strings, property->nameOffset),
-				getBinaryValue(dataSet->strings, property->nameOffset)),
+				getDynamicString(dataSet->strings, value->nameOffset)),
 			value->descriptionOffset == -1 ?
 			"" :
 			getString(dataSet->strings, value->descriptionOffset),
