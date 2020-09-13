@@ -263,16 +263,10 @@ IpIntelligence::ResultsIpi::getValueAsIpAddress(int requiredPropertyIndex) {
                 }
                 else {
                     IpAddress ipAddress;
-                    unsigned char ipAddressBytes[FIFTYONE_DEGREES_IPV6_LENGTH];
-                    uint32_t charactersAdded = IpiGetIpAddressAsByteArray(
-                        &valuesItems->item,
-                        ipAddressBytes,
-                        FIFTYONE_DEGREES_IPV6_LENGTH,
-                        exception);
-                    EXCEPTION_THROW;
-
-                    if (charactersAdded) {
-                        ipAddress = IpAddress(ipAddressBytes, results->items[0].type);
+                    const char *ipAddressBytes = IP_ADDRESS(valuesItems->item.data.ptr);
+                    if (ipAddressBytes != NULL) {
+                        ipAddress = IpAddress(
+                            (const unsigned char *)ipAddressBytes, results->items[0].type);
                     }
                     result.setValue(ipAddress);
                 }

@@ -106,31 +106,6 @@ typedef struct offset_percentage_t {
 } offsetPercentage;
 #pragma pack(pop)
 
-/*
- * The structure of a string item containing
- * a pair of float values
- */
-#pragma pack(push, 1)
-typedef struct string_coordinate_t {
-	uint16_t length; /* Length of the data block */
-	unsigned char type; /* Type of the data block */
-	Float lat; /* First float value */
-	Float lon; /* Second float value */
-} stringCoordinate;
-#pragma pack(pop)
-
-/*
- * The structure of a string item containing
- * a byte array representation of an IP address
- */
-#pragma pack(push, 1)
-typedef struct string_ip_address_t {
-	uint16_t length; /* Length of the data block */
-	unsigned char type; /* Type of the data block */
-	unsigned char firstByte; /* First byte of the array */
-} stringIpAddress;
-#pragma pack(pop)
-
 /**
  * PRESET IP INTELLIGENCE CONFIGURATIONS
  */
@@ -2114,7 +2089,7 @@ static bool resultGetHasValidPropertyValueOffset(
 			}
 		}
 	}
-	return true;
+	return hasValidOffset;
 }
 
 fiftyoneDegreesResultsNoValueReason fiftyoneDegreesResultsIpiGetNoValueReason(
@@ -2218,7 +2193,7 @@ static size_t getRangeString(
 	fiftyoneDegreesEvidenceIpType type,
 	char *buffer,
 	size_t bufferLength) {
-	stringIpAddress *ipAddress;
+	String *value;
 	size_t charactersAdded = 0, tempAdded = 0;
 	const size_t quoteLen = strlen("\"");
 
@@ -2231,16 +2206,16 @@ static size_t getRangeString(
 			}
 		}
 
-		ipAddress = (stringIpAddress *)profilePercentage->item.data.ptr;
+		value = (String *)profilePercentage->item.data.ptr;
 		if (type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
 			charactersAdded += getIpv4RangeString(
-				&ipAddress->firstByte,
+				(unsigned char *)&value->trail.secondValue,
 				buffer + charactersAdded,
 				bufferLength - charactersAdded);
 		}
 		else {
 			charactersAdded += getIpv6RangeString(
-				&ipAddress->firstByte,
+				(unsigned char *)&value->trail.secondValue,
 				buffer + charactersAdded,
 				bufferLength - charactersAdded);
 		}
@@ -2275,8 +2250,8 @@ static size_t getLocationString(
 	const size_t quoteLen = strlen("\"");
 
 	if (count > 0) {
-		stringCoordinate *location =
-			(stringCoordinate *)profilePercentage->item.data.ptr;
+		String *value =
+			(String *)profilePercentage->item.data.ptr;
 		
 		// Add the opening quote
 		if (charactersAdded + quoteLen < bufferLength) {
@@ -2289,8 +2264,8 @@ static size_t getLocationString(
 			buffer + charactersAdded,
 			bufferLength - charactersAdded,
 			"%f,%f",
-			FLOAT_TO_NATIVE(location->lat),
-			FLOAT_TO_NATIVE(location->lon));
+			FLOAT_TO_NATIVE(value->trail.coordinate.lat),
+			FLOAT_TO_NATIVE(value->trail.coordinate.lon));
 		if (tempAdded > 0) {
 			charactersAdded += tempAdded;
 			// Add the closing quote
@@ -2580,11 +2555,11 @@ char* fiftyoneDegreesIpiGetNetworkIdFromResults(
 fiftyoneDegreesCoordinate fiftyoneDegreesIpiGetCoordinate(
 	fiftyoneDegreesCollectionItem *item,
 	fiftyoneDegreesException *exception) {
-	stringCoordinate *fPair = (stringCoordinate *)item->data.ptr;
+	String *value = (String *)item->data.ptr;
 	fiftyoneDegreesCoordinate coordinate = { 0, 0 };
-	if (fPair->type == FIFTYONE_DEGREES_STRING_COORDINATE) {
-		coordinate.lat = FLOAT_TO_NATIVE(fPair->lat);
-		coordinate.lon = FLOAT_TO_NATIVE(fPair->lon);
+	if (value->value == FIFTYONE_DEGREES_STRING_COORDINATE) {
+		coordinate.lat = FLOAT_TO_NATIVE(value->trail.coordinate.lat);
+		coordinate.lon = FLOAT_TO_NATIVE(value->trail.coordinate.lon);
 	}
 	else {
 		EXCEPTION_SET(INCORRECT_FORMAT);
@@ -2599,53 +2574,32 @@ size_t fiftyoneDegreesIpiGetIpAddressAsString(
 	uint32_t bufferLength,
 	fiftyoneDegreesException *exception) {
 	size_t charactersAdded = 0;
-	stringIpAddress *ipAddress = (stringIpAddress *)item->data.ptr;
+	String *ipAddress = (String *)item->data.ptr;
 	int32_t ipLength = 
 		type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ?
 		FIFTYONE_DEGREES_IPV4_LENGTH :
 		FIFTYONE_DEGREES_IPV6_LENGTH;
 	// Get the actual length of the byte array
-	int32_t actualLength = ipAddress->length - 1;
+	int32_t actualLength = ipAddress->size - 1;
 
 	// Make sure the ipAddress item and everything is in correct
 	// format
-	if (ipAddress->type == FIFTYONE_DEGREES_STRING_IP_ADDRESS
+	if (ipAddress->value == FIFTYONE_DEGREES_STRING_IP_ADDRESS
 		&& ipLength == actualLength
 		&& type != FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID) {
 
 		if (type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
 			charactersAdded += getIpv4RangeString(
-				&ipAddress->firstByte,
+				(unsigned char *)&ipAddress->trail.secondValue,
 				buffer,
 				bufferLength);
 		}
 		else {
 			charactersAdded += getIpv6RangeString(
-				&ipAddress->firstByte,
+				(unsigned char *)&ipAddress->trail.secondValue,
 				buffer,
 				bufferLength);
 		}
-	}
-	else {
-		EXCEPTION_SET(INCORRECT_FORMAT);
-	}
-	return charactersAdded;
-}
-
-uint32_t fiftyoneDegreesIpiGetIpAddressAsByteArray(
-	fiftyoneDegreesCollectionItem *item,
-	unsigned char *buffer,
-	uint32_t bufferLength,
-	fiftyoneDegreesException *exception) {
-	uint32_t charactersAdded = 0;
-	stringIpAddress *ipAddress = (stringIpAddress *)item->data.ptr;
-	if (ipAddress->type == FIFTYONE_DEGREES_STRING_IP_ADDRESS) {
-		uint32_t copyLength = ipAddress->length - 1;
-		if (copyLength > bufferLength) {
-			copyLength = bufferLength;
-		}
-		memcpy(buffer, &ipAddress->firstByte, copyLength);
-		charactersAdded = copyLength;
 	}
 	else {
 		EXCEPTION_SET(INCORRECT_FORMAT);

@@ -396,7 +396,7 @@ void EngineIpIntelligenceTests::verifyIpAddressValue(
 	EXPECT_EQ(true, value.hasValue()) << "Could not find an IP range that matches"
 		"the IP address: " << ipAddress;
 
-	EXPECT_EQ(true, validateIpAddress(value.getValue())) << "An invalid IP address has been"
+	EXPECT_EQ(true, validateIpAddress(value.getValue())) << "An invalid IP address has been "
 		"returned, where it should be for IP address: " << ipAddress;
 }
 
@@ -428,7 +428,7 @@ void EngineIpIntelligenceTests::boundIpAddressPresent(const char *ipAddress) {
 	verifyIpAddressValue(ipAddress, rangeEnd);
 
 	EXPECT_EQ(rangeStart.getValue().getType(), rangeEnd.getValue().getType())
-			<< "RangeStart and RangeEnd types are not the same, where it should"
+			<< "RangeStart and RangeEnd types are not the same, where it should "
 			"be at IP address: " << ipAddress;
 
 	if (rangeStart.getValue().getType() == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
@@ -440,7 +440,7 @@ void EngineIpIntelligenceTests::boundIpAddressPresent(const char *ipAddress) {
 			memcmp(
 				upperBoundIpAddress,
 				rangeEnd.getValue().getIpAddress(),
-				FIFTYONE_DEGREES_IPV4_LENGTH) == 0) << "RangeStart or RangeEnd are not"
+				FIFTYONE_DEGREES_IPV4_LENGTH) == 0) << "RangeStart or RangeEnd are not "
 			"at the bound where it should be at IP address: " << ipAddress;
 	}
 	else {
@@ -452,7 +452,7 @@ void EngineIpIntelligenceTests::boundIpAddressPresent(const char *ipAddress) {
 			memcmp(
 				upperBoundIpAddress,
 				rangeEnd.getValue().getIpAddress(),
-				FIFTYONE_DEGREES_IPV6_LENGTH) == 0) << "RangeStart or RangeEnd are not"
+				FIFTYONE_DEGREES_IPV6_LENGTH) == 0) << "RangeStart or RangeEnd are not "
 			"at the bound where it should be at IP address: " << ipAddress;
 	}
 
@@ -474,7 +474,7 @@ void EngineIpIntelligenceTests::randomIpAddressPresent(int count) {
 		verifyIpAddressValue(ipAddress.c_str(), rangeEnd);
 
 		EXPECT_EQ(rangeStart.getValue().getType(), rangeEnd.getValue().getType())
-			<< "RangeStart and RangeEnd types are not the same, where it should"
+			<< "RangeStart and RangeEnd types are not the same, where it should "
 			"be at IP address: " << ipAddress;
 
 		delete results;

@@ -32,7 +32,7 @@ IpAddress::IpAddress() {
     this->type = FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID;
 }
 
-IpAddress::IpAddress(unsigned char ipAddress[],
+IpAddress::IpAddress(const unsigned char ipAddress[],
     fiftyoneDegreesEvidenceIpType type) {
     init(ipAddress, type);
 }
@@ -54,7 +54,7 @@ IpAddress::IpAddress(const char *ipAddressString) {
     free(eIpAddress);
 }
 
-void IpAddress::init(unsigned char *ipAddress,
+void IpAddress::init(const unsigned char *ipAddress,
     fiftyoneDegreesEvidenceIpType type) {
     switch (type) {
     case FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4:

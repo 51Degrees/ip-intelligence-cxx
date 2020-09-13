@@ -935,26 +935,6 @@ EXTERNAL size_t fiftyoneDegreesIpiGetIpAddressAsString(
 	fiftyoneDegreesException *exception);
 
 /**
- * Get the ipaddress byte array from the collection item. This should
- * be used on the item returned from #fiftyoneDegreesResultsIpiGetValues
- * where the property is 'RangeStart', 'RangeEnd'.
- * This copy the IP address byte array in the collection to the input
- * buffer
- * @param item the collection item pointing to the strings item in
- * strings collection
- * @param buffer the pre-allocated buffer
- * @param bufferLength the length of the buffer
- * @param exception pointer to an exception data structure to be used if an
- * exception occurs. See exceptions.h
- * @return the number of characters added to the buffer
- */
-EXTERNAL uint32_t fiftyoneDegreesIpiGetIpAddressAsByteArray(
-	fiftyoneDegreesCollectionItem *item,
-	unsigned char *buffer,
-	uint32_t bufferLength,
-	fiftyoneDegreesException *exception);
-
-/**
  * @}
  */
 

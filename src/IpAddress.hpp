@@ -55,7 +55,7 @@ namespace FiftyoneDegrees {
              * @param ipAddress the IP address byte array
              * @param type the type of the IP address
              */
-            IpAddress(unsigned char ipAddress[],
+            IpAddress(const unsigned char ipAddress[],
                       fiftyoneDegreesEvidenceIpType type);
 
             /**
@@ -111,7 +111,7 @@ namespace FiftyoneDegrees {
              * @param ipAddress the byte array IP address
              * @param type the type of the IP
              */
-            void init(unsigned char *ipAddress,
+            void init(const unsigned char *ipAddress,
                       fiftyoneDegreesEvidenceIpType type);
 
             /** The type of the IP address */
