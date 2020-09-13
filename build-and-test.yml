@@ -54,7 +54,7 @@ stages:
         configuration: Release
         clean: true
 
-    - bash: './FiftyOne.IpIntelligence.Tests.exe --gtest_filter="-*TestMem*:*TestPerf*:*TestOfflineProcessing*" --gtest_catch_exceptions=1 --gtest_break_on_failure=0 --gtest_output=xml:testoutput.xml'
+    - bash: './FiftyOne.IpIntelligence.Tests.exe --gtest_filter="-*TestOfflineProcessing*" --gtest_catch_exceptions=1 --gtest_break_on_failure=0 --gtest_output=xml:testoutput.xml'
       workingDirectory: VisualStudio/FiftyOne.IpIntelligence.Tests/x64/Release
       failOnStderr: true
       displayName: 'Run IP Intelligence Tests'
@@ -117,7 +117,7 @@ stages:
         workingDirectory: build
         cmakeArgs: '--build . --config Release'
 
-    - bash: 'ctest -R ".*Ipi.*" -E ".*TestMem|TestPerf|TestOfflineProcessing.*" -T test --no-compress-output'
+    - bash: 'ctest -R ".*Ipi.*" -E ".*TestOfflineProcessing.*" -T test --no-compress-output'
       workingDirectory: build
       failOnStderr: true
       displayName: 'Run Tests'
@@ -169,7 +169,7 @@ stages:
         workingDirectory: build
         cmakeArgs: '--build .'
 
-    - bash: 'ctest -E ".*TestMem|TestPerf|TestOfflineProcessing.*" -T test --no-compress-output'
+    - bash: 'ctest -E ".*TestOfflineProcessing.*" -T test --no-compress-output'
       workingDirectory: build
       failOnStderr: true
       displayName: 'Run Tests'
