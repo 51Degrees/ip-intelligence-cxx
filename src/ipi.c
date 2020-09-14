@@ -238,7 +238,7 @@ static int compareToIpv4Range(
 	if (target.length != FIFTYONE_DEGREES_IPV4_LENGTH)
 	{
 		// Length mismatched
-		EXCEPTION_SET(INCORRECT_FORMAT);
+		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 		result = 0;
 	}
 	else {
@@ -302,7 +302,7 @@ static int compareToIpv6Range(
 	if (target.length != FIFTYONE_DEGREES_IPV6_LENGTH)
 	{
 		// Length mismatched
-		EXCEPTION_SET(INCORRECT_FORMAT);
+		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 		result = 0;
 	}
 	else {
@@ -1427,7 +1427,7 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 			&& ipAddressLength < FIFTYONE_DEGREES_IPV4_LENGTH)
 		|| (type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6 
 			&& ipAddressLength < FIFTYONE_DEGREES_IPV6_LENGTH)) {
-		EXCEPTION_SET(INCORRECT_FORMAT);
+		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 		return;
 	}
 
@@ -1495,7 +1495,7 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 		break;
 	case FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID:
 	default:
-		EXCEPTION_SET(INCORRECT_FORMAT);
+		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 		break;
 	}
 	// Free parsed IP address
@@ -1526,7 +1526,7 @@ static bool setResultFromEvidence(
 		}
 		else if(ipAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID) {
 			free(ipAddress);
-			EXCEPTION_SET(INCORRECT_FORMAT);
+			EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 			return false;
 		}
 
@@ -2562,7 +2562,7 @@ fiftyoneDegreesCoordinate fiftyoneDegreesIpiGetCoordinate(
 		coordinate.lon = FLOAT_TO_NATIVE(value->trail.coordinate.lon);
 	}
 	else {
-		EXCEPTION_SET(INCORRECT_FORMAT);
+		EXCEPTION_SET(CORRUPT_DATA);
 	}
 	return coordinate;
 }
@@ -2602,7 +2602,7 @@ size_t fiftyoneDegreesIpiGetIpAddressAsString(
 		}
 	}
 	else {
-		EXCEPTION_SET(INCORRECT_FORMAT);
+		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 	}
 	return charactersAdded;
 }
