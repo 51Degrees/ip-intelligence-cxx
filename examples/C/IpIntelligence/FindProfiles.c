@@ -27,6 +27,10 @@ Getting started example of using 51Degrees IP intelligence.
 The example shows how to use 51Degrees on-premise IP intelligence to iterate
 over all profiles in the data set which match a specified property value pair.
 
+This feature is supported on normal profiles where the property is not dynamic.
+The dynamic properties where this feature is not supported are 'RangeStart',
+'RangeEnd', 'AverageLocation', 'LocationBoundSouthEast' and 'LocationBoundNorthWest'
+
 This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/FindProfiles.c).
 
 @include{doc} example-ipi-require-datafile.txt
