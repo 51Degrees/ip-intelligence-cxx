@@ -143,11 +143,12 @@ protected:
 	bool fileReadToByteArray();
 	void verifyWithIpAddressString(const char *ipAddress);
 	void verifyWithEvidence(EvidenceIpi *evidence);
+	void verifyComponentMetaDataDefaultProfile(
+		MetaData *metaData,
+		ComponentMetaData *component) 
+		override;
 	fiftyoneDegreesMemoryReader data = { nullptr, nullptr, 0L };
 private:
-	string getRandomKeyWithMatchingPrefix(
-		vector<string> *keys,
-		string prefix);
 	bool validateIpAddressInternal(IpAddress ipAddress, int length);
 	bool validateIpAddress(IpAddress ipAddress);
 	void verifyIpAddressValue(const char *ipAddress, Value<IpAddress> value);

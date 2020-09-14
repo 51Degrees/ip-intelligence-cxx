@@ -100,7 +100,7 @@ ProfileMetaData* MetaDataIpi::getDefaultProfileForComponent(
 	Collection<uint32_t, ProfileMetaData> *profiles = getProfiles();
 	if (profiles != nullptr) {
 		// Make sure that it is not a dynamic component
-		if (!component->isDynamic()) {
+		if (component->getDefaultProfileId() != 0) {
 			result = profiles->getByKey(component->getDefaultProfileId());
 		}
 		delete profiles;

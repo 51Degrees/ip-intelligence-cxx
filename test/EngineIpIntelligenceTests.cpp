@@ -87,6 +87,25 @@ void EngineIpIntelligenceTests::TearDown() {
 	EngineTests::TearDown();
 }
 
+void EngineIpIntelligenceTests::verifyComponentMetaDataDefaultProfile(
+	MetaData *metaData,
+	ComponentMetaData *component) {
+	if (component->getDefaultProfileId() != 0) {
+		ProfileMetaData *defaultProfile = 
+			metaData->getDefaultProfileForComponent(component);
+		ComponentMetaData *otherComponent = 
+			metaData->getComponentForProfile(defaultProfile);
+		ASSERT_EQ(*component, *otherComponent) <<
+			L"The component and its default profile are not linked." <<
+			L"\nComponent Id = " << (int)component->getComponentId() <<
+			L"\nOther Component Id = " << (int)otherComponent->getComponentId() <<
+			L"\nProfile Id = " << defaultProfile->getProfileId();
+
+		delete otherComponent;
+		delete defaultProfile;
+	}
+}
+
 void EngineIpIntelligenceTests::verifyValueMetaData() {
 	EngineIpi *engineIpi = (EngineIpi *)getEngine();
 	ValueMetaData *value;
