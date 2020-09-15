@@ -38,7 +38,7 @@
 %template(WeightedBoolListValueSwig) Value<std::vector<WeightedValue<bool>>>;
 %template(WeightedIntListValueSwig) Value<std::vector<WeightedValue<int>>>;
 %template(WeightedDoubleListValueSwig) Value<std::vector<WeightedValue<double>>>;
-%template(CoordinateValueSwig) Value<Coordinate>;
+%template(CoordinateValueSwig) Value<fiftyoneDegreesCoordinate>;
 %template(IpAddressValueSwig) Value<IpAddress>;
 
 %nodefaultctor ResultsIpi;

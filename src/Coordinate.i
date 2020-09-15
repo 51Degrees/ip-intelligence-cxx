@@ -24,7 +24,7 @@
 #include "ip-intelligence-cxx/src/ipi.h"
 %}
 
-%rename (CoordinateSwig) fiftyoneDegreesCoordinate;
+%rename (CoordinateSwig) fiftyone_degrees_ipi_coordinate_t;
 
 typedef struct fiftyone_degrees_ipi_coordinate_t {
 	float lat;
