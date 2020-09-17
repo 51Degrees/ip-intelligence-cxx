@@ -1513,7 +1513,7 @@ static bool setResultFromEvidence(
 	Exception* exception = ((stateWithException*)state)->exception;
 
 	// Only proceed if match the unique header "ip"
-	if (strcmp(UNIQUE_HEADER, pair->field) == 0) {
+	if (StringCompare(UNIQUE_HEADER, pair->field) == 0) {
 		// Get the parsed Value
 		const char *ipAddressString = (const char *)pair->parsedValue;
 		// Obtain the byte array first
