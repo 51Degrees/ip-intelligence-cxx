@@ -22,6 +22,7 @@
 
 #include <string>
 #include <stdexcept>
+#include "common-cxx/memory.h"
 #include "IpAddress.hpp"
 
 using namespace std;
@@ -40,7 +41,7 @@ IpAddress::IpAddress(const unsigned char ipAddress[],
 IpAddress::IpAddress(const char *ipAddressString) {
     fiftyoneDegreesEvidenceIpAddress *eIpAddress = 
 		fiftyoneDegreesIpParseAddress(
-			malloc,
+			fiftyoneDegreesMalloc,
 			ipAddressString,
 			ipAddressString + strlen(ipAddressString));
     // Make sure the ip address has been parsed successfully
@@ -51,7 +52,7 @@ IpAddress::IpAddress(const char *ipAddressString) {
     init(eIpAddress->address, eIpAddress->type);
 
     // Free the previously allocated IP address
-    free(eIpAddress);
+    fiftyoneDegreesFree(eIpAddress);
 }
 
 void IpAddress::init(const unsigned char *ipAddress,

@@ -239,50 +239,26 @@ static int compareToIpv4Range(
 	{
 		// Length mismatched
 		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
-		result = 0;
 	}
 	else {
 		// We will terminate if IP address is within the range between the current item and the next item
 		int tempResult = compareIpAddresses(((Ipv4Range*)item->data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV4_LENGTH);
-		if (tempResult == 0) {
-			result = 0;
-		}
-		else if (tempResult < 0) {
+		if (tempResult < 0) {
 			Item nextItem;
 			DataReset(&nextItem.data);
-			if ((uint32_t)curIndex > item->collection->count - 1) {
-				// Target IP address is out of the maximum upper bound for and IP address
-				EXCEPTION_SET(COLLECTION_INDEX_OUT_OF_RANGE);
-				result = 0;
-			}
-			else {
-				if ((uint32_t)curIndex + 1 == item->collection->count) {
-					// There is no more item for the IP address
-					// Use the current result instead
-					result = 0;
-				}
-				else if (item->collection->get(
+			if ((uint32_t)curIndex + 1 < item->collection->count &&
+				item->collection->get(
 					item->collection,
 					++curIndex,
 					&nextItem,
 					exception) != NULL && EXCEPTION_OKAY) {
-					if (compareIpAddresses(((Ipv4Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV4_LENGTH) > 0) {
-						// The target IP address is within the range between the current and next items
-						result = 0;
-					}
-					else {
-						// The IP address is not within the range
-						result = -1;
-					}
-					COLLECTION_RELEASE(item->collection, &nextItem);
+				if (compareIpAddresses(((Ipv4Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV4_LENGTH) <= 0) {
+					result = -1;
 				}
-				else {
-					// Error occured
-					result = 0;
-				}
+				COLLECTION_RELEASE(item->collection, &nextItem);
 			}
 		}
-		else if (curIndex > 0) {
+		else if (tempResult > 0 && curIndex > 0) {
 			// The IP address is out of range
 			// NOTE: If the current index is 0
 			// There is no more item lower so return the current
@@ -303,50 +279,27 @@ static int compareToIpv6Range(
 	{
 		// Length mismatched
 		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
-		result = 0;
 	}
 	else {
 		// We will terminate if IP address is within the range between the current item and the next item
 		int tempResult = compareIpAddresses(((Ipv6Range*)item->data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV6_LENGTH);
-		if (tempResult == 0) {
-			result = 0;
-		}
-		else if (tempResult < 0) {
+		if (tempResult < 0) {
 			Item nextItem;
 			DataReset(&nextItem.data);
-			if ((uint32_t)curIndex > item->collection->count - 1) {
-				// Target IP address is out of the maximum upper bound for and IP address
-				EXCEPTION_SET(COLLECTION_INDEX_OUT_OF_RANGE);
-				result = 0;
-			}
-			else {
-				if ((uint32_t)curIndex + 1 == item->collection->count) {
-					// There is no more item for the IP address
-					// Use the current result instead
-					result = 0;
-				}
-				else if (item->collection->get(
+			if ((uint32_t)curIndex + 1 < item->collection->count &&
+				item->collection->get(
 					item->collection,
 					++curIndex,
 					&nextItem,
 					exception) != NULL && EXCEPTION_OKAY) {
-					if (compareIpAddresses(((Ipv6Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV6_LENGTH) > 0) {
-						// The target IP address is within the range between the current and next items
-						result = 0;
-					}
-					else {
-						// The IP address is not within the range
-						result = -1;
-					}
-					COLLECTION_RELEASE(item->collection, &nextItem);
+				if (compareIpAddresses(((Ipv6Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV6_LENGTH) <= 0) {
+					// The IP address is not within the range
+					result = -1;
 				}
-				else {
-					// Error occured
-					result = 0;
-				}
+				COLLECTION_RELEASE(item->collection, &nextItem);
 			}
 		}
-		else if (curIndex > 0) {
+		else if (tempResult > 0 && curIndex > 0) {
 			// The IP address is out of range
 			// NOTE: There is no more item lower
 			// so return the current
@@ -585,8 +538,8 @@ uint32_t initGetEvidenceProperties(
 		name = (String*)availableProperty->name.data.ptr;
 		// Allocate some space to set the name of a target property. This
 		// follows the convension of a 'JavaScript' suffix. For example, a
-		// property named 'CountryJavaScript' would contain JavaScript which
-		// produced evidence for the 'Country' property.
+		// property named 'CountriesJavaScript' would contain JavaScript which
+		// produced evidence for the 'Countries' property.
 		// For the scope of IP Intelligence this is not required. But it is
 		// good to have its in place for future supports.
 		jsName = (char*)Malloc(sizeof(char) * (name->size + strlen("javascript") + 1));
@@ -1325,22 +1278,32 @@ static void freeIpiList(fiftyoneDegreesIpiList* list) {
 	list->capacity = 0;
 }
 
-static void resizeIpiList(
+/*
+ * Extend the size of the current list.
+ * This should ever be used by the addIpiListItem
+ * @param list the current list
+ * @param newCapacity which should be bigger
+ * than the current capacity else now
+ * change will be made
+ */
+static void extendIpiList(
 	fiftyoneDegreesIpiList* list,
 	uint32_t newCapacity) {
 	// Allocate new list
-	ProfilePercentage *newItems 
-		= (ProfilePercentage*)Malloc(newCapacity * sizeof(ProfilePercentage));
-	if (newItems == NULL) {
-		return;
-	}
+	if (newCapacity > list->capacity) {
+		ProfilePercentage *newItems 
+			= (ProfilePercentage*)Malloc(newCapacity * sizeof(ProfilePercentage));
+		if (newItems == NULL) {
+			return;
+		}
 
-	if (list->items != NULL) {
-		memcpy(newItems, list->items, list->count * sizeof(ProfilePercentage));
-		Free(list->items);
+		if (list->items != NULL) {
+			memcpy(newItems, list->items, list->count * sizeof(ProfilePercentage));
+			Free(list->items);
+		}
+		list->items = newItems;
+		list->capacity = newCapacity;
 	}
-	list->items = newItems;
-	list->capacity = newCapacity;
 }
 
 static void addIpiListItem(
@@ -1355,7 +1318,7 @@ static void addIpiListItem(
 		uint32_t newCapacity =
 			(uint32_t)ceilf(list->capacity * IPI_LIST_RESIZE_FACTOR);
 
-		resizeIpiList(list, newCapacity);
+		extendIpiList(list, newCapacity);
 	}
 }
 
@@ -1467,7 +1430,7 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 	size_t ipLength,
 	fiftyoneDegreesException* exception) {
 	fiftyoneDegreesEvidenceIpAddress *ip = 
-		fiftyoneDegreesIpParseAddress(malloc, ipAddress, ipAddress + ipLength);
+		fiftyoneDegreesIpParseAddress(Malloc, ipAddress, ipAddress + ipLength);
 	// Check if the IP address was successfully created
 	if (ip == NULL) {
 		EXCEPTION_SET(INSUFFICIENT_MEMORY);
@@ -1498,7 +1461,7 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 		break;
 	}
 	// Free parsed IP address
-	free(ip);
+	Free(ip);
 }
 
 static bool setResultFromEvidence(
@@ -1517,14 +1480,14 @@ static bool setResultFromEvidence(
 		const char *ipAddressString = (const char *)pair->parsedValue;
 		// Obtain the byte array first
 		fiftyoneDegreesEvidenceIpAddress *ipAddress = 
-			fiftyoneDegreesIpParseAddress(malloc, ipAddressString, ipAddressString + strlen(ipAddressString));
+			fiftyoneDegreesIpParseAddress(Malloc, ipAddressString, ipAddressString + strlen(ipAddressString));
 		// Check if the IP address was successfully created
 		if (ipAddress == NULL) {
 			EXCEPTION_SET(INSUFFICIENT_MEMORY);
 			return false;
 		}
 		else if(ipAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID) {
-			free(ipAddress);
+			Free(ipAddress);
 			EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 			return false;
 		}
@@ -1547,7 +1510,7 @@ static bool setResultFromEvidence(
 		results->count++;
 
 		// Freed the allocated memory for ipAddress
-		free(ipAddress);
+		Free(ipAddress);
 
 		setResultFromIpAddress(
 			result,
