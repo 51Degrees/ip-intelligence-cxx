@@ -1875,57 +1875,6 @@ fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	return firstValue;
 }
 
-bool fiftyoneDegreesResultsIpiGetHasValues(
-	fiftyoneDegreesResultsIpi* results,
-	int requiredPropertyIndex,
-	fiftyoneDegreesException* exception) {
-	ProfilePercentage *profilePercentage = NULL;
-	DataSetIpi *dataSet = (DataSetIpi*)results->b.dataSet;
-	// Ensure any previous uses of the results to get values are released.
-	resultsIpiRelease(results);
-
-	if (requiredPropertyIndex < 0 ||
-		requiredPropertyIndex >= (int)dataSet->b.b.available->count) {
-		// The property index is not valid.
-		return false;
-	}
-
-	if (results->count == 0)
-		// There is no result
-		return false;
-
-	// Work out the property index from the required property index.
-	uint32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
-		dataSet->b.b.available,
-		requiredPropertyIndex);
-
-	if (propertyIndex >= 0) {
-		// Set the property that will be available in the results structure. 
-		// This may also be needed to work out which of a selection of results 
-		// are used to obtain the values.
-		Property *property = PropertyGet(
-			dataSet->properties,
-			propertyIndex,
-			&results->propertyItem,
-			exception);
-
-		// There will only be one result
-		profilePercentage = getValuesFromResult(
-			results,
-			results->items,
-			property,
-			exception);
-	}
-
-	if (profilePercentage == NULL) {
-		// There is no value for the required property.
-		return false;
-	}
-
-	// None of the checks have returned false, so there must be valid values.
-	return true;
-}
-
 static bool resultGetHasValidPropertyValueOffset(
 	fiftyoneDegreesResultsIpi* results,
 	fiftyoneDegreesResultIpi* result,
@@ -2007,6 +1956,38 @@ static bool resultGetHasValidPropertyValueOffset(
 		}
 	}
 	return hasValidOffset;
+}
+
+bool fiftyoneDegreesResultsIpiGetHasValues(
+	fiftyoneDegreesResultsIpi* results,
+	int requiredPropertyIndex,
+	fiftyoneDegreesException* exception) {
+	DataSetIpi *dataSet = (DataSetIpi*)results->b.dataSet;
+	// Ensure any previous uses of the results to get values are released.
+	resultsIpiRelease(results);
+
+	if (requiredPropertyIndex < 0 ||
+		requiredPropertyIndex >= (int)dataSet->b.b.available->count) {
+		// The property index is not valid.
+		return false;
+	}
+
+	if (results->count == 0)
+		// There is no result
+		return false;
+
+	// There will only be one result
+	bool hasValidOffset = resultGetHasValidPropertyValueOffset(
+		results,
+		results->items,
+		requiredPropertyIndex,
+		exception);
+	if (!hasValidOffset || EXCEPTION_FAILED) {
+		return false;
+	}
+
+	// None of the checks have returned false, so there must be valid values.
+	return true;
 }
 
 fiftyoneDegreesResultsNoValueReason fiftyoneDegreesResultsIpiGetNoValueReason(
