@@ -1359,12 +1359,6 @@ static void addIpiListItem(
 	}
 }
 
-//static fiftyoneDegreesString* fiftyoneDegreesListGetAsString(
-//	fiftyoneDegreesList* list,
-//	int index) {
-//	return (String*)list->items[index].data.ptr;
-//}
-
 static void resetIpiList(fiftyoneDegreesIpiList* list) {
 	list->capacity = 0;
 	list->count = 0;
@@ -1745,7 +1739,6 @@ static uint32_t addValuesFromDynamicProperty(
 				profilePercentage.percentage = values[i].percentage;
 				addIpiListItem(&results->values, &profilePercentage);
 				count++;
-				break;
 			}
 		}
 	}
@@ -1829,6 +1822,14 @@ static uint32_t addValuesFromResult(
 						property,
 						profileCombination,
 						exception);
+					if (count > 1 && 
+						EXCEPTION_OKAY &&
+						(property->valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE ||
+						property->valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS)) {
+						releaseIpiList(&results->values);
+						// There should not be more than one value for this type
+						EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
+					}
 				}
 				else {
 					count = addValuesFromNormalProperty(
@@ -1892,7 +1893,7 @@ fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 				results->propertyItem.collection = dataSet->properties;
 			}
 
-			// There will be only result so make sure we have more than 1
+			// There will only be one result
 			if (results->count > 0 && EXCEPTION_OKAY) {
 				firstValue = getValuesFromResult(
 					results,
