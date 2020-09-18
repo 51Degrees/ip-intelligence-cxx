@@ -341,9 +341,8 @@ typedef struct fiftyone_degrees_ipi_list_t {
  */
 typedef struct fiftyone_degrees_result_ipi_t {
 	fiftyoneDegreesEvidenceIpType type; /**< The version of the IP */
-	uint32_t ipRangeOffset; /**< The offset in the IP range collection.
-							Use the type to determine what IP range collection
-							that it belongs to: ipv4Ranges or ipv6Ranges */
+	uint32_t profileCombinationOffset; /**< The offset in the profile combination
+							collection, which matches the target IP address */
 	fiftyoneDegreesIpAddress targetIpAddress; /**< The target IP address
 											  to find a matching range for */
 } fiftyoneDegreesResultIpi;
@@ -397,9 +396,12 @@ FIFTYONE_DEGREES_IP_RANGE(4, 4)
  */
 FIFTYONE_DEGREES_IP_RANGE(6, 16)
 
+/**
+ * Singular coordinate, representing a location
+ */
 typedef struct fiftyone_degrees_ipi_coordinate_t {
-	float lat;
-	float lon;
+	float lat; /**< Latitude value of the coordinate */
+	float lon; /**< Longitude value of the coordinate */
 } fiftyoneDegreesCoordinate;
 
 /**

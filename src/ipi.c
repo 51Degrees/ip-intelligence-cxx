@@ -373,6 +373,10 @@ static void setResultFromIpAddress(
 			(void*)&result->targetIpAddress,
 			compareToIpv4Range,
 			exception);
+		if (rangeOffset >= 0 && EXCEPTION_OKAY) {
+			result->profileCombinationOffset = 
+				((Ipv4Range *)item.data.ptr)->profileCombinationOffset;
+		}
 		COLLECTION_RELEASE(dataSet->ipv4Ranges, &item);
 		break;
 	case FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6:
@@ -385,11 +389,12 @@ static void setResultFromIpAddress(
 			(void*)&result->targetIpAddress,
 			compareToIpv6Range,
 			exception);
+		if (rangeOffset >= 0 && EXCEPTION_OKAY) {
+			result->profileCombinationOffset = 
+				((Ipv6Range *)item.data.ptr)->profileCombinationOffset;
+		}
 		COLLECTION_RELEASE(dataSet->ipv6Ranges, &item);
 		break;
-	}
-	if (rangeOffset >= 0 && EXCEPTION_OKAY) {
-		result->ipRangeOffset = rangeOffset;
 	}
 }
 
@@ -1432,7 +1437,7 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 	}
 
 	resultIpiReset(&results->items[0]);
-	results->items[0].ipRangeOffset = NULL_PROFILE_OFFSET; // Default IP range offset
+	results->items[0].profileCombinationOffset = NULL_PROFILE_OFFSET; // Default IP range offset
 	results->items[0].targetIpAddress.type = type;
 	results->items[0].type = type;
 
@@ -1538,7 +1543,7 @@ static bool setResultFromEvidence(
 		// Configure the next result in the array of results.
 		result = &((ResultIpi*)results->items)[results->count];
 		resultIpiReset(result);
-		results->items[0].ipRangeOffset = NULL_PROFILE_OFFSET; // Default IP range offset
+		results->items[0].profileCombinationOffset = NULL_PROFILE_OFFSET; // Default IP range offset
 		result->targetIpAddress.length = ipLength;
 		memset(result->targetIpAddress.value, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
 		memcpy(result->targetIpAddress.value, ipAddress->address, ipLength);
@@ -1709,50 +1714,6 @@ static Item getStringItemByValueOffset(
 	return returnedItem;
 }
 
-/*
- * get the profile combination offset from the result
- * @param results the results array
- * @param result the matched result
- * @param exception the exception object which will be used
- * when an exception occurs
- * @return offset -1 if not be found
- */
-static uint32_t getProfileCombinationOffset(
-	ResultsIpi* results,
-	ResultIpi* result,
-	Exception *exception) {
-	uint32_t offset = NULL_PROFILE_OFFSET;
-	Item item;
-	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
-
-	if (result->ipRangeOffset >= 0) {
-		DataReset(&item.data);
-		if (result->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
-			Ipv4Range* ipv4Range = dataSet->ipv4Ranges->get(
-				dataSet->ipv4Ranges,
-				result->ipRangeOffset,
-				&item,
-				exception);
-			if (ipv4Range != NULL && EXCEPTION_OKAY) {
-				offset = ipv4Range->profileCombinationOffset;
-				COLLECTION_RELEASE(dataSet->ipv4Ranges, &item);
-			}
-		}
-		else {
-			Ipv6Range* ipv6Range = dataSet->ipv6Ranges->get(
-				dataSet->ipv6Ranges,
-				result->ipRangeOffset,
-				&item,
-				exception);
-			if (ipv6Range != NULL && EXCEPTION_OKAY) {
-				offset = ipv6Range->profileCombinationOffset;
-				COLLECTION_RELEASE(dataSet->ipv4Ranges, &item);
-			}
-		}
-	}
-	return offset;
-}
-
 static uint32_t addValuesFromDynamicProperty(
 	ResultsIpi* results,
 	Property *property,
@@ -1846,19 +1807,14 @@ static uint32_t addValuesFromResult(
 	Item profileCombinationItem;
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 
-	// Get the profile combination
-	DataReset(&profileCombinationItem.data);
 	if (results->count > 0) {
-		uint32_t profileCombinationOffset = getProfileCombinationOffset(
-			results,
-			result,
-			exception);
-
-		if (profileCombinationOffset != NULL_PROFILE_OFFSET
-			&& EXCEPTION_OKAY) {
-			profileCombination = (ProfileCombination*)dataSet->profileCombinations->get(
+		if (result->profileCombinationOffset != NULL_PROFILE_OFFSET) {
+			// Get the profile combination
+			DataReset(&profileCombinationItem.data);
+			profileCombination = 
+				(ProfileCombination*)dataSet->profileCombinations->get(
 				dataSet->profileCombinations,
-				profileCombinationOffset,
+				result->profileCombinationOffset,
 				&profileCombinationItem,
 				exception);
 
@@ -2036,16 +1992,13 @@ static bool resultGetHasValidPropertyValueOffset(
 				dataSet->b.b.available,
 				requiredPropertyIndex));
 		if (propertyName != NULL && EXCEPTION_OKAY) {
-			// Obtain the profile combination offset from the returned result
-			uint32_t offset = getProfileCombinationOffset(results, result, exception);
-
 			// We will only execute this step if successfully obtained the
 			// profile combination offset from the previous step
-			if (offset != NULL_PROFILE_OFFSET && EXCEPTION_OKAY) {
+			if (result->profileCombinationOffset != NULL_PROFILE_OFFSET) {
 				DataReset(&item.data);
 				profileCombination = dataSet->profileCombinations->get(
 					dataSet->profileCombinations,
-					offset,
+					result->profileCombinationOffset,
 					&item,
 					exception);
 
@@ -2477,22 +2430,20 @@ char* fiftyoneDegreesIpiGetNetworkIdFromResult(
 	char* destination,
 	size_t size,
 	fiftyoneDegreesException* exception) {
-	uint32_t offset;
 	Item profileCombinationItem, profileItem;
 	Profile *profile;
+	uint32_t profileOffset;
 	char *buffer = destination;
 	ProfileCombination* profileCombination;
 	DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
-	// Obtain the profile combination offset from the returned result
-	offset = getProfileCombinationOffset(results, result, exception);
-
+	
 	// We will only execute this step if successfully obtained the
 	// profile combination offset from the previous step
-	if (offset != NULL_PROFILE_OFFSET  && EXCEPTION_OKAY) {
+	if (result->profileCombinationOffset != NULL_PROFILE_OFFSET) {
 		DataReset(&profileCombinationItem.data);
 		profileCombination = dataSet->profileCombinations->get(
 			dataSet->profileCombinations,
-			offset,
+			result->profileCombinationOffset,
 			&profileCombinationItem,
 			exception);
 		if (profileCombination != NULL && EXCEPTION_OKAY) {
@@ -2510,10 +2461,10 @@ char* fiftyoneDegreesIpiGetNetworkIdFromResult(
 				}
 
 				// Get profile offset
-				offset = profiles[i].offset;
+				profileOffset = profiles[i].offset;
 				profile = (Profile *)dataSet->profiles->get(
 					dataSet->profiles,
-					offset,
+					profileOffset,
 					&profileItem,
 					exception);
 				if (profile == NULL) {

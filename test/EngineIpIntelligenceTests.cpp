@@ -112,7 +112,7 @@ void EngineIpIntelligenceTests::verifyValueMetaData() {
 	Collection<ValueMetaDataKey, ValueMetaData> *values = 
 		engineIpi->getMetaData()->getValues();
 	value = values->getByKey(ValueMetaDataKey("RangeStart", lowerBoundIpv4Address));
-	EXPECT_TRUE(value != nullptr) << "Value meta data is not found"
+	EXPECT_TRUE(value != nullptr) << "Value meta data is not found "
 		"where it should be at IP address: " << lowerBoundIpv4Address;
 	EXPECT_EQ(0, strcmp(lowerBoundIpv4Address, value->getName().c_str()))
 		<< "Value meta data is not correct where it should be at IP address: "
@@ -120,7 +120,7 @@ void EngineIpIntelligenceTests::verifyValueMetaData() {
 	delete value;
 
 	value = values->getByKey(ValueMetaDataKey("RangeStart", lowerBoundIpv6Address));
-	EXPECT_TRUE(value != nullptr) << "Value meta data is not found"
+	EXPECT_TRUE(value != nullptr) << "Value meta data is not found "
 		"where it should be at IP address: " << lowerBoundIpv6Address;
 	EXPECT_EQ(0, strcmp(lowerBoundIpv6Address, value->getName().c_str()))
 		<< "Value meta data is not correct where it should be at IP address: "
@@ -412,7 +412,7 @@ bool EngineIpIntelligenceTests::validateIpAddress(IpAddress ipAddress) {
 void EngineIpIntelligenceTests::verifyIpAddressValue(
 	const char *ipAddress, 
 	Value<IpAddress> value) {
-	EXPECT_EQ(true, value.hasValue()) << "Could not find an IP range that matches"
+	EXPECT_EQ(true, value.hasValue()) << "Could not find an IP range that matches "
 		"the IP address: " << ipAddress;
 
 	EXPECT_EQ(true, validateIpAddress(value.getValue())) << "An invalid IP address has been "
@@ -530,7 +530,7 @@ void EngineIpIntelligenceTests::verifyCoordinate() {
 		Value<fiftyoneDegreesCoordinate> value = results->getValueAsCoordinate("AverageLocation");
 		fiftyoneDegreesCoordinate coordinate;
 
-		EXPECT_EQ(true, value.hasValue()) << "Could not find an IP range that matches"
+		EXPECT_EQ(true, value.hasValue()) << "Could not find an IP range that matches "
 			"the IP address: " << ipAddress;
 
 		coordinate = value.getValue();
@@ -609,11 +609,11 @@ void EngineIpIntelligenceTests::multiThreadRandom(uint16_t concurrency) {
  	EXPECT_NE(a->results->b.dataSet, b->results->b.dataSet) <<
  		"The data set was not reloaded.";
  	EXPECT_EQ(a->getAvailableProperties(), b->getAvailableProperties()) <<
- 		"Number of properties available does not match";
+ 		"Number of properties available does not match.";
  	for (size_t i = 0; i < a->getProperties().size(); i++) {
  		vector<string> av = *a->getValues((int)i);
  		vector<string> bv = *b->getValues((int)i);
- 		EXPECT_EQ(av.size(), bv.size()) << "Expected same number of values";
+ 		EXPECT_EQ(av.size(), bv.size()) << "Expected same number of values.";
  		for (size_t v = 0; v < av.size(); v++) {
  			EXPECT_STREQ(av[v].c_str(), bv[v].c_str()) <<
  				"Values for the new data set should be the same.";
