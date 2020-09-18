@@ -145,7 +145,7 @@ void reportProgress(memoryThreadState* state) {
 }
 
 /**
- * runs the test for the IP Address provided. Called from the text file
+ * Runs the test for the IP Address provided. Called from the text file
  * iterator.
  * @param ipAddress to be used for the test
  * @param state instance of performanceThreadState

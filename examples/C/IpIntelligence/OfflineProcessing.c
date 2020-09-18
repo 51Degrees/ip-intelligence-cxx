@@ -28,17 +28,11 @@ This example demonstrates one possible use of the 51Degrees on-premise IP intell
 API and data for offline data processing. It also demonstrates that you can reuse the
 retrieved results for multiple uses and only then release it.
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/OfflineProcessing.c).
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/C/OfflineProcessing.c).
 
 @include{doc} example-ipi-require-datafile.txt
 
 @include{doc} example-ipi-how-to-run.txt
-
-Expected output:
-
-```
-Result
-```
 
 In detail, the example shows how to:
 
@@ -102,6 +96,11 @@ fiftyoneDegreesTextFileIterate(
 7. Finally release the memory used by the data set resource.
 ```
 fiftyoneDegreesResourceManagerFree(&manager);
+```
+
+Expected output:
+```
+Result
 ```
 
 */

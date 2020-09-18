@@ -27,17 +27,11 @@ Getting started example of using 51Degrees IP intelligence.
 The example shows how to use 51Degrees on-premise IP intelligence to
 determine the country of a given IP address.
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/GettingStarted.c).
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/C/GettingStarted.c).
 
 @include{doc} example-ipi-require-datafile.txt
 
 @include{doc} example-ipi-how-to-run.txt
-
-Expected output:
-
-```
-Result
-```
 
 In detail, the example shows how to
 
@@ -101,6 +95,11 @@ fiftyoneDegreesResultsIpiFree(results);
 fiftyoneDegreesResourceManagerFree(&manager);
 ```
 
+Expected output:
+```
+Result
+```
+
 */
 
 #ifdef _DEBUG
@@ -148,6 +147,21 @@ static void reportStatus(StatusCode status,
 	Free((void*)message);
 }
 
+static void printPropertyValueFromResults(ResultsIpi *results) {
+	if (results != NULL && results->count > 0) {
+		printf("RangeStart: %s\n", getPropertyValueAsString(results, "RangeStart"));
+		printf("RangeEnd: %s\n", getPropertyValueAsString(results, "RangeEnd"));
+		printf("Countries: %s\n", getPropertyValueAsString(results, "Countries"));
+		printf("AverageLocation: %s\n", getPropertyValueAsString(results, "AverageLocation"));
+		printf("LocationBoundNorthWest: %s\n", getPropertyValueAsString(results, "LocationBoundNorthWest"));
+		printf("LocationBoundSouthEast: %s\n", getPropertyValueAsString(results, "LocationBoundSouthEast"));
+	}
+	else
+	{
+		printf("No results.");
+	}
+}
+
 void fiftyoneDegreesIpiGettingStarted(
 	const char* dataFilePath,
 	ConfigIpi* config) {
@@ -193,12 +207,7 @@ void fiftyoneDegreesIpiGettingStarted(
 	if (EXCEPTION_FAILED) {
 		printf("%s\n", ExceptionGetMessage(exception));
 	}
-	printf("RangeStart: %s\n", getPropertyValueAsString(results, "RangeStart"));
-	printf("RangeEnd: %s\n", getPropertyValueAsString(results, "RangeEnd"));
-	printf("Countries: %s\n", getPropertyValueAsString(results, "Countries"));
-	printf("AverageLocation: %s\n", getPropertyValueAsString(results, "AverageLocation"));
-	printf("LocationBoundNorthWest: %s\n", getPropertyValueAsString(results, "LocationBoundNorthWest"));
-	printf("LocationBoundSouthEast: %s\n", getPropertyValueAsString(results, "LocationBoundSouthEast"));
+	printPropertyValueFromResults(results);
 
 	// Carries out a match for the ipv6 address
 	printf("\nIpv6 Address: %s\n", ipv6Address);
@@ -210,12 +219,7 @@ void fiftyoneDegreesIpiGettingStarted(
 	if (EXCEPTION_FAILED) {
 		printf("%s\n", ExceptionGetMessage(exception));
 	}
-	printf("RangeStart: %s\n", getPropertyValueAsString(results, "RangeStart"));
-	printf("RangeEnd: %s\n", getPropertyValueAsString(results, "RangeEnd"));
-	printf("Countries: %s\n", getPropertyValueAsString(results, "Countries"));
-	printf("AverageLocation: %s\n", getPropertyValueAsString(results, "AverageLocation"));
-	printf("LocationBoundNorthWest: %s\n", getPropertyValueAsString(results, "LocationBoundNorthWest"));
-	printf("LocationBoundSouthEast: %s\n", getPropertyValueAsString(results, "LocationBoundSouthEast"));
+	printPropertyValueFromResults(results);
 
 	// Ensure the results are freed to avoid memory leaks.
 	ResultsIpiFree(results);

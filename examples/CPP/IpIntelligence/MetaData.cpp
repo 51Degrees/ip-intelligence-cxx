@@ -39,17 +39,11 @@ IP intelligence. This feature can be used to get information such as
 the category that a property belons to or the possible values a property
 can have.
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/MetaData.cpp).
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/CPP/MetaData.cpp).
 
 @include{doc} example-ipi-require-datafile.txt
 
 @include{doc} example-ipi-how-to-run.txt
-
-Expected output:
-
-```
-Result
-```
 
 In detail, the example shows how to:
 
@@ -110,6 +104,11 @@ delete properties;
 7. Finally release the memory used by the engine.
 ```
 delete engine;
+```
+
+Expected output:
+```
+Result
 ```
 
 */

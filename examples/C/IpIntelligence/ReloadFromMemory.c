@@ -28,17 +28,11 @@ This example illustrates how to use a single reference to the resource manager
 to use 51Degrees on-premise IP intelligence and invoke the reload functionality
 instead of maintaining a reference to the dataset directly.
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/ReloadFromMemory.c).
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/C/ReloadFromMemory.c).
 
 @include{doc} example-ipi-require-datafile.txt
 
 @include{doc} example-ipi-how-to-run.txt
-
-Expected output:
-
-```
-Result
-```
 
 In detail, this example shows how to:
 
@@ -94,6 +88,11 @@ FIFTYONE_DEGREES_NO_THREADING for multi threaded example.
 In a single threaded environment the reload function is executed as part of
 the normal flow of the program execution and will prevent any other actions
 until the reload is complete.
+
+Expected output:
+```
+Result
+```
 
 */
 

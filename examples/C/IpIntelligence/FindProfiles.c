@@ -31,17 +31,11 @@ This feature is supported on normal profiles where the property is not dynamic.
 The dynamic properties where this feature is not supported are 'RangeStart',
 'RangeEnd', 'AverageLocation', 'LocationBoundSouthEast' and 'LocationBoundNorthWest'
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/FindProfiles.c).
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/C/FindProfiles.c).
 
 @include{doc} example-ipi-require-datafile.txt
 
 @include{doc} example-ipi-how-to-run.txt
-
-Expected output:
-
-```
-Result
-```
 
 In detail, the example shows how to:
 
@@ -82,6 +76,11 @@ fiftyoneDegreesIpiIterateProfilesForPropertyAndValue(
 4. Finally release the memory used by the data set resource.
 ```
 fiftyoneDegreesResourceManagerFree(&manager);
+```
+
+Expected output:
+```
+Result
 ```
 
 */

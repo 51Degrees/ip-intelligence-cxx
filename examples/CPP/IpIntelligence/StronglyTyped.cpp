@@ -37,17 +37,11 @@ Strongly typed example of using 51Degrees IP intelligence.
 The example shows how to extract the strongly typed value from the
 returned results of the 51Degrees on-premise IP intelligence.
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/StronglyTyped.cpp).
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/CPP/StronglyTyped.cpp).
 
 @include{doc} example-ipi-require-datafile.txt
 
 @include{doc} example-ipi-how-to-run.txt
-
-Expected output:
-
-```
-Result
-```
 
 In detail, the example shows how to:
 
@@ -115,6 +109,11 @@ delete evidence;
 7. Finally release the memory used by the engine.
 ```
 delete engine;
+```
+
+Expected output:
+```
+Result
 ```
 
  */
