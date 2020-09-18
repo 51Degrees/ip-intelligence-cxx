@@ -5,6 +5,7 @@
 .vs
 CMakeFiles
 *.a
+*.org
 CMakeCache.txt
 bin/
 lib/
