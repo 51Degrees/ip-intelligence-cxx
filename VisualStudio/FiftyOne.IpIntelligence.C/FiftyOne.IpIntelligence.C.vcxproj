@@ -432,8 +432,8 @@
     <ClCompile Include="..\..\src\ipi.c" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FiftyOne.Common.C\FiftyOne.Common.C.vcxproj">
-      <Project>{626f7fb2-8095-4976-b86c-24536519f277}</Project>
+    <ProjectReference Include="..\..\src\common-cxx\VisualStudio\FiftyOne.Common.C\FiftyOne.Common.C.vcxproj">
+      <Project>{8e1b0b4c-8220-4e7b-a838-b4b3ddb4cf15}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

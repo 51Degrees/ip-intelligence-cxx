@@ -397,14 +397,6 @@ FIFTYONE_DEGREES_IP_RANGE(4, 4)
 FIFTYONE_DEGREES_IP_RANGE(6, 16)
 
 /**
- * Singular coordinate, representing a location
- */
-typedef struct fiftyone_degrees_ipi_coordinate_t {
-	float lat; /**< Latitude value of the coordinate */
-	float lon; /**< Longitude value of the coordinate */
-} fiftyoneDegreesCoordinate;
-
-/**
  * IP INTELLIGENCE CONFIGURATIONS
  */
 
@@ -899,22 +891,6 @@ EXTERNAL uint32_t fiftyoneDegreesIpiIterateProfilesForPropertyAndValue(
 	void* state,
 	fiftyoneDegreesProfileIterateMethod callback,
 	fiftyoneDegreesException* exception);
-
-/**
- * Get the 51Degrees Coordinate from the collection item. This should
- * be used on the item returned from #fiftyoneDegreesResultsIpiGetValues
- * where the property is 'AverateLocation', 'LocationBoundSouthEast',
- * 'LocationBoundNorthWest' or property type is 
- * #FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_FLOAT_PAIR.
- * @param item the collection item pointing to the float pair item in
- * string collection
- * @param exception pointer to an exception data structure to be used if an
- * exception occurs. See exceptions.h
- * @return the coordinate value
- */
-EXTERNAL fiftyoneDegreesCoordinate fiftyoneDegreesIpiGetCoordinate(
-	fiftyoneDegreesCollectionItem *item,
-	fiftyoneDegreesException *exception);
 
 /**
  * Get the ipaddress string from the collection item. This should

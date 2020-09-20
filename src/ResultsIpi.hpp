@@ -25,6 +25,7 @@
 
 #include <sstream>
 #include <vector>
+#include "common-cxx/coordinate.h"
 #include "common-cxx/ResultsBase.hpp"
 #include "WeightedValue.hpp"
 #include "IpAddress.hpp"

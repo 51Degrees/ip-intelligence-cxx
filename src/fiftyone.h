@@ -37,7 +37,6 @@ MAP_TYPE(DataSetIpiHeader)
 MAP_TYPE(ProfileCombination)
 MAP_TYPE(Ipv4Range)
 MAP_TYPE(Ipv6Range)
-MAP_TYPE(Coordinate)
 
 // Methods
 #define ResultsIpiCreate fiftyoneDegreesResultsIpiCreate /**< Synonym for #fiftyoneDegreesResultsIpiCreate function. */
@@ -60,7 +59,6 @@ MAP_TYPE(Coordinate)
 #define IpiReloadManagerFromMemory fiftyoneDegreesIpiReloadManagerFromMemory /**< Synonym for #fiftyoneDegreesIpiReloadManagerFromMemory function. */
 #define IpiGetNetworkIdFromResult fiftyoneDegreesIpiGetNetworkIdFromResult /**< Synonym for #fiftyoneDegreesIpiGetNetworkIdFromResult function. */
 #define IpiGetNetworkIdFromResults fiftyoneDegreesIpiGetNetworkIdFromResults /**< Synonym for #fiftyoneDegreesIpiGetNetworkIdFromResults function. */
-#define IpiGetCoordinate fiftyoneDegreesIpiGetCoordinate /**< Synonym for #fiftyoneDegreesIpiGetCoordinate function. */
 #define IpiGetIpAddressAsString fiftyoneDegreesIpiGetIpAddressAsString /**< Synonym for #fiftyoneDegreesIpiGetIpAddressAsString function. */
 #define IpiGetIpAddressAsByteArray fiftyoneDegreesIpiGetIpAddressAsByteArray /**< Synonym for #fiftyoneDegreesIpiGetIpAddressAsByteArray function. */
 #define IpiIterateProfilesForPropertyAndValue fiftyoneDegreesIpiIterateProfilesForPropertyAndValue /**< Synonym for #fiftyoneDegreesIpiIterateProfilesForPropertyAndValue function. */

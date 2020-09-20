@@ -407,11 +407,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FiftyOne.Common.CPP\FiftyOne.Common.CPP.vcxproj">
-      <Project>{08c2a778-5f07-4294-b534-507678afde2b}</Project>
+    <ProjectReference Include="..\..\src\common-cxx\VisualStudio\FiftyOne.Common.CPP\FiftyOne.Common.CPP.vcxproj">
+      <Project>{01dccd38-27cc-4c1a-851f-f1700edf8bb5}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\FiftyOne.Common.C\FiftyOne.Common.C.vcxproj">
-      <Project>{626f7fb2-8095-4976-b86c-24536519f277}</Project>
+    <ProjectReference Include="..\..\src\common-cxx\VisualStudio\FiftyOne.Common.C\FiftyOne.Common.C.vcxproj">
+      <Project>{8e1b0b4c-8220-4e7b-a838-b4b3ddb4cf15}</Project>
     </ProjectReference>
     <ProjectReference Include="..\FiftyOne.IpIntelligence.C\FiftyOne.IpIntelligence.C.vcxproj">
       <Project>{eddf7b03-a483-4b52-9234-4585af17b284}</Project>

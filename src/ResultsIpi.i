@@ -24,10 +24,10 @@
 %include std_pair.i
 %include std_vector.i
 
+%include "common-cxx/Coordinate.i"
 %include "common-cxx/ResultsBase.i"
 %include "WeightedValue.i"
 %include "IpAddress.i"
-%include "Coordinate.i"
 
 %template(WeightedStringListSwig) std::vector<WeightedValue<std::string>>;
 %template(WeightedBoolListSwig) std::vector<WeightedValue<bool>>;

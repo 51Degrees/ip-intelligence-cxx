@@ -2448,21 +2448,6 @@ char* fiftyoneDegreesIpiGetNetworkIdFromResults(
 	return destination;
 }
 
-fiftyoneDegreesCoordinate fiftyoneDegreesIpiGetCoordinate(
-	fiftyoneDegreesCollectionItem *item,
-	fiftyoneDegreesException *exception) {
-	String *value = (String *)item->data.ptr;
-	fiftyoneDegreesCoordinate coordinate = { 0, 0 };
-	if (value->value == FIFTYONE_DEGREES_STRING_COORDINATE) {
-		coordinate.lat = FLOAT_TO_NATIVE(value->trail.coordinate.lat);
-		coordinate.lon = FLOAT_TO_NATIVE(value->trail.coordinate.lon);
-	}
-	else {
-		EXCEPTION_SET(CORRUPT_DATA);
-	}
-	return coordinate;
-}
-
 size_t fiftyoneDegreesIpiGetIpAddressAsString(
 	fiftyoneDegreesCollectionItem *item,
 	fiftyoneDegreesEvidenceIpType type,
