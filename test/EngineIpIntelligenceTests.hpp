@@ -206,7 +206,8 @@ TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestIpAddress) { \
 #define ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e,t,c,p) \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestNetworkId) { \
 	verifyNetworkId(ipv4Address); \
-	verifyNetworkId(ipv6Address); }
+	verifyNetworkId(ipv6Address); \
+	verifyNetworkId(""); }
 
 #define ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e,t,c,p) \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestCoordinate) { \

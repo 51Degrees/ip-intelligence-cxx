@@ -507,7 +507,15 @@ void EngineIpIntelligenceTests::verifyNetworkId(const char *ipAddress) {
 	// By default regex use ECMAScript regex
 	// For special pattern character such as '\d'
 	// the '\' need to be escaped. eg. '\\d'
-	regex matchPattern = regex("^(\\d+\\:\\d+.\\d+)(\\|(\\d+\\:\\d+.\\d+))*");
+	regex matchPattern;
+	if (strcmp(ipAddress, "") == 0) {
+		// If ipAddress is empty the default network id should
+		// be in the form of 0:1.00...|0:1.00...|...
+		matchPattern = regex("^(0:1.0+)(\\|(0:1.0+))*");
+	}
+	else {
+		matchPattern = regex("^(\\d+\\:\\d+.\\d+)(\\|(\\d+\\:\\d+.\\d+))*");
+	}
 	
 	EXPECT_EQ(true, regex_match(networkId, matchPattern)) << "An "
 		"invalid network ID has been returned, where it should be for IP address: "

@@ -2369,6 +2369,21 @@ size_t fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex(
 #define PRINT_PROFILE_ID(d,b,s,f,v,p) d += snprintf(d, (b - d) + s, f, v, p)
 #define PRINT_NULL_PROFILE_ID(d,b,s,p) PRINT_PROFILE_ID(d, b, s, "%i:%f", 0, p)
 
+static char* getNullNetworkId(
+	fiftyoneDegreesDataSetIpi *dataSet,
+	char* destination,
+	size_t size) {
+	for (uint32_t i = 0; i < dataSet->componentsList.count; i++) {
+		// Print separator
+		if (i != 0) {
+			PRINT_PROFILE_SEP(destination, destination, size, "|");
+		}
+		// Default to 0:1.0 if there is no matching IP range
+		PRINT_NULL_PROFILE_ID(destination, destination, size, 1.0f);
+	}
+	return destination;
+}
+
 char* fiftyoneDegreesIpiGetNetworkIdFromResult(
 	fiftyoneDegreesResultsIpi* results,
 	fiftyoneDegreesResultIpi* result,
@@ -2392,42 +2407,65 @@ char* fiftyoneDegreesIpiGetNetworkIdFromResult(
 			&profileCombinationItem,
 			exception);
 		if (profileCombination != NULL && EXCEPTION_OKAY) {
-			componentIndex* index;
+			componentIndex* index,* cur;
 			offsetPercentage* profiles;
 			// Set pointer to the component index list in the profile combination block
 			index = (componentIndex*)&profileCombination->firstByte;
 			// Set pointer to the profiles list in the profile combination block
 			profiles = (offsetPercentage*)(index + dataSet->componentsList.count);
 			DataReset(&profileItem.data);
-			for (int i = 0; i < profileCombination->profileCount; i++) {
+			cur = index;
+			for (; cur < (componentIndex *)profiles; cur++) {
 				// Print separator
-				if (i != 0) {
+				if (cur != index) {
 					PRINT_PROFILE_SEP(destination, buffer, size, "|");
 				}
 
-				// Get profile offset
-				profileOffset = profiles[i].offset;
-				profile = (Profile *)dataSet->profiles->get(
-					dataSet->profiles,
-					profileOffset,
-					&profileItem,
-					exception);
-				if (profile == NULL) {
-					PRINT_NULL_PROFILE_ID(destination, buffer, size, FLOAT_TO_NATIVE(profiles[i].percentage));
+				// Go through the component profiles if there is more than one
+				if (cur->count > 0) {
+					for (int j = 0, k = 0; j < cur->count; j++) {
+						// Print separator
+						if (j != 0) {
+							PRINT_PROFILE_SEP(destination, buffer, size, "|");
+						}
+
+						// Get the profile offset
+						k = cur->index + j;
+						profileOffset = profiles[k].offset;
+						profile = (Profile *)dataSet->profiles->get(
+						dataSet->profiles,
+						profileOffset,
+						&profileItem,
+						exception);
+						if (profile == NULL) {
+							PRINT_NULL_PROFILE_ID(
+								destination, 
+								buffer, 
+								size, 
+								FLOAT_TO_NATIVE(profiles[k].percentage));
+						}
+						else {
+							PRINT_PROFILE_ID(
+								destination,
+								buffer,
+								size,
+								"%i:%f",
+								profile->profileId,
+								FLOAT_TO_NATIVE(profiles[k].percentage));
+						}
+						COLLECTION_RELEASE(dataSet->profiles, &profileItem);
+					}
 				}
 				else {
-					PRINT_PROFILE_ID(
-						destination,
-						buffer,
-						size,
-						"%i:%f",
-						profile->profileId,
-						FLOAT_TO_NATIVE(profiles[i].percentage));
+					// Default to 0:1.0 if there is no profiles for the component
+					PRINT_NULL_PROFILE_ID(destination, buffer, size, 1.0f);
 				}
-				COLLECTION_RELEASE(dataSet->profiles, &profileItem);
 			}
 			COLLECTION_RELEASE(dataSet->profileCombinations, &profileCombinationItem);
 		}
+	}
+	else {
+		getNullNetworkId(dataSet, destination, size);
 	}
 	return destination;
 }
@@ -2444,6 +2482,12 @@ char* fiftyoneDegreesIpiGetNetworkIdFromResults(
 			destination,
 			size,
 			exception);
+	}
+	else {
+		getNullNetworkId(
+			results->b.dataSet, 
+			destination, 
+			size);
 	}
 	return destination;
 }

@@ -156,8 +156,7 @@ static void printPropertyValueFromResults(ResultsIpi *results) {
 		printf("LocationBoundNorthWest: %s\n", getPropertyValueAsString(results, "LocationBoundNorthWest"));
 		printf("LocationBoundSouthEast: %s\n", getPropertyValueAsString(results, "LocationBoundSouthEast"));
 	}
-	else
-	{
+	else {
 		printf("No results.");
 	}
 }
