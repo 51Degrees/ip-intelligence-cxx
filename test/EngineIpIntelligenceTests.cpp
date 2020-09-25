@@ -260,9 +260,9 @@ void EngineIpIntelligenceTests::verifyWithEmptyEvidence() {
 
 void EngineIpIntelligenceTests::verifyMixedPrefixesEvidence() {
 	EvidenceIpi mixedEvidence;
-	// To make sure query.ip is pick up first
-	mixedEvidence["query.ip"] = lowerBoundIpv4Address;
-	mixedEvidence["server.ip"] = upperBoundIpv4Address;
+	// To make sure query.client-ip is pick up first
+	mixedEvidence["query.client-ip"] = lowerBoundIpv4Address;
+	mixedEvidence["server.true-client-ip"] = upperBoundIpv4Address;
 	ResultsIpi *results = ((EngineIpi*)getEngine())->process(&mixedEvidence);
 	Value<IpAddress> rangeStart = results->getValueAsIpAddress("RangeStart");
 	unsigned char lowerBoundIpAddress[FIFTYONE_DEGREES_IPV4_LENGTH];
@@ -272,16 +272,27 @@ void EngineIpIntelligenceTests::verifyMixedPrefixesEvidence() {
 			lowerBoundIpAddress,
 			FIFTYONE_DEGREES_IPV4_LENGTH)) << "The RangeStart IP address is not "
 		"at the lower bound where it should be.";
+	delete results;
 
+	// Check if true-client-ip is taking priority
+	mixedEvidence["query.client-ip"] = "";
+	mixedEvidence["query.true-client-ip"] = lowerBoundIpv4Address;
+	results = ((EngineIpi*)getEngine())->process(&mixedEvidence);
+	rangeStart = results->getValueAsIpAddress("RangeStart");
+	EXPECT_EQ(0,
+		memcmp(rangeStart.getValue().getIpAddress(),
+			lowerBoundIpAddress,
+			FIFTYONE_DEGREES_IPV4_LENGTH)) << "The RangeStart IP address is not "
+		"at the lower bound where it should be.";
 	delete results;
 }
 
 void EngineIpIntelligenceTests::verifyWithEvidence() {
 	EvidenceIpi queryEvidence, serverEvidence;
-	queryEvidence["query.ip"] = ipv4Address;
+	queryEvidence["query.client-ip"] = ipv4Address;
 	verifyWithEvidence(&queryEvidence);
 
-	serverEvidence["server.ip"] = ipv6Address;
+	serverEvidence["server.client-ip"] = ipv6Address;
 	verifyWithEvidence(&serverEvidence);
 }
 
@@ -577,7 +588,7 @@ void EngineIpIntelligenceTests::randomWithIpAddress(int count) {
 }
 
 void EngineIpIntelligenceTests::randomWithEvidence(int count) {
-	string ipKey = "query.ip";
+	string ipKey = "query.client-ip";
 	EngineIpi *engineIpi = (EngineIpi*)getEngine();
 	for (int i = 0; i < count; i++) {
 		EvidenceIpi evidence;

@@ -230,6 +230,14 @@ namespace FiftyoneDegrees {
 			/**
 			 * @}
 			 */
+		protected:
+			/**
+			 * Initialise the header keys which are used by this engine.
+			 * These are the pieces of evidence which should be passed in if
+			 * available.
+			 * @param uniqueHeaders to get the keys from
+			 */
+			void initHttpHeaderKeys(fiftyoneDegreesHeaders *uniqueHeaders) override;
 
 		private:
 			void initMetaData();

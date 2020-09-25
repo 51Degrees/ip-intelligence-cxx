@@ -219,7 +219,7 @@ static void executeTest(const char *ipAddress, void *state) {
 	EvidenceAddString(
 		evidence,
 		FIFTYONE_DEGREES_EVIDENCE_QUERY,
-		"query.ip",
+		"query.client-ip",
 		ipAddress);
 	EXCEPTION_CREATE;
 	ResultsIpiFromEvidence(results, evidence, exception);

@@ -88,6 +88,15 @@ typedef struct state_with_percentage_t {
 } stateWithPercentage;
 
 /**
+ * Used to pass a state together with an unique header index which
+ * might be used to compared against evidence.
+ */
+typedef struct state_with_unique_header_index_t {
+	void* subState; /* Pointer to the data set or other state information */
+	uint32_t headerIndex; /* An unique header index to use */
+} stateWithUniqueHeaderIndex;
+
+/**
  * Used to represent the structure within a profile combination item
  */
 #pragma pack(push, 2)
@@ -111,10 +120,8 @@ typedef struct offset_percentage_t {
  */
 
 /* The expected version of the data file */
-// #define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MAJOR 4
-// #define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MINOR 1
-#define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MAJOR 1
-#define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MINOR 2
+#define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MAJOR 4
+#define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MINOR 1
 
 #undef FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY
 #define FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY true
@@ -396,6 +403,38 @@ static void freeDataSet(void* dataSetPtr) {
 	Free(dataSet);
 }
 
+static long initGetHttpHeaderString(
+	void *state,
+	uint32_t index,
+	Item *nameItem) {
+	DataSetIpi *dataSet =
+		(DataSetIpi*)((stateWithException*)state)->state;
+	Exception *exception = ((stateWithException*)state)->exception;
+	uint32_t i = 0, c = 0;
+	Component *component = COMPONENT(dataSet, c);
+	c++;
+	while (component != NULL) {
+		if (index < i + component->keyValuesCount) {
+			const ComponentKeyValuePair *keyValue =
+				ComponentGetKeyValuePair(
+					component,
+					(uint16_t)(index - i),
+					exception);
+			nameItem->collection = NULL;
+			dataSet->strings->get(
+				dataSet->strings,
+				keyValue->key,
+				nameItem,
+				exception);
+			return keyValue->key;
+		}
+		i += component->keyValuesCount;
+		component = COMPONENT(dataSet, c);
+		c++;
+	}
+	return -1;
+}
+
 static String* initGetPropertyString(
 	void* state,
 	uint32_t index,
@@ -575,7 +614,7 @@ uint32_t initGetEvidenceProperties(
 	return count;
 }
 
-static StatusCode initProperties(
+static StatusCode initPropertiesAndHeaders(
 	DataSetIpi* dataSet,
 	PropertiesRequired* properties,
 	Exception* exception) {
@@ -588,6 +627,14 @@ static StatusCode initProperties(
 		&state,
 		initGetPropertyString,
 		initGetEvidenceProperties);
+	if (status != SUCCESS) {
+		return status;
+	}
+
+	status = DataSetInitHeaders(
+		&dataSet->b.b,
+		&state,
+		initGetHttpHeaderString);
 	if (status != SUCCESS) {
 		return status;
 	}
@@ -976,7 +1023,7 @@ static StatusCode initDataSetFromFile(
 
 	// Initialise the required properties and headers and check the 
 	// initialisation was successful.
-	status = initProperties(dataSet, properties, exception);
+	status = initPropertiesAndHeaders(dataSet, properties, exception);
 	if (status != SUCCESS || EXCEPTION_FAILED) {
 		// Delete the temp file if one has been created.
 		if (config->b.useTempFile == true) {
@@ -1122,7 +1169,7 @@ static StatusCode initDataSetFromMemory(
 	}
 
 	// Initialise the required properties and headers.
-	status = initProperties(dataSet, properties, exception);
+	status = initPropertiesAndHeaders(dataSet, properties, exception);
 	if (status != SUCCESS || EXCEPTION_FAILED) {
 		return status;
 	}
@@ -1467,81 +1514,111 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 static bool setResultFromEvidence(
 	void* state,
 	EvidenceKeyValuePair* pair) {
-	ResultIpi* result;
-	ResultsIpi* results =
-		(ResultsIpi*)((stateWithException*)state)->state;
-	DataSetIpi* dataSet =
-		(DataSetIpi*)results->b.dataSet;
-	Exception* exception = ((stateWithException*)state)->exception;
+	stateWithUniqueHeaderIndex* indexState = (stateWithUniqueHeaderIndex*)state;
+	stateWithException* exceptionState = (stateWithException*)indexState->subState;
+	ResultsIpi* results = (ResultsIpi*)exceptionState->state;
+	Exception* exception = exceptionState->exception;
+	// We should not look further if a 
+	// result has already been found
+	if (results->count == 0) {
+		ResultIpi* result;
+		DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
+		uint32_t curHeaderIndex = indexState->headerIndex;
+		int headerIndex = HeaderGetIndex(
+			dataSet->b.b.uniqueHeaders,
+			pair->field,
+			strlen(pair->field));
+		// Only the current header index should be considered
+		if (headerIndex >= 0 && headerIndex == (int)curHeaderIndex) {
+			// Get the parsed Value
+			const char *ipAddressString = (const char *)pair->parsedValue;
+			// Obtain the byte array first
+			fiftyoneDegreesEvidenceIpAddress *ipAddress = 
+				fiftyoneDegreesIpParseAddress(Malloc, ipAddressString, ipAddressString + strlen(ipAddressString));
+			// Check if the IP address was successfully created
+			if (ipAddress == NULL) {
+				EXCEPTION_SET(INSUFFICIENT_MEMORY);
+				return false;
+			}
+			else if(ipAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID) {
+				Free(ipAddress);
+				EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
+				return false;
+			}
 
-	// Only proceed if match the unique header "ip"
-	if (StringCompare(UNIQUE_HEADER, pair->field) == 0) {
-		// Get the parsed Value
-		const char *ipAddressString = (const char *)pair->parsedValue;
-		// Obtain the byte array first
-		fiftyoneDegreesEvidenceIpAddress *ipAddress = 
-			fiftyoneDegreesIpParseAddress(Malloc, ipAddressString, ipAddressString + strlen(ipAddressString));
-		// Check if the IP address was successfully created
-		if (ipAddress == NULL) {
-			EXCEPTION_SET(INSUFFICIENT_MEMORY);
-			return false;
-		}
-		else if(ipAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID) {
+			// Obtain the correct IP address
+			int ipLength = 
+				ipAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ?
+				FIFTYONE_DEGREES_IPV4_LENGTH : 
+				FIFTYONE_DEGREES_IPV6_LENGTH;
+			// Configure the next result in the array of results.
+			result = &((ResultIpi*)results->items)[results->count];
+			resultIpiReset(result);
+			results->items[0].profileCombinationOffset = NULL_PROFILE_OFFSET; // Default IP range offset
+			result->targetIpAddress.length = ipLength;
+			memset(result->targetIpAddress.value, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
+			memcpy(result->targetIpAddress.value, ipAddress->address, ipLength);
+			memcpy(result->targetIpAddress.value, ipAddress->address, FIFTYONE_DEGREES_IPV6_LENGTH);
+			result->targetIpAddress.type = ipAddress->type;
+			result->type = ipAddress->type;
+			results->count++;
+
+			// Freed the allocated memory for ipAddress
 			Free(ipAddress);
-			EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
-			return false;
-		}
 
-		// Obtain the correct IP address
-		int ipLength = 
-			ipAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ?
-			FIFTYONE_DEGREES_IPV4_LENGTH : 
-			FIFTYONE_DEGREES_IPV6_LENGTH;
-		// Configure the next result in the array of results.
-		result = &((ResultIpi*)results->items)[results->count];
-		resultIpiReset(result);
-		results->items[0].profileCombinationOffset = NULL_PROFILE_OFFSET; // Default IP range offset
-		result->targetIpAddress.length = ipLength;
-		memset(result->targetIpAddress.value, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
-		memcpy(result->targetIpAddress.value, ipAddress->address, ipLength);
-		memcpy(result->targetIpAddress.value, ipAddress->address, FIFTYONE_DEGREES_IPV6_LENGTH);
-		result->targetIpAddress.type = ipAddress->type;
-		result->type = ipAddress->type;
-		results->count++;
-
-		// Freed the allocated memory for ipAddress
-		Free(ipAddress);
-
-		setResultFromIpAddress(
-			result,
-			dataSet,
-			exception);
-		if (EXCEPTION_FAILED) {
-			return false;
+			setResultFromIpAddress(
+				result,
+				dataSet,
+				exception);
+			if (EXCEPTION_FAILED) {
+				return false;
+			}
 		}
 	}
 
 	return EXCEPTION_OKAY;
 }
 
+static void fiftyoneDegreesIterateHeadersWithEvidence(
+	ResultsIpi* results,
+	EvidenceKeyValuePairArray* evidence,
+	int prefixes,
+	stateWithUniqueHeaderIndex *state) {
+	DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
+	// Each unique header is checked against the evidence
+	// in the order that its added to the headers array.
+	// The order represents the prioritis of the headers.
+	for (uint32_t i = 0;
+		i < dataSet->b.b.uniqueHeaders->count && results->count == 0;
+		i++) {
+		state->headerIndex = i;
+		EvidenceIterate(
+			evidence,
+			prefixes,
+			state,
+			setResultFromEvidence);
+	}
+}
+
 void fiftyoneDegreesResultsIpiFromEvidence(
 	fiftyoneDegreesResultsIpi* results,
 	fiftyoneDegreesEvidenceKeyValuePairArray* evidence,
 	fiftyoneDegreesException* exception) {
-	stateWithException state;
-	state.state = results;
-	state.exception = exception;
+	stateWithException subState;
+	stateWithUniqueHeaderIndex state;
+	subState.state = results;
+	subState.exception = exception;
+	state.subState = &subState;
 
 	if (evidence != (EvidenceKeyValuePairArray*)NULL) {
 		// Reset the results data before iterating the evidence.
 		results->count = 0;
 
-		// Check the IP prefixed evidence keys 
-		EvidenceIterate(
+		fiftyoneDegreesIterateHeadersWithEvidence(
+			results,
 			evidence,
 			FIFTYONE_DEGREES_EVIDENCE_QUERY,
-			&state,
-			setResultFromEvidence);
+			&state);
 		if (EXCEPTION_FAILED) {
 			return;
 		}
@@ -1549,11 +1626,11 @@ void fiftyoneDegreesResultsIpiFromEvidence(
 		// If no results were obtained from the query evidence prefix then use
 		// the HTTP headers to populate the results.
 		if (results->count == 0) {
-			EvidenceIterate(
+			fiftyoneDegreesIterateHeadersWithEvidence(
+				results,
 				evidence,
 				FIFTYONE_DEGREES_EVIDENCE_SERVER,
-				&state,
-				setResultFromEvidence);
+				&state);
 			if (EXCEPTION_FAILED) {
 				return;
 			}

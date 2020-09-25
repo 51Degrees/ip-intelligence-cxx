@@ -147,7 +147,7 @@ namespace FiftyoneDegrees {
 
 					// Carries out a match for a ipv4 address.
 					cout << "\nIpv4 Address: " << ipv4Address << "\n";
-					evidence->operator[]("query.ip")
+					evidence->operator[]("query.client-ip")
 							= ipv4Address;
 					results = engine->process(evidence);
 					Common::Value<vector<WeightedValue<string>>> ipv4Value
@@ -162,7 +162,7 @@ namespace FiftyoneDegrees {
 
 					// Carries out a match for a ipv4 address.
 					cout << "\nIpv6 Address: " << ipv6Address << "\n";
-					evidence->operator[]("query.ip")
+					evidence->operator[]("query.client-ip")
 							= ipv6Address;
 					results = engine->process(evidence);
 					Common::Value<vector<WeightedValue<string>>> ipv6Value

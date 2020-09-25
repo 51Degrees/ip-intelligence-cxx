@@ -90,6 +90,7 @@ EngineIpi::EngineIpi(
 
 void EngineIpi::init() {
 	DataSetIpi *dataSet = DataSetIpiGet(manager.get());
+	initHttpHeaderKeys(dataSet->b.b.uniqueHeaders);
 	initMetaData();
 	DataSetIpiRelease(dataSet);
 }
@@ -274,6 +275,19 @@ Common::ResultsBase* EngineIpi::processBase(
 		EXCEPTION_THROW;
 	}
 	return new ResultsIpi(results, manager);
+}
+
+void EngineIpi::initHttpHeaderKeys(fiftyoneDegreesHeaders *uniqueHeaders) {
+	uint32_t i, p;
+	const char *prefixes[] = { "query.", "server." };
+	for (i = 0; i < uniqueHeaders->count; i++) {
+		for (p = 0; p < sizeof(prefixes) / sizeof(const char*); p++) {
+			string key = string(prefixes[p]);
+			key.append(&((fiftyoneDegreesString*)
+				uniqueHeaders->items[i].name.data.ptr)->value);
+			addKey(key);
+		}
+	}
 }
 
 void EngineIpi::initMetaData() {
