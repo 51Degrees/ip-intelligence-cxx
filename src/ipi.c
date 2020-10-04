@@ -36,8 +36,6 @@ MAP_TYPE(Collection)
 /** Dynamic component */
 #define DYNAMIC_COMPONENT_OFFSET UINT32_MAX
 
-/** Unique Header */
-#define UNIQUE_HEADER "ip"
 /** Default value and percentage separator */
 #define DEFAULT_VALUE_PERCENTAGE_SEPARATOR ":"
 /** Default valus separator */
@@ -68,6 +66,10 @@ if (dataSet->t == NULL) { \
 	return INVALID_COLLECTION_CONFIG; \
 }
 
+/** Get min value */
+#define MIN(a,b) a < b ? a : b
+/** Get max value */
+#define MAX(a,b) a > b ? a : b
 
 /**
  * PRIVATE DATA STRUCTURES
@@ -2123,7 +2125,10 @@ static size_t getIpv4RangeString(
 		(int)ipAddress[1],
 		(int)ipAddress[2],
 		(int)ipAddress[3]);
-	return charactersAdded > 0 ? charactersAdded : 0;
+	if (charactersAdded > 0) {
+		return MIN(charactersAdded, bufferLength);
+	}
+	return 0;
 }
 
 static size_t getIpv6RangeString(
@@ -2170,6 +2175,7 @@ static size_t getRangeString(
 	size_t bufferLength) {
 	String *value;
 	size_t charactersAdded = 0, tempAdded = 0;
+	size_t remainerLength = 0;
 	const size_t quoteLen = strlen("\"");
 
 	if (count > 0) {
@@ -2202,13 +2208,14 @@ static size_t getRangeString(
 			}
 		}
 		if (charactersAdded < bufferLength) {
+			remainerLength = bufferLength - charactersAdded;
 			tempAdded = snprintf(
 				buffer + charactersAdded,
-				bufferLength - charactersAdded,
+				remainerLength,
 				":\"%f\"",
 				FLOAT_TO_NATIVE(profilePercentage->percentage));
 			if (tempAdded > 0) {
-				charactersAdded += tempAdded;
+				charactersAdded += MIN(tempAdded, remainerLength);
 				buffer[charactersAdded] = '\0';
 			}
 		}
@@ -2222,6 +2229,7 @@ static size_t getLocationString(
 	char *buffer,
 	size_t bufferLength) {
 	size_t charactersAdded = 0, tempAdded = 0;
+	size_t remainerLength = 0;
 	const size_t quoteLen = strlen("\"");
 
 	if (count > 0) {
@@ -2235,14 +2243,15 @@ static size_t getLocationString(
 				charactersAdded += tempAdded;
 			}
 		}
+		remainerLength = bufferLength - charactersAdded;
 		tempAdded = snprintf(
 			buffer + charactersAdded,
-			bufferLength - charactersAdded,
+			remainerLength,
 			"%f,%f",
 			FLOAT_TO_NATIVE(value->trail.coordinate.lat),
 			FLOAT_TO_NATIVE(value->trail.coordinate.lon));
 		if (tempAdded > 0) {
-			charactersAdded += tempAdded;
+			charactersAdded += MIN(tempAdded, remainerLength);
 			// Add the closing quote
 			if (charactersAdded + quoteLen < bufferLength) {
 				tempAdded = sprintf(buffer + charactersAdded, "\"");
@@ -2250,13 +2259,14 @@ static size_t getLocationString(
 					charactersAdded += tempAdded;
 				}
 			}
+			remainerLength = bufferLength - charactersAdded;
 			tempAdded = snprintf(
 				buffer + charactersAdded,
-				bufferLength - charactersAdded,
+				remainerLength,
 				":\"%f\"",
 				FLOAT_TO_NATIVE(profilePercentage->percentage));
 			if (tempAdded > 0) {
-				charactersAdded += tempAdded;
+				charactersAdded += MIN(tempAdded, remainerLength);
 				buffer[charactersAdded] = '\0';
 			}
 		}
@@ -2275,7 +2285,8 @@ static size_t getNormalString(
 	size_t charactersAdded = 0,
 		separatorLen = strlen(separator),
 		stringLen,
-		tempAdded = 0;
+		tempAdded = 0,
+		remainerLength = 0;
 
 	// Loop through the values adding them to the string buffer.
 	for (uint32_t i = 0; i < count;  i++) {
@@ -2318,13 +2329,14 @@ static size_t getNormalString(
 		}
 
 		// Append the percentage
+		remainerLength = bufferLength - charactersAdded;
 		tempAdded = snprintf(
 			buffer + charactersAdded,
-			bufferLength - charactersAdded,
+			remainerLength,
 			":\"%f\"",
 			FLOAT_TO_NATIVE(profilePercentage[i].percentage));
 		if (tempAdded > 0) {
-			charactersAdded += tempAdded;
+			charactersAdded += MIN(tempAdded, remainerLength);
 		}
 	}
 
@@ -2439,41 +2451,107 @@ size_t fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex(
 		exception);
 }
 
+static size_t printProfileSeparator(
+	char **destination, 
+	size_t size, 
+	char *format) {
+	size_t charactersAdded = snprintf(
+		*destination, 
+		size, 
+		format);
+	if (charactersAdded >= size && size > 0) {
+		// Truncate the changes as there was
+		// not enough space in the last snprinf 
+		// operation
+		(*destination)[0] = '\0';
+		charactersAdded = 0;
+	}
+	*destination += charactersAdded;
+	return charactersAdded;
+}
+
+static size_t printProfileId(
+	char **destination,
+	size_t size,
+	char *format,
+	uint32_t profileId,
+	float percentage) {
+	size_t charactersAdded = snprintf(
+		*destination,
+		size, 
+		format,
+		profileId,
+		percentage);
+	if (charactersAdded >= size && size > 0) {
+		// Truncate the changes as there was
+		// not enough space in the last snprinf 
+		// operation
+		(*destination)[0] = '\0';
+		charactersAdded = 0;
+	}
+	*destination += charactersAdded;
+	return charactersAdded;
+}
+
 /*
  * Supporting Macros to printout the NetworkId
  */
-#define PRINT_PROFILE_SEP(d,b,s,f) d += snprintf(d, (b - d) + s, f)
-#define PRINT_PROFILE_ID(d,b,s,f,v,p) d += snprintf(d, (b - d) + s, f, v, p)
+#define PRINT_PROFILE_SEP(d,b,s,f) printProfileSeparator(&d, (b - d) + s, f)
+#define PRINT_PROFILE_ID(d,b,s,f,v,p) printProfileId(&d, (b - d) + s, f, v, p)
 #define PRINT_NULL_PROFILE_ID(d,b,s,p) PRINT_PROFILE_ID(d, b, s, "%i:%f", 0, p)
 
-static char* getNullNetworkId(
+static fiftyoneDegreesCombinationProfileIndex
+getNullNetworkId(
 	fiftyoneDegreesDataSetIpi *dataSet,
 	char* destination,
+	fiftyoneDegreesCombinationProfileIndex combProfileIndex,
 	size_t size) {
-	for (uint32_t i = 0; i < dataSet->componentsList.count; i++) {
+	fiftyoneDegreesCombinationProfileIndex curCompProfileIndex = { -1, -1 };
+	for (uint32_t i = combProfileIndex.componentIndex; 
+		i < dataSet->componentsList.count; 
+		i++) {
 		// Print separator
 		if (i != 0) {
-			PRINT_PROFILE_SEP(destination, destination, size, "|");
+			if (PRINT_PROFILE_SEP(destination, destination, size, "|") == 0) {
+				curCompProfileIndex.componentIndex = i;
+				curCompProfileIndex.profileIndex = 0;
+				break;
+			}
 		}
 		// Default to 0:1.0 if there is no matching IP range
-		PRINT_NULL_PROFILE_ID(destination, destination, size, 1.0f);
+		if (PRINT_NULL_PROFILE_ID(destination, destination, size, 1.0f) == 0) {
+			curCompProfileIndex.componentIndex = i;
+			curCompProfileIndex.profileIndex = 0;
+			if (i != 0) {
+				// Remove the last separator
+				(--destination)[0] = '\0';
+			}
+			break;
+		}
 	}
-	return destination;
+	return curCompProfileIndex;
 }
 
-char* fiftyoneDegreesIpiGetNetworkIdFromResult(
+fiftyoneDegreesCombinationProfileIndex
+fiftyoneDegreesIpiGetNetworkIdFromResult(
 	fiftyoneDegreesResultsIpi* results,
 	fiftyoneDegreesResultIpi* result,
 	char* destination,
 	size_t size,
+	fiftyoneDegreesCombinationProfileIndex combProfileIndex,
 	fiftyoneDegreesException* exception) {
 	Item profileCombinationItem, profileItem;
 	Profile *profile;
 	uint32_t profileOffset;
 	char *buffer = destination;
+	size_t charactersAdded = 0;
+	bool sufficientSpace = true;
+	fiftyoneDegreesCombinationProfileIndex curCompProfileIndex = {-1, -1};
 	ProfileCombination* profileCombination;
 	DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
 	
+	if (combProfileIndex.componentIndex >= 0 &&
+		combProfileIndex.profileIndex >= 0)
 	// We will only execute this step if successfully obtained the
 	// profile combination offset from the previous step
 	if (result->profileCombinationOffset != NULL_PROFILE_OFFSET) {
@@ -2492,18 +2570,34 @@ char* fiftyoneDegreesIpiGetNetworkIdFromResult(
 			profiles = (offsetPercentage*)(index + dataSet->componentsList.count);
 			DataReset(&profileItem.data);
 			cur = index;
-			for (; cur < (componentIndex *)profiles; cur++) {
-				// Print separator
-				if (cur != index) {
+			for (cur += combProfileIndex.componentIndex; 
+				cur < (componentIndex *)profiles && sufficientSpace; 
+				cur++) {
+				// Print separator if not the first processed component
+				if (cur != index + combProfileIndex.componentIndex) {
 					PRINT_PROFILE_SEP(destination, buffer, size, "|");
 				}
 
 				// Go through the component profiles if there is more than one
 				if (cur->count > 0) {
-					for (int j = 0, k = 0; j < cur->count; j++) {
-						// Print separator
-						if (j != 0) {
-							PRINT_PROFILE_SEP(destination, buffer, size, "|");
+					int j = 0;
+					if (cur == index + combProfileIndex.componentIndex) {
+						j = combProfileIndex.profileIndex;
+					}
+					for (int k = 0; j < cur->count && sufficientSpace; j++) {
+						// Print separator if not the first process profile of
+						// current component or if it is not processed profile 
+						// of the processed component
+						if ((cur != index + combProfileIndex.componentIndex &&
+								j != 0) ||
+							(cur == index + combProfileIndex.componentIndex &&
+								j != combProfileIndex.profileIndex)) {
+							if (PRINT_PROFILE_SEP(destination, buffer, size, "|") == 0) {
+								curCompProfileIndex.componentIndex = (int32_t)(cur - index);
+								curCompProfileIndex.profileIndex = j;
+								sufficientSpace = false;
+								break;
+							}
 						}
 
 						// Get the profile offset
@@ -2515,14 +2609,14 @@ char* fiftyoneDegreesIpiGetNetworkIdFromResult(
 						&profileItem,
 						exception);
 						if (profile == NULL) {
-							PRINT_NULL_PROFILE_ID(
+							charactersAdded = PRINT_NULL_PROFILE_ID(
 								destination, 
 								buffer, 
 								size, 
 								FLOAT_TO_NATIVE(profiles[k].percentage));
 						}
 						else {
-							PRINT_PROFILE_ID(
+							charactersAdded = PRINT_PROFILE_ID(
 								destination,
 								buffer,
 								size,
@@ -2531,42 +2625,76 @@ char* fiftyoneDegreesIpiGetNetworkIdFromResult(
 								FLOAT_TO_NATIVE(profiles[k].percentage));
 						}
 						COLLECTION_RELEASE(dataSet->profiles, &profileItem);
+						if (charactersAdded == 0) {
+							curCompProfileIndex.componentIndex = (int32_t)(cur - index);
+							curCompProfileIndex.profileIndex = j;
+							if (cur != index + combProfileIndex.componentIndex ||
+								j != 0) {
+								// Remove the last separator
+								(--destination)[0] = '\0';
+							}
+							sufficientSpace = false;
+							break;
+						}
 					}
 				}
 				else {
 					// Default to 0:1.0 if there is no profiles for the component
-					PRINT_NULL_PROFILE_ID(destination, buffer, size, 1.0f);
+					if (PRINT_NULL_PROFILE_ID(destination, buffer, size, 1.0f) == 0) {
+						curCompProfileIndex.componentIndex = (int32_t)(cur - index);
+						curCompProfileIndex.profileIndex = 0;
+						if (cur != index + combProfileIndex.componentIndex) {
+							// Remove the last separator.
+							(--destination)[0] = '\0';
+						}
+						sufficientSpace = false;
+						break;
+					}
 				}
 			}
 			COLLECTION_RELEASE(dataSet->profileCombinations, &profileCombinationItem);
 		}
 	}
 	else {
-		getNullNetworkId(dataSet, destination, size);
+		curCompProfileIndex = 
+			getNullNetworkId(dataSet, destination, combProfileIndex, size);
 	}
-	return destination;
+	return curCompProfileIndex;
 }
 
-char* fiftyoneDegreesIpiGetNetworkIdFromResults(
+fiftyoneDegreesResultProfileIndex
+fiftyoneDegreesIpiGetNetworkIdFromResults(
 	fiftyoneDegreesResultsIpi* results,
 	char* destination,
 	size_t size,
+	fiftyoneDegreesResultProfileIndex resultProfileIndex,
 	fiftyoneDegreesException* exception) {
+	fiftyoneDegreesResultProfileIndex curResultProfileIndex = {-1, -1, -1};
 	if (results->count > 0) {
-		fiftyoneDegreesIpiGetNetworkIdFromResult(
-			results,
-			results->items,
-			destination,
-			size,
-			exception);
+		curResultProfileIndex.componentProfileIndex =
+			fiftyoneDegreesIpiGetNetworkIdFromResult(
+				results,
+				results->items,
+				destination,
+				size,
+				resultProfileIndex.componentProfileIndex,
+				exception);
 	}
 	else {
-		getNullNetworkId(
-			results->b.dataSet, 
-			destination, 
-			size);
+		curResultProfileIndex.componentProfileIndex =
+			getNullNetworkId(
+				results->b.dataSet, 
+				destination, 
+				resultProfileIndex.componentProfileIndex,
+				size);
 	}
-	return destination;
+	if (curResultProfileIndex.componentProfileIndex.componentIndex >= 0 &&
+		curResultProfileIndex.componentProfileIndex.profileIndex >= 0) {
+		// If there are remaining profiles to fetch then set index
+		// to the first result.
+		curResultProfileIndex.resultIndex = 0;
+	}
+	return curResultProfileIndex;
 }
 
 size_t fiftyoneDegreesIpiGetIpAddressAsString(

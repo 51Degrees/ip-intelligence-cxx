@@ -397,6 +397,26 @@ FIFTYONE_DEGREES_IP_RANGE(4, 4)
 FIFTYONE_DEGREES_IP_RANGE(6, 16)
 
 /**
+ * Index of a profile in a profile combination item
+ * This include the component Index to indicate in which component
+ * it belong to.
+ */
+typedef struct fiftyone_degrees_combination_profile_index_t {
+	int32_t componentIndex; /**< Index of the component based on components list */
+	int32_t profileIndex; /**< Index of the profile index for the associated component */
+} fiftyoneDegreesCombinationProfileIndex;
+
+/**
+ * Index of a profile in a profile combination item of a result
+ * This include the component and result Indices to indicate in which
+ * component the profile belong to in which result. 
+ */
+typedef struct fiftyone_degrees_result_profile_index_t {
+	int16_t resultIndex;
+	fiftyoneDegreesCombinationProfileIndex componentProfileIndex;
+} fiftyoneDegreesResultProfileIndex;
+
+/**
  * IP INTELLIGENCE CONFIGURATIONS
  */
 
@@ -834,19 +854,28 @@ EXTERNAL size_t fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex(
  * profile ids for all components and their percentages for the matched
  * IP range, delimited by ':'. The profile id percentage pairs are concatenated
  * with the separator character '|'.
- * @param dataSet pointer to the data set used to get the result
+ * @param results pointer to the results
  * @param result pointer to the result to get the network id of
  * @param destination pointer to the memory to write the characters to
  * @param size amount of memory allocated to destination
+ * @param componentProfileIndex the combination profile index to start
+ * constructing the network ID from. Negative values indicate nothing
+ * to fetch.
  * @param exception pointer to an exception data structure to be used if an
  * exception occurs. See exceptions.h
- * @return the destination pointer
+ * @return the combination profile index to start from in the next call for
+ * fetching the remaining of the network ID. All indices will be -1s there
+ * is no more to fetch. The returned format does not contain leading or
+ * trailing separator so the separator will need to be added explicitly
+ * if more than one call  is required.
  */
-EXTERNAL char* fiftyoneDegreesIpiGetNetworkIdFromResult(
+EXTERNAL fiftyoneDegreesCombinationProfileIndex 
+fiftyoneDegreesIpiGetNetworkIdFromResult(
 	fiftyoneDegreesResultsIpi* results,
 	fiftyoneDegreesResultIpi* result,
-	char* buffer,
-	size_t bufferLength,
+	char* destination,
+	size_t size,
+	fiftyoneDegreesCombinationProfileIndex componentProfileIndex,
 	fiftyoneDegreesException* exception);
 
 /**
@@ -854,24 +883,31 @@ EXTERNAL char* fiftyoneDegreesIpiGetNetworkIdFromResult(
  * profile ids for all components and their percentages for the matched
  * IP range, delimited by ':'. The profile id percentage pairs are concatenated
  * with the separator character '|'.
- * @param dataSet pointer to the data set used to get the result
- * @param result pointer to the result to get the network id of
+ * @param results pointer to the results
  * @param destination pointer to the memory to write the characters to
  * @param size amount of memory allocated to destination
+ * @param resultProfileIndex the profile index to start constructing the network
+ * ID from. Negative values indicate nothing to fetch.
  * @param exception pointer to an exception data structure to be used if an
  * exception occurs. See exceptions.h
- * @return the destination pointer
+ * @return the result profile index to start from in the next call for
+ * fetching the remaining of the network ID. All indices will be -1s there
+ * is no more to fetch. The returned format does not contain leading or
+ * trailing separator so the separator will need to be added explicitly
+ * if more than one call  is required.
  */
-EXTERNAL char* fiftyoneDegreesIpiGetNetworkIdFromResults(
+EXTERNAL fiftyoneDegreesResultProfileIndex
+fiftyoneDegreesIpiGetNetworkIdFromResults(
 	fiftyoneDegreesResultsIpi* results,
-	char* buffer,
-	size_t bufferLength,
+	char* destination,
+	size_t size,
+	fiftyoneDegreesResultProfileIndex resultProfileIndex,
 	fiftyoneDegreesException* exception);
 
 /**
  * Iterates over the profiles in the data set calling the callback method for
  * any profiles that contain the property and value provided.
- * This currently not applicable for properties 'RangeStart', 'RangeEnd',
+ * This currently not applicable for properties 'IpRangeStart', 'IpRangeEnd',
  * 'AverageLocation', 'LocationBoundSouthEast', 'LocationBoundNortWest' as
  * these data are not stored in the profiles collection.
  * @param manager the resource manager containing a IP Intelligence data set initialised

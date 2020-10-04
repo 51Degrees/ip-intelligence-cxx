@@ -37,6 +37,8 @@ MAP_TYPE(DataSetIpiHeader)
 MAP_TYPE(ProfileCombination)
 MAP_TYPE(Ipv4Range)
 MAP_TYPE(Ipv6Range)
+MAP_TYPE(CombinationProfileIndex)
+MAP_TYPE(ResultProfileIndex)
 
 // Methods
 #define ResultsIpiCreate fiftyoneDegreesResultsIpiCreate /**< Synonym for #fiftyoneDegreesResultsIpiCreate function. */

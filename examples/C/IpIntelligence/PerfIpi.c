@@ -141,6 +141,7 @@ static void printLoadBar(performanceThreadState* state) {
 static void reportProgress(performanceThreadState* state) {
 	EXCEPTION_CREATE;
 	char networkId[1024] = "";
+	ResultProfileIndex profileIndex = {0, {0, 0}};
 
 	// Update the user interface.
 	printLoadBar(state);
@@ -153,6 +154,7 @@ static void reportProgress(performanceThreadState* state) {
 			state->results,
 			networkId,
 			sizeof(networkId),
+			profileIndex,
 			exception);
 		EXCEPTION_THROW;
 		printf("%s", networkId);

@@ -701,27 +701,51 @@ IpIntelligence::ResultsIpi::getNoValueReasonInternal(
 string IpIntelligence::ResultsIpi::getNetworkId(
 	uint32_t resultIndex) {
 	EXCEPTION_CREATE;
-	char networkId[1024] = "";
+	char cNetworkId[1024] = "";
+    string networkId = string(cNetworkId);
+    CombinationProfileIndex profileIndex = {0, 0};
 	if (resultIndex < results->count) {
-		IpiGetNetworkIdFromResult(
-			results,
-			&results->items[resultIndex],
-			networkId,
-			sizeof(networkId),
-			exception);
-		EXCEPTION_THROW;
+        while (profileIndex.componentIndex >= 0 &&
+        profileIndex.profileIndex >= 0) {
+            if (profileIndex.componentIndex != 0 ||
+                profileIndex.profileIndex != 0) {
+                networkId.append("|");
+            }
+		    profileIndex = IpiGetNetworkIdFromResult(
+	            results,
+	            &results->items[resultIndex],
+	            cNetworkId,
+	            sizeof(cNetworkId),
+                profileIndex,
+	            exception);
+		    EXCEPTION_THROW;
+            networkId.append(cNetworkId);
+        }
 	}
-	return string(networkId);
+	return networkId;
 }
 
 string IpIntelligence::ResultsIpi::getNetworkId() {
 	EXCEPTION_CREATE;
-	char networkId[1024] = "";
-	IpiGetNetworkIdFromResults(
-		results,
-		networkId,
-		sizeof(networkId),
-		exception);
-	EXCEPTION_THROW;
-	return string(networkId);
+	char cNetworkId[1024] = "";
+    string networkId = string(cNetworkId);
+    ResultProfileIndex profileIndex = {0, {0, 0}};
+    while (profileIndex.resultIndex >= 0 &&
+        profileIndex.componentProfileIndex.componentIndex >= 0 &&
+        profileIndex.componentProfileIndex.profileIndex >= 0) {
+        if (profileIndex.resultIndex != 0 ||
+            profileIndex.componentProfileIndex.componentIndex != 0 ||
+            profileIndex.componentProfileIndex.profileIndex != 0) {
+            networkId.append("|");
+        }
+	    profileIndex = IpiGetNetworkIdFromResults(
+	    	results,
+	    	cNetworkId,
+	    	sizeof(cNetworkId),
+            profileIndex,
+	    	exception);
+        EXCEPTION_THROW;
+        networkId.append(cNetworkId);
+    }
+	return networkId;
 }
