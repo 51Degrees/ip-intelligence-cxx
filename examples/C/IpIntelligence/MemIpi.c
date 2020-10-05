@@ -123,24 +123,52 @@ static const char* getPropertyValueAsString(
 }
 
 /**
+ * The NetworkId can get very long and not suitable
+ * to be displayed as full in a console interface.
+ * Thus, shorten with '...' at the end if it gets
+ * too long.
+ * @param networkId to be printed
+ */
+static void printShortenNetworkId(char *networkId) {
+	// Buffer to hold the printed network ID. Additional 4
+	// bytes to hold the '...' and the null terminator.
+	char buffer[54] = "";
+	// Triple dots to be attached
+	const char *tripleDots = "...";
+	// Max length to display the network ID string
+	const int maxLength = 50;
+	if (strlen(networkId) > maxLength) {
+		memcpy(buffer, networkId, maxLength);
+		memcpy(buffer + maxLength, tripleDots, strlen(tripleDots));
+		buffer[53] = '\0';
+	}
+	printf("%s", buffer);
+}
+
+/**
  * Reports progress using the required property index specified.
  * @param state of the performance test
  */
 void reportProgress(memoryThreadState* state) {
 	EXCEPTION_CREATE;
-	char rangeStart[50] = "";
-	char rangeEnd[50] = "";
+	char networkId[1024] = "";
+	ResultProfileIndex profileIndex = {0, {0, 0}};
 
 	// Update the user interface.
 	printLoadBar(state);
 
-	// If in real detection mode then print the IP range
+	// If in real detection mode then print the id of the network profile found
 	// to prove it's actually doing something!
 	if (state->results != NULL) {
 		printf(" ");
-		printf("%s - %s",
-			getPropertyValueAsString(state->results, "RangeStart"),
-			getPropertyValueAsString(state->results, "RangeEnd"));
+		IpiGetNetworkIdFromResults(
+			state->results,
+			networkId,
+			sizeof(networkId),
+			profileIndex,
+			exception);
+		EXCEPTION_THROW;
+		printShortenNetworkId(networkId);
 	}
 }
 

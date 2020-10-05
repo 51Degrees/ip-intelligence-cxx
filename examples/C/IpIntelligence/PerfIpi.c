@@ -135,6 +135,29 @@ static void printLoadBar(performanceThreadState* state) {
 }
 
 /**
+ * The NetworkId can get very long and not suitable
+ * to be displayed as full in a console interface.
+ * Thus, shorten with '...' at the end if it gets
+ * too long.
+ * @param networkId to be printed
+ */
+static void printShortenNetworkId(char *networkId) {
+	// Buffer to hold the printed network ID. Additional 4
+	// bytes to hold the '...' and the null terminator.
+	char buffer[54] = "";
+	// Triple dots to be attached
+	const char *tripleDots = "...";
+	// Max length to display the network ID string
+	const int maxLength = 50;
+	if (strlen(networkId) > maxLength) {
+		memcpy(buffer, networkId, maxLength);
+		memcpy(buffer + maxLength, tripleDots, strlen(tripleDots));
+		buffer[53] = '\0';
+	}
+	printf("%s", buffer);
+}
+
+/**
  * Reports progress using the required property index specified.
  * @param state of the performance test
  */
@@ -157,7 +180,7 @@ static void reportProgress(performanceThreadState* state) {
 			profileIndex,
 			exception);
 		EXCEPTION_THROW;
-		printf("%s", networkId);
+		printShortenNetworkId(networkId);
 	}
 }
 
