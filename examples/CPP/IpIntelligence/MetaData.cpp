@@ -53,7 +53,8 @@ initialised with, and the configuration.
 using namespace FiftyoneDegrees;
 
 string fileName = "51Degrees-V4.1.ipi";
-string propertiesString = "RangeStart,RangeEnd,Countries,Cities,AverageLocation";
+string propertiesString = "IpRangeStart,IpRangeEnd,"
+	"CountryCode,CityName,AverageLocation";
 Common::RequiredPropertiesConfig *properties =
 	new Common::RequiredPropertiesConfig(&propertiesString);
 IpIntelligence::ConfigIpi *config =
@@ -108,7 +109,14 @@ delete engine;
 
 Expected output:
 ```
-Result
+...
+ConnectivityTypes - The connectivity type
+MCC - Mobile country code. Only valid if type = mobile
+MNC - Mobile network code. Only valid if type = mobile
+...
+Get specific property value
+IpRangeStart - 0.0.0.0 -
+...
 ```
 
 */
@@ -148,7 +156,7 @@ namespace FiftyoneDegrees {
 					Collection<ValueMetaDataKey, ValueMetaData> *values;
 					cout << "\n\nGet specific property value\n";
 					values = engine->getMetaData()->getValues();
-					value = values->getByKey(ValueMetaDataKey("RangeStart", "0.0.0.0"));
+					value = values->getByKey(ValueMetaDataKey("IpRangeStart", "0.0.0.0"));
 					if (value != nullptr) {
 						cout << value->getKey().getPropertyName() << " - " << value->getName() 
 							<< " - " << value->getDescription() << "\n";

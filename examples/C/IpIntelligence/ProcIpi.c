@@ -47,7 +47,7 @@ static void buildString(
 			results,
 			i,
 			exception) != NULL && EXCEPTION_OKAY) {
-			if (strncmp("Range", property, strlen("Range")) == 0) {
+			if (strncmp("IpRange", property, strlen("IpRange")) == 0) {
 				// The collection item is and ipRange which has ipAddress byte array at the start
 				// and a offset to the profileCombination collection item
 				if (results->items[0].type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
@@ -198,8 +198,8 @@ int main(int argc, char* argv[]) {
 	// Capture input from standard in and display property value.
 	fiftyoneDegreesProcIpiRun(
 		dataFilePath,
-		//argc > 2 ? argv[2] : "Countries,Cities,ContactEmails",
-		"RangeStart,RangeEnd,Countries,AverageLocation",
+		argc > 2 ? argv[2] : "IpRangeStart,IpRangeEnd,"
+			"CountryCode,AverageLocation",
 		& config);
 
 		return 0;

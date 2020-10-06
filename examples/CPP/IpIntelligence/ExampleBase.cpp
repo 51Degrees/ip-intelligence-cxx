@@ -33,7 +33,7 @@ ExampleBase::ExampleBase(byte *data, long length, ConfigIpi *config) {
   this->config = config;
 
   // Set the properties to be returned for each Ip Address.
-  string propertiesString = "RangeStart,RangeEnd,Countries,Cities,AverageLocation";
+  string propertiesString = "IpRangeStart,IpRangeEnd,CountryCode,CityName,AverageLocation";
   properties = new RequiredPropertiesConfig(propertiesString);
 
   // Initialise the engine for device detection.
@@ -44,7 +44,7 @@ ExampleBase::ExampleBase(string dataFilePath, ConfigIpi *config) {
   this->config = config;
 
   // Set the properties to be returned for each Ip Address.
-  string propertiesString = "RangeStart,RangeEnd,Countries,Cities,AverageLocation";
+  string propertiesString = "IpRangeStart,IpRangeEnd,CountryCode,CityName,AverageLocation";
   properties = new RequiredPropertiesConfig(propertiesString);
 
   // Initialise the engine for ip intelligence.

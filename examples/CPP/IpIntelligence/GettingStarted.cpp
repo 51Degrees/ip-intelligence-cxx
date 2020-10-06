@@ -51,7 +51,8 @@ initialised with, and the configuration.
 using namespace FiftyoneDegrees;
 
 string fileName = "51Degrees-V4.1.ipi";
-string propertiesString = "RangeStart,RangeEnd,Countries,Cities,AverageLocation";
+string propertiesString = "IpRangeStart,IpRangeEnd,"
+	"CountryCode,CityName,AverageLocation";
 Common::RequiredPropertiesConfig *properties =
 	new Common::RequiredPropertiesConfig(&propertiesString);
 IpIntelligence::ConfigIpi *config =
@@ -90,9 +91,9 @@ IpIntelligence::ResultsIpi *results = engine->process(evidence);
 
 5. Extract the value of a property as a weighted string from the results.
 ```
-Value<vector<WeightedValue<string>>> value = results->getValuesAsWeightedStringList("Countries");
+Value<vector<WeightedValue<string>>> value = results->getValuesAsWeightedStringList("CountryCode");
 for (WeightedValue<string> w : value.getValue()) {
-	cout << "   Country: " <<
+	cout << "   Country Code: " <<
 		w.getValue() <<
 		", Percentage: " <<
 		w.getWeight() << "\n";
@@ -112,7 +113,13 @@ delete engine;
 
 Expected output:
 ```
-Result
+...
+Ipv4 Address: 8.8.8.8
+   Country Code: ZZ, Percentage: 1
+
+Ipv6 Address: 2001:4860:4860::8888
+   Country Code: ZZ, Percentage: 1
+...
 ```
 
 */
@@ -151,9 +158,9 @@ namespace FiftyoneDegrees {
 							= ipv4Address;
 					results = engine->process(evidence);
 					Common::Value<vector<WeightedValue<string>>> ipv4Value
-						= results->getValuesAsWeightedStringList("Countries");
+						= results->getValuesAsWeightedStringList("CountryCode");
 					for (WeightedValue<string> w : ipv4Value.getValue()) {
-						cout << "   Country: " <<
+						cout << "   Country Code: " <<
 							w.getValue() <<
 							", Percentage: " <<
 							w.getWeight() << "\n";
@@ -166,9 +173,9 @@ namespace FiftyoneDegrees {
 							= ipv6Address;
 					results = engine->process(evidence);
 					Common::Value<vector<WeightedValue<string>>> ipv6Value
-						= results->getValuesAsWeightedStringList("Countries");
+						= results->getValuesAsWeightedStringList("CountryCode");
 					for (WeightedValue<string> w : ipv4Value.getValue()) {
-						cout << "   Country: " <<
+						cout << "   Country Code: " <<
 							w.getValue() <<
 							", Percentage: " <<
 							w.getWeight() << "\n";

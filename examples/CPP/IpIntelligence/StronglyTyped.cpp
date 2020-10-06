@@ -51,7 +51,8 @@ initialised with, and the configuration.
 using namespace FiftyoneDegrees;
 
 string fileName = "51Degrees-V4.1.ipi";
-string propertiesString = "RangeStart,RangeEnd,Countries,Cities,AverageLocation";
+string propertiesString = "IpRangeStart,IpRangeEnd,"
+	"CountryCode,CityName,AverageLocation";
 Common::RequiredPropertiesConfig *properties =
 	new Common::RequiredPropertiesConfig(&propertiesString);
 IpIntelligence::ConfigIpi *config =
@@ -113,7 +114,13 @@ delete engine;
 
 Expected output:
 ```
-Result
+...
+Ipv4 Address: 8.8.8.8
+   AverageLocation: 0,0
+
+Ipv6 Address: 2001:4860:4860::8888
+   AverageLocation: 0,0
+...
 ```
 
  */

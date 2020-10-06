@@ -91,7 +91,14 @@ until the reload is complete.
 
 Expected output:
 ```
-Result
+...
+Finished with hashcode '548397166'
+Finished with hashcode '548397166'
+Finished with hashcode '548397166'
+Finished with hashcode '548397166'
+Reloaded '3' times.
+Failed to reload '0' times.
+...
 ```
 
 */
@@ -241,7 +248,7 @@ static void runRequestsSingle(sharedState *state) {
 		sizeof(ipAddress),
 		&thread,
 		executeTest);
-	printf("Finished with hashcode '%li'\r\n", thread.hashCode);
+	printf("Finished with hashcode '%lu'\r\n", thread.hashCode);
 }
 
 static void runRequestsMulti(void *state) {
@@ -449,7 +456,8 @@ int main(int argc, char* argv[]) {
 	fiftyoneDegreesIpiReloadFromMemoryRun(
 		dataFilePath,
 		ipAddressFilePath,
-		argc > 3 ? argv[3] : "Countries,Cities",
+		argc > 3 ? argv[3] : "CountryCode,CountyName,"
+			"CityName,IspName,TimezoneName",
 		CONFIG);
 
 #ifdef _DEBUG

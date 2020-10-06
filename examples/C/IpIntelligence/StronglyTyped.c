@@ -41,7 +41,7 @@ initialised with.
 const char* fileName = argv[1];
 fiftyoneDegreesPropertiesRequired properties =
 	fiftyoneDegreesPropertiesDefault;
-properties.string = "RangeStart,RangeEnd,Countries,AverageLocation";
+properties.string = "IpRangeStart,IpRangeEnd,CountryCode,AverageLocation";
 ```
 
 2. Instantiate the 51Degrees data set within a resource manager from the
@@ -115,7 +115,19 @@ fiftyoneDegreesResourceManagerFree(&manager);
 
 Expected output:
 ```
-Result
+...
+Ipv4 Address: 8.8.8.8
+   AverageLocation: 0.000000,0.000000
+   CountryCode: 0.000000,0.000000
+   IpRangeEnd: 0.000000,0.000000
+   IpRangeStart: 0.000000,0.000000
+
+Ipv6 Address: 2001:4860:4860::8888
+   AverageLocation: 0.000000,0.000000
+   CountryCode: 0.000000,0.000000
+   IpRangeEnd: 0.000000,0.000000
+   IpRangeStart: 0.000000,0.000000
+...
 ```
 
 */
@@ -218,7 +230,7 @@ void fiftyoneDegreesIpiStronglyTyped(
 
 	// Set the properties to be returned for each IP Address.
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "RangeStart,RangeEnd,Countries,AverageLocation";
+	properties.string = "IpRangeStart,IpRangeEnd,CountryCode,AverageLocation";
 
 	// Initialise the manager for IP intelligence.
 	StatusCode status = IpiInitManagerFromFile(

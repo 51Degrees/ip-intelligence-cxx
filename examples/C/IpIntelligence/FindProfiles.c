@@ -28,8 +28,8 @@ The example shows how to use 51Degrees on-premise IP intelligence to iterate
 over all profiles in the data set which match a specified property value pair.
 
 This feature is supported on normal profiles where the property is not dynamic.
-The dynamic properties where this feature is not supported are 'RangeStart',
-'RangeEnd', 'AverageLocation', 'LocationBoundSouthEast' and 'LocationBoundNorthWest'
+The dynamic properties where this feature is not supported are 'IpRangeStart',
+'IpRangeEnd', 'AverageLocation', 'LocationBoundSouthEast' and 'LocationBoundNorthWest'
 
 This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/C/FindProfiles.c).
 
@@ -45,7 +45,7 @@ initialised with.
 const char* fileName = argv[1];
 fiftyoneDegreesPropertiesRequired properties =
 	fiftyoneDegreesPropertiesDefault;
-properties.string = "Countries";
+properties.string = "CountryCode";
 ```
 
 2. Instantiate the 51Degrees data set within a resource manager from the
@@ -66,8 +66,8 @@ property value pair.
 ```
 fiftyoneDegreesIpiIterateProfilesForPropertyAndValue(
 	manager,
-	"Countries",
-	"Italy",
+	"CountryCode",
+	"ITA",
 	&isItaly,
 	count,
 	exception);
@@ -80,7 +80,10 @@ fiftyoneDegreesResourceManagerFree(&manager);
 
 Expected output:
 ```
-Result
+...
+There are '1' countries in the data set with code ITA.
+There are '1' countries in the data set with code DEU.
+...
 ```
 
 */
@@ -134,21 +137,21 @@ void run(ResourceManager* manager) {
 
 	IpiIterateProfilesForPropertyAndValue(
 		manager,
-		"Countries",
-		"Italy",
+		"CountryCode",
+		"ITA",
 		&isItaly,
 		count,
 		exception);
-	printf("There are '%d' countries in the data set named Italy.\n", isItaly);
+	printf("There are '%d' countries in the data set with code ITA.\n", isItaly);
 
 	IpiIterateProfilesForPropertyAndValue(
 		manager,
-		"Countries",
-		"Germany",
+		"CountryCode",
+		"DEU",
 		&isGermany,
 		count,
 		exception);
-	printf("There are '%d' countries in the data set named Germany.\n",
+	printf("There are '%d' countries in the data set with code DEU.\n",
 		isGermany);
 }
 
@@ -171,7 +174,7 @@ void fiftyoneDegreesIpiFindProfiles(
 
 	// Set the properties to be returned for each IP Address.
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "Countries";
+	properties.string = "CountryCode";
 
 	// Initialise the manager for device detection.
 	StatusCode status = IpiInitManagerFromFile(

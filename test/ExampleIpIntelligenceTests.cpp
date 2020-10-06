@@ -34,7 +34,7 @@ ExampleIpIntelligenceTest::ExampleIpIntelligenceTest(
     }
 
     ipAddressFilePath = GetFilePath(_dataFolderName, ipAddressFileName);
-    requiredProperties = "RangeStart,RangeEnd,Countries,Cities,ContactEmails,AverageLocation";
+    requiredProperties = "IpRangeStart,IpRangeEnd,CountryCode,CityName,AbuseContactEmail,AverageLocation";
 };
 
 ExampleIpIntelligenceTest::ExampleIpIntelligenceTest()

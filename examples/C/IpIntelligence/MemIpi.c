@@ -133,6 +133,7 @@ static void printShortenNetworkId(char *networkId) {
 	// Buffer to hold the printed network ID. Additional 4
 	// bytes to hold the '...' and the null terminator.
 	char buffer[54] = "";
+
 	// Triple dots to be attached
 	const char *tripleDots = "...";
 	// Max length to display the network ID string
@@ -378,7 +379,7 @@ void fiftyoneDegreesMemIpiRun(
 
 	// Configure to return the IP range properties.
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "RangeStart,RangeEnd";
+	properties.string = "IpRangeStart,IpRangeEnd,CountryCode";
 
 	ResourceManager manager;
 	EXCEPTION_CREATE;

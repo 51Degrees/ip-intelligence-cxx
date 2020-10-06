@@ -88,7 +88,14 @@ until the reload is complete.
 
 Expected output:
 ```
-Result
+...
+Finished with hash code '10965098'
+Finished with hash code '10965098'
+Finished with hash code '10965098'
+Finished with hash code '10965098'
+Reloaded '23' times.
+Failed to reload '0' times.
+...
 ```
 
 */

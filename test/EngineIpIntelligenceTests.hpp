@@ -45,18 +45,18 @@ static const vector<string> n = { v1, v2, v3 }; \
 static const vector<string> *n##Pointer = &n;
 
 // Common IP intelligence properties in arrays and strings.
-ENGINE_PROPERTIES_STRING(OnePropertyString, "Countries")
-ENGINE_PROPERTIES_STRING(TwoPropertyStrings, "Countries,Cities")
-ENGINE_PROPERTIES_STRING(DuplicatePropertyStrings, "Countries,Countries")
+ENGINE_PROPERTIES_STRING(OnePropertyString, "CountryCode")
+ENGINE_PROPERTIES_STRING(TwoPropertyStrings, "CountryCode,CityName")
+ENGINE_PROPERTIES_STRING(DuplicatePropertyStrings, "CountryCode,CountryCode")
 ENGINE_PROPERTIES_STRING(InvalidPropertyStrings, "INVALID,PROPERTIES PROVIDED")
-ENGINE_PROPERTIES_STRING(MixedPropertyStrings, "INVALID,Countries")
-ENGINE_PROPERTIES_STRING(AllEdgePropertyStrings, "RangeStart,RangeEnd,AverageLocation")
-ENGINE_PROPERTIES_ARRAY_ONE(OnePropertyArray, "Countries")
-ENGINE_PROPERTIES_ARRAY_TWO(TwoPropertyArray, "Countries", "Cities")
-ENGINE_PROPERTIES_ARRAY_TWO(DuplicatePropertyArray, "Countries", "Countries")
+ENGINE_PROPERTIES_STRING(MixedPropertyStrings, "INVALID,CountryCode")
+ENGINE_PROPERTIES_STRING(AllEdgePropertyStrings, "IpRangeStart,IpRangeEnd,AverageLocation")
+ENGINE_PROPERTIES_ARRAY_ONE(OnePropertyArray, "CountryCode")
+ENGINE_PROPERTIES_ARRAY_TWO(TwoPropertyArray, "CountryCode", "CityName")
+ENGINE_PROPERTIES_ARRAY_TWO(DuplicatePropertyArray, "CountryCode", "CountryCode")
 ENGINE_PROPERTIES_ARRAY_TWO(InvalidPropertyArray, "INVALID1", "INVALID2")
-ENGINE_PROPERTIES_ARRAY_TWO(MixedPropertyArray, "Countries", "Invalid")
-ENGINE_PROPERTIES_ARRAY_THREE(AllEdgePropertyArray, "RangeStart", "RangeEnd", "AverageLocation")
+ENGINE_PROPERTIES_ARRAY_TWO(MixedPropertyArray, "CountryCode", "Invalid")
+ENGINE_PROPERTIES_ARRAY_THREE(AllEdgePropertyArray, "IpRangeStart", "IpRangeEnd", "AverageLocation")
 static const string *NullPointer = nullptr;
 
 // An ipv4 address string.
@@ -115,6 +115,7 @@ public:
 	void verifyCoordinate();
 	void validateIndex(ResultsBase *results, int index) override;
 	void validateName(ResultsBase *results, string *name) override;
+	void validateQuick(ResultsBase *results) override;
 	void verifyWithEvidence();
 	void verifyMixedPrefixesEvidence();
 	void verifyWithIpv4Address();
@@ -194,13 +195,13 @@ TEST_F(ENGINE_CLASS_NAME(e,t,c,p), MultiThreadRandom) { \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestIpAddress) { \
 	ipAddressPresent(ipv4Address); \
 	ipAddressPresent(lowerBoundIpv4Address); \
-	boundIpAddressPresent(upperBoundIpv4Address); \
-	boundIpAddressPresent(outOfRangeIpv4Address); \
 	ipAddressPresent(ipv6Address); \
 	ipAddressPresent(lowerBoundIpv6Address); \
-	boundIpAddressPresent(upperBoundIpv6Address); \
 	randomIpAddressPresent(50); \
 	verifyMixedPrefixesEvidence(); }
+	//boundIpAddressPresent(upperBoundIpv4Address); \
+	//boundIpAddressPresent(outOfRangeIpv4Address); \
+	//boundIpAddressPresent(upperBoundIpv6Address); \
 	//boundIpAddressPresent(outOfRangeIpv6Address); \ /* This will give undefined behaviour */
 
 #define ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e,t,c,p) \

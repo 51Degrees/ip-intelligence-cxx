@@ -106,26 +106,47 @@ void EngineIpIntelligenceTests::verifyComponentMetaDataDefaultProfile(
 	}
 }
 
+/*
+ * This test check whether IP address string can be parsed
+ * and searched for in values collection where the IP address
+ * is in byte format.
+ */
 void EngineIpIntelligenceTests::verifyValueMetaData() {
 	EngineIpi *engineIpi = (EngineIpi *)getEngine();
-	ValueMetaData *value;
+	ValueMetaData *value1, *value2;
 	Collection<ValueMetaDataKey, ValueMetaData> *values = 
 		engineIpi->getMetaData()->getValues();
-	value = values->getByKey(ValueMetaDataKey("RangeStart", lowerBoundIpv4Address));
-	EXPECT_TRUE(value != nullptr) << "Value meta data is not found "
-		"where it should be at IP address: " << lowerBoundIpv4Address;
-	EXPECT_EQ(0, strcmp(lowerBoundIpv4Address, value->getName().c_str()))
-		<< "Value meta data is not correct where it should be at IP address: "
-		<< lowerBoundIpv4Address;
-	delete value;
+	EXPECT_TRUE(values->getSize() > 0) << "There is no values "
+		"meta data.";
 
-	value = values->getByKey(ValueMetaDataKey("RangeStart", lowerBoundIpv6Address));
-	EXPECT_TRUE(value != nullptr) << "Value meta data is not found "
-		"where it should be at IP address: " << lowerBoundIpv6Address;
-	EXPECT_EQ(0, strcmp(lowerBoundIpv6Address, value->getName().c_str()))
+	Collection<string, PropertyMetaData> *properties = 
+		engineIpi->getMetaData()->getProperties();
+	EXPECT_TRUE(properties->getSize() > 0) << "There is no properties "
+		"meta data.";
+
+	PropertyMetaData *property = properties->getByKey("IpRangeStart");
+	Collection<ValueMetaDataKey, ValueMetaData> *rangeStartValues = 
+		engineIpi->getMetaData()->getValuesForProperty(property);
+	EXPECT_TRUE(rangeStartValues->getSize() > 0) << "There is no values "
+		"meta data for property " << property->getName();
+
+	// Pick the first value to be used for testing.
+	value1 = rangeStartValues->getByIndex(0);
+	EXPECT_TRUE(value1 != nullptr) << "There is no value at index 0.";
+	
+	// See if a valid IP address value string can be correctly parsed
+	// and searched from the values collection.
+	value2 = values->getByKey(ValueMetaDataKey("IpRangeStart", value1->getName()));
+	EXPECT_TRUE(value2 != nullptr) << "Value meta data is not found "
+		"where it should be at IP address: " << value1->getName();
+	EXPECT_EQ(0, value1->getName().compare(value2->getName()))
 		<< "Value meta data is not correct where it should be at IP address: "
-		<< lowerBoundIpv6Address;
-	delete value;
+		<< value1->getName();
+	delete value2;
+	delete value1;
+	delete rangeStartValues;
+	delete property;
+	delete properties;
 	delete values;
 }
 
@@ -240,9 +261,28 @@ void EngineIpIntelligenceTests::validateName(
 			// There are no values returned. This is only allowed when:
 			// 1. If there was no evidence provided. This means the results can
 			//    not be determined as there was nothing to process.
+			// 2. We don't have enough data for required property.
 			EXPECT_TRUE(values.getNoValueReason() ==
-				FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_NO_RESULTS) <<
+				FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_NO_RESULTS ||
+				values.getNoValueReason() == 
+				FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_NULL_PROFILE) <<
 				L"Must get values for available property '" << *name << "'";
+		}
+	}
+}
+
+void EngineIpIntelligenceTests::validateQuick(ResultsBase *results) {
+	for (int i = 0; i < results->getAvailableProperties(); i++) {
+		vector<string> values;
+		Value<vector<string>> value = results->getValues(i);
+		if (value.hasValue()) {
+			EXPECT_NO_THROW(values = *value) << "Should not throw "
+			"exception for property '" << results->getPropertyName(i) << "'";
+		}
+		else {
+			// This could only happen only because we don't have the details
+			// in our data.
+			EXPECT_THROW(values = *value, NoValuesAvailableException);
 		}
 	}
 }
@@ -264,13 +304,13 @@ void EngineIpIntelligenceTests::verifyMixedPrefixesEvidence() {
 	mixedEvidence["query.client-ip"] = lowerBoundIpv4Address;
 	mixedEvidence["server.true-client-ip"] = upperBoundIpv4Address;
 	ResultsIpi *results = ((EngineIpi*)getEngine())->process(&mixedEvidence);
-	Value<IpAddress> rangeStart = results->getValueAsIpAddress("RangeStart");
+	Value<IpAddress> rangeStart = results->getValueAsIpAddress("IpRangeStart");
 	unsigned char lowerBoundIpAddress[FIFTYONE_DEGREES_IPV4_LENGTH];
 	memset(lowerBoundIpAddress, 0, FIFTYONE_DEGREES_IPV4_LENGTH);
 	EXPECT_EQ(0,
 		memcmp(rangeStart.getValue().getIpAddress(),
 			lowerBoundIpAddress,
-			FIFTYONE_DEGREES_IPV4_LENGTH)) << "The RangeStart IP address is not "
+			FIFTYONE_DEGREES_IPV4_LENGTH)) << "The IpRangeStart IP address is not "
 		"at the lower bound where it should be.";
 	delete results;
 
@@ -278,11 +318,11 @@ void EngineIpIntelligenceTests::verifyMixedPrefixesEvidence() {
 	mixedEvidence["query.client-ip"] = "";
 	mixedEvidence["query.true-client-ip"] = lowerBoundIpv4Address;
 	results = ((EngineIpi*)getEngine())->process(&mixedEvidence);
-	rangeStart = results->getValueAsIpAddress("RangeStart");
+	rangeStart = results->getValueAsIpAddress("IpRangeStart");
 	EXPECT_EQ(0,
 		memcmp(rangeStart.getValue().getIpAddress(),
 			lowerBoundIpAddress,
-			FIFTYONE_DEGREES_IPV4_LENGTH)) << "The RangeStart IP address is not "
+			FIFTYONE_DEGREES_IPV4_LENGTH)) << "The IpRangeStart IP address is not "
 		"at the lower bound where it should be.";
 	delete results;
 }
@@ -433,8 +473,8 @@ void EngineIpIntelligenceTests::verifyIpAddressValue(
 void EngineIpIntelligenceTests::ipAddressPresent(const char *ipAddress) {
 	EngineIpi *engineIpi = (EngineIpi*)getEngine();
 	ResultsIpi *results = engineIpi->process(ipAddress);
-	Value<IpAddress> rangeStart = results->getValueAsIpAddress("RangeStart");
-	Value<IpAddress> rangeEnd = results->getValueAsIpAddress("RangeEnd");
+	Value<IpAddress> rangeStart = results->getValueAsIpAddress("IpRangeStart");
+	Value<IpAddress> rangeEnd = results->getValueAsIpAddress("IpRangeEnd");
 
 	verifyIpAddressValue(ipAddress, rangeStart);
 	verifyIpAddressValue(ipAddress, rangeEnd);
@@ -451,14 +491,14 @@ void EngineIpIntelligenceTests::boundIpAddressPresent(const char *ipAddress) {
 
 	EngineIpi *engineIpi = (EngineIpi*)getEngine();
 	ResultsIpi *results = engineIpi->process(ipAddress);
-	Value<IpAddress> rangeStart = results->getValueAsIpAddress("RangeStart");
-	Value<IpAddress> rangeEnd = results->getValueAsIpAddress("RangeEnd");
+	Value<IpAddress> rangeStart = results->getValueAsIpAddress("IpRangeStart");
+	Value<IpAddress> rangeEnd = results->getValueAsIpAddress("IpRangeEnd");
 
 	verifyIpAddressValue(ipAddress, rangeStart);
 	verifyIpAddressValue(ipAddress, rangeEnd);
 
 	EXPECT_EQ(rangeStart.getValue().getType(), rangeEnd.getValue().getType())
-			<< "RangeStart and RangeEnd types are not the same, where it should "
+			<< "IpRangeStart and IpRangeEnd types are not the same, where it should "
 			"be at IP address: " << ipAddress;
 
 	if (rangeStart.getValue().getType() == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
@@ -470,7 +510,7 @@ void EngineIpIntelligenceTests::boundIpAddressPresent(const char *ipAddress) {
 			memcmp(
 				upperBoundIpAddress,
 				rangeEnd.getValue().getIpAddress(),
-				FIFTYONE_DEGREES_IPV4_LENGTH) == 0) << "RangeStart or RangeEnd are not "
+				FIFTYONE_DEGREES_IPV4_LENGTH) == 0) << "IpRangeStart or IpRangeEnd are not "
 			"at the bound where it should be at IP address: " << ipAddress;
 	}
 	else {
@@ -482,7 +522,7 @@ void EngineIpIntelligenceTests::boundIpAddressPresent(const char *ipAddress) {
 			memcmp(
 				upperBoundIpAddress,
 				rangeEnd.getValue().getIpAddress(),
-				FIFTYONE_DEGREES_IPV6_LENGTH) == 0) << "RangeStart or RangeEnd are not "
+				FIFTYONE_DEGREES_IPV6_LENGTH) == 0) << "IpRangeStart or IpRangeEnd are not "
 			"at the bound where it should be at IP address: " << ipAddress;
 	}
 
@@ -497,14 +537,14 @@ void EngineIpIntelligenceTests::randomIpAddressPresent(int count) {
 		ResultsIpi *results = engineIpi->process(
 			ipAddress.c_str());
 
-		Value<IpAddress> rangeStart = results->getValueAsIpAddress("RangeStart");
-		Value<IpAddress> rangeEnd = results->getValueAsIpAddress("RangeEnd");
+		Value<IpAddress> rangeStart = results->getValueAsIpAddress("IpRangeStart");
+		Value<IpAddress> rangeEnd = results->getValueAsIpAddress("IpRangeEnd");
 
 		verifyIpAddressValue(ipAddress.c_str(), rangeStart);
 		verifyIpAddressValue(ipAddress.c_str(), rangeEnd);
 
 		EXPECT_EQ(rangeStart.getValue().getType(), rangeEnd.getValue().getType())
-			<< "RangeStart and RangeEnd types are not the same, where it should "
+			<< "IpRangeStart and IpRangeEnd types are not the same, where it should "
 			"be at IP address: " << ipAddress;
 
 		delete results;
@@ -571,9 +611,11 @@ void EngineIpIntelligenceTests::verifyCoordinate() {
 		delete results;
 	}
 
-	EXPECT_EQ(true, defaultCount < count) << "A special case has occurs where all test "
-		"addresses have returned a default coordinate of (0, 0). This need to be verified "
-		"that it is not a coincidence.";
+	// TODO: Once data is available. Uncomment this one.
+	//
+	// EXPECT_EQ(true, defaultCount < count) << "A special case has occurs where all test "
+	// 	"addresses have returned a default coordinate of (0, 0). This need to be verified "
+	// 	"that it is not a coincidence.";
 }
 
 void EngineIpIntelligenceTests::randomWithIpAddress(int count) {
@@ -630,13 +672,22 @@ void EngineIpIntelligenceTests::multiThreadRandom(uint16_t concurrency) {
  	EXPECT_EQ(a->getAvailableProperties(), b->getAvailableProperties()) <<
  		"Number of properties available does not match.";
  	for (size_t i = 0; i < a->getProperties().size(); i++) {
- 		vector<string> av = *a->getValues((int)i);
- 		vector<string> bv = *b->getValues((int)i);
- 		EXPECT_EQ(av.size(), bv.size()) << "Expected same number of values.";
- 		for (size_t v = 0; v < av.size(); v++) {
- 			EXPECT_STREQ(av[v].c_str(), bv[v].c_str()) <<
- 				"Values for the new data set should be the same.";
- 		}
+		Value<vector<string>> av = a->getValues((int)i);
+		Value<vector<string>> bv = b->getValues((int)i);
+		if (av.hasValue()) {
+			EXPECT_TRUE(bv.hasValue()) << "Expected both has values.";
+			vector<string> avs = *a->getValues((int)i);
+ 			vector<string> bvs = *b->getValues((int)i);
+ 			EXPECT_EQ(avs.size(), bvs.size()) << "Expected same number of values.";
+ 			for (size_t v = 0; v < avs.size(); v++) {
+ 				EXPECT_STREQ(avs[v].c_str(), bvs[v].c_str()) <<
+ 					"Values for the new data set should be the same.";
+ 			}
+		}
+		else {
+			// One does not have values, the other should not have value either.
+			EXPECT_FALSE(bv.hasValue()) << "Expected both dot not have values.";
+		}
  	}
  }
  

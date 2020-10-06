@@ -37,7 +37,7 @@ public:
 
         // Start to process Ip Addresses.
         int count =
-            fiftyoneDegreesProcIpiRun(dataFilePath.c_str(), "Countries", &config);
+            fiftyoneDegreesProcIpiRun(dataFilePath.c_str(), "CountryCode", &config);
 
         // Get the output from the processing.
         stringstream output = stringstream(testing::internal::GetCapturedStdout());

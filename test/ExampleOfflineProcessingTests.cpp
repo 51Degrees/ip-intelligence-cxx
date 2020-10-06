@@ -42,7 +42,7 @@ public:
 
         fiftyoneDegreesOfflineProcessingRun(
             dataFilePath.c_str(), ipAddressFilePath.c_str(),
-            getOutputFilePath().c_str(), "RangeStart,RangeEnd,AverageLocation", config);
+            getOutputFilePath().c_str(), "IpRangeStart,IpRangeEnd,AverageLocation", config);
         fiftyoneDegreesFileDelete(getOutputFilePath().c_str());
 
         // Don't print the stdout

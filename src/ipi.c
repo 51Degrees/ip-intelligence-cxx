@@ -2103,7 +2103,8 @@ const char* fiftyoneDegreesResultsIpiGetNoValueReasonMessage(
 	fiftyoneDegreesResultsNoValueReason reason) {
 	switch (reason) {
 	case FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_NO_RESULTS:
-		return "The results are empty. This is probably because we don't have this data in our database.";
+		return "The results are empty. This is probably because we don't "
+			"have this data in our database.";
 	case FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_NULL_PROFILE:
 		return "The results contained a null profile for the component which "
 			"the required property belongs to.";

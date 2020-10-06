@@ -41,7 +41,7 @@ initialised with.
 const char* fileName = argv[1];
 fiftyoneDegreesPropertiesRequired properties =
 	fiftyoneDegreesPropertiesDefault;
-properties.string = "RangeStart,RangeEnd,Countries,AverageLocation";
+properties.string = "IpRangeStart,IpRangeEnd,CountryCode,AverageLocation";
 ```
 
 2. Instantiate the 51Degrees data set within a resource manager from the
@@ -97,7 +97,23 @@ fiftyoneDegreesResourceManagerFree(&manager);
 
 Expected output:
 ```
-Result
+...
+Ipv4 Address: 8.8.8.8
+IpRangeStart: "8.6.113.0":"1.000000"
+IpRangeEnd: "8.8.227.255":"1.000000"
+CountryCode: "ZZ":"1.000000"
+AverageLocation: "0.000000,0.000000":"1.000000"
+LocationBoundNorthWest: "0.000000,0.000000":"1.000000"
+LocationBoundSouthEast: "0.000000,0.000000":"1.000000"
+...
+Ipv6 Address: 2001:4860:4860::8888
+IpRangeStart: "2001:4700:0000:0000:0000:0000:0000:0000":"1.000000"
+IpRangeEnd: "2001:48f8:0021:ffff:ffff:ffff:ffff:ffff":"1.000000"
+CountryCode: "ZZ":"1.000000"
+AverageLocation: "0.000000,0.000000":"1.000000"
+LocationBoundNorthWest: "0.000000,0.000000":"1.000000"
+LocationBoundSouthEast: "0.000000,0.000000":"1.000000"
+...
 ```
 
 */
@@ -149,9 +165,9 @@ static void reportStatus(StatusCode status,
 
 static void printPropertyValueFromResults(ResultsIpi *results) {
 	if (results != NULL && results->count > 0) {
-		printf("RangeStart: %s\n", getPropertyValueAsString(results, "RangeStart"));
-		printf("RangeEnd: %s\n", getPropertyValueAsString(results, "RangeEnd"));
-		printf("Countries: %s\n", getPropertyValueAsString(results, "Countries"));
+		printf("IpRangeStart: %s\n", getPropertyValueAsString(results, "IpRangeStart"));
+		printf("IpRangeEnd: %s\n", getPropertyValueAsString(results, "IpRangeEnd"));
+		printf("CountryCode: %s\n", getPropertyValueAsString(results, "CountryCode"));
 		printf("AverageLocation: %s\n", getPropertyValueAsString(results, "AverageLocation"));
 		printf("LocationBoundNorthWest: %s\n", getPropertyValueAsString(results, "LocationBoundNorthWest"));
 		printf("LocationBoundSouthEast: %s\n", getPropertyValueAsString(results, "LocationBoundSouthEast"));
@@ -169,7 +185,7 @@ void fiftyoneDegreesIpiGettingStarted(
 
 	// Set the properties to be returned for each ip
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "RangeStart,RangeEnd,Countries,"
+	properties.string = "IpRangeStart,IpRangeEnd,CountryCode,"
 		"AverageLocation,LocationBoundNorthWest,LocationBoundSouthEast";
 
 	StatusCode status = IpiInitManagerFromFile(
