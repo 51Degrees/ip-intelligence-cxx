@@ -29,8 +29,24 @@ using namespace FiftyoneDegrees::IpIntelligence;
 ProfileMetaData* ProfileMetaDataBuilderIpi::build(
 	fiftyoneDegreesDataSetIpi *dataSet,
 	fiftyoneDegreesProfile *profile) {
-	byte componentId = ((Component*)dataSet->componentsList
-		.items[profile->componentIndex].data.ptr)->componentId;
+	EXCEPTION_CREATE;
+	Item item;
+	Component* component;
+	byte componentId;
+
+	DataReset(&item.data);
+	component = 
+		fiftyoneDegreesProfileGetComponent(
+			dataSet->components, 
+			profile, 
+			&item, 
+			exception);
+	EXCEPTION_THROW;
+	
+	// Obtain the componentId before release
+	componentId = component->componentId;
+	COLLECTION_RELEASE(dataSet->components, &item);
+
 	return new ProfileMetaData(
 		profile->profileId,
 		componentId);

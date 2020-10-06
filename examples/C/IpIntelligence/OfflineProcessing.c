@@ -196,9 +196,10 @@ static void process(const char* ipAddress, void* state) {
 			fprintf(offline->output, ",\"\"");
 		}
 		else {
-
-			// Write value(s) with comma separator.
+			// Write value(s) with pipeline separator.
 			fprintf(offline->output, "|");
+			// Write weighted value with comma separator
+			// between value and its weight.
 			fprintf(offline->output, "%s", getPropertyValueAsString(
 				offline->results,
 				i));
