@@ -252,7 +252,7 @@ static void executeTest(const char* ipAddress, void* state) {
  * @param mainState state information about the main test
  */
 static void runPerformanceThread(void* mainState) {
-	const char ipAddress[BUFFER] = "";
+	char ipAddress[BUFFER] = "";
 	performanceThreadState threadState;
 	threadState.main = (performanceState*)mainState;
 

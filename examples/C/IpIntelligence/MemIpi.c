@@ -107,21 +107,6 @@ void printLoadBar(memoryThreadState* state) {
 	printf("]");
 }
 
-static const char* getPropertyValueAsString(
-	ResultsIpi* results,
-	const char* propertyName) {
-	EXCEPTION_CREATE;
-	ResultsIpiGetValuesString(
-		results,
-		propertyName,
-		valueBuffer,
-		sizeof(valueBuffer),
-		",",
-		exception);
-	EXCEPTION_THROW;
-	return valueBuffer;
-}
-
 /**
  * The NetworkId can get very long and not suitable
  * to be displayed as full in a console interface.
@@ -208,7 +193,7 @@ static void executeTest(const char* ipAddress, void* state) {
  * @param mainState state information about the main test
  */
 static void runMemoryThread(void* mainState) {
-	const char ipAddress[50] = "";
+	char ipAddress[500] = "";
 	memoryThreadState threadState;
 	threadState.main = (memoryState*)mainState;
 

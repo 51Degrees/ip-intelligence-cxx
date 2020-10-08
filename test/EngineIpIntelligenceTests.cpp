@@ -47,7 +47,7 @@ EngineIpIntelligenceTests::EngineIpIntelligenceTests(
 	const char *ipAddressesFileName)
 	: EngineTests(requiredProperties, directory, fileNames, fileNamesLength) {
 	char ipAddressesFullName[FIFTYONE_DEGREES_FILE_MAX_PATH];
-	const char ipAddress[50] = "";
+	char ipAddress[500] = "";
 	fiftyoneDegreesFileGetPath(
 		directory,
 		ipAddressesFileName,
@@ -131,7 +131,7 @@ void EngineIpIntelligenceTests::verifyValueMetaData() {
 		"meta data for property " << property->getName();
 
 	// Pick the first value to be used for testing.
-	value1 = rangeStartValues->getByIndex(0);
+	value1 = rangeStartValues->getByIndex(1);
 	EXPECT_TRUE(value1 != nullptr) << "There is no value at index 0.";
 	
 	// See if a valid IP address value string can be correctly parsed
@@ -487,7 +487,6 @@ void EngineIpIntelligenceTests::boundIpAddressPresent(const char *ipAddress) {
 	unsigned char upperBoundIpAddress[FIFTYONE_DEGREES_IPV6_LENGTH];
 	memset(lowerBoundIpAddress, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
 	memset(upperBoundIpAddress, 0xff, FIFTYONE_DEGREES_IPV6_LENGTH);
-	upperBoundIpAddress[0] = 0xfe;
 
 	EngineIpi *engineIpi = (EngineIpi*)getEngine();
 	ResultsIpi *results = engineIpi->process(ipAddress);

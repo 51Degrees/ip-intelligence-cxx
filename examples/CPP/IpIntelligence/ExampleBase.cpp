@@ -102,7 +102,7 @@ void ExampleBase::processIpAddress(const char *ipAddress, void *state) {
 }
 
 void ExampleBase::SharedState::processIpAddressesSingle() {
-  const char ipAddress[50] = "";
+  char ipAddress[500] = "";
   ThreadState thread(engine);
   fiftyoneDegreesTextFileIterate(ipAddressFilePath.c_str(), ipAddress,
                                  sizeof(ipAddress), &thread, processIpAddress);

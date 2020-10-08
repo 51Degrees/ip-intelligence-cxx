@@ -496,22 +496,23 @@ static StatusCode initComponentsAvailable(
 	return SUCCESS;
 }
 
-int findPropertyName(
-	Collection* properties,
-	Collection* strings,
-	const char* name,
-	Exception* exception) {
-	int i;
-	Property* property;
-	String* propertyName;
+static int findPropertyIndexByName(
+	Collection *properties,
+	Collection *strings,
+	char *name,
+	Exception *exception) {
+	int index;
+	bool found = false;
+	Property *property;
+	String *propertyName;
 	Item propertyItem, nameItem;
 	int count = CollectionGetCount(properties);
 	DataReset(&propertyItem.data);
 	DataReset(&nameItem.data);
-	for (i = 0; i < count; i++) {
+	for (index = 0; index < count && found == false; index++) {
 		property = PropertyGet(
 			properties,
-			i,
+			index,
 			&propertyItem,
 			exception);
 		if (property != NULL &&
@@ -522,17 +523,69 @@ int findPropertyName(
 				&nameItem,
 				exception);
 			if (propertyName != NULL && EXCEPTION_OKAY) {
-				if (StringCompare(name, STRING(propertyName)) == 0) {
-					COLLECTION_RELEASE(strings, &nameItem);
-					COLLECTION_RELEASE(properties, &propertyItem);
-					return i;
+				if (StringCompare(name, &propertyName->value) == 0) {
+					found = true;
 				}
 				COLLECTION_RELEASE(strings, &nameItem);
 			}
 			COLLECTION_RELEASE(properties, &propertyItem);
 		}
 	}
-	return -1;
+	return found ? index : -1;
+}
+
+static void initGetEvidencePropertyRelated(
+	DataSetIpi* dataSet,
+	PropertyAvailable* availableProperty,
+	EvidenceProperties* evidenceProperties,
+	int* count,
+	char* suffix,
+	Exception* exception) {
+	Property* property;
+	String* name;
+	String* availableName = (String*)availableProperty->name.data.ptr;
+	int requiredLength = ((int)strlen(suffix)) + availableName->size - 1;
+	Item propertyItem, nameItem;
+	DataReset(&propertyItem.data);
+	DataReset(&nameItem.data);
+	int propertiesCount = CollectionGetCount(dataSet->properties);
+	for (int propertyIndex = 0; 
+		propertyIndex < propertiesCount && EXCEPTION_OKAY; 
+		propertyIndex++) {
+		property = PropertyGet(
+			dataSet->properties,
+			propertyIndex,
+			&propertyItem,
+			exception);
+		if (property != NULL && EXCEPTION_OKAY) {
+			name = StringGet(
+				dataSet->strings,
+				property->nameOffset,
+				&nameItem,
+				exception);
+			if (name != NULL && EXCEPTION_OKAY) {
+				if (requiredLength == name->size -1 &&
+					// Check that the available property matches the start of
+					// the possible related property.
+					StringCompareLength(
+						&availableName->value,
+						&name->value,
+						(size_t)availableName->size - 1) == 0 && 
+					// Check that the related property has a suffix that 
+					// matches the one provided to the method.
+					StringCompare(
+						&name->value + availableName->size - 1, 
+						suffix) == 0) {
+					if (evidenceProperties != NULL) {
+						evidenceProperties->items[*count] = propertyIndex;
+					}
+					(*count)++;
+				}
+				COLLECTION_RELEASE(dataSet->strings, &nameItem);
+			}
+			COLLECTION_RELEASE(dataSet->properties, &propertyItem);
+		}
+	}
 }
 
 uint32_t initGetEvidenceProperties(
@@ -540,80 +593,22 @@ uint32_t initGetEvidenceProperties(
 	fiftyoneDegreesPropertyAvailable* availableProperty,
 	fiftyoneDegreesEvidenceProperties* evidenceProperties) {
 	int count = 0;
-	int index;
-	Item propertyItem, stringItem;
-	Component* component;
-	String* name;
-	char* jsName;
-	DataSetIpi* dataSet = (DataSetIpi*)((stateWithException*)state)->state;
+	DataSetIpi* dataSet =
+		(DataSetIpi*)((stateWithException*)state)->state;
 	Exception* exception = ((stateWithException*)state)->exception;
 
-	DataReset(&propertyItem.data);
-
-	// First get the property to check its component.
-	Property* property = PropertyGet(
-		dataSet->properties,
-		availableProperty->propertyIndex,
-		&propertyItem,
+	// Any properties that have a suffix of JavaScript and are associated with
+	// an available property should also be added. These are used to gather
+	// evidence from JavaScript that might impact the value returned.
+	initGetEvidencePropertyRelated(
+		dataSet,
+		availableProperty,
+		evidenceProperties,
+		&count,
+		"JavaScript",
 		exception);
-	if (property != NULL && EXCEPTION_OKAY) {
-		// Get the name of the component which the property belongs to.
-		component = (Component*)dataSet->componentsList.items[property->componentIndex].data.ptr;
 
-		DataReset(&stringItem.data);
-		name = StringGet(
-			dataSet->strings,
-			component->nameOffset,
-			&stringItem,
-			exception);
-		if (name != NULL && EXCEPTION_OKAY) {
-			// The property and its component exist
-			COLLECTION_RELEASE(dataSet->strings, &stringItem);
-		}
-		COLLECTION_RELEASE(dataSet->properties, &propertyItem);
-	}
-
-	// Only carry on doing this if there was no exception from the section
-	// above.
-	if (EXCEPTION_OKAY) {
-		name = (String*)availableProperty->name.data.ptr;
-		// Allocate some space to set the name of a target property. This
-		// follows the convension of a 'JavaScript' suffix. For example, a
-		// property named 'CountriesJavaScript' would contain JavaScript which
-		// produced evidence for the 'Countries' property.
-		// For the scope of IP Intelligence this is not required. But it is
-		// good to have its in place for future supports.
-		jsName = (char*)Malloc(sizeof(char) * (name->size + strlen("javascript") + 1));
-		if (jsName != NULL) {
-			// Construct the name to look for.
-			strcpy(jsName, &name->value);
-			strcpy(jsName + name->size - 1, "javascript");
-			// Do a sequential search for the property name just constructed.
-			// Ideally this would be a binary search, but the properties are not
-			// guaranteed to be in alphabetical order. Besides, this method only
-			// runs at startup and the number of properties is relatively
-			// small, so performance is not such an issue.
-			index = findPropertyName(
-				dataSet->properties,
-				dataSet->strings,
-				jsName,
-				exception);
-			if (EXCEPTION_OKAY) {
-				if (index >= 0) {
-					if (evidenceProperties != NULL) {
-						// Add the index if the structure has been allocated.
-						evidenceProperties->items[count] = index;
-					}
-					count++;
-				}
-			}
-			Free(jsName);
-		}
-		else {
-			EXCEPTION_SET(INSUFFICIENT_MEMORY);
-		}
-	}
-	return count;
+	return (uint32_t)count;
 }
 
 static StatusCode initPropertiesAndHeaders(

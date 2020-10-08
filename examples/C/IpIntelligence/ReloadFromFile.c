@@ -224,7 +224,7 @@ static void executeTest(const char* ipAddress, void* state) {
 }
 
 static void runRequestsSingle(sharedState* state) {
-	const char ipAddress[50] = "";
+	char ipAddress[500] = "";
 	sharedState* shared = (sharedState*)state;
 	threadState thread;
 	thread.hashCode = 0;

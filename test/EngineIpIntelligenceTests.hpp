@@ -195,13 +195,13 @@ TEST_F(ENGINE_CLASS_NAME(e,t,c,p), MultiThreadRandom) { \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestIpAddress) { \
 	ipAddressPresent(ipv4Address); \
 	ipAddressPresent(lowerBoundIpv4Address); \
+	boundIpAddressPresent(upperBoundIpv4Address); \
+	boundIpAddressPresent(outOfRangeIpv4Address); \
 	ipAddressPresent(ipv6Address); \
 	ipAddressPresent(lowerBoundIpv6Address); \
+	boundIpAddressPresent(upperBoundIpv6Address); \
 	randomIpAddressPresent(50); \
 	verifyMixedPrefixesEvidence(); }
-	//boundIpAddressPresent(upperBoundIpv4Address); \
-	//boundIpAddressPresent(outOfRangeIpv4Address); \
-	//boundIpAddressPresent(upperBoundIpv6Address); \
 	//boundIpAddressPresent(outOfRangeIpv6Address); \ /* This will give undefined behaviour */
 
 #define ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e,t,c,p) \
