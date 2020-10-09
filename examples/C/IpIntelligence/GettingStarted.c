@@ -29,9 +29,9 @@ determine the country of a given IP address.
 
 This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/C/GettingStarted.c).
 
-@include{doc} example-ipi-require-datafile.txt
+@include{doc} example-require-datafile-ipi.txt
 
-@include{doc} example-ipi-how-to-run.txt
+@include{doc} example-how-to-run-ipi.txt
 
 In detail, the example shows how to
 
