@@ -11,11 +11,8 @@ The 51Degrees IP intelligence API is built on the 51Degrees [common API](https:/
 ## Data File
 
 In order to perform IP intelligence, you will need to use a 51Degrees data file. 
-This repository includes a free, 'lite' file in the 'ip-intelligence-data' 
-sub-module that has a significantly reduced set of properties. To obtain a 
-file with a more complete set of IP intelligence properties see the 
-[51Degrees website](https://51degrees.com/pricing). 
-If you want to use the lite file, you will need to install [GitLFS](https://git-lfs.github.com/).
+To obtain an IP intelligence data file see the [51Degrees website](https://51degrees.com/pricing). 
+By default, the data file will need to be placed in the 'ip-intelligence-data' sub-folder for the tests and the on-premise examples to work. If you want to use a different location, you will need to manually update the data file paths for these files.
 
 For Linux:
 ```
@@ -71,7 +68,7 @@ mkdir build
 cd build
 cmake .. 
 ```
-Note: on an x64 Windows system, it is neccessary to add `-A x64` as CMake will build a Win32 Solution by default.
+Note: on an x64 Windows system, it is necessary to add `-A x64` as CMake will build a Win32 Solution by default.
 
 Then build the whole solution with
 
@@ -83,7 +80,7 @@ Libraries are output to the `lib/` directory, and executables like examples and 
 
 ## Using Visual Studio
 
-Calling `CMake` in an MSVC environment (as described in the [Using CMake](#Using-CMake) section) will produce a Visual Studio solution with projects for all libraries, examples, and tests. However, it is preferable to use the dedicated Visual Studio solution in the `VisualStudio/` directory.
+Calling `CMake` in an MSVC environment (as described in the [Using CMake](#Using-CMake) section) will produce a Visual Studio solution with projects for all libraries, examples, and tests. However, it is preferable to use the dedicated Visual Studio solution in the `VisualStudio/` directory. If the dedicated Visual Studio solution is used, re-targeting the solution might be required as some sub-modules projects might have been using different versions of platform tool set.
 
 ## Build Options
 

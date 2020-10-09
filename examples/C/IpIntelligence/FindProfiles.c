@@ -176,7 +176,7 @@ void fiftyoneDegreesIpiFindProfiles(
 	PropertiesRequired properties = PropertiesDefault;
 	properties.string = "CountryCode";
 
-	// Initialise the manager for device detection.
+	// Initialise the manager for IP intelligence.
 	StatusCode status = IpiInitManagerFromFile(
 		&manager,
 		&config,

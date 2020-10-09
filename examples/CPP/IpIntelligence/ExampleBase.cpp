@@ -36,7 +36,7 @@ ExampleBase::ExampleBase(byte *data, long length, ConfigIpi *config) {
   string propertiesString = "IpRangeStart,IpRangeEnd,CountryCode,CityName,AverageLocation";
   properties = new RequiredPropertiesConfig(propertiesString);
 
-  // Initialise the engine for device detection.
+  // Initialise the engine for IP intelligence.
   engine = new EngineIpi(data, length, config, properties);
 }
 
