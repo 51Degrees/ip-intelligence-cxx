@@ -105,7 +105,7 @@ namespace FiftyoneDegrees {
 	namespace Examples {
 		namespace IpIntelligence {
 			/**
-			 * Hash Reload From Memory Example.
+			 * IP Intelligence Reload From Memory Example.
 			 */
 			class ReloadFromMemory : public ExampleBase {
 			public:

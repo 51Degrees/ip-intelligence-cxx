@@ -129,7 +129,7 @@ namespace FiftyoneDegrees {
 	namespace Examples {
 		namespace IpIntelligence {
 			/**
-			 * Hash Strongly Typed Example
+			 * IP Intelligence Strongly Typed Example
 			 */
 			class StronglyTyped : public ExampleBase {
 			public:

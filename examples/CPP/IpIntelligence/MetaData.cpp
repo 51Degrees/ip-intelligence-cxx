@@ -125,7 +125,7 @@ namespace FiftyoneDegrees {
 	namespace Examples {
 		namespace IpIntelligence {
 			/**
-			 * Hash Meta Data Example.
+			 * IP Intelligence Meta Data Example.
 			 */
 			class MetaDataExample : public ExampleBase {
 			public:

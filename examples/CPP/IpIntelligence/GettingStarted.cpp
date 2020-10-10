@@ -128,7 +128,7 @@ namespace FiftyoneDegrees {
 	namespace Examples {
 		namespace IpIntelligence {
 			/**
-			 * Hash Getting Started Example.
+			 * IP Intelligence Getting Started Example.
 			 */
 			class GettingStarted : public ExampleBase {
 			public:
