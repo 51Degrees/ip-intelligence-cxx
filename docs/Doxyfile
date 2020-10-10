@@ -822,6 +822,7 @@ INPUT                  = ../ \
                          ../src \
                          ../src/common-cxx \
                          ../examples/CPP \
+                         ../examples/CPP/IpIntelligence \
                          ../examples/CPP/IpIntelligence/GettingStarted.cpp \
                          ../examples/CPP/IpIntelligence/MetaData.cpp \
                          ../examples/CPP/IpIntelligence/ReloadFromFile.cpp \
