@@ -15,7 +15,7 @@ stages:
   - job: Build_VisualStudio
 
     pool:
-      vmImage: windows-2019
+      vmImage: windows-2017
       demands:
       - msbuild
       - vstest
@@ -52,7 +52,6 @@ stages:
         msbuildArchitecture: x64
         platform: x64
         configuration: Release
-        msbuildArguments: /p:PlatformToolSet=v142,WindowsTargetPlatformVersion=10.0
         clean: true
 
     - bash: './FiftyOne.IpIntelligence.Tests.exe --gtest_filter="-*TestOfflineProcessing*" --gtest_catch_exceptions=1 --gtest_break_on_failure=0 --gtest_output=xml:testoutput.xml'
