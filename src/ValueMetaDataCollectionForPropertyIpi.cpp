@@ -78,9 +78,9 @@ ValueMetaData* ValueMetaDataCollectionForPropertyIpi::getByKey(
 	EXCEPTION_THROW;
 	if (name != nullptr) {
 		result = ValueMetaDataCollectionBaseIpi::getByKey(key);
-		if (strcmp(
-			result->getKey().getPropertyName().c_str(), 
-			&name->value) != 0) {
+		if (result != nullptr &&
+			strcmp(result->getKey().getPropertyName().c_str(), 
+				&name->value) != 0) {
 			delete result;
 			result = nullptr;
 		}
