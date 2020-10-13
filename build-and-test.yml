@@ -15,7 +15,7 @@ stages:
   - job: Build_VisualStudio
 
     pool:
-      vmImage: windows-2017
+      vmImage: vs2017-win2016
       demands:
       - msbuild
       - vstest
