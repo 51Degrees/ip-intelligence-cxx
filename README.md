@@ -50,7 +50,7 @@ rather than the files themselves. As such, these need to be downloaded individua
 
 ### Windows
 
-You will need either Visual Studio 2019 or the [C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) installed.
+You will need either Visual Studio 2017/2019 or the [C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) installed.
 If you have Visual Studio Code, you'll still need to install the build tools from the link above.
 
 ### Linux 
@@ -80,7 +80,7 @@ Libraries are output to the `lib/` directory, and executables like examples and 
 
 ## Using Visual Studio
 
-Calling `CMake` in an MSVC environment (as described in the [Using CMake](#Using-CMake) section) will produce a Visual Studio solution with projects for all libraries, examples, and tests. However, it is preferable to use the dedicated Visual Studio solution in the `VisualStudio/` directory. If the dedicated Visual Studio solution is used, re-targeting the solution might be required as some sub-modules projects might have been using different versions of platform tool set.
+Calling `CMake` in an MSVC environment (as described in the [Using CMake](#Using-CMake) section) will produce a Visual Studio solution with projects for all libraries, examples, and tests. However, it is preferable to use the dedicated Visual Studio solution in the `VisualStudio/` directory. If the dedicated Visual Studio solution is used, re-targeting the solution might be required for VS2019 IDE.
 
 ## Build Options
 

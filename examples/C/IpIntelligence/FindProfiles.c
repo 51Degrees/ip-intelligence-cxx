@@ -81,8 +81,8 @@ fiftyoneDegreesResourceManagerFree(&manager);
 Expected output:
 ```
 ...
-There are '1' countries in the data set with code ITA.
-There are '1' countries in the data set with code DEU.
+There are '1' countries in the data set with code 'it'.
+There are '1' countries in the data set with code 'gb'.
 ...
 ```
 
@@ -130,7 +130,7 @@ static bool count(void* state, Item* item) {
 
 void run(ResourceManager* manager) {
 	EXCEPTION_CREATE;
-	uint32_t isGermany = 0;
+	uint32_t isGreatBritian = 0;
 	uint32_t isItaly = 0;
 
 	printf("Starting Find Profiles Example.\n\n");
@@ -138,21 +138,21 @@ void run(ResourceManager* manager) {
 	IpiIterateProfilesForPropertyAndValue(
 		manager,
 		"CountryCode",
-		"ITA",
+		"it",
 		&isItaly,
 		count,
 		exception);
-	printf("There are '%d' countries in the data set with code ITA.\n", isItaly);
+	printf("There are '%d' countries in the data set with code 'it'.\n", isItaly);
 
 	IpiIterateProfilesForPropertyAndValue(
 		manager,
 		"CountryCode",
-		"DEU",
-		&isGermany,
+		"gb",
+		&isGreatBritian,
 		count,
 		exception);
-	printf("There are '%d' countries in the data set with code DEU.\n",
-		isGermany);
+	printf("There are '%d' countries in the data set with code 'gb'.\n",
+		isGreatBritian);
 }
 
 /**

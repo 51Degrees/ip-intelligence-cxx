@@ -25,7 +25,7 @@
 using namespace FiftyoneDegrees;
 using namespace FiftyoneDegrees::Examples::IpIntelligence;
 
-const char *ExampleBase::ipv4Address = "8.8.8.8";
+const char *ExampleBase::ipv4Address = "185.28.167.77";
 
 const char *ExampleBase::ipv6Address = "2001:4860:4860::8888";
 

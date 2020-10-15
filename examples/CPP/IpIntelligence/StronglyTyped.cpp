@@ -115,8 +115,8 @@ delete engine;
 Expected output:
 ```
 ...
-Ipv4 Address: 8.8.8.8
-   AverageLocation: 0,0
+Ipv4 Address: 185.28.167.77
+   AverageLocation: 53.5763,-2.32811
 
 Ipv6 Address: 2001:4860:4860::8888
    AverageLocation: 0,0
@@ -170,9 +170,9 @@ namespace FiftyoneDegrees {
 					results = engine->process(evidence);
 					Common::Value<fiftyoneDegreesCoordinate> ipv6Value = results->getValueAsCoordinate("AverageLocation");
 					cout << "   AverageLocation: " <<
-						ipv4Value.getValue().lat <<
+						ipv6Value.getValue().lat <<
 						"," <<
-						ipv4Value.getValue().lon << "\n";
+						ipv6Value.getValue().lon << "\n";
 					delete results;
 
 					// Free the evidence.

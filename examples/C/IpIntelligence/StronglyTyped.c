@@ -116,8 +116,8 @@ fiftyoneDegreesResourceManagerFree(&manager);
 Expected output:
 ```
 ...
-Ipv4 Address: 8.8.8.8
-   AverageLocation: 0.000000,0.000000
+Ipv4 Address: 185.28.167.77
+   AverageLocation: 53.576283,-2.328108
    CountryCode: 0.000000,0.000000
    IpRangeEnd: 0.000000,0.000000
    IpRangeStart: 0.000000,0.000000
@@ -249,7 +249,7 @@ void fiftyoneDegreesIpiStronglyTyped(
 	ResultsIpi* results = ResultsIpiCreate(&manager);
 
 	// Ipv4 Address.
-	const char* ipv4Address = "8.8.8.8";
+	const char* ipv4Address = "185.28.167.77";
 
 	// Ipv6 Address.
 	const char* ipv6Address = "2001:4860:4860::8888";

@@ -114,11 +114,11 @@ delete engine;
 Expected output:
 ```
 ...
-Ipv4 Address: 8.8.8.8
-   Country Code: ZZ, Percentage: 1
+Ipv4 Address: 185.28.167.77
+   Country Code: gb, Percentage: 100%
 
 Ipv6 Address: 2001:4860:4860::8888
-   Country Code: ZZ, Percentage: 1
+   Country Code: ZZ, Percentage: 100%
 ...
 ```
 
@@ -163,7 +163,7 @@ namespace FiftyoneDegrees {
 						cout << "   Country Code: " <<
 							w.getValue() <<
 							", Percentage: " <<
-							w.getWeight() << "\n";
+							w.getWeight() * 100 << "%\n";
 					}
 					delete results;
 
@@ -174,11 +174,11 @@ namespace FiftyoneDegrees {
 					results = engine->process(evidence);
 					Common::Value<vector<WeightedValue<string>>> ipv6Value
 						= results->getValuesAsWeightedStringList("CountryCode");
-					for (WeightedValue<string> w : ipv4Value.getValue()) {
+					for (WeightedValue<string> w : ipv6Value.getValue()) {
 						cout << "   Country Code: " <<
 							w.getValue() <<
 							", Percentage: " <<
-							w.getWeight() << "\n";
+							w.getWeight() * 100 << "%\n";
 					}
 					delete results;
 

@@ -40,7 +40,22 @@ work.
 
 Expected output:
 ```
-Result
+...
+Caching Data pass 1 of 1:
+
+        [========================================]
+
+Calibration pass 1 of 1:
+
+        [========================================]
+
+Detection test pass 1 of 1:
+
+        [========================================] 6416:1.000000|6417:1.000000|0:1.000000|0:1.000000|...
+
+Total seconds for 80000 IP Addresses over 4 thread(s): 0.** s
+Average matching per second: ***
+...
 ```
 
 */

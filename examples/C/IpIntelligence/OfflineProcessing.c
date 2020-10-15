@@ -101,7 +101,15 @@ fiftyoneDegreesResourceManagerFree(&manager);
 
 Expected output:
 ```
-Result
+Output Written to [Full Path]/ip-intelligence-data/20000 IP Addresses.processed.csv
+
+```
+Expected content of output file:
+```
+"IP Address"|"AverageLocation"|"CountryCode"|"IpRangeEnd"|"IpRangeStart"
+"::f33e:25e3:c5bd:e182:e584"|"0.000000,0.000000":"1.000000"|"ZZ":"1.000000"|...
+"0fa0:3a4::2626"|"0.000000,0.000000":"1.000000"|"ZZ":"1.000000"|"2001:023f:...
+...
 ```
 
 */

@@ -98,18 +98,20 @@ fiftyoneDegreesResourceManagerFree(&manager);
 Expected output:
 ```
 ...
-Ipv4 Address: 8.8.8.8
-IpRangeStart: "8.6.113.0":"1.000000"
-IpRangeEnd: "8.8.227.255":"1.000000"
+Ipv4 Address: 185.28.167.77
+IpRangeStart: "185.28.167.0":"1.000000"
+IpRangeEnd: "185.28.167.127":"1.000000"
+CountryCode: "gb":"1.000000"
+CityName: "Moffat":"0.535714"|"Reading":"0.357143"|"Swindon":"0.107143"
+AverageLocation: "53.576283,-2.328108":"1.000000"
+LocationBoundNorthWest: "55.378052,-3.435973":"1.000000"
+LocationBoundSouthEast: "51.457577,-0.976019":"1.000000"
+
+Ipv6 Address: fdaa:bbcc:ddee:0:995f:d63a:f2a1:f189
+IpRangeStart: "2c0f:ff30:0100:0000:0000:0000:0000:0000":"1.000000"
+IpRangeEnd: "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff":"1.000000"
 CountryCode: "ZZ":"1.000000"
-AverageLocation: "0.000000,0.000000":"1.000000"
-LocationBoundNorthWest: "0.000000,0.000000":"1.000000"
-LocationBoundSouthEast: "0.000000,0.000000":"1.000000"
-...
-Ipv6 Address: 2001:4860:4860::8888
-IpRangeStart: "2001:4700:0000:0000:0000:0000:0000:0000":"1.000000"
-IpRangeEnd: "2001:48f8:0021:ffff:ffff:ffff:ffff:ffff":"1.000000"
-CountryCode: "ZZ":"1.000000"
+CityName: "Unknown":"1.000000"
 AverageLocation: "0.000000,0.000000":"1.000000"
 LocationBoundNorthWest: "0.000000,0.000000":"1.000000"
 LocationBoundSouthEast: "0.000000,0.000000":"1.000000"
@@ -168,6 +170,7 @@ static void printPropertyValueFromResults(ResultsIpi *results) {
 		printf("IpRangeStart: %s\n", getPropertyValueAsString(results, "IpRangeStart"));
 		printf("IpRangeEnd: %s\n", getPropertyValueAsString(results, "IpRangeEnd"));
 		printf("CountryCode: %s\n", getPropertyValueAsString(results, "CountryCode"));
+		printf("CityName: %s\n", getPropertyValueAsString(results, "CityName"));
 		printf("AverageLocation: %s\n", getPropertyValueAsString(results, "AverageLocation"));
 		printf("LocationBoundNorthWest: %s\n", getPropertyValueAsString(results, "LocationBoundNorthWest"));
 		printf("LocationBoundSouthEast: %s\n", getPropertyValueAsString(results, "LocationBoundSouthEast"));
@@ -185,7 +188,7 @@ void fiftyoneDegreesIpiGettingStarted(
 
 	// Set the properties to be returned for each ip
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "IpRangeStart,IpRangeEnd,CountryCode,"
+	properties.string = "IpRangeStart,IpRangeEnd,CountryCode,CityName,"
 		"AverageLocation,LocationBoundNorthWest,LocationBoundSouthEast";
 
 	StatusCode status = IpiInitManagerFromFile(
@@ -205,10 +208,10 @@ void fiftyoneDegreesIpiGettingStarted(
 	ResultsIpi* results = ResultsIpiCreate(&manager);
 
 	// an ipv4 address string
-	const char* ipv4Address = "8.8.8.8";
+	const char* ipv4Address = "185.28.167.77";
 
 	// an ipv6 address string
-	const char* ipv6Address = "2001:4860:4860::8888";
+	const char* ipv6Address = "fdaa:bbcc:ddee:0:995f:d63a:f2a1:f189";
 
 	printf("Starting Getting Started Example.\n");
 
