@@ -35,6 +35,10 @@ stages:
         git -c http.https://51degrees.visualstudio.com.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" lfs fetch
         git -c http.https://51degrees.visualstudio.com.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" lfs checkout
         ls
+        gzip -d Enterprise-ListV41.ipi.gz
+        ls
+        mv -p Enterprise-ListV41.ipi 51Degrees-LiteV4.1.ipi
+        ls
       workingDirectory: 'ip-intelligence-data'
       displayName: 'Fetch LFS Data Files'
 
@@ -96,6 +100,10 @@ stages:
         git -c http.https://51degrees.visualstudio.com.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" lfs fetch
         git -c http.https://51degrees.visualstudio.com.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" lfs checkout
         ls
+        gzip -d Enterprise-ListV41.ipi.gz
+        ls
+        mv -p Enterprise-ListV41.ipi 51Degrees-LiteV4.1.ipi
+        ls
       workingDirectory: 'ip-intelligence-data'
       displayName: 'Fetch LFS Data Files'
 
@@ -150,6 +158,18 @@ stages:
     - checkout: self
       submodules: recursive
       lfs: true
+
+    - task: Bash@3
+      displayName: 'Extract data file'
+      input:
+        targetType: 'inline'
+        script: |
+          ls
+          gzip -d Enterprise-ListV41.ipi.gz
+          ls
+          mv -p Enterprise-ListV41.ipi 51Degrees-LiteV4.1.ipi
+          ls
+        workingDirectory: 'ip-intelligence-data'
 
     - task: Bash@3
       displayName: 'Create Build Directory'
