@@ -272,12 +272,26 @@ void EngineIpIntelligenceTests::validateName(
 }
 
 void EngineIpIntelligenceTests::validateQuick(ResultsBase *results) {
+	ResultsIpi* resultsIpi = (ResultsIpi*)results;
 	for (int i = 0; i < results->getAvailableProperties(); i++) {
 		vector<string> values;
 		Value<vector<string>> value = results->getValues(i);
 		if (value.hasValue()) {
 			EXPECT_NO_THROW(values = *value) << "Should not throw "
 			"exception for property '" << results->getPropertyName(i) << "'";
+			vector<WeightedValue<string>> weightedStrings = 
+				resultsIpi->getValuesAsWeightedStringList(i).getValue();
+
+			float curWeight;
+			for (std::vector<WeightedValue<string>>::iterator iter = weightedStrings.begin();
+				iter != weightedStrings.end();
+				iter++) {
+				if (iter != weightedStrings.begin()) {
+					EXPECT_TRUE(curWeight >= iter->getWeight()) << "Weights of returned results "
+					"are not in the descending order";
+					curWeight = iter->getWeight();
+				}
+			}
 		}
 		else {
 			// This could only happen only because we don't have the details
@@ -545,6 +559,12 @@ void EngineIpIntelligenceTests::randomIpAddressPresent(int count) {
 		EXPECT_EQ(rangeStart.getValue().getType(), rangeEnd.getValue().getType())
 			<< "IpRangeStart and IpRangeEnd types are not the same, where it should "
 			"be at IP address: " << ipAddress;
+		EXPECT_TRUE(fiftyoneDegreesCompareIpAddresses(
+			rangeStart.getValue().getIpAddress(),
+			rangeEnd.getValue().getIpAddress(),
+			rangeStart.getValue().getType()) < 0) << "Range start IP address should "
+			"be smaller than Range end IP address, where it shoud for IP address: " <<
+			ipAddress;
 
 		delete results;
 	}

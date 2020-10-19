@@ -20,7 +20,7 @@ stages:
       - msbuild
       - vstest
 
-    timeoutInMinutes: 120
+    timeoutInMinutes: 180
 
     steps:
 
@@ -81,7 +81,7 @@ stages:
           poolName: Hosted VS2017
           imageName:
 
-    timeoutInMinutes: 120
+    timeoutInMinutes: 180
 
     pool:
       name: $(poolName)
@@ -148,7 +148,7 @@ stages:
         ubuntu-16:
           imageName: ubuntu-16.04
 
-    timeoutInMinutes: 120
+    timeoutInMinutes: 180
 
     pool:
       vmImage: $(imageName)
