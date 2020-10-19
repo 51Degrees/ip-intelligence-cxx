@@ -161,7 +161,7 @@ stages:
 
     - task: Bash@3
       displayName: 'Extract data file'
-      input:
+      inputs:
         targetType: 'inline'
         script: |
           ls
