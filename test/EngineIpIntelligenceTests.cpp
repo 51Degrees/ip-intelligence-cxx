@@ -282,15 +282,15 @@ void EngineIpIntelligenceTests::validateQuick(ResultsBase *results) {
 			vector<WeightedValue<string>> weightedStrings = 
 				resultsIpi->getValuesAsWeightedStringList(i).getValue();
 
-			float curWeight;
-			for (std::vector<WeightedValue<string>>::iterator iter = weightedStrings.begin();
+			float curWeight = 0.0f;
+			for (vector<WeightedValue<string>>::iterator iter = weightedStrings.begin();
 				iter != weightedStrings.end();
 				iter++) {
 				if (iter != weightedStrings.begin()) {
 					EXPECT_TRUE(curWeight >= iter->getWeight()) << "Weights of returned results "
-					"are not in the descending order";
-					curWeight = iter->getWeight();
+						"are not in the descending order: " << results->getPropertyName(i);
 				}
+				curWeight = iter->getWeight();
 			}
 		}
 		else {
