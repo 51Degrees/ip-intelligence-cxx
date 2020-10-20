@@ -395,13 +395,13 @@ void EngineIpIntelligenceTests::verifyWithOutOfRangeIpv6Address() {
 
 void EngineIpIntelligenceTests::verifyWithInvalidInput() {
 	int character;
-	char userAgent[2];
-	userAgent[1] = '\0';
+	char ipAddress[2];
+	ipAddress[1] = '\0';
 	EngineIpi *engineIpi = (EngineIpi*)getEngine();
 	for (character = CHAR_MIN; character <= CHAR_MAX; character++) {
-		userAgent[0] = (char)character;
+		ipAddress[0] = (char)character;
 		ResultsIpi *results = engineIpi->process(
-		userAgent);
+		ipAddress);
 		validate(results);
 		delete results;
 	}
