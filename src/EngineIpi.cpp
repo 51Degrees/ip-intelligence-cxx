@@ -120,7 +120,7 @@ string EngineIpi::getProduct() {
  * updated file.
  */
 string EngineIpi::getType() {
-	return string("IpiV41");
+	return string("IPIV41");
 }
 
 /**

@@ -29,6 +29,8 @@ using namespace FiftyoneDegrees::IpIntelligence;
 
 /* Maximum buffer length to hold an IP address string */
 #define IP_ADDRESS_STRING_MAX_LENGTH 50
+/* Coordinate floating point precision */
+#define COORDINATE_PRECISION 7
 
 string ValueMetaDataBuilderIpi::getDynamicString(
 	fiftyoneDegreesCollection *stringsCollection,
@@ -52,7 +54,10 @@ string ValueMetaDataBuilderIpi::getDynamicString(
 			{
 				Coordinate coordinate = IpiGetCoordinate(&item, exception);
 				EXCEPTION_THROW;
-				stream << coordinate.lat << "," << coordinate.lon;
+				stream.precision(COORDINATE_PRECISION);
+				stream << fixed << coordinate.lat;
+				stream << ",";
+				stream << fixed << coordinate.lon;
 			}
 			break;
 		case FIFTYONE_DEGREES_STRING_IP_ADDRESS:

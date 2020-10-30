@@ -37,4 +37,11 @@ public:
     }
 };
 
-EXAMPLE_TESTS(ExampleTestMem)
+TEST_F(ExampleTestMem, InMemory) {
+    run(fiftyoneDegreesIpiInMemoryConfig); 
+}
+TEST_F(ExampleTestMem, LowMemory) {
+    if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) {
+        run(fiftyoneDegreesIpiLowMemoryConfig);
+    }
+}

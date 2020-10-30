@@ -101,7 +101,7 @@ public:
 	~EngineIpIntelligenceTests();
 	void SetUp();
 	void TearDown();
-	void verifyValueMetaData();
+	void verifyValueMetaDataIpAddress();
 	void metaData();
 	void availableProperties();
 	string getExpectedFileType();

@@ -111,7 +111,7 @@ void EngineIpIntelligenceTests::verifyComponentMetaDataDefaultProfile(
  * and searched for in values collection where the IP address
  * is in byte format.
  */
-void EngineIpIntelligenceTests::verifyValueMetaData() {
+void EngineIpIntelligenceTests::verifyValueMetaDataIpAddress() {
 	EngineIpi *engineIpi = (EngineIpi *)getEngine();
 	ValueMetaData *value1, *value2;
 	Collection<ValueMetaDataKey, ValueMetaData> *values = 
@@ -154,7 +154,7 @@ void EngineIpIntelligenceTests::metaData() {
 	EngineTests::verifyMetaData(getEngine());
 	// Verify additional cases where the value
 	// is not string
-	verifyValueMetaData();
+	verifyValueMetaDataIpAddress();
 }
 void EngineIpIntelligenceTests::availableProperties() {
 	// TODO: This mainly check the evidence property which is 
