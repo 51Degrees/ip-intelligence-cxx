@@ -58,7 +58,7 @@ PropertyMetaData* PropertyMetaDataBuilderIpi::build(
 		getEvidenceProperties(dataSet, property));
 }
 
-byte PropertyMetaDataBuilderIpi::getComponentId(
+::byte PropertyMetaDataBuilderIpi::getComponentId(
 	fiftyoneDegreesDataSetIpi *dataSet,
 	fiftyoneDegreesProperty *property) {
 	return ((Component*)dataSet->componentsList.items[
