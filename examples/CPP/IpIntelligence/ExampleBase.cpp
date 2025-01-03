@@ -29,7 +29,7 @@ const char *ExampleBase::ipv4Address = "185.28.167.77";
 
 const char *ExampleBase::ipv6Address = "2001:4860:4860::8888";
 
-ExampleBase::ExampleBase(byte *data, long length, ConfigIpi *config) {
+ExampleBase::ExampleBase(::byte *data, long length, ConfigIpi *config) {
 	this->config = config;
 	
 	// Set the properties to be returned for each Ip Address.
