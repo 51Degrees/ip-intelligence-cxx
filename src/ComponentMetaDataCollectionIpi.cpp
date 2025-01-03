@@ -27,7 +27,7 @@ using namespace FiftyoneDegrees::IpIntelligence;
 
 ComponentMetaDataCollectionIpi::ComponentMetaDataCollectionIpi(
 	fiftyoneDegreesResourceManager *manager)
-	: Collection<byte, ComponentMetaData>() {
+	: Collection<::byte, ComponentMetaData>() {
 	dataSet = DataSetIpiGet(manager);
 	if (dataSet == nullptr) {
 		throw runtime_error("Data set pointer can not be null");
@@ -51,7 +51,7 @@ ComponentMetaData* ComponentMetaDataCollectionIpi::getByIndex(
 }
 
 ComponentMetaData* ComponentMetaDataCollectionIpi::getByKey(
-	byte componentId) const {
+	::byte componentId) const {
 	ComponentMetaData *result = nullptr;
 	Component *component;
 	uint32_t i;
