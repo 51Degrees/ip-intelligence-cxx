@@ -191,7 +191,7 @@ namespace FiftyoneDegrees {
 			 * concurrencies.
 			 * @return a 16 bit integer with the minimum concurrency value.
 			 */
-			uint16_t getConcurrency();
+			uint16_t getConcurrency() const override;
 
 			 /**
 			  * Gets the configuration data structure for use in C code.

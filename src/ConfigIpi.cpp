@@ -129,7 +129,7 @@ fiftyoneDegreesConfigIpi* ConfigIpi::getConfig() {
  * Provides the lowest concurrency value in the list of possible concurrencies.
  * @return a 16 bit integer with the minimum concurrency value.
  */
-uint16_t ConfigIpi::getConcurrency() {
+uint16_t ConfigIpi::getConcurrency() const {
 	uint16_t concurrencies[] = {
 		strings.getConcurrency(),
 		properties.getConcurrency(),
