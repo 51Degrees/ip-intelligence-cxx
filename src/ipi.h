@@ -1,7 +1,7 @@
 /* *********************************************************************
  * This Original Work is copyright of 51 Degrees Mobile Experts Limited.
- * Copyright 2020 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
- * Caversham, Reading, Berkshire, United Kingdom RG4 7BY.
+ * Copyright 2025 51 Degrees Mobile Experts Limited, Davidson House,
+ * Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU.
  *
  * This Original Work is licensed under the European Union Public Licence (EUPL) 
  * v.1.2 and is subject to its terms as set out below.
@@ -207,21 +207,24 @@ typedef struct fiftyone_degrees_ipi_dataset_header_t {
 	const fiftyoneDegreesCollectionHeader strings; /**< Size and location of
 												   the strings collection */
 	const fiftyoneDegreesCollectionHeader components; /**< Size and location of
-													  the components collection */
+													  the components 
+													  collection */
 	const fiftyoneDegreesCollectionHeader maps; /**< Size and location of the
 												maps collection */
 	const fiftyoneDegreesCollectionHeader properties; /**< Size and location of
-													  the properties collection */
+													  the properties 
+													  collection */
 	const fiftyoneDegreesCollectionHeader values; /**< Size and location of the
 												  values collection */
 	const fiftyoneDegreesCollectionHeader profiles; /**< Size and location of
 													the profiles collection */
-	const fiftyoneDegreesCollectionHeader ipv4Ranges; /**< Size and location of
-													the ipv4 ranges collection */
-	const fiftyoneDegreesCollectionHeader ipv6Ranges; /**< Size and location of
-													the ipv6 ranges collection */
-	const fiftyoneDegreesCollectionHeader profileCombinations; /**< Size and location of
-													the profile combinations collection */
+	const fiftyoneDegreesCollectionHeader ipv4Graph; /**< Size and location of
+													 the ipv4 graph */
+	const fiftyoneDegreesCollectionHeader ipv6Graph; /**< Size and location of
+													 the ipv6 graph */
+	const fiftyoneDegreesCollectionHeader profileCombinations; /**< Size and 
+													location of the profile 
+													combinations collection */
 	const fiftyoneDegreesCollectionHeader profileOffsets; /**< Size and
 														  location of the
 														  profile offsets
@@ -242,8 +245,8 @@ typedef struct fiftyone_degrees_config_ipi_t {
 												config */
 	fiftyoneDegreesCollectionConfig values; /**< Values collection config */
 	fiftyoneDegreesCollectionConfig profiles; /**< Profiles collection config */
-	fiftyoneDegreesCollectionConfig ipv4Ranges; /**< Ipv4Ranges collection config */
-	fiftyoneDegreesCollectionConfig ipv6Ranges; /**< Ipv6Ranges collection config */
+	fiftyoneDegreesCollectionConfig ipv4Graph; /**< Ipv4Ranges collection config */
+	fiftyoneDegreesCollectionConfig ipv6Graph; /**< Ipv6Ranges collection config */
 	fiftyoneDegreesCollectionConfig profileCombinations; /**< ProfileCombinations collection config */
 	fiftyoneDegreesCollectionConfig profileOffsets; /**< ProfileOffsets collection config */
 } fiftyoneDegreesConfigIpi;
@@ -281,8 +284,8 @@ typedef struct fiftyone_degrees_dataset_ipi_t {
 	fiftyoneDegreesCollection *properties; /**< Collection data file properties */
 	fiftyoneDegreesCollection *values; /**< Collection data file values */
 	fiftyoneDegreesCollection *profiles; /**< Collection data file profiles */
-	fiftyoneDegreesCollection *ipv4Ranges; /**< Collection data file ipv4Ranges */
-	fiftyoneDegreesCollection *ipv6Ranges; /**< Collection data file ipv6Ranges */
+	fiftyoneDegreesCollection *ipv4Graph; /**< Collection data file ipv4Graph */
+	fiftyoneDegreesCollection *ipv6Graph; /**< Collection data file ipv6Graph */
 	fiftyoneDegreesCollection *profileCombinations; /**< Collection data file
 													profileCombinations */
 	fiftyoneDegreesCollection *profileOffsets; /**< Collection of all offsets to

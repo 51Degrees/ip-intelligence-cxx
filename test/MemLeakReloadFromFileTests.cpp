@@ -1,7 +1,7 @@
 /* *********************************************************************
  * This Original Work is copyright of 51 Degrees Mobile Experts Limited.
- * Copyright 2020 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
- * Caversham, Reading, Berkshire, United Kingdom RG4 7BY.
+ * Copyright 2025 51 Degrees Mobile Experts Limited, Davidson House,
+ * Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU.
  *
  * This Original Work is licensed under the European Union Public Licence (EUPL) 
  * v.1.2 and is subject to its terms as set out below.
@@ -222,8 +222,8 @@ void memReloadRun(
 	reqProps.string = requiredProperties;
 
 	// Set concurrency to ensure sufficient shared resources available.
-	config.ipv4Ranges.concurrency =
-		config.ipv6Ranges.concurrency =
+	config.ipv4Graph.concurrency =
+		config.ipv6Graph.concurrency =
 		config.components.concurrency =
 		config.properties.concurrency =
 		config.profiles.concurrency =
@@ -235,6 +235,7 @@ void memReloadRun(
 	ResourceManager manager;
 	EXCEPTION_CREATE;
 	MemoryReader reader;
+	reader.startByte = nullptr;
 	StatusCode status;
 	if (fromFile) {
 		// Initialize manager from file
@@ -246,7 +247,8 @@ void memReloadRun(
 			exception);
 	}
 	else {
-		// Read the data file into memory for the initialise and reload operations.
+		// Read the data file into memory for the initialise and reload 
+		// operations.
 		status = FileReadToByteArray(dataFilePath, &reader);
 		if (status != SUCCESS) {
 			return;
@@ -277,7 +279,9 @@ void memReloadRun(
 	}
 
 	// Free the memory for the test.
-	if (!fromFile) Free(reader.startByte);
+	if (!fromFile && reader.startByte != nullptr) {
+		Free(reader.startByte);
+	}
 }
 
 /*

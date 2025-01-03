@@ -1,7 +1,7 @@
 /* *********************************************************************
  * This Original Work is copyright of 51 Degrees Mobile Experts Limited.
- * Copyright 2020 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
- * Caversham, Reading, Berkshire, United Kingdom RG4 7BY.
+ * Copyright 2025 51 Degrees Mobile Experts Limited, Davidson House,
+ * Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU.
  *
  * This Original Work is licensed under the European Union Public Licence (EUPL) 
  * v.1.2 and is subject to its terms as set out below.
@@ -204,28 +204,27 @@ namespace FiftyoneDegrees {
 			 * @{
 			 */
 
-			void refreshData();
+			void refreshData() const;
 
-			void refreshData(const char *fileName);
+			void refreshData(const char *fileName) const;
 
-			void refreshData(void *data, long length);
+			void refreshData(void *data, long length) const;
 
-			void refreshData(unsigned char data[], long length);
+			void refreshData(unsigned char data[], long length) const;
 
-			ResultsBase* processBase(EvidenceBase *evidence);
+			ResultsBase* processBase(EvidenceBase *evidence) const;
 
-			Date getPublishedTime();
+			Date getPublishedTime() const;
 
-			Date getUpdateAvailableTime();
+			Date getUpdateAvailableTime() const;
 
-			string getDataFilePath();
+			string getDataFilePath() const;
 
-			string getDataFileTempPath();
+			string getDataFileTempPath() const;
 
-			string getProduct();
+			string getProduct() const;
 
-			string getType();
-
+			string getType() const;
 
 			/**
 			 * @}
@@ -244,7 +243,7 @@ namespace FiftyoneDegrees {
 
 			void init();
 
-			void* copyData(void *data, size_t length);
+			void* copyData(void *data, size_t length) const;
 		};
 	}
 }

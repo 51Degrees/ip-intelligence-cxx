@@ -1,7 +1,7 @@
 /* *********************************************************************
  * This Original Work is copyright of 51 Degrees Mobile Experts Limited.
- * Copyright 2020 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
- * Caversham, Reading, Berkshire, United Kingdom RG4 7BY.
+ * Copyright 2025 51 Degrees Mobile Experts Limited, Davidson House,
+ * Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU.
  *
  * This Original Work is licensed under the European Union Public Licence (EUPL) 
  * v.1.2 and is subject to its terms as set out below.
@@ -163,13 +163,13 @@ namespace FiftyoneDegrees {
 			CollectionConfig getProfiles();
 
 			/**
-			 * Get the configuration for the ipv4Ranges collection.
+			 * Get the configuration for the ipv4Graph collection.
 			 * @return ipv4 ranges collection configuration
 			 */
 			CollectionConfig getIpv4Ranges();
 
 			/**
-			 * Get the configuration for the ipv6Ranges collection.
+			 * Get the configuration for the ipv6Graph collection.
 			 * @return ipv6 ranges collection configuration
 			 */
 			CollectionConfig getIpv6Ranges();
@@ -221,10 +221,10 @@ namespace FiftyoneDegrees {
 			CollectionConfig profiles;
 
 			/** The underlying ipv4 ranges configuration structure */
-			CollectionConfig ipv4Ranges;
+			CollectionConfig ipv4Graph;
 
 			/** The underlyig ipv6 ranges configuration structure */
-			CollectionConfig ipv6Ranges;
+			CollectionConfig ipv6Graph;
 
 			/** The underlying profile combinations configuration structure */
 			CollectionConfig profileCombinations;

@@ -1,7 +1,7 @@
 /* *********************************************************************
  * This Original Work is copyright of 51 Degrees Mobile Experts Limited.
- * Copyright 2020 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
- * Caversham, Reading, Berkshire, United Kingdom RG4 7BY.
+ * Copyright 2025 51 Degrees Mobile Experts Limited, Davidson House,
+ * Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU.
  *
  * This Original Work is licensed under the European Union Public Licence (EUPL) 
  * v.1.2 and is subject to its terms as set out below.
@@ -68,39 +68,43 @@ namespace FiftyoneDegrees {
 			 * @{
 			 */
 
-			Collection<byte, ComponentMetaData>* getComponents();
+			Collection<byte, ComponentMetaData>* getComponents() const;
 
-			Collection<string, PropertyMetaData>* getProperties();
+			Collection<string, PropertyMetaData>* getProperties() const;
 
-			Collection<uint32_t, ProfileMetaData>* getProfiles();
+			Collection<uint32_t, ProfileMetaData>* getProfiles() const;
 
-			Collection<ValueMetaDataKey, ValueMetaData>* getValues();
-
-			Collection<ValueMetaDataKey, ValueMetaData>*
-				getValuesForProperty(PropertyMetaData *property);
+			Collection<ValueMetaDataKey, ValueMetaData>* getValues() const;
 
 			Collection<ValueMetaDataKey, ValueMetaData>*
-				getValuesForProfile(ProfileMetaData *profile);
+				getValuesForProperty(PropertyMetaData *property) const;
+
+			Collection<ValueMetaDataKey, ValueMetaData>*
+				getValuesForProfile(ProfileMetaData *profile) const;
 
 			ComponentMetaData* getComponentForProfile(
-				ProfileMetaData *profile);
+				ProfileMetaData *profile) const;
 
 			ComponentMetaData* getComponentForProperty(
-				PropertyMetaData *property);
+				PropertyMetaData *property) const;
 
 			ProfileMetaData* getDefaultProfileForComponent(
-				ComponentMetaData *component);
+				ComponentMetaData *component) const;
 
 			ValueMetaData* getDefaultValueForProperty(
-				PropertyMetaData *property);
+				PropertyMetaData *property) const;
 
 			Collection<string, PropertyMetaData>*
-				getPropertiesForComponent(ComponentMetaData *component);
+				getPropertiesForComponent(ComponentMetaData *component) 
+				const;
 
 			Collection<string, PropertyMetaData>*
-				getEvidencePropertiesForProperty(PropertyMetaData *property);
+				getEvidencePropertiesForProperty(PropertyMetaData *property)
+				const;
 
-			PropertyMetaData* getPropertyForValue(ValueMetaData *value);
+			PropertyMetaData* getPropertyForValue(ValueMetaData *value)
+				const;
+
 			/**
 			 * @}
 			 */

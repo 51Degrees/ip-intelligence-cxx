@@ -1,7 +1,7 @@
 /* *********************************************************************
  * This Original Work is copyright of 51 Degrees Mobile Experts Limited.
- * Copyright 2020 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
- * Caversham, Reading, Berkshire, United Kingdom RG4 7BY.
+ * Copyright 2025 51 Degrees Mobile Experts Limited, Davidson House,
+ * Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU.
  *
  * This Original Work is licensed under the European Union Public Licence (EUPL) 
  * v.1.2 and is subject to its terms as set out below.
@@ -64,8 +64,8 @@ fiftyoneDegreesResultsIpi *results =
 		&manager);
 ```
 
-4. Process a single IP addess string to retrieve the values associated
-with the IP addess for the selected properties.
+4. Process a single IP address string to retrieve the values associated
+with the IP address for the selected properties.
 ```
 fiftyoneDegreesResultsIpiFromIpAddressString(
 	results,

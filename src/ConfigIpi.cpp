@@ -1,7 +1,7 @@
 /* *********************************************************************
  * This Original Work is copyright of 51 Degrees Mobile Experts Limited.
- * Copyright 2020 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
- * Caversham, Reading, Berkshire, United Kingdom RG4 7BY.
+ * Copyright 2025 51 Degrees Mobile Experts Limited, Davidson House,
+ * Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU.
  *
  * This Original Work is licensed under the European Union Public Licence (EUPL) 
  * v.1.2 and is subject to its terms as set out below.
@@ -43,8 +43,8 @@ void ConfigIpi::setPerformanceFromExistingConfig(
 	config.properties = existing->properties;
 	config.values = existing->values;
 	config.profiles = existing->profiles;
-	config.ipv4Ranges = existing->ipv4Ranges;
-    config.ipv6Ranges = existing->ipv6Ranges;
+	config.ipv4Graph = existing->ipv4Graph;
+    config.ipv6Graph = existing->ipv6Graph;
     config.profileCombinations = existing->profileCombinations;
 	config.profileOffsets = existing->profileOffsets;
 	config.maps = existing->maps;
@@ -89,11 +89,11 @@ CollectionConfig ConfigIpi::getProfiles() {
 }
 
 CollectionConfig ConfigIpi::getIpv4Ranges() {
-	return ipv4Ranges;
+	return ipv4Graph;
 }
 
 CollectionConfig ConfigIpi::getIpv6Ranges() { 
-	return ipv6Ranges;
+	return ipv6Graph;
 }
 
 CollectionConfig ConfigIpi::getProfileCombinations() {
@@ -109,8 +109,8 @@ void ConfigIpi::initCollectionConfig() {
 	properties = CollectionConfig(&config.properties);
 	values = CollectionConfig(&config.values);
 	profiles = CollectionConfig(&config.profiles);
-	ipv4Ranges = CollectionConfig(&config.ipv4Ranges);
-    ipv6Ranges = CollectionConfig(&config.ipv6Ranges);
+	ipv4Graph = CollectionConfig(&config.ipv4Graph);
+    ipv6Graph = CollectionConfig(&config.ipv6Graph);
     profileCombinations = CollectionConfig(&config.profileCombinations);
 	profileOffsets = CollectionConfig(&config.profileOffsets);
 	maps = CollectionConfig(&config.maps);
@@ -135,8 +135,8 @@ uint16_t ConfigIpi::getConcurrency() {
 		properties.getConcurrency(),
 		values.getConcurrency(),
 		profiles.getConcurrency(),
-		ipv4Ranges.getConcurrency(),
-		ipv6Ranges.getConcurrency(),
+		ipv4Graph.getConcurrency(),
+		ipv6Graph.getConcurrency(),
         profileCombinations.getConcurrency(),
 		profileOffsets.getConcurrency(),
 		maps.getConcurrency(),
@@ -150,8 +150,8 @@ void ConfigIpi::setConcurrency(uint16_t concurrency) {
 	properties.setConcurrency(concurrency);
 	values.setConcurrency(concurrency);
 	profiles.setConcurrency(concurrency);
-	ipv4Ranges.setConcurrency(concurrency);
-    ipv6Ranges.setConcurrency(concurrency);
+	ipv4Graph.setConcurrency(concurrency);
+    ipv6Graph.setConcurrency(concurrency);
     profileCombinations.setConcurrency(concurrency);
 	profileOffsets.setConcurrency(concurrency);
 	maps.setConcurrency(concurrency);

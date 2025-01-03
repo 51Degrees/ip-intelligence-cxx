@@ -1,7 +1,7 @@
 /* *********************************************************************
  * This Original Work is copyright of 51 Degrees Mobile Experts Limited.
- * Copyright 2020 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
- * Caversham, Reading, Berkshire, United Kingdom RG4 7BY.
+ * Copyright 2025 51 Degrees Mobile Experts Limited, Davidson House,
+ * Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU.
  *
  * This Original Work is licensed under the European Union Public Licence (EUPL) 
  * v.1.2 and is subject to its terms as set out below.
@@ -95,7 +95,7 @@ void EngineIpi::init() {
 	DataSetIpiRelease(dataSet);
 }
 
-void* EngineIpi::copyData(void *data, size_t length) {
+void* EngineIpi::copyData(void *data, size_t length) const {
 	void *dataCopy = (void*)Malloc(length);
 	if (dataCopy == nullptr) {
 		throw StatusCodeException(INSUFFICIENT_MEMORY);
@@ -107,7 +107,7 @@ void* EngineIpi::copyData(void *data, size_t length) {
 /**
  * @return the name of the data set used contained in the source file.
  */
-string EngineIpi::getProduct() {
+string EngineIpi::getProduct() const {
 	stringstream stream;
 	DataSetIpi *dataSet = DataSetIpiGet(manager.get());
 	appendString(stream, dataSet->strings, dataSet->header.nameOffset);
@@ -119,14 +119,14 @@ string EngineIpi::getProduct() {
  * Returns the string that represents the type of data file when requesting an
  * updated file.
  */
-string EngineIpi::getType() {
+string EngineIpi::getType() const {
 	return string("IPIV41");
 }
 
 /**
  * @return the date that 51Degrees published the data file.
  */
-Date EngineIpi::getPublishedTime() {
+Date EngineIpi::getPublishedTime() const {
 	DataSetIpi*dataSet = DataSetIpiGet(manager.get());
 	Date date = Date(&dataSet->header.published);
 	DataSetIpiRelease(dataSet);
@@ -136,21 +136,21 @@ Date EngineIpi::getPublishedTime() {
 /**
  * @return the date that 51Degrees will publish an updated data file.
  */
-Date EngineIpi::getUpdateAvailableTime() {
+Date EngineIpi::getUpdateAvailableTime() const {
 	DataSetIpi *dataSet = DataSetIpiGet(manager.get());
 	Date date = Date(&dataSet->header.nextUpdate);
 	DataSetIpiRelease(dataSet);
 	return date;
 }
 
-string EngineIpi::getDataFilePath() {
+string EngineIpi::getDataFilePath() const {
 	DataSetIpi *dataSet = DataSetIpiGet(manager.get());
 	string path = string(dataSet->b.b.masterFileName);
 	DataSetIpiRelease(dataSet);
 	return path;
 }
 
-string EngineIpi::getDataFileTempPath() {
+string EngineIpi::getDataFileTempPath() const {
 	string path;
 	DataSetIpi *dataSet = DataSetIpiGet(manager.get());
 	if (strcmp(
@@ -165,7 +165,7 @@ string EngineIpi::getDataFileTempPath() {
 	return path;
 }
 
-void EngineIpi::refreshData() {
+void EngineIpi::refreshData() const {
 	EXCEPTION_CREATE;
 	StatusCode status = IpiReloadManagerFromOriginalFile(
 		manager.get(),
@@ -176,7 +176,7 @@ void EngineIpi::refreshData() {
 	EXCEPTION_THROW;
 }
 
-void EngineIpi::refreshData(const char *fileName) {
+void EngineIpi::refreshData(const char *fileName) const {
 	EXCEPTION_CREATE;
 	StatusCode status = IpiReloadManagerFromFile(
 		manager.get(),
@@ -188,7 +188,7 @@ void EngineIpi::refreshData(const char *fileName) {
 	EXCEPTION_THROW;
 }
 
-void EngineIpi::refreshData(void *data, long length) {
+void EngineIpi::refreshData(void *data, long length) const {
 	EXCEPTION_CREATE;
 	void *dataCopy = copyData(data, length);
 	StatusCode status = IpiReloadManagerFromMemory(
@@ -204,7 +204,7 @@ void EngineIpi::refreshData(void *data, long length) {
 
 void EngineIpi::refreshData(
 	unsigned char data[], 
-	long length) {
+	long length) const {
 	refreshData((void*)data, length);
 }
 
@@ -262,7 +262,7 @@ IpIntelligence::ResultsIpi *EngineIpi::process(
 }
 
 Common::ResultsBase* EngineIpi::processBase(
-	Common::EvidenceBase *evidence) {
+	Common::EvidenceBase *evidence) const {
 	EXCEPTION_CREATE;
 	fiftyoneDegreesResultsIpi *results = ResultsIpiCreate(
 		manager.get());
@@ -283,8 +283,7 @@ void EngineIpi::initHttpHeaderKeys(fiftyoneDegreesHeaders *uniqueHeaders) {
 	for (i = 0; i < uniqueHeaders->count; i++) {
 		for (p = 0; p < sizeof(prefixes) / sizeof(const char*); p++) {
 			string key = string(prefixes[p]);
-			key.append(&((fiftyoneDegreesString*)
-				uniqueHeaders->items[i].name.data.ptr)->value);
+			key.append(uniqueHeaders->items[i].name);
 			addKey(key);
 		}
 	}

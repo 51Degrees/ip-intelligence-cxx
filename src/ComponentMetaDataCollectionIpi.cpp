@@ -1,7 +1,7 @@
 /* *********************************************************************
  * This Original Work is copyright of 51 Degrees Mobile Experts Limited.
- * Copyright 2020 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
- * Caversham, Reading, Berkshire, United Kingdom RG4 7BY.
+ * Copyright 2025 51 Degrees Mobile Experts Limited, Davidson House,
+ * Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU.
  *
  * This Original Work is licensed under the European Union Public Licence (EUPL) 
  * v.1.2 and is subject to its terms as set out below.
@@ -40,7 +40,7 @@ ComponentMetaDataCollectionIpi::~ComponentMetaDataCollectionIpi() {
 }
 
 ComponentMetaData* ComponentMetaDataCollectionIpi::getByIndex(
-	uint32_t index) {
+	uint32_t index) const {
 	ComponentMetaData *component = nullptr;
 	if (index < components->count) {
 		component = ComponentMetaDataBuilderIpi::build(
@@ -51,7 +51,7 @@ ComponentMetaData* ComponentMetaDataCollectionIpi::getByIndex(
 }
 
 ComponentMetaData* ComponentMetaDataCollectionIpi::getByKey(
-	byte componentId) {
+	byte componentId) const {
 	ComponentMetaData *result = nullptr;
 	Component *component;
 	uint32_t i;
@@ -64,6 +64,6 @@ ComponentMetaData* ComponentMetaDataCollectionIpi::getByKey(
 	return result;
 }
 
-uint32_t ComponentMetaDataCollectionIpi::getSize() {
+uint32_t ComponentMetaDataCollectionIpi::getSize() const {
 	return components->count;
 }
