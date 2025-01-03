@@ -1,7 +1,7 @@
 /* *********************************************************************
  * This Original Work is copyright of 51 Degrees Mobile Experts Limited.
- * Copyright 2020 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
- * Caversham, Reading, Berkshire, United Kingdom RG4 7BY.
+ * Copyright 2025 51 Degrees Mobile Experts Limited, Davidson House,
+ * Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU.
  *
  * This Original Work is licensed under the European Union Public Licence (EUPL) 
  * v.1.2 and is subject to its terms as set out below.
@@ -62,14 +62,15 @@ PropertyMetaDataCollectionForPropertyIpi::
 }
 
 PropertyMetaData* PropertyMetaDataCollectionForPropertyIpi::getByIndex(
-	uint32_t index) {
+	uint32_t index) const {
 	return new PropertyMetaData(*properties.at(index));
 }
 
 PropertyMetaData* PropertyMetaDataCollectionForPropertyIpi::getByKey(
-	string name) {
+	string name) const {
 	PropertyMetaData* result = nullptr;
-	for (vector<shared_ptr<PropertyMetaData>>::iterator i = properties.begin();
+	for (vector<shared_ptr<PropertyMetaData>>::const_iterator 
+		i = properties.begin();
 		i != properties.end();
 		i++) {
 		if (name == (*i)->getName()) {
@@ -80,6 +81,6 @@ PropertyMetaData* PropertyMetaDataCollectionForPropertyIpi::getByKey(
 	return result;
 }
 
-uint32_t PropertyMetaDataCollectionForPropertyIpi::getSize() {
+uint32_t PropertyMetaDataCollectionForPropertyIpi::getSize() const {
 	return (uint32_t)properties.size();
 }

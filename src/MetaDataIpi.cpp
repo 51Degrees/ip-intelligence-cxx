@@ -1,7 +1,7 @@
 /* *********************************************************************
  * This Original Work is copyright of 51 Degrees Mobile Experts Limited.
- * Copyright 2020 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
- * Caversham, Reading, Berkshire, United Kingdom RG4 7BY.
+ * Copyright 2025 51 Degrees Mobile Experts Limited, Davidson House,
+ * Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU.
  *
  * This Original Work is licensed under the European Union Public Licence (EUPL) 
  * v.1.2 and is subject to its terms as set out below.
@@ -36,29 +36,29 @@ MetaDataIpi::MetaDataIpi(
 MetaDataIpi::~MetaDataIpi() {
 }
 
-Collection<byte, ComponentMetaData>* MetaDataIpi::getComponents()
+Collection<byte, ComponentMetaData>* MetaDataIpi::getComponents() const
 {
 	return new ComponentMetaDataCollectionIpi(manager.get());
 }
 
-Collection<string, PropertyMetaData>* MetaDataIpi::getProperties()
+Collection<string, PropertyMetaData>* MetaDataIpi::getProperties() const
 {
 	return new PropertyMetaDataCollectionIpi(manager.get());
 }
 
-Collection<ValueMetaDataKey, ValueMetaData>* MetaDataIpi::getValues()
+Collection<ValueMetaDataKey, ValueMetaData>* MetaDataIpi::getValues() const
 {
 	return new ValueMetaDataCollectionIpi(manager.get());
 }
 
-Collection<uint32_t, ProfileMetaData>* MetaDataIpi::getProfiles()
+Collection<uint32_t, ProfileMetaData>* MetaDataIpi::getProfiles() const
 {
 	return new ProfileMetaDataCollectionIpi(manager.get());
 }
 
 Collection<ValueMetaDataKey, ValueMetaData>*
 MetaDataIpi::getValuesForProperty(
-	PropertyMetaData *property) {
+	PropertyMetaData *property) const {
 	return new ValueMetaDataCollectionForPropertyIpi(
 		manager.get(),
 		property);
@@ -66,14 +66,14 @@ MetaDataIpi::getValuesForProperty(
 
 Collection<ValueMetaDataKey, ValueMetaData>*
 MetaDataIpi::getValuesForProfile(
-	ProfileMetaData *profile) {
+	ProfileMetaData *profile) const {
 	return new ValueMetaDataCollectionForProfileIpi(
 		manager.get(),
 		profile);
 }
 
 ComponentMetaData* MetaDataIpi::getComponentForProfile(
-	ProfileMetaData *profile) {
+	ProfileMetaData *profile) const {
 	ComponentMetaData *result = nullptr;
 	Collection<byte, ComponentMetaData> *components = getComponents();
 	if (components != nullptr) {
@@ -84,7 +84,7 @@ ComponentMetaData* MetaDataIpi::getComponentForProfile(
 }
 
 ComponentMetaData* MetaDataIpi::getComponentForProperty(
-	PropertyMetaData *property) {
+	PropertyMetaData *property) const {
 	ComponentMetaData *result = nullptr;
 	Collection<byte, ComponentMetaData> *components = getComponents();
 	if (components != nullptr) {
@@ -95,7 +95,7 @@ ComponentMetaData* MetaDataIpi::getComponentForProperty(
 }
 
 ProfileMetaData* MetaDataIpi::getDefaultProfileForComponent(
-	ComponentMetaData *component) {
+	ComponentMetaData *component) const {
 	ProfileMetaData *result = nullptr;
 	Collection<uint32_t, ProfileMetaData> *profiles = getProfiles();
 	if (profiles != nullptr) {
@@ -109,7 +109,7 @@ ProfileMetaData* MetaDataIpi::getDefaultProfileForComponent(
 }
 
 ValueMetaData* MetaDataIpi::getDefaultValueForProperty(
-	PropertyMetaData *property) {
+	PropertyMetaData *property) const {
 	ValueMetaData *result = nullptr;
 	Collection<ValueMetaDataKey, ValueMetaData> *values = getValues();
 	if (values != nullptr) {
@@ -123,7 +123,7 @@ ValueMetaData* MetaDataIpi::getDefaultValueForProperty(
 
 Collection<string, PropertyMetaData>*
 MetaDataIpi::getPropertiesForComponent(
-	ComponentMetaData *component) {
+	ComponentMetaData *component) const {
 	return new PropertyMetaDataCollectionForComponentIpi(
 		manager.get(),
 		component);
@@ -131,14 +131,14 @@ MetaDataIpi::getPropertiesForComponent(
 
 Collection<string, PropertyMetaData>*
 MetaDataIpi::getEvidencePropertiesForProperty(
-	PropertyMetaData *property) {
+	PropertyMetaData *property) const {
 	return new PropertyMetaDataCollectionForPropertyIpi(
 		manager.get(),
 		property);
 }
 
 PropertyMetaData* MetaDataIpi::getPropertyForValue(
-	ValueMetaData *value) {
+	ValueMetaData *value) const {
 	PropertyMetaData *result = nullptr;
 	Collection<string, PropertyMetaData> *properties = getProperties();
 	if (properties != nullptr) {

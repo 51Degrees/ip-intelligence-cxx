@@ -1,7 +1,7 @@
 /* *********************************************************************
  * This Original Work is copyright of 51 Degrees Mobile Experts Limited.
- * Copyright 2020 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
- * Caversham, Reading, Berkshire, United Kingdom RG4 7BY.
+ * Copyright 2025 51 Degrees Mobile Experts Limited, Davidson House,
+ * Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU.
  *
  * This Original Work is licensed under the European Union Public Licence (EUPL) 
  * v.1.2 and is subject to its terms as set out below.
@@ -33,7 +33,7 @@ ValueMetaDataCollectionIpi::ValueMetaDataCollectionIpi(
 
 ValueMetaDataCollectionIpi::~ValueMetaDataCollectionIpi() {}
 
-ValueMetaData* ValueMetaDataCollectionIpi::getByIndex(uint32_t index) {
+ValueMetaData* ValueMetaDataCollectionIpi::getByIndex(uint32_t index) const {
 	EXCEPTION_CREATE;
 	Item item;
 	Value *value;
@@ -48,10 +48,10 @@ ValueMetaData* ValueMetaDataCollectionIpi::getByIndex(uint32_t index) {
 	return result;
 }
 
-ValueMetaData* ValueMetaDataCollectionIpi::getByKey(ValueMetaDataKey key) {
+ValueMetaData* ValueMetaDataCollectionIpi::getByKey(ValueMetaDataKey key) const {
 	return ValueMetaDataCollectionBaseIpi::getByKey(key);
 }
 
-uint32_t ValueMetaDataCollectionIpi::getSize() {
+uint32_t ValueMetaDataCollectionIpi::getSize() const {
 	return CollectionGetCount(dataSet->values);
 }

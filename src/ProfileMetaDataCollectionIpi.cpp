@@ -1,7 +1,7 @@
 /* *********************************************************************
  * This Original Work is copyright of 51 Degrees Mobile Experts Limited.
- * Copyright 2020 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
- * Caversham, Reading, Berkshire, United Kingdom RG4 7BY.
+ * Copyright 2025 51 Degrees Mobile Experts Limited, Davidson House,
+ * Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU.
  *
  * This Original Work is licensed under the European Union Public Licence (EUPL) 
  * v.1.2 and is subject to its terms as set out below.
@@ -41,7 +41,8 @@ ProfileMetaDataCollectionIpi::~ProfileMetaDataCollectionIpi() {
 	DataSetIpiRelease(dataSet);
 }
 
-ProfileMetaData* ProfileMetaDataCollectionIpi::getByIndex(uint32_t index) {
+ProfileMetaData* ProfileMetaDataCollectionIpi::getByIndex(
+	uint32_t index) const {
 	EXCEPTION_CREATE;
 	Item item;
 	ProfileMetaData *result = nullptr;
@@ -61,7 +62,7 @@ ProfileMetaData* ProfileMetaDataCollectionIpi::getByIndex(uint32_t index) {
 	return result;
 }
 
-ProfileMetaData* ProfileMetaDataCollectionIpi::getByKey(uint32_t key) {
+ProfileMetaData* ProfileMetaDataCollectionIpi::getByKey(uint32_t key) const {
 	EXCEPTION_CREATE;
 	Item item;
 	ProfileMetaData *result = nullptr;
@@ -81,6 +82,6 @@ ProfileMetaData* ProfileMetaDataCollectionIpi::getByKey(uint32_t key) {
 	return result;
 }
 
-uint32_t ProfileMetaDataCollectionIpi::getSize() {
+uint32_t ProfileMetaDataCollectionIpi::getSize() const {
 	return CollectionGetCount(profileOffsets);
 }

@@ -1,7 +1,7 @@
 /* *********************************************************************
  * This Original Work is copyright of 51 Degrees Mobile Experts Limited.
- * Copyright 2020 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
- * Caversham, Reading, Berkshire, United Kingdom RG4 7BY.
+ * Copyright 2025 51 Degrees Mobile Experts Limited, Davidson House,
+ * Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU.
  *
  * This Original Work is licensed under the European Union Public Licence (EUPL) 
  * v.1.2 and is subject to its terms as set out below.
@@ -50,7 +50,8 @@ ValueMetaDataCollectionForProfileIpi::~ValueMetaDataCollectionForProfileIpi() {
 	COLLECTION_RELEASE(dataSet->profiles, &profileItem);
 }
 
-ValueMetaData* ValueMetaDataCollectionForProfileIpi::getByIndex(uint32_t index) {
+ValueMetaData* ValueMetaDataCollectionForProfileIpi::getByIndex(
+	uint32_t index) const {
 	EXCEPTION_CREATE;
 	ValueMetaData *result = nullptr;
 	Value *value;
@@ -98,7 +99,7 @@ bool ValueMetaDataCollectionForProfileIpi::valueFilter(
 }
 
 ValueMetaData* ValueMetaDataCollectionForProfileIpi::getByKey(
-	ValueMetaDataKey key) {
+	ValueMetaDataKey key) const {
 	EXCEPTION_CREATE;
 	Item propertyItem;
 	Property *property;
@@ -131,10 +132,11 @@ ValueMetaData* ValueMetaDataCollectionForProfileIpi::getByKey(
 	return result;
 }
 
-uint32_t ValueMetaDataCollectionForProfileIpi::getSize() {
+uint32_t ValueMetaDataCollectionForProfileIpi::getSize() const {
 	return getProfile()->valueCount;
 }
 
-fiftyoneDegreesProfile* ValueMetaDataCollectionForProfileIpi::getProfile() {
+fiftyoneDegreesProfile* 
+ValueMetaDataCollectionForProfileIpi::getProfile() const {
 	return (Profile*)profileItem.data.ptr;
 }

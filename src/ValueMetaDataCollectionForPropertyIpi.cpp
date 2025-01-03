@@ -1,7 +1,7 @@
 /* *********************************************************************
  * This Original Work is copyright of 51 Degrees Mobile Experts Limited.
- * Copyright 2020 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
- * Caversham, Reading, Berkshire, United Kingdom RG4 7BY.
+ * Copyright 2025 51 Degrees Mobile Experts Limited, Davidson House,
+ * Forbury Square, Reading, Berkshire, United Kingdom RG1 3EU.
  *
  * This Original Work is licensed under the European Union Public Licence (EUPL) 
  * v.1.2 and is subject to its terms as set out below.
@@ -45,7 +45,7 @@ ValueMetaDataCollectionForPropertyIpi::~ValueMetaDataCollectionForPropertyIpi() 
 }
 
 ValueMetaData* ValueMetaDataCollectionForPropertyIpi::getByIndex(
-	uint32_t index) {
+	uint32_t index) const {
 	EXCEPTION_CREATE;
 	Item item;
 	Value *value;
@@ -65,7 +65,7 @@ ValueMetaData* ValueMetaDataCollectionForPropertyIpi::getByIndex(
 }
 
 ValueMetaData* ValueMetaDataCollectionForPropertyIpi::getByKey(
-	ValueMetaDataKey key) {
+	ValueMetaDataKey key) const {
 	EXCEPTION_CREATE;
 	Item item;
 	ValueMetaData *result = nullptr;
@@ -89,12 +89,13 @@ ValueMetaData* ValueMetaDataCollectionForPropertyIpi::getByKey(
 	return result;
 }
 
-uint32_t ValueMetaDataCollectionForPropertyIpi::getSize() {
+uint32_t ValueMetaDataCollectionForPropertyIpi::getSize() const {
 	return (int)getProperty()->firstValueIndex == -1 ?
 		0 :
 		getProperty()->lastValueIndex - getProperty()->firstValueIndex + 1;
 }
 
-fiftyoneDegreesProperty* ValueMetaDataCollectionForPropertyIpi::getProperty() {
+fiftyoneDegreesProperty* ValueMetaDataCollectionForPropertyIpi::getProperty()
+const {
 	return (Property*)propertyItem.data.ptr;
 }

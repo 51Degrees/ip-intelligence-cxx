@@ -32,31 +32,31 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = "51Degrees IP Intelligence C/C++"
+PROJECT_NAME           = "51Degrees Device Detection C/C++"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 4.1
+PROJECT_NUMBER         = 4.4
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
 # quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          = "An IP intelligence library that is used natively or by 51Degrees products"
+PROJECT_BRIEF          = "A device detection library that is used natively or by 51Degrees products"
 
 # With the PROJECT_LOGO tag one can specify a logo or an icon that is included
 # in the documentation. The maximum height of the logo should not exceed 55
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           = ../../../docs/images/logo-51Degrees-Docs.png
+PROJECT_LOGO           = ../../documentation/docs/images/logo-51Degrees-Docs.png
 
 # The PROJECT_URL tag is used to specify the URL which is linked by the
 # PROJECT_LOGO.
 
-PROJECT_URL            = ../../documentation/4.1/index.html
+PROJECT_URL            = ../../documentation/4.4/index.html
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
@@ -819,21 +819,23 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = ../ \
+                         ../src/hash \
                          ../src \
                          ../src/common-cxx \
-                         ../examples/CPP \
-                         ../examples/CPP/IpIntelligence \
-                         ../examples/CPP/IpIntelligence/GettingStarted.cpp \
-                         ../examples/CPP/IpIntelligence/MetaData.cpp \
-                         ../examples/CPP/IpIntelligence/ReloadFromFile.cpp \
-                         ../examples/CPP/IpIntelligence/ReloadFromMemory.cpp \
-                         ../examples/CPP/IpIntelligence/StronglyTyped.cpp \
-                         ../examples/C/IpIntelligence/GettingStarted.c \
-                         ../examples/C/IpIntelligence/OfflineProcessing.c \
-                         ../examples/C/IpIntelligence/PerfIpi.c \
-                         ../examples/C/IpIntelligence/ReloadFromFile.c \
-                         ../examples/C/IpIntelligence/ReloadFromMemory.c \
-                         ../examples/C/IpIntelligence/StronglyTyped.c
+                         ../examples/CPP/Hash \
+                         ../examples/CPP/Hash/GettingStarted.cpp \
+                         ../examples/CPP/Hash/MatchMetrics.cpp \
+                         ../examples/CPP/Hash/MetaData.cpp \
+                         ../examples/CPP/Hash/ReloadFromFile.cpp \
+                         ../examples/CPP/Hash/ReloadFromMemory.cpp \
+                         ../examples/CPP/Hash/StronglyTyped.cpp \
+                         ../examples/C/Hash/GettingStarted.c \
+                         ../examples/C/Hash/MatchMetrics.c \
+                         ../examples/C/Hash/OfflineProcessing.c \
+                         ../examples/C/Hash/Performance.c \
+                         ../examples/C/Hash/ReloadFromFile.c \
+                         ../examples/C/Hash/ReloadFromMemory.c \
+                         ../examples/C/Hash/StronglyTyped.c
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -912,8 +914,7 @@ EXCLUDE_SYMBOLS        = EXTERNAL \
 # command).
 
 EXAMPLE_PATH           = ../examples/CPP \
-                         ../examples/C \
-			 ../../../src/snippets
+                         ../examples/C
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp and
@@ -935,7 +936,7 @@ EXAMPLE_RECURSIVE      = YES
 # that contain images that are to be included in the documentation (see the
 # \image command).
 
-IMAGE_PATH             = ../../../docs/images
+IMAGE_PATH             = ../../documentation/docs/images
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
@@ -1120,7 +1121,7 @@ GENERATE_HTML          = YES
 # The default directory is: html.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_OUTPUT            = 4.1
+HTML_OUTPUT            = 4.4
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for each
 # generated HTML page (for example: .htm, .php, .asp).
@@ -1147,7 +1148,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = ../../../docs/header.html
+HTML_HEADER            = ../../documentation/docs/header.html
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1157,7 +1158,7 @@ HTML_HEADER            = ../../../docs/header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = ../../../docs/footer.html
+HTML_FOOTER            = ../../documentation/docs/footer.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1169,7 +1170,7 @@ HTML_FOOTER            = ../../../docs/footer.html
 # obsolete.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_STYLESHEET        = ../../../docs/docs-main.min.css
+HTML_STYLESHEET        = ../../documentation/docs/docs-main.min.css
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify additional user-defined
 # cascading style sheets that are included after the standard style sheets
@@ -1192,12 +1193,14 @@ HTML_EXTRA_STYLESHEET  =
 # files will be copied as-is; there are no commands or markers available.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_FILES       = ../../../docs/images/icon-arrow-left-black.svg \
-                         ../../../docs/images/icon-arrow-right-black.svg \
-                         ../../../docs/images/icon-arrow-solid-right-mute.svg \
-                         ../../../docs/images/icon-arrow-solid-right-orange.svg \
-                         ../../../docs/images/icon-search.svg \
-                         ../../../docs/search51.js
+HTML_EXTRA_FILES       = ../../documentation/docs/images/icon-arrow-left-black.svg \
+                         ../../documentation/docs/images/icon-arrow-right-black.svg \
+                         ../../documentation/docs/images/icon-arrow-solid-right-mute.svg \
+                         ../../documentation/docs/images/icon-arrow-solid-right-orange.svg \
+                         ../../documentation/docs/images/icon-search.svg \
+                         ../../documentation/docs/examplegrabber.js \
+                         ../../documentation/docs/testedversionsgrabber.js \
+                         ../../documentation/docs/search51.js
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to
