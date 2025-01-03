@@ -428,7 +428,7 @@ typedef struct fiftyone_degrees_result_profile_index_t {
  * in memory and concepts like caching are not required. The concurrency
  * setting is ignored as there are no critical sections with this configuration.
  */
-EXTERNAL fiftyoneDegreesConfigIpi fiftyoneDegreesIpiInMemoryConfig;
+EXTERNAL_VAR fiftyoneDegreesConfigIpi fiftyoneDegreesIpiInMemoryConfig;
 
 /**
  * Highest performance configuration. Loads all the data into memory and does
@@ -436,7 +436,7 @@ EXTERNAL fiftyoneDegreesConfigIpi fiftyoneDegreesIpiInMemoryConfig;
  * set. The concurrency setting is ignored as there are no critical sections
  * with this configuration.
  */
-EXTERNAL fiftyoneDegreesConfigIpi fiftyoneDegreesIpiHighPerformanceConfig;
+EXTERNAL_VAR fiftyoneDegreesConfigIpi fiftyoneDegreesIpiHighPerformanceConfig;
 
 /**
  * Low memory configuration. A connection is maintained to the source data file
@@ -445,7 +445,7 @@ EXTERNAL fiftyoneDegreesConfigIpi fiftyoneDegreesIpiHighPerformanceConfig;
  * of performance. The concurrency of each collection must be set to the
  * maximum number of concurrent operations to optimize file reads.
  */
-EXTERNAL fiftyoneDegreesConfigIpi fiftyoneDegreesIpiLowMemoryConfig;
+EXTERNAL_VAR fiftyoneDegreesConfigIpi fiftyoneDegreesIpiLowMemoryConfig;
 
 /**
  * Uses caching to balance memory usage and performance. A connection is
@@ -455,19 +455,19 @@ EXTERNAL fiftyoneDegreesConfigIpi fiftyoneDegreesIpiLowMemoryConfig;
  * number of concurrent operations to optimize file reads. This is the default
  * configuration.
  */
-EXTERNAL fiftyoneDegreesConfigIpi fiftyoneDegreesIpiBalancedConfig;
+EXTERNAL_VAR fiftyoneDegreesConfigIpi fiftyoneDegreesIpiBalancedConfig;
 
 /**
  * Balanced configuration modified to create a temporary file copy of the
  * source data file to avoid locking the source data file.
  */
-EXTERNAL fiftyoneDegreesConfigIpi fiftyoneDegreesIpiBalancedTempConfig;
+EXTERNAL_VAR fiftyoneDegreesConfigIpi fiftyoneDegreesIpiBalancedTempConfig;
 
 /**
  * Default detection configuration. This configures the data set to not create
  * a temp file.
  */
-EXTERNAL fiftyoneDegreesConfigIpi fiftyoneDegreesIpiDefaultConfig;
+EXTERNAL_VAR fiftyoneDegreesConfigIpi fiftyoneDegreesIpiDefaultConfig;
 
 /**
  * Configuration designed only for testing. This uses a loaded size of 1 in
@@ -475,7 +475,7 @@ EXTERNAL fiftyoneDegreesConfigIpi fiftyoneDegreesIpiDefaultConfig;
  * items which do not exist in the root collection. This configuration is not
  * exposed through C++ intentionally as it is only used in testing.
  */
-EXTERNAL fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig;
+EXTERNAL_VAR fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig;
 
 
 /**
