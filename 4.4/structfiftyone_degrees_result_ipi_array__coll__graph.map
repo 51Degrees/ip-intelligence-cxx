@@ -1,0 +1,12 @@
+<map id="fiftyoneDegreesResultIpiArray" name="fiftyoneDegreesResultIpiArray">
+<area shape="rect" id="node1" title="Array of items of type fiftyoneDegreesResultIpi used to easily access and track the size of the array..." alt="" coords="1284,67,1467,109"/>
+<area shape="rect" id="node2" href="$structfiftyone_degrees_result_ipi.html" title="Singular IP address result returned by a detection process method." alt="" coords="994,7,1177,33"/>
+<area shape="rect" id="node3" href="$structfiftyone_degrees_ip_address.html" title="The structure to hold a IP Address in byte array format." alt="" coords="613,7,802,33"/>
+<area shape="rect" id="node4" href="$structfiftyone_degrees_ipi_list.html" title="The structure which represents the list of values returned for the required property from the results..." alt="" coords="1003,108,1167,135"/>
+<area shape="rect" id="node5" href="$structfiftyone_degrees_profile_percentage.html" title="The structure to hold a pair of result item and its percentage When getting values for a property fro..." alt="" coords="588,227,827,253"/>
+<area shape="rect" id="node6" href="$structfiftyone_degrees_collection_item.html" title="Used to store a handle to the underlying item that could be used to release the item when it&#39;s finish..." alt="" coords="243,153,463,180"/>
+<area shape="rect" id="node7" href="$structfiftyone_degrees_collection.html" title="All the shared methods and fields required by file, memory and cached collections." alt="" coords="612,176,803,203"/>
+<area shape="rect" id="node8" href="$structfiftyone_degrees_data.html" title="Data structure used for reusing memory which may have been allocated in a previous operation." alt="" coords="5,153,161,180"/>
+<area shape="rect" id="node9" href="$structfiftyone_degrees_float_internal.html" title="Struture that represents 51Degrees implementation, which encapsulate an array of 4 bytes." alt="" coords="249,267,457,293"/>
+<area shape="rect" id="node10" href="$structfiftyone_degrees_results_base.html" title="Base results structure which any processing results should extend." alt="" coords="983,159,1188,185"/>
+</map>
