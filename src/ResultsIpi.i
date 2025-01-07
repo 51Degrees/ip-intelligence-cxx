@@ -27,7 +27,7 @@
 %include "common-cxx/Coordinate.i"
 %include "common-cxx/ResultsBase.i"
 %include "WeightedValue.i"
-%include "IpAddress.i"
+%include "common-cxx/IpAddress.i"
 
 %template(WeightedStringListSwig) std::vector<WeightedValue<std::string>>;
 %template(WeightedBoolListSwig) std::vector<WeightedValue<bool>>;

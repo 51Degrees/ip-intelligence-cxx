@@ -25,7 +25,7 @@
 %include "ConfigIpi.i"
 %include "common-cxx/EvidenceBase.i"
 %include "EvidenceIpi.i"
-%include "ip.i"
+%include "common-cxx/ip.i"
 
 %newobject process;
 
