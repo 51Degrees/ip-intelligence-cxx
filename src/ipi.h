@@ -97,7 +97,7 @@
  * configuration.
  */
 #ifndef FIFTYONE_DEGREES_IP_V4_CACHE_SIZE
-#define FIFTYONE_DEGREES_IP_V4_RANGE_CACHE_SIZE 50000
+#define FIFTYONE_DEGREES_IP_ROOTS_CACHE_SIZE 50000
 #endif
 /**
  * Default value for the ipv4 range cache loaded size used in the default collection
@@ -111,7 +111,7 @@
  * configuration.
  */
 #ifndef FIFTYONE_DEGREES_IP_V6_CACHE_SIZE
-#define FIFTYONE_DEGREES_IP_V6_RANGE_CACHE_SIZE 50000
+#define FIFTYONE_DEGREES_IP_NODES_CACHE_SIZE 50000
 #endif
 /**
  * Default value for the ipv6 range cache loaded size used in the default collection
@@ -218,13 +218,10 @@ typedef struct fiftyone_degrees_ipi_dataset_header_t {
 												  values collection */
 	const fiftyoneDegreesCollectionHeader profiles; /**< Size and location of
 													the profiles collection */
-	const fiftyoneDegreesCollectionHeader ipv4Graph; /**< Size and location of
+	const fiftyoneDegreesCollectionHeader ipRoots; /**< Size and location of
 													 the ipv4 graph */
-	const fiftyoneDegreesCollectionHeader ipv6Graph; /**< Size and location of
+	const fiftyoneDegreesCollectionHeader ipNodes; /**< Size and location of
 													 the ipv6 graph */
-	const fiftyoneDegreesCollectionHeader profileCombinations; /**< Size and 
-													location of the profile 
-													combinations collection */
 	const fiftyoneDegreesCollectionHeader profileOffsets; /**< Size and
 														  location of the
 														  profile offsets
@@ -245,9 +242,8 @@ typedef struct fiftyone_degrees_config_ipi_t {
 												config */
 	fiftyoneDegreesCollectionConfig values; /**< Values collection config */
 	fiftyoneDegreesCollectionConfig profiles; /**< Profiles collection config */
-	fiftyoneDegreesCollectionConfig ipv4Graph; /**< Ipv4Ranges collection config */
-	fiftyoneDegreesCollectionConfig ipv6Graph; /**< Ipv6Ranges collection config */
-	fiftyoneDegreesCollectionConfig profileCombinations; /**< ProfileCombinations collection config */
+	fiftyoneDegreesCollectionConfig ipRoots; /**< Roots collection config */
+	fiftyoneDegreesCollectionConfig ipNodes; /**< Nodes collection config */
 	fiftyoneDegreesCollectionConfig profileOffsets; /**< ProfileOffsets collection config */
 } fiftyoneDegreesConfigIpi;
 
@@ -284,10 +280,8 @@ typedef struct fiftyone_degrees_dataset_ipi_t {
 	fiftyoneDegreesCollection *properties; /**< Collection data file properties */
 	fiftyoneDegreesCollection *values; /**< Collection data file values */
 	fiftyoneDegreesCollection *profiles; /**< Collection data file profiles */
-	fiftyoneDegreesCollection *ipv4Graph; /**< Collection data file ipv4Graph */
-	fiftyoneDegreesCollection *ipv6Graph; /**< Collection data file ipv6Graph */
-	fiftyoneDegreesCollection *profileCombinations; /**< Collection data file
-													profileCombinations */
+	fiftyoneDegreesCollection *ipRoots; /**< Collection data file ipv4Graph */
+	fiftyoneDegreesCollection *ipNodes; /**< Collection data file ipv6Graph */
 	fiftyoneDegreesCollection *profileOffsets; /**< Collection of all offsets to
 											   profiles in the profiles
 											   collection */

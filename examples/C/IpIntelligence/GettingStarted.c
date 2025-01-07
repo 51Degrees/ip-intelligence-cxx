@@ -136,7 +136,7 @@ LocationBoundSouthEast: "0.000000,0.000000":"1.000000"
 
 static const char* dataDir = "ip-intelligence-data";
 
-static const char* dataFileName = "51Degrees-LiteV4.1.ipi";
+static const char* dataFileName = "IpIntelligence-LiteV4.1.ipi";
 
 static char valueBuffer[1024] = "";
 
@@ -167,13 +167,8 @@ static void reportStatus(StatusCode status,
 
 static void printPropertyValueFromResults(ResultsIpi *results) {
 	if (results != NULL && results->count > 0) {
-		printf("IpRangeStart: %s\n", getPropertyValueAsString(results, "IpRangeStart"));
-		printf("IpRangeEnd: %s\n", getPropertyValueAsString(results, "IpRangeEnd"));
-		printf("CountryCode: %s\n", getPropertyValueAsString(results, "CountryCode"));
-		printf("CityName: %s\n", getPropertyValueAsString(results, "CityName"));
-		printf("AverageLocation: %s\n", getPropertyValueAsString(results, "AverageLocation"));
-		printf("LocationBoundNorthWest: %s\n", getPropertyValueAsString(results, "LocationBoundNorthWest"));
-		printf("LocationBoundSouthEast: %s\n", getPropertyValueAsString(results, "LocationBoundSouthEast"));
+		printf("networkname: %s\n", getPropertyValueAsString(results, "networkname"));
+		printf("coordinate: %s\n", getPropertyValueAsString(results, "coordinate"));
 	}
 	else {
 		printf("No results.");
@@ -188,8 +183,7 @@ void fiftyoneDegreesIpiGettingStarted(
 
 	// Set the properties to be returned for each ip
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "IpRangeStart,IpRangeEnd,CountryCode,CityName,"
-		"AverageLocation,LocationBoundNorthWest,LocationBoundSouthEast";
+	properties.string = "networkname,coordinate";
 
 	StatusCode status = IpiInitManagerFromFile(
 		&manager,
