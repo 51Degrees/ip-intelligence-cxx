@@ -3,4 +3,4 @@
 	url = ../common-cxx 
 [submodule "ip-intelligence-data"]
 	path = ip-intelligence-data
-	url = https://github.com/51Degrees/ip-intelligence-data.git
+	url = ../ip-intelligence-data
