@@ -22,13 +22,209 @@
 
 #include "wkbtot.h"
 
-fiftyoneDegreesTransformWkbtotResult
+typedef struct {
+    const unsigned char *binaryBuffer;
+    char *textBuffer;
+    size_t charsWritten;
+    size_t charsRemaining;
+} fiftyoneDegreesWKBToT_Position;
+
+typedef struct {
+    short dimensionsCount;
+    const char *tag;
+} fiftyoneDegreesWKBToT_CoordMode;
+
+
+static const fiftyoneDegreesWKBToT_CoordMode fiftyoneDegreesWKBToT_CoordModes[] = {
+    { 2, NULL },
+    { 3, "Z" },
+    { 3, "M" },
+    { 4, "ZM" },
+};
+
+
+typedef enum {
+    fiftyoneDegreesWKBToT_XDR = 0, // Big Endian
+    fiftyoneDegreesWKBToT_NDR = 1, // Little Endian
+} fiftyoneDegreesWKBToT_ByteOrder;
+
+typedef int32_t (*fiftyoneDegreesWKBToT_IntReader)(const unsigned char *wkbBytes);
+typedef double (*fiftyoneDegreesWKBToT_DoubleReader)(const unsigned char *wkbBytes);
+typedef struct  {
+    const char *name;
+    fiftyoneDegreesWKBToT_IntReader intReader;
+    fiftyoneDegreesWKBToT_DoubleReader doubleReader;
+} fiftyoneDegreesWKBToT_NumReader;
+
+static int32_t fiftyoneDegreesWKBToT_ReadIntMatchingBitness(const unsigned char *wkbBytes) {
+    return *(int32_t *)wkbBytes;
+}
+static double fiftyoneDegreesWKBToT_ReadDoubleMatchingBitness(const unsigned char *wkbBytes) {
+    return *(double *)wkbBytes;
+}
+
+static int32_t fiftyoneDegreesWKBToT_ReadIntMismatchingBitness(const unsigned char *wkbBytes) {
+    unsigned char t[4];
+    for (short i = 0; i < 4; i++) {
+        t[i] = wkbBytes[3 - i];
+    }
+    return *(int32_t *)t;
+}
+static double fiftyoneDegreesWKBToT_ReadDoubleMismatchingBitness(const unsigned char *wkbBytes) {
+    unsigned char t[8];
+    for (short i = 0; i < 8; i++) {
+        t[i] = wkbBytes[7 - i];
+    }
+    return *(double *)t;
+}
+
+static const fiftyoneDegreesWKBToT_NumReader fiftyoneDegreesWKBToT_MatchingBitnessNumReader = {
+    "Matching Bitness NumReader",
+    fiftyoneDegreesWKBToT_ReadIntMatchingBitness,
+    fiftyoneDegreesWKBToT_ReadDoubleMatchingBitness,
+};
+
+static const fiftyoneDegreesWKBToT_NumReader fiftyoneDegreesWKBToT_MismatchingBitnessNumReader = {
+    "Mismatching Bitness NumReader",
+    fiftyoneDegreesWKBToT_ReadIntMismatchingBitness,
+    fiftyoneDegreesWKBToT_ReadDoubleMismatchingBitness,
+};
+
+static fiftyoneDegreesWKBToT_ByteOrder fiftyoneDegreesWKBToT_GetBitness() {
+    unsigned char buffer[4];
+    *(uint32_t *)buffer = 1;
+    return buffer[0];
+}
+
+
+typedef struct {
+    fiftyoneDegreesWKBToT_CoordMode coordMode;
+    fiftyoneDegreesWKBToT_ByteOrder wkbByteOrder;
+    fiftyoneDegreesWKBToT_ByteOrder machineByteOrder;
+    fiftyoneDegreesWKBToT_NumReader numReader;
+} fiftyoneDegreesWKBToT_FragmentContext;
+
+
+static void fiftyoneDegreesWKBToT_WriteCharacter(
+fiftyoneDegreesWKBToT_Position * const position, char character) {
+    if (position->charsRemaining) {
+        position->charsRemaining--;
+        position->textBuffer[0] = character;
+        position->textBuffer[1] = '\0';
+        position->textBuffer++;
+    }
+    position->charsWritten++;
+}
+
+static void fiftyoneDegreesWKBToT_WriteDouble(
+fiftyoneDegreesWKBToT_Position * const position, double value) {
+    int const nextCoordTextLength = snprintf(
+        position->textBuffer,
+        position->charsRemaining,
+        "%f",
+        value);
+    position->charsWritten += nextCoordTextLength;
+    position->textBuffer += nextCoordTextLength;
+    if (position->charsRemaining > nextCoordTextLength) {
+        position->charsRemaining -= nextCoordTextLength;
+    } else {
+        position->charsRemaining = 0;
+    }
+}
+
+static void fiftyoneDegreesWKBToT_WriteString(
+fiftyoneDegreesWKBToT_Position * const position, const char * const string) {
+    int const nextCoordTextLength = snprintf(
+        position->textBuffer,
+        position->charsRemaining,
+        "%s",
+        string);
+    position->charsWritten += nextCoordTextLength;
+    position->textBuffer += nextCoordTextLength;
+    if (position->charsRemaining > nextCoordTextLength) {
+        position->charsRemaining -= nextCoordTextLength;
+    } else {
+        position->charsRemaining = 0;
+    }
+}
+
+
+
+static void fiftyoneDegreesWKBToT_HandlePointSegment(
+    fiftyoneDegreesWKBToT_Position * const position,
+    const fiftyoneDegreesWKBToT_FragmentContext fragmentContext) {
+
+    fiftyoneDegreesWKBToT_WriteCharacter(position, '(');
+    for (short i = 0; i < fragmentContext.coordMode.dimensionsCount; i++) {
+        if (i) {
+            fiftyoneDegreesWKBToT_WriteCharacter(position, ' ');
+        }
+        const double nextCoord = fragmentContext.numReader.doubleReader(position->binaryBuffer);
+        position->binaryBuffer += 8;
+        fiftyoneDegreesWKBToT_WriteDouble(position, nextCoord);
+    }
+    fiftyoneDegreesWKBToT_WriteCharacter(position, ')');
+}
+
+static void fiftyoneDegreesWKBToT_HandlePoint(
+    fiftyoneDegreesWKBToT_Position * const position,
+    const fiftyoneDegreesWKBToT_FragmentContext fragmentContext) {
+
+    position->binaryBuffer += 1; // skip byte order byte
+    position->binaryBuffer += 4; // skip geometry type
+    fiftyoneDegreesWKBToT_WriteString(position, "POINT");
+    if (fragmentContext.coordMode.tag) {
+        fiftyoneDegreesWKBToT_WriteCharacter(position, ' ');
+        fiftyoneDegreesWKBToT_WriteString(position, fragmentContext.coordMode.tag);
+    }
+    fiftyoneDegreesWKBToT_HandlePointSegment(position, fragmentContext);
+}
+
+static void fiftyoneDegreesWKBToT_HandleGeometry(
+    fiftyoneDegreesWKBToT_Position * const position,
+    const fiftyoneDegreesWKBToT_FragmentContext fragmentContext) {
+
+    fiftyoneDegreesWKBToT_HandlePoint(position, fragmentContext);
+}
+
+static void fiftyoneDegreesWKBToT_HandleWKBRoot(
+    fiftyoneDegreesWKBToT_Position * const position) {
+
+    fiftyoneDegreesWKBToT_FragmentContext fragmentContext;
+
+    fragmentContext.wkbByteOrder = *position->binaryBuffer;
+    fragmentContext.machineByteOrder = fiftyoneDegreesWKBToT_GetBitness();
+    fragmentContext.numReader = (
+        (fragmentContext.wkbByteOrder == fragmentContext.machineByteOrder)
+        ? fiftyoneDegreesWKBToT_MatchingBitnessNumReader
+        : fiftyoneDegreesWKBToT_MismatchingBitnessNumReader);
+
+    const int rootGeometryTypeFull = fragmentContext.numReader.intReader(position->binaryBuffer + 1);
+    const int coordType = rootGeometryTypeFull / 100;
+    fragmentContext.coordMode = fiftyoneDegreesWKBToT_CoordModes[coordType];
+
+    fiftyoneDegreesWKBToT_HandleGeometry(position, fragmentContext);
+}
+
+
+fiftyoneDegreesWkbtotResult
 fiftyoneDegreesConvertWkbToWkt(
-    const char *wellKnownBinary, char *buffer, size_t length,
-    fiftyoneDegreesException *const exception) {
-    const fiftyoneDegreesTransformWkbtotResult result = {
+    const unsigned char * const wellKnownBinary,
+    char * const buffer, size_t const length,
+    fiftyoneDegreesException * const exception) {
+
+    fiftyoneDegreesWKBToT_Position position = {
+        wellKnownBinary,
+        buffer,
         0,
-        0,
+        length ? (length - 1) : 0,
+    };
+
+    fiftyoneDegreesWKBToT_HandleWKBRoot(&position);
+
+    const fiftyoneDegreesWkbtotResult result = {
+        position.charsWritten,
+        position.charsWritten > length ? 1 : 0,
     };
     return result;
 }

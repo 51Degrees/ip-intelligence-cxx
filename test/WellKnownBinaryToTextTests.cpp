@@ -33,21 +33,23 @@ static bool CheckResult(const char *result, const char *expected, uint16_t const
 	return match;
 }
 
+static size_t constexpr DEFAULT_BUFFER_SIZE = 1024;
+
 TEST(WKBToT, WKBToT_Point_2D_NDR)
 {
 	const uint8_t wkbBytes[] = {
-		00, // big endian
-      	00,00,00,01, // POINT (2D)
-        40,00,00,00,00,00,00,00, // 2.0: x-coordinate
-      	40,10,00,00,00,00,00,00, // 4.0: y-coordinate
+		0x00, // big endian
+      	0x00,0x00,0x00,0x01, // POINT (2D)
+        0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00, // 2.0: x-coordinate
+      	0x40,0x10,0x00,0x00,0x00,0x00,0x00,0x00, // 4.0: y-coordinate
     };
-	const char * const expected = "POINT(2.0 4.0)";
+	const char * const expected = "POINT(2.000000 4.000000)";
 
-	char buffer[1024];
+	char buffer[DEFAULT_BUFFER_SIZE] = { 0 };
 	FIFTYONE_DEGREES_EXCEPTION_CREATE;
 
 	auto const result = fiftyoneDegreesConvertWkbToWkt(
-		reinterpret_cast<const char *>(wkbBytes),
+		wkbBytes,
 		buffer, std::size(buffer),
 		exception);
 
@@ -60,5 +62,6 @@ TEST(WKBToT, WKBToT_Point_2D_NDR)
 
 	EXPECT_TRUE(
 		CheckResult(buffer, expected, strlen(expected))) <<
-		"The value of Point 2D (NDR) is not correctly converted.";
+		"The value of Point 2D (NDR) is not correctly converted -- '" << buffer <<
+		"' -- vs expected -- '" << expected << "'";
 }

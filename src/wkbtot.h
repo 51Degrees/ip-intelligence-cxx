@@ -42,12 +42,12 @@ typedef struct fiftyone_degrees_transform_wkb_to_t_result {
 	 * if this flag is set
 	 */
 	bool bufferTooSmall;
-} fiftyoneDegreesTransformWkbtotResult;
+} fiftyoneDegreesWkbtotResult;
 
 
-EXTERNAL fiftyoneDegreesTransformWkbtotResult
+EXTERNAL fiftyoneDegreesWkbtotResult
 fiftyoneDegreesConvertWkbToWkt
-(const char *wellKnownBinary, char *buffer, size_t length,
+(const unsigned char *wellKnownBinary, char *buffer, size_t length,
  fiftyoneDegreesException *exception);
 
 #endif //FIFTYONE_DEGREES_WKBTOT_H_INCLUDED
