@@ -354,11 +354,10 @@ void fiftyoneDegreesMemIpiRun(
 	FreeAligned = MemoryTrackingFreeAligned;
 
 	// Set concurrency to ensure sufficient shared resouces available.
-	config.ipv4Graph.concurrency =
-		config.ipv6Graph.concurrency =
+	config.ipRoots.concurrency =
+		config.ipNodes.concurrency =
 		config.profiles.concurrency =
 		config.profileOffsets.concurrency =
-		config.profileCombinations.concurrency =
 		config.values.concurrency =
 		config.strings.concurrency = THREAD_COUNT;
 

@@ -43,9 +43,8 @@ void ConfigIpi::setPerformanceFromExistingConfig(
 	config.properties = existing->properties;
 	config.values = existing->values;
 	config.profiles = existing->profiles;
-	config.ipv4Graph = existing->ipv4Graph;
-    config.ipv6Graph = existing->ipv6Graph;
-    config.profileCombinations = existing->profileCombinations;
+	config.ipRoots = existing->ipRoots;
+    config.ipNodes = existing->ipNodes;
 	config.profileOffsets = existing->profileOffsets;
 	config.maps = existing->maps;
 	config.components = existing->components;
@@ -89,11 +88,11 @@ CollectionConfig ConfigIpi::getProfiles() {
 }
 
 CollectionConfig ConfigIpi::getIpv4Ranges() {
-	return ipv4Graph;
+	return ipRoots;
 }
 
 CollectionConfig ConfigIpi::getIpv6Ranges() { 
-	return ipv6Graph;
+	return ipNodes;
 }
 
 CollectionConfig ConfigIpi::getProfileCombinations() {
@@ -109,9 +108,8 @@ void ConfigIpi::initCollectionConfig() {
 	properties = CollectionConfig(&config.properties);
 	values = CollectionConfig(&config.values);
 	profiles = CollectionConfig(&config.profiles);
-	ipv4Graph = CollectionConfig(&config.ipv4Graph);
-    ipv6Graph = CollectionConfig(&config.ipv6Graph);
-    profileCombinations = CollectionConfig(&config.profileCombinations);
+	ipRoots = CollectionConfig(&config.ipRoots);
+    ipNodes = CollectionConfig(&config.ipNodes);
 	profileOffsets = CollectionConfig(&config.profileOffsets);
 	maps = CollectionConfig(&config.maps);
 	components = CollectionConfig(&config.components);
@@ -135,8 +133,8 @@ uint16_t ConfigIpi::getConcurrency() const {
 		properties.getConcurrency(),
 		values.getConcurrency(),
 		profiles.getConcurrency(),
-		ipv4Graph.getConcurrency(),
-		ipv6Graph.getConcurrency(),
+		ipRoots.getConcurrency(),
+		ipNodes.getConcurrency(),
         profileCombinations.getConcurrency(),
 		profileOffsets.getConcurrency(),
 		maps.getConcurrency(),
@@ -150,8 +148,8 @@ void ConfigIpi::setConcurrency(uint16_t concurrency) {
 	properties.setConcurrency(concurrency);
 	values.setConcurrency(concurrency);
 	profiles.setConcurrency(concurrency);
-	ipv4Graph.setConcurrency(concurrency);
-    ipv6Graph.setConcurrency(concurrency);
+	ipRoots.setConcurrency(concurrency);
+    ipNodes.setConcurrency(concurrency);
     profileCombinations.setConcurrency(concurrency);
 	profileOffsets.setConcurrency(concurrency);
 	maps.setConcurrency(concurrency);

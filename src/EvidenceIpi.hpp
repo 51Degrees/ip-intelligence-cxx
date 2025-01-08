@@ -24,7 +24,7 @@
 #define FIFTYONE_DEGREES_EVIDENCE_IPI_HPP
 
 #include "common-cxx/EvidenceBase.hpp"
-#include "IpAddress.hpp"
+#include "common-cxx/IpAddress.hpp"
 
 using namespace FiftyoneDegrees::Common;
 

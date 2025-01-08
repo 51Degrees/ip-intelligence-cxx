@@ -490,11 +490,10 @@ void fiftyoneDegreesPerfIpiRun(
 	fiftyoneDegreesConfigIpi config) {
 
 	// Set concurrency to ensure sufficient shared resources available.
-	config.ipv4Graph.concurrency =
-		config.ipv6Graph.concurrency =
+	config.ipRoots.concurrency =
+		config.ipNodes.concurrency =
 		config.profiles.concurrency =
 		config.profileOffsets.concurrency =
-		config.profileCombinations.concurrency =
 		config.values.concurrency =
 		config.strings.concurrency = THREAD_COUNT;
 	config.strings.capacity = 100;
