@@ -24,21 +24,17 @@
 #include "common-cxx/string.h"
 
 typedef struct {
-    const unsigned char *binaryBuffer;
-    fiftyoneDegreesStringBuilder *stringBuilder;
-} fiftyoneDegreesWKBToT_Position;
-
-typedef struct {
     short dimensionsCount;
     const char *tag;
+    size_t tagLength;
 } fiftyoneDegreesWKBToT_CoordMode;
 
 
 static const fiftyoneDegreesWKBToT_CoordMode fiftyoneDegreesWKBToT_CoordModes[] = {
-    { 2, NULL },
-    { 3, "Z" },
-    { 3, "M" },
-    { 4, "ZM" },
+    { 2, NULL, 0 },
+    { 3, "Z", 1 },
+    { 3, "M", 1 },
+    { 4, "ZM", 2 },
 };
 
 
@@ -51,8 +47,8 @@ typedef int32_t (*fiftyoneDegreesWKBToT_IntReader)(const unsigned char *wkbBytes
 typedef double (*fiftyoneDegreesWKBToT_DoubleReader)(const unsigned char *wkbBytes);
 typedef struct  {
     const char *name;
-    fiftyoneDegreesWKBToT_IntReader intReader;
-    fiftyoneDegreesWKBToT_DoubleReader doubleReader;
+    fiftyoneDegreesWKBToT_IntReader readInt;
+    fiftyoneDegreesWKBToT_DoubleReader readDouble;
 } fiftyoneDegreesWKBToT_NumReader;
 
 static int32_t fiftyoneDegreesWKBToT_ReadIntMatchingBitness(const unsigned char *wkbBytes) {
@@ -91,106 +87,169 @@ static const fiftyoneDegreesWKBToT_NumReader fiftyoneDegreesWKBToT_MismatchingBi
 
 static fiftyoneDegreesWKBToT_ByteOrder fiftyoneDegreesWKBToT_GetBitness() {
     unsigned char buffer[4];
-    *(uint32_t *)buffer = 1;
+    *(int32_t *)buffer = 1;
     return buffer[0];
 }
 
 
 typedef struct {
-    fiftyoneDegreesWKBToT_CoordMode coordMode;
-    fiftyoneDegreesWKBToT_ByteOrder wkbByteOrder;
-    fiftyoneDegreesWKBToT_ByteOrder machineByteOrder;
-    fiftyoneDegreesWKBToT_NumReader numReader;
-} fiftyoneDegreesWKBToT_FragmentContext;
+    const unsigned char *binaryBuffer;
+    fiftyoneDegreesStringBuilder * const stringBuilder;
+    fiftyoneDegreesWKBToT_CoordMode const coordMode;
+    fiftyoneDegreesWKBToT_ByteOrder const wkbByteOrder;
+    fiftyoneDegreesWKBToT_ByteOrder const machineByteOrder;
+    fiftyoneDegreesWKBToT_NumReader const numReader;
+} fiftyoneDegreesWKBToT_ProcessingContext;
+
+
+static int32_t fiftyoneDegreesWKBToT_ReadInt(
+    fiftyoneDegreesWKBToT_ProcessingContext * const context,
+    bool movePointer) {
+
+    const int32_t result = context->numReader.readInt(context->binaryBuffer);
+    if (movePointer) {
+        context->binaryBuffer += 4;
+    }
+    return result;
+}
+
+static double fiftyoneDegreesWKBToT_ReadDouble(
+    fiftyoneDegreesWKBToT_ProcessingContext * const context) {
+
+    const double result = context->numReader.readDouble(context->binaryBuffer);
+    context->binaryBuffer += 8;
+    return result;
+}
 
 
 static void fiftyoneDegreesWKBToT_WriteCharacter(
-    const fiftyoneDegreesWKBToT_Position * const position, const char character) {
-    fiftyoneDegreesStringBuilderAddChar(position->stringBuilder, character);
+    const fiftyoneDegreesWKBToT_ProcessingContext * const context, const char character) {
+    fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, character);
 }
 
 static void fiftyoneDegreesWKBToT_WriteDouble(
-    const fiftyoneDegreesWKBToT_Position * const position, const double value) {
+    const fiftyoneDegreesWKBToT_ProcessingContext * const context, const double value) {
     // 64-bit max-length double is `-X.{X:16}e-308` => 24 characters + NULL
     char temp[27];
     if (snprintf(temp, sizeof(temp), "%.17g", value) > 0) {
         fiftyoneDegreesStringBuilderAddChars(
-            position->stringBuilder,
+            context->stringBuilder,
             temp,
             strlen(temp));
     }
 }
 
 static void fiftyoneDegreesWKBToT_WriteTaggedGeometryName(
-    const fiftyoneDegreesWKBToT_Position * const position,
-    const char * const geometryName,
-    const fiftyoneDegreesWKBToT_CoordMode coordMode) {
+    const fiftyoneDegreesWKBToT_ProcessingContext * const context,
+    const char * const geometryName) {
+
     fiftyoneDegreesStringBuilderAddChars(
-        position->stringBuilder,
+        context->stringBuilder,
         geometryName,
         strlen(geometryName));
-    if (coordMode.tag) {
-        fiftyoneDegreesStringBuilderAddChar(position->stringBuilder, ' ');
+    if (context->coordMode.tag) {
+        fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, ' ');
         fiftyoneDegreesStringBuilderAddChars(
-            position->stringBuilder,
-            coordMode.tag,
-            strlen(coordMode.tag));
+            context->stringBuilder,
+            context->coordMode.tag,
+            context->coordMode.tagLength);
     }
-    fiftyoneDegreesStringBuilderAddChar(position->stringBuilder, ' ');
+    // fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, ' ');
 }
 
 
 
-static void fiftyoneDegreesWKBToT_HandlePointSegment(
-    fiftyoneDegreesWKBToT_Position * const position,
-    const fiftyoneDegreesWKBToT_FragmentContext fragmentContext) {
+typedef void (*fiftyoneDegreesWKBToT_LoopVisitor)(
+    fiftyoneDegreesWKBToT_ProcessingContext * const context);
 
-    fiftyoneDegreesWKBToT_WriteCharacter(position, '(');
-    for (short i = 0; i < fragmentContext.coordMode.dimensionsCount; i++) {
+static void fiftyoneDegreesWKBToT_WithParenthesesIterate(
+    fiftyoneDegreesWKBToT_ProcessingContext * const context,
+    const fiftyoneDegreesWKBToT_LoopVisitor visitor,
+    const int32_t count) {
+
+    fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, '(');
+    for (int32_t i = 0; i < count; i++) {
         if (i) {
-            fiftyoneDegreesWKBToT_WriteCharacter(position, ' ');
+            fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, ',');
         }
-        const double nextCoord = fragmentContext.numReader.doubleReader(position->binaryBuffer);
-        position->binaryBuffer += 8;
-        fiftyoneDegreesWKBToT_WriteDouble(position, nextCoord);
+        visitor(context);
     }
-    fiftyoneDegreesWKBToT_WriteCharacter(position, ')');
+    fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, ')');
+}
+
+static void fiftyoneDegreesWKBToT_HandlePointSegment(
+    fiftyoneDegreesWKBToT_ProcessingContext * const context) {
+
+    for (short i = 0; i < context->coordMode.dimensionsCount; i++) {
+        if (i) {
+            fiftyoneDegreesWKBToT_WriteCharacter(context, ' ');
+        }
+        const double nextCoord = fiftyoneDegreesWKBToT_ReadDouble(context);
+        fiftyoneDegreesWKBToT_WriteDouble(context, nextCoord);
+    }
+}
+
+static void fiftyoneDegreesWKBToT_HandleLoop(
+    fiftyoneDegreesWKBToT_ProcessingContext * const context,
+    const fiftyoneDegreesWKBToT_LoopVisitor visitor) {
+
+    const int32_t count = fiftyoneDegreesWKBToT_ReadInt(context, true);
+    if (!count) {
+        static const char empty[] = "EMPTY";
+        fiftyoneDegreesStringBuilderAddChars(context->stringBuilder, empty, sizeof(empty));
+        return;
+    }
+    fiftyoneDegreesWKBToT_WithParenthesesIterate(context, visitor, count);
+}
+
+static void fiftyoneDegreesWKBToT_SkipGeometryHeader(
+    fiftyoneDegreesWKBToT_ProcessingContext * const context) {
+
+    context->binaryBuffer += 1; // skip byte order byte
+    context->binaryBuffer += 4; // skip geometry type
 }
 
 static void fiftyoneDegreesWKBToT_HandlePoint(
-    fiftyoneDegreesWKBToT_Position * const position,
-    const fiftyoneDegreesWKBToT_FragmentContext fragmentContext) {
+    fiftyoneDegreesWKBToT_ProcessingContext * const context) {
 
-    position->binaryBuffer += 1; // skip byte order byte
-    position->binaryBuffer += 4; // skip geometry type
-    fiftyoneDegreesWKBToT_WriteTaggedGeometryName(position, "POINT", fragmentContext.coordMode);
-    fiftyoneDegreesWKBToT_HandlePointSegment(position, fragmentContext);
+    fiftyoneDegreesWKBToT_SkipGeometryHeader(context);
+    fiftyoneDegreesWKBToT_WriteTaggedGeometryName(context, "POINT");
+
+    fiftyoneDegreesWKBToT_WithParenthesesIterate(
+        context, fiftyoneDegreesWKBToT_HandlePointSegment, 1);
 }
 
 static void fiftyoneDegreesWKBToT_HandleGeometry(
-    fiftyoneDegreesWKBToT_Position * const position,
-    const fiftyoneDegreesWKBToT_FragmentContext fragmentContext) {
+    fiftyoneDegreesWKBToT_ProcessingContext * const context) {
 
-    fiftyoneDegreesWKBToT_HandlePoint(position, fragmentContext);
+    fiftyoneDegreesWKBToT_HandlePoint(context);
 }
 
 static void fiftyoneDegreesWKBToT_HandleWKBRoot(
-    fiftyoneDegreesWKBToT_Position * const position) {
+    const unsigned char *binaryBuffer,
+    fiftyoneDegreesStringBuilder * const stringBuilder) {
 
-    fiftyoneDegreesWKBToT_FragmentContext fragmentContext;
-
-    fragmentContext.wkbByteOrder = *position->binaryBuffer;
-    fragmentContext.machineByteOrder = fiftyoneDegreesWKBToT_GetBitness();
-    fragmentContext.numReader = (
-        (fragmentContext.wkbByteOrder == fragmentContext.machineByteOrder)
+    const fiftyoneDegreesWKBToT_ByteOrder machineByteOrder = fiftyoneDegreesWKBToT_GetBitness();
+    const fiftyoneDegreesWKBToT_ByteOrder wkbByteOrder = *binaryBuffer;
+    const fiftyoneDegreesWKBToT_NumReader numReader = (
+        (wkbByteOrder == machineByteOrder)
         ? fiftyoneDegreesWKBToT_MatchingBitnessNumReader
         : fiftyoneDegreesWKBToT_MismatchingBitnessNumReader);
 
-    const int rootGeometryTypeFull = fragmentContext.numReader.intReader(position->binaryBuffer + 1);
-    const int coordType = rootGeometryTypeFull / 100;
-    fragmentContext.coordMode = fiftyoneDegreesWKBToT_CoordModes[coordType];
+    const int32_t rootGeometryTypeFull = numReader.readInt(binaryBuffer + 1);
+    const int32_t coordType = rootGeometryTypeFull / 100;
 
-    fiftyoneDegreesWKBToT_HandleGeometry(position, fragmentContext);
+    fiftyoneDegreesWKBToT_ProcessingContext context = {
+        binaryBuffer,
+        stringBuilder,
+
+        fiftyoneDegreesWKBToT_CoordModes[coordType],
+        wkbByteOrder,
+        machineByteOrder,
+        numReader,
+    };
+
+    fiftyoneDegreesWKBToT_HandleGeometry(&context);
 }
 
 
@@ -203,18 +262,13 @@ fiftyoneDegreesConvertWkbToWkt(
     fiftyoneDegreesStringBuilder stringBuilder = { buffer, length };
     fiftyoneDegreesStringBuilderInit(&stringBuilder);
 
-    fiftyoneDegreesWKBToT_Position position = {
-        wellKnownBinary,
-        &stringBuilder,
-    };
-
-    fiftyoneDegreesWKBToT_HandleWKBRoot(&position);
+    fiftyoneDegreesWKBToT_HandleWKBRoot(wellKnownBinary, &stringBuilder);
 
     fiftyoneDegreesStringBuilderComplete(&stringBuilder);
 
     const fiftyoneDegreesWkbtotResult result = {
-        position.stringBuilder->added,
-        position.stringBuilder->full,
+        stringBuilder.added,
+        stringBuilder.full,
     };
     return result;
 }
