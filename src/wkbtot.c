@@ -206,6 +206,13 @@ static void fiftyoneDegreesWKBToT_HandleLoop(
     }
 }
 
+static void fiftyoneDegreesWKBToT_HandleLinearRing(
+    fiftyoneDegreesWKBToT_ProcessingContext * const context) {
+
+    fiftyoneDegreesWKBToT_HandleLoop(
+        context, fiftyoneDegreesWKBToT_HandlePointSegment);
+}
+
 
 typedef struct fiftyoneDegreesWKBToT_GeometryParser_t {
     const char * const nameToPrint;
@@ -218,13 +225,6 @@ static void fiftyoneDegreesWKBToT_HandleGeometry(
     fiftyoneDegreesWKBToT_ProcessingContext *context);
 
 
-
-static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_LinearRing = {
-    NULL,
-    true,
-    NULL,
-    fiftyoneDegreesWKBToT_HandlePointSegment,
-};
 
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_Geometry = {
     // ABSTRACT -- ANY GEOMETRY BELOW QUALIFIES
@@ -248,8 +248,8 @@ static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_Polygon = {
     "Polygon",
     true,
-    &fiftyoneDegreesWKBToT_Geometry_LinearRing,
     NULL,
+    fiftyoneDegreesWKBToT_HandleLinearRing,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_MultiPoint = {
     "MultiPoint",
@@ -339,8 +339,8 @@ static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_Triangle = {
     "Triangle",
     true,
-    &fiftyoneDegreesWKBToT_Geometry_LinearRing,
     NULL,
+    fiftyoneDegreesWKBToT_HandleLinearRing,
 };
 
 static const fiftyoneDegreesWKBToT_GeometryParser * const fiftyoneDegreesWKBToT_Geometries[] = {
@@ -360,7 +360,7 @@ static const fiftyoneDegreesWKBToT_GeometryParser * const fiftyoneDegreesWKBToT_
     &fiftyoneDegreesWKBToT_Geometry_Curve,
     &fiftyoneDegreesWKBToT_Geometry_Surface,
     &fiftyoneDegreesWKBToT_Geometry_PolyhedralSurface,
-    &fiftyoneDegreesWKBToT_Geometry_Geometry,
+    &fiftyoneDegreesWKBToT_Geometry_TIN,
     &fiftyoneDegreesWKBToT_Geometry_Triangle,
 };
 
@@ -398,16 +398,17 @@ static void fiftyoneDegreesWKBToT_HandleGeometry(
         fiftyoneDegreesWKBToT_WriteTaggedGeometryName(context, parser->nameToPrint);
     }
 
-    const uint32_t childCount = parser->hasChildCount ? fiftyoneDegreesWKBToT_ReadInt(context) : 1;
-
-    fiftyoneDegreesWKBToT_WithParenthesesIterate(
-        context,
-        parser->childGeometry
+    const fiftyoneDegreesWKBToT_LoopVisitor visitor = (parser->childGeometry
         ? fiftyoneDegreesWKBToT_HandleGeometry
-        : (fiftyoneDegreesWKBToT_HandlePointSegment
-            ? fiftyoneDegreesWKBToT_HandlePointSegment
-            : fiftyoneDegreesWKBToT_HandleGeometry),
-        childCount);
+        : (parser->childParser
+            ? parser->childParser
+            : fiftyoneDegreesWKBToT_HandleGeometry));
+
+    if (parser->hasChildCount) {
+        fiftyoneDegreesWKBToT_HandleLoop(context, visitor);
+    } else {
+        fiftyoneDegreesWKBToT_WithParenthesesIterate(context, visitor, 1);
+    }
 }
 
 static void fiftyoneDegreesWKBToT_HandleWKBRoot(
