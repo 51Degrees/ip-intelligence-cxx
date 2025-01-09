@@ -43,7 +43,7 @@ TEST(WKBToT, WKBToT_Point_2D_NDR)
         0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00, // 2.0: x-coordinate
       	0x40,0x10,0x00,0x00,0x00,0x00,0x00,0x00, // 4.0: y-coordinate
     };
-	const char * const expected = "POINT(2.000000 4.000000)";
+	const char * const expected = "POINT(2 4)";
 
 	char buffer[DEFAULT_BUFFER_SIZE] = { 0 };
 	FIFTYONE_DEGREES_EXCEPTION_CREATE;

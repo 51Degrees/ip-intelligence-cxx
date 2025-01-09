@@ -21,12 +21,11 @@
  * ********************************************************************* */
 
 #include "wkbtot.h"
+#include "common-cxx/string.h"
 
 typedef struct {
     const unsigned char *binaryBuffer;
-    char *textBuffer;
-    size_t charsWritten;
-    size_t charsRemaining;
+    fiftyoneDegreesStringBuilder *stringBuilder;
 } fiftyoneDegreesWKBToT_Position;
 
 typedef struct {
@@ -106,46 +105,38 @@ typedef struct {
 
 
 static void fiftyoneDegreesWKBToT_WriteCharacter(
-fiftyoneDegreesWKBToT_Position * const position, char character) {
-    if (position->charsRemaining) {
-        position->charsRemaining--;
-        position->textBuffer[0] = character;
-        position->textBuffer[1] = '\0';
-        position->textBuffer++;
-    }
-    position->charsWritten++;
+    const fiftyoneDegreesWKBToT_Position * const position, const char character) {
+    fiftyoneDegreesStringBuilderAddChar(position->stringBuilder, character);
 }
 
 static void fiftyoneDegreesWKBToT_WriteDouble(
-fiftyoneDegreesWKBToT_Position * const position, double value) {
-    int const nextCoordTextLength = snprintf(
-        position->textBuffer,
-        position->charsRemaining,
-        "%f",
-        value);
-    position->charsWritten += nextCoordTextLength;
-    position->textBuffer += nextCoordTextLength;
-    if (position->charsRemaining > nextCoordTextLength) {
-        position->charsRemaining -= nextCoordTextLength;
-    } else {
-        position->charsRemaining = 0;
+    const fiftyoneDegreesWKBToT_Position * const position, const double value) {
+    // 64-bit max-length double is `-X.{X:16}e-308` => 24 characters + NULL
+    char temp[27];
+    if (snprintf(temp, sizeof(temp), "%.17g", value) > 0) {
+        fiftyoneDegreesStringBuilderAddChars(
+            position->stringBuilder,
+            temp,
+            strlen(temp));
     }
 }
 
-static void fiftyoneDegreesWKBToT_WriteString(
-fiftyoneDegreesWKBToT_Position * const position, const char * const string) {
-    int const nextCoordTextLength = snprintf(
-        position->textBuffer,
-        position->charsRemaining,
-        "%s",
-        string);
-    position->charsWritten += nextCoordTextLength;
-    position->textBuffer += nextCoordTextLength;
-    if (position->charsRemaining > nextCoordTextLength) {
-        position->charsRemaining -= nextCoordTextLength;
-    } else {
-        position->charsRemaining = 0;
+static void fiftyoneDegreesWKBToT_WriteTaggedGeometryName(
+    const fiftyoneDegreesWKBToT_Position * const position,
+    const char * const geometryName,
+    const fiftyoneDegreesWKBToT_CoordMode coordMode) {
+    fiftyoneDegreesStringBuilderAddChars(
+        position->stringBuilder,
+        geometryName,
+        strlen(geometryName));
+    if (coordMode.tag) {
+        fiftyoneDegreesStringBuilderAddChar(position->stringBuilder, ' ');
+        fiftyoneDegreesStringBuilderAddChars(
+            position->stringBuilder,
+            coordMode.tag,
+            strlen(coordMode.tag));
     }
+    fiftyoneDegreesStringBuilderAddChar(position->stringBuilder, ' ');
 }
 
 
@@ -172,11 +163,7 @@ static void fiftyoneDegreesWKBToT_HandlePoint(
 
     position->binaryBuffer += 1; // skip byte order byte
     position->binaryBuffer += 4; // skip geometry type
-    fiftyoneDegreesWKBToT_WriteString(position, "POINT");
-    if (fragmentContext.coordMode.tag) {
-        fiftyoneDegreesWKBToT_WriteCharacter(position, ' ');
-        fiftyoneDegreesWKBToT_WriteString(position, fragmentContext.coordMode.tag);
-    }
+    fiftyoneDegreesWKBToT_WriteTaggedGeometryName(position, "POINT", fragmentContext.coordMode);
     fiftyoneDegreesWKBToT_HandlePointSegment(position, fragmentContext);
 }
 
@@ -213,18 +200,21 @@ fiftyoneDegreesConvertWkbToWkt(
     char * const buffer, size_t const length,
     fiftyoneDegreesException * const exception) {
 
+    fiftyoneDegreesStringBuilder stringBuilder = { buffer, length };
+    fiftyoneDegreesStringBuilderInit(&stringBuilder);
+
     fiftyoneDegreesWKBToT_Position position = {
         wellKnownBinary,
-        buffer,
-        0,
-        length ? (length - 1) : 0,
+        &stringBuilder,
     };
 
     fiftyoneDegreesWKBToT_HandleWKBRoot(&position);
 
+    fiftyoneDegreesStringBuilderComplete(&stringBuilder);
+
     const fiftyoneDegreesWkbtotResult result = {
-        position.charsWritten,
-        position.charsWritten > length ? 1 : 0,
+        position.stringBuilder->added,
+        position.stringBuilder->full,
     };
     return result;
 }
