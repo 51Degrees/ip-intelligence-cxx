@@ -119,11 +119,6 @@ static double fiftyoneDegreesWKBToT_ReadDouble(
 }
 
 
-static void fiftyoneDegreesWKBToT_WriteCharacter(
-    const fiftyoneDegreesWKBToT_ProcessingContext * const context, const char character) {
-    fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, character);
-}
-
 static void fiftyoneDegreesWKBToT_WriteDouble(
     const fiftyoneDegreesWKBToT_ProcessingContext * const context, const double value) {
     // 64-bit max-length double is `-X.{X:16}e-308` => 24 characters + NULL
@@ -158,7 +153,7 @@ static void fiftyoneDegreesWKBToT_WriteTaggedGeometryName(
             context->coordMode.tag,
             context->coordMode.tagLength);
     }
-    // fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, ' ');
+    fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, ' ');
 }
 
 
@@ -187,7 +182,7 @@ static void fiftyoneDegreesWKBToT_HandlePointSegment(
 
     for (short i = 0; i < context->coordMode.dimensionsCount; i++) {
         if (i) {
-            fiftyoneDegreesWKBToT_WriteCharacter(context, ' ');
+            fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, ' ');
         }
         const double nextCoord = fiftyoneDegreesWKBToT_ReadDouble(context);
         fiftyoneDegreesWKBToT_WriteDouble(context, nextCoord);
