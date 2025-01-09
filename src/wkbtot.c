@@ -175,6 +175,7 @@ static void fiftyoneDegreesWKBToT_WithParenthesesIterate(
     for (uint32_t i = 0; i < count; i++) {
         if (i) {
             fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, ',');
+            fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, ' ');
         }
         visitor(context);
     }
@@ -386,8 +387,8 @@ static void fiftyoneDegreesWKBToT_HandleGeometry(
     fiftyoneDegreesWKBToT_UpdateWkbByteOrder(context);
 
     const uint32_t geometryTypeFull = fiftyoneDegreesWKBToT_ReadInt(context);
-    const uint32_t coordType = geometryTypeFull / 100;
-    const uint32_t geometryCode = geometryTypeFull % 100;
+    const uint32_t coordType = geometryTypeFull / 1000;
+    const uint32_t geometryCode = geometryTypeFull % 1000;
 
     context->coordMode = fiftyoneDegreesWKBToT_CoordModes[coordType];
 
