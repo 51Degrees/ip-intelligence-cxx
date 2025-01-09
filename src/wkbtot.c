@@ -216,7 +216,7 @@ typedef struct fiftyoneDegreesWKBToT_GeometryParser_t {
     const fiftyoneDegreesWKBToT_LoopVisitor childParser;
 } fiftyoneDegreesWKBToT_GeometryParser;
 
-static void fiftyoneDegreesWKBToT_HandleGeometry(
+static void fiftyoneDegreesWKBToT_HandleUnknownGeometry(
     fiftyoneDegreesWKBToT_ProcessingContext *context);
 
 
@@ -268,7 +268,7 @@ static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry
     "GeometryCollection",
     true,
     NULL,
-    fiftyoneDegreesWKBToT_HandleGeometry,
+    fiftyoneDegreesWKBToT_HandleUnknownGeometry,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_CircularString = {
     // RESERVED IN STANDARD (OGC 06-103r4) FOR FUTURE USE
@@ -326,7 +326,7 @@ static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry
     NULL,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_TIN = {
-    "TIN",
+    "Tin",
     true,
     &fiftyoneDegreesWKBToT_Geometry_Polygon,
     NULL,
@@ -376,8 +376,12 @@ static void fiftyoneDegreesWKBToT_UpdateWkbByteOrder(
         : &fiftyoneDegreesWKBToT_MismatchingBitnessNumReader);
 }
 
+static void fiftyoneDegreesWKBToT_HandleKnownGeometry(
+    fiftyoneDegreesWKBToT_ProcessingContext *context);
+
 static void fiftyoneDegreesWKBToT_HandleGeometry(
-    fiftyoneDegreesWKBToT_ProcessingContext * const context) {
+    fiftyoneDegreesWKBToT_ProcessingContext * const context,
+    const bool typeIsKnown) {
 
     fiftyoneDegreesWKBToT_UpdateWkbByteOrder(context);
 
@@ -389,21 +393,33 @@ static void fiftyoneDegreesWKBToT_HandleGeometry(
 
     const fiftyoneDegreesWKBToT_GeometryParser * const parser =
         fiftyoneDegreesWKBToT_Geometries[geometryCode];
-    if (parser->nameToPrint) {
+    if (!typeIsKnown && parser->nameToPrint) {
         fiftyoneDegreesWKBToT_WriteTaggedGeometryName(context, parser->nameToPrint);
     }
 
     const fiftyoneDegreesWKBToT_LoopVisitor visitor = (parser->childGeometry
-        ? fiftyoneDegreesWKBToT_HandleGeometry
+        ? fiftyoneDegreesWKBToT_HandleKnownGeometry
         : (parser->childParser
             ? parser->childParser
-            : fiftyoneDegreesWKBToT_HandleGeometry));
+            : fiftyoneDegreesWKBToT_HandleUnknownGeometry));
 
     if (parser->hasChildCount) {
         fiftyoneDegreesWKBToT_HandleLoop(context, visitor);
     } else {
         fiftyoneDegreesWKBToT_WithParenthesesIterate(context, visitor, 1);
     }
+}
+
+static void fiftyoneDegreesWKBToT_HandleUnknownGeometry(
+    fiftyoneDegreesWKBToT_ProcessingContext * const context) {
+
+    fiftyoneDegreesWKBToT_HandleGeometry(context, false);
+}
+
+static void fiftyoneDegreesWKBToT_HandleKnownGeometry(
+    fiftyoneDegreesWKBToT_ProcessingContext * const context) {
+
+    fiftyoneDegreesWKBToT_HandleGeometry(context, true);
 }
 
 static void fiftyoneDegreesWKBToT_HandleWKBRoot(
@@ -420,7 +436,7 @@ static void fiftyoneDegreesWKBToT_HandleWKBRoot(
         NULL,
     };
 
-    fiftyoneDegreesWKBToT_HandleGeometry(&context);
+    fiftyoneDegreesWKBToT_HandleUnknownGeometry(&context);
 }
 
 
