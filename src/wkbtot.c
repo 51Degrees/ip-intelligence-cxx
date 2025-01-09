@@ -43,7 +43,7 @@ typedef enum {
     fiftyoneDegreesWKBToT_NDR = 1, // Little Endian
 } fiftyoneDegreesWKBToT_ByteOrder;
 
-typedef int32_t (*fiftyoneDegreesWKBToT_IntReader)(const unsigned char *wkbBytes);
+typedef uint32_t (*fiftyoneDegreesWKBToT_IntReader)(const unsigned char *wkbBytes);
 typedef double (*fiftyoneDegreesWKBToT_DoubleReader)(const unsigned char *wkbBytes);
 typedef struct  {
     const char *name;
@@ -51,19 +51,19 @@ typedef struct  {
     fiftyoneDegreesWKBToT_DoubleReader readDouble;
 } fiftyoneDegreesWKBToT_NumReader;
 
-static int32_t fiftyoneDegreesWKBToT_ReadIntMatchingBitness(const unsigned char *wkbBytes) {
-    return *(int32_t *)wkbBytes;
+static uint32_t fiftyoneDegreesWKBToT_ReadIntMatchingBitness(const unsigned char *wkbBytes) {
+    return *(uint32_t *)wkbBytes;
 }
 static double fiftyoneDegreesWKBToT_ReadDoubleMatchingBitness(const unsigned char *wkbBytes) {
     return *(double *)wkbBytes;
 }
 
-static int32_t fiftyoneDegreesWKBToT_ReadIntMismatchingBitness(const unsigned char *wkbBytes) {
+static uint32_t fiftyoneDegreesWKBToT_ReadIntMismatchingBitness(const unsigned char *wkbBytes) {
     unsigned char t[4];
     for (short i = 0; i < 4; i++) {
         t[i] = wkbBytes[3 - i];
     }
-    return *(int32_t *)t;
+    return *(uint32_t *)t;
 }
 static double fiftyoneDegreesWKBToT_ReadDoubleMismatchingBitness(const unsigned char *wkbBytes) {
     unsigned char t[8];
@@ -87,7 +87,7 @@ static const fiftyoneDegreesWKBToT_NumReader fiftyoneDegreesWKBToT_MismatchingBi
 
 static fiftyoneDegreesWKBToT_ByteOrder fiftyoneDegreesWKBToT_GetBitness() {
     unsigned char buffer[4];
-    *(int32_t *)buffer = 1;
+    *(uint32_t *)buffer = 1;
     return buffer[0];
 }
 
@@ -102,10 +102,10 @@ typedef struct {
 } fiftyoneDegreesWKBToT_ProcessingContext;
 
 
-static int32_t fiftyoneDegreesWKBToT_ReadInt(
+static uint32_t fiftyoneDegreesWKBToT_ReadInt(
     fiftyoneDegreesWKBToT_ProcessingContext * const context) {
 
-    const int32_t result = context->numReader->readInt(context->binaryBuffer);
+    const uint32_t result = context->numReader->readInt(context->binaryBuffer);
     context->binaryBuffer += 4;
     return result;
 }
@@ -169,10 +169,10 @@ typedef void (*fiftyoneDegreesWKBToT_LoopVisitor)(
 static void fiftyoneDegreesWKBToT_WithParenthesesIterate(
     fiftyoneDegreesWKBToT_ProcessingContext * const context,
     const fiftyoneDegreesWKBToT_LoopVisitor visitor,
-    const int32_t count) {
+    const uint32_t count) {
 
     fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, '(');
-    for (int32_t i = 0; i < count; i++) {
+    for (uint32_t i = 0; i < count; i++) {
         if (i) {
             fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, ',');
         }
@@ -197,7 +197,7 @@ static void fiftyoneDegreesWKBToT_HandleLoop(
     fiftyoneDegreesWKBToT_ProcessingContext * const context,
     const fiftyoneDegreesWKBToT_LoopVisitor visitor) {
 
-    const int32_t count = fiftyoneDegreesWKBToT_ReadInt(context);
+    const uint32_t count = fiftyoneDegreesWKBToT_ReadInt(context);
     if (count) {
         fiftyoneDegreesWKBToT_WithParenthesesIterate(context, visitor, count);
     } else {
@@ -373,6 +373,7 @@ static void fiftyoneDegreesWKBToT_UpdateWkbByteOrder(
     if (newByteOrder == context->wkbByteOrder) {
         return;
     }
+    context->wkbByteOrder = newByteOrder;
     context->numReader = (
         (context->wkbByteOrder == context->machineByteOrder)
         ? &fiftyoneDegreesWKBToT_MatchingBitnessNumReader
@@ -384,9 +385,9 @@ static void fiftyoneDegreesWKBToT_HandleGeometry(
 
     fiftyoneDegreesWKBToT_UpdateWkbByteOrder(context);
 
-    const int32_t geometryTypeFull = fiftyoneDegreesWKBToT_ReadInt(context);
-    const int32_t coordType = geometryTypeFull / 100;
-    const int32_t geometryCode = geometryTypeFull % 100;
+    const uint32_t geometryTypeFull = fiftyoneDegreesWKBToT_ReadInt(context);
+    const uint32_t coordType = geometryTypeFull / 100;
+    const uint32_t geometryCode = geometryTypeFull % 100;
 
     context->coordMode = fiftyoneDegreesWKBToT_CoordModes[coordType];
 
@@ -396,7 +397,7 @@ static void fiftyoneDegreesWKBToT_HandleGeometry(
         fiftyoneDegreesWKBToT_WriteTaggedGeometryName(context, parser->nameToPrint);
     }
 
-    const int32_t childCount = parser->hasChildCount ? fiftyoneDegreesWKBToT_ReadInt(context) : 1;
+    const uint32_t childCount = parser->hasChildCount ? fiftyoneDegreesWKBToT_ReadInt(context) : 1;
 
     fiftyoneDegreesWKBToT_WithParenthesesIterate(
         context,

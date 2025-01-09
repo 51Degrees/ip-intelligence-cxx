@@ -35,16 +35,10 @@ static bool CheckResult(const char *result, const char *expected, uint16_t const
 
 static size_t constexpr DEFAULT_BUFFER_SIZE = 1024;
 
-TEST(WKBToT, WKBToT_Point_2D_NDR)
-{
-	const uint8_t wkbBytes[] = {
-		0x00, // big endian
-      	0x00,0x00,0x00,0x01, // POINT (2D)
-        0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00, // 2.0: x-coordinate
-      	0x40,0x10,0x00,0x00,0x00,0x00,0x00,0x00, // 4.0: y-coordinate
-    };
-	const char * const expected = "Point(2 4)";
-
+static void convertAndCompare(
+	const uint8_t * const wkbBytes,
+	const char * const expected,
+	const char * const comment) {
 	char buffer[DEFAULT_BUFFER_SIZE] = { 0 };
 	FIFTYONE_DEGREES_EXCEPTION_CREATE;
 
@@ -62,6 +56,32 @@ TEST(WKBToT, WKBToT_Point_2D_NDR)
 
 	EXPECT_TRUE(
 		CheckResult(buffer, expected, strlen(expected))) <<
-		"The value of Point 2D (NDR) is not correctly converted -- '" << buffer <<
+		"The value of " << comment << " is not correctly converted -- '" << buffer <<
 		"' -- vs expected -- '" << expected << "'";
+}
+
+TEST(WKBToT, WKBToT_Point_2D_NDR)
+{
+	const uint8_t wkbBytes[] = {
+		0x00, // big endian
+      	0x00,0x00,0x00,0x01, // POINT (2D)
+        0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00, // 2.0: x-coordinate
+      	0x40,0x10,0x00,0x00,0x00,0x00,0x00,0x00, // 4.0: y-coordinate
+    };
+	const char * const expected = "Point(2 4)";
+
+	convertAndCompare(wkbBytes, expected, "Point 2D (NDR)");
+}
+
+TEST(WKBToT, WKBToT_Point_2D_XDR)
+{
+	const uint8_t wkbBytes[] = {
+		0x01,
+		0x01, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0c, 0x40,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x31, 0x40,
+	};
+	const char * const expected = "Point(3.5 17.25)";
+
+	convertAndCompare(wkbBytes, expected, "Point 2D (XDR)");
 }
