@@ -95,28 +95,25 @@ static fiftyoneDegreesWKBToT_ByteOrder fiftyoneDegreesWKBToT_GetBitness() {
 typedef struct {
     const unsigned char *binaryBuffer;
     fiftyoneDegreesStringBuilder * const stringBuilder;
-    fiftyoneDegreesWKBToT_CoordMode const coordMode;
-    fiftyoneDegreesWKBToT_ByteOrder const wkbByteOrder;
+    fiftyoneDegreesWKBToT_CoordMode coordMode;
+    fiftyoneDegreesWKBToT_ByteOrder wkbByteOrder;
     fiftyoneDegreesWKBToT_ByteOrder const machineByteOrder;
-    fiftyoneDegreesWKBToT_NumReader const numReader;
+    const fiftyoneDegreesWKBToT_NumReader *numReader;
 } fiftyoneDegreesWKBToT_ProcessingContext;
 
 
 static int32_t fiftyoneDegreesWKBToT_ReadInt(
-    fiftyoneDegreesWKBToT_ProcessingContext * const context,
-    bool movePointer) {
+    fiftyoneDegreesWKBToT_ProcessingContext * const context) {
 
-    const int32_t result = context->numReader.readInt(context->binaryBuffer);
-    if (movePointer) {
-        context->binaryBuffer += 4;
-    }
+    const int32_t result = context->numReader->readInt(context->binaryBuffer);
+    context->binaryBuffer += 4;
     return result;
 }
 
 static double fiftyoneDegreesWKBToT_ReadDouble(
     fiftyoneDegreesWKBToT_ProcessingContext * const context) {
 
-    const double result = context->numReader.readDouble(context->binaryBuffer);
+    const double result = context->numReader->readDouble(context->binaryBuffer);
     context->binaryBuffer += 8;
     return result;
 }
@@ -137,6 +134,13 @@ static void fiftyoneDegreesWKBToT_WriteDouble(
             temp,
             strlen(temp));
     }
+}
+
+static void fiftyoneDegreesWKBToT_WriteEmpty(
+    fiftyoneDegreesWKBToT_ProcessingContext * const context) {
+
+    static const char empty[] = "EMPTY";
+    fiftyoneDegreesStringBuilderAddChars(context->stringBuilder, empty, sizeof(empty));
 }
 
 static void fiftyoneDegreesWKBToT_WriteTaggedGeometryName(
@@ -193,60 +197,229 @@ static void fiftyoneDegreesWKBToT_HandleLoop(
     fiftyoneDegreesWKBToT_ProcessingContext * const context,
     const fiftyoneDegreesWKBToT_LoopVisitor visitor) {
 
-    const int32_t count = fiftyoneDegreesWKBToT_ReadInt(context, true);
-    if (!count) {
-        static const char empty[] = "EMPTY";
-        fiftyoneDegreesStringBuilderAddChars(context->stringBuilder, empty, sizeof(empty));
+    const int32_t count = fiftyoneDegreesWKBToT_ReadInt(context);
+    if (count) {
+        fiftyoneDegreesWKBToT_WithParenthesesIterate(context, visitor, count);
+    } else {
+        fiftyoneDegreesWKBToT_WriteEmpty(context);
+    }
+}
+
+
+typedef struct fiftyoneDegreesWKBToT_GeometryParser_t {
+    const char * const nameToPrint;
+    const bool hasChildCount;
+    const struct fiftyoneDegreesWKBToT_GeometryParser_t * const childGeometry;
+    const fiftyoneDegreesWKBToT_LoopVisitor childParser;
+} fiftyoneDegreesWKBToT_GeometryParser;
+
+static void fiftyoneDegreesWKBToT_HandleGeometry(
+    fiftyoneDegreesWKBToT_ProcessingContext *context);
+
+
+
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_LinearRing = {
+    NULL,
+    true,
+    NULL,
+    fiftyoneDegreesWKBToT_HandlePointSegment,
+};
+
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_Geometry = {
+    // ABSTRACT -- ANY GEOMETRY BELOW QUALIFIES
+    "Geometry",
+    false,
+    NULL,
+    fiftyoneDegreesWKBToT_WriteEmpty,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_Point = {
+    "Point",
+    false,
+    NULL,
+    fiftyoneDegreesWKBToT_HandlePointSegment,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_LineString = {
+    "LineString",
+    true,
+    NULL,
+    fiftyoneDegreesWKBToT_HandlePointSegment,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_Polygon = {
+    "Polygon",
+    true,
+    &fiftyoneDegreesWKBToT_Geometry_LinearRing,
+    NULL,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_MultiPoint = {
+    "MultiPoint",
+    true,
+    &fiftyoneDegreesWKBToT_Geometry_Point,
+    NULL,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_MultiLineString = {
+    "MultiLineString",
+    true,
+    &fiftyoneDegreesWKBToT_Geometry_LineString,
+    NULL,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_MultiPolygon = {
+    "MultiPolygon",
+    true,
+    &fiftyoneDegreesWKBToT_Geometry_Polygon,
+    NULL,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_GeometryCollection = {
+    "GeometryCollection",
+    true,
+    NULL,
+    fiftyoneDegreesWKBToT_HandleGeometry,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_CircularString = {
+    // RESERVED IN STANDARD (OGC 06-103r4) FOR FUTURE USE
+    "CircularString",
+    false,
+    NULL,
+    NULL,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_CompoundCurve = {
+    // RESERVED IN STANDARD (OGC 06-103r4) FOR FUTURE USE
+    "CompoundCurve",
+    false,
+    NULL,
+    NULL,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_CurvePolygon = {
+    // RESERVED IN STANDARD (OGC 06-103r4) FOR FUTURE USE
+    "CurvePolygon",
+    false,
+    NULL,
+    NULL,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_MultiCurve = {
+    // NON-INSTANTIABLE -- SEE `MultiLineString` SUBCLASS
+    "MultiCurve",
+    false,
+    NULL,
+    NULL,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_MultiSurface = {
+    // NON-INSTANTIABLE -- SEE `MultiPolygon` SUBCLASS
+    "MultiSurface",
+    false,
+    NULL,
+    NULL,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_Curve = {
+    // NON-INSTANTIABLE -- SEE `LineString` SUBCLASS. ALSO `LinearRing` and `Line`
+    "Curve",
+    false,
+    NULL,
+    NULL,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_Surface = {
+    // NON-INSTANTIABLE -- SEE `Polygon` AND `PolyhedralSurface` SUBCLASSES.
+    "Surface",
+    false,
+    NULL,
+    NULL,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_PolyhedralSurface = {
+    "PolyhedralSurface",
+    true,
+    &fiftyoneDegreesWKBToT_Geometry_Polygon,
+    NULL,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_TIN = {
+    "TIN",
+    true,
+    &fiftyoneDegreesWKBToT_Geometry_Polygon,
+    NULL,
+};
+static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_Triangle = {
+    "Triangle",
+    true,
+    &fiftyoneDegreesWKBToT_Geometry_LinearRing,
+    NULL,
+};
+
+static const fiftyoneDegreesWKBToT_GeometryParser * const fiftyoneDegreesWKBToT_Geometries[] = {
+    &fiftyoneDegreesWKBToT_Geometry_Geometry,
+    &fiftyoneDegreesWKBToT_Geometry_Point,
+    &fiftyoneDegreesWKBToT_Geometry_LineString,
+    &fiftyoneDegreesWKBToT_Geometry_Polygon,
+    &fiftyoneDegreesWKBToT_Geometry_MultiPoint,
+    &fiftyoneDegreesWKBToT_Geometry_MultiLineString,
+    &fiftyoneDegreesWKBToT_Geometry_MultiPolygon,
+    &fiftyoneDegreesWKBToT_Geometry_GeometryCollection,
+    &fiftyoneDegreesWKBToT_Geometry_CircularString,
+    &fiftyoneDegreesWKBToT_Geometry_CompoundCurve,
+    &fiftyoneDegreesWKBToT_Geometry_CurvePolygon,
+    &fiftyoneDegreesWKBToT_Geometry_MultiCurve,
+    &fiftyoneDegreesWKBToT_Geometry_MultiSurface,
+    &fiftyoneDegreesWKBToT_Geometry_Curve,
+    &fiftyoneDegreesWKBToT_Geometry_Surface,
+    &fiftyoneDegreesWKBToT_Geometry_PolyhedralSurface,
+    &fiftyoneDegreesWKBToT_Geometry_Geometry,
+    &fiftyoneDegreesWKBToT_Geometry_Triangle,
+};
+
+
+static void fiftyoneDegreesWKBToT_UpdateWkbByteOrder(
+    fiftyoneDegreesWKBToT_ProcessingContext * const context) {
+
+    const fiftyoneDegreesWKBToT_ByteOrder newByteOrder = *context->binaryBuffer;
+    context->binaryBuffer++;
+
+    if (newByteOrder == context->wkbByteOrder) {
         return;
     }
-    fiftyoneDegreesWKBToT_WithParenthesesIterate(context, visitor, count);
-}
-
-static void fiftyoneDegreesWKBToT_SkipGeometryHeader(
-    fiftyoneDegreesWKBToT_ProcessingContext * const context) {
-
-    context->binaryBuffer += 1; // skip byte order byte
-    context->binaryBuffer += 4; // skip geometry type
-}
-
-static void fiftyoneDegreesWKBToT_HandlePoint(
-    fiftyoneDegreesWKBToT_ProcessingContext * const context) {
-
-    fiftyoneDegreesWKBToT_SkipGeometryHeader(context);
-    fiftyoneDegreesWKBToT_WriteTaggedGeometryName(context, "POINT");
-
-    fiftyoneDegreesWKBToT_WithParenthesesIterate(
-        context, fiftyoneDegreesWKBToT_HandlePointSegment, 1);
+    context->numReader = (
+        (context->wkbByteOrder == context->machineByteOrder)
+        ? &fiftyoneDegreesWKBToT_MatchingBitnessNumReader
+        : &fiftyoneDegreesWKBToT_MismatchingBitnessNumReader);
 }
 
 static void fiftyoneDegreesWKBToT_HandleGeometry(
     fiftyoneDegreesWKBToT_ProcessingContext * const context) {
 
-    fiftyoneDegreesWKBToT_HandlePoint(context);
+    fiftyoneDegreesWKBToT_UpdateWkbByteOrder(context);
+
+    const int32_t geometryTypeFull = fiftyoneDegreesWKBToT_ReadInt(context);
+    const int32_t coordType = geometryTypeFull / 100;
+    const int32_t geometryCode = geometryTypeFull % 100;
+
+    context->coordMode = fiftyoneDegreesWKBToT_CoordModes[coordType];
+
+    const fiftyoneDegreesWKBToT_GeometryParser * const parser =
+        fiftyoneDegreesWKBToT_Geometries[geometryCode];
+    if (parser->nameToPrint) {
+        fiftyoneDegreesWKBToT_WriteTaggedGeometryName(context, parser->nameToPrint);
+    }
+
+    const int32_t childCount = parser->hasChildCount ? fiftyoneDegreesWKBToT_ReadInt(context) : 1;
+
+    fiftyoneDegreesWKBToT_WithParenthesesIterate(
+        context,
+        parser->childGeometry
+        ? fiftyoneDegreesWKBToT_HandleGeometry
+        : (fiftyoneDegreesWKBToT_HandlePointSegment
+            ? fiftyoneDegreesWKBToT_HandlePointSegment
+            : fiftyoneDegreesWKBToT_HandleGeometry),
+        childCount);
 }
 
 static void fiftyoneDegreesWKBToT_HandleWKBRoot(
     const unsigned char *binaryBuffer,
     fiftyoneDegreesStringBuilder * const stringBuilder) {
 
-    const fiftyoneDegreesWKBToT_ByteOrder machineByteOrder = fiftyoneDegreesWKBToT_GetBitness();
-    const fiftyoneDegreesWKBToT_ByteOrder wkbByteOrder = *binaryBuffer;
-    const fiftyoneDegreesWKBToT_NumReader numReader = (
-        (wkbByteOrder == machineByteOrder)
-        ? fiftyoneDegreesWKBToT_MatchingBitnessNumReader
-        : fiftyoneDegreesWKBToT_MismatchingBitnessNumReader);
-
-    const int32_t rootGeometryTypeFull = numReader.readInt(binaryBuffer + 1);
-    const int32_t coordType = rootGeometryTypeFull / 100;
-
     fiftyoneDegreesWKBToT_ProcessingContext context = {
         binaryBuffer,
         stringBuilder,
 
-        fiftyoneDegreesWKBToT_CoordModes[coordType],
-        wkbByteOrder,
-        machineByteOrder,
-        numReader,
+        fiftyoneDegreesWKBToT_CoordModes[0],
+        ~*binaryBuffer,
+        fiftyoneDegreesWKBToT_GetBitness(),
+        NULL,
     };
 
     fiftyoneDegreesWKBToT_HandleGeometry(&context);
