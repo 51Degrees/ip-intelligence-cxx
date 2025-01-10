@@ -427,9 +427,11 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\fiftyone.h" />
     <ClInclude Include="..\..\src\ipi.h" />
+    <ClInclude Include="..\..\src\wkbtot.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ipi.c" />
+    <ClCompile Include="..\..\src\wkbtot.c" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\common-cxx\VisualStudio\FiftyOne.Common.C\FiftyOne.Common.C.vcxproj">

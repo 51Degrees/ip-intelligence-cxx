@@ -23,6 +23,7 @@
     <ClCompile Include="..\..\test\ExampleReloadFromMemoryTests.cpp" />
     <ClCompile Include="..\..\test\ExampleStronglyTypedTests.cpp" />
     <ClCompile Include="..\..\test\MemLeakReloadFromFileTests.cpp" />
+    <ClCompile Include="..\..\test\WellKnownBinaryToTextTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\common-cxx\tests\Base.hpp" />
