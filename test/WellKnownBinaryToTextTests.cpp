@@ -23,9 +23,9 @@
 #include "pch.h"
 #include "../src/wkbtot.h"
 
-static bool CheckResult(const char *result, const char *expected, uint16_t const size) {
+static bool CheckResult(const char *result, const char *expected, size_t const size) {
 	bool match = true;
-	for (uint16_t i = 0; i < size; i++) {
+	for (size_t i = 0; i < size; i++) {
 		match = match && (*result == *expected);
 		result++;
 		expected++;
