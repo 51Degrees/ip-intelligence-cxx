@@ -72,9 +72,6 @@
     <ClInclude Include="..\..\src\WeightedValue.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\IpAddress.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\PropertyMetaDataCollectionForPropertyIpi.cpp">
@@ -129,9 +126,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\EvidenceIpi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\IpAddress.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

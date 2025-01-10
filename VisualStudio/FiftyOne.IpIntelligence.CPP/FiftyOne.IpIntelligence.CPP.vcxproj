@@ -423,7 +423,6 @@
     <ClInclude Include="..\..\src\ConfigIpi.hpp" />
     <ClInclude Include="..\..\src\EngineIpi.hpp" />
     <ClInclude Include="..\..\src\EvidenceIpi.hpp" />
-    <ClInclude Include="..\..\src\IpAddress.hpp" />
     <ClInclude Include="..\..\src\MetaDataIpi.hpp" />
     <ClInclude Include="..\..\src\ProfileMetaDataBuilderIpi.hpp" />
     <ClInclude Include="..\..\src\ProfileMetaDataCollectionIpi.hpp" />
@@ -445,7 +444,6 @@
     <ClCompile Include="..\..\src\ConfigIpi.cpp" />
     <ClCompile Include="..\..\src\EngineIpi.cpp" />
     <ClCompile Include="..\..\src\EvidenceIpi.cpp" />
-    <ClCompile Include="..\..\src\IpAddress.cpp" />
     <ClCompile Include="..\..\src\MetaDataIpi.cpp" />
     <ClCompile Include="..\..\src\ProfileMetaDataBuilderIpi.cpp" />
     <ClCompile Include="..\..\src\ProfileMetaDataCollectionIpi.cpp" />
