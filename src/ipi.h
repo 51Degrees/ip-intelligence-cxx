@@ -218,10 +218,8 @@ typedef struct fiftyone_degrees_ipi_dataset_header_t {
 												  values collection */
 	const fiftyoneDegreesCollectionHeader profiles; /**< Size and location of
 													the profiles collection */
-	const fiftyoneDegreesCollectionHeader ipRoots; /**< Size and location of
-													 the ipv4 graph */
-	const fiftyoneDegreesCollectionHeader ipNodes; /**< Size and location of
-													 the ipv6 graph */
+	const fiftyoneDegreesCollectionHeader ipRoots; /**< Roots collection config */
+	const fiftyoneDegreesCollectionHeader ipNodes; /**< Nodes collection config */
 	const fiftyoneDegreesCollectionHeader profileOffsets; /**< Size and
 														  location of the
 														  profile offsets
