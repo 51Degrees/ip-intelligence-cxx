@@ -124,10 +124,13 @@ static double fiftyoneDegreesWKBToT_ReadDouble(
 }
 
 
+#define MAX_DOUBLE_DECIMAL_PLACES 15
+
 static void fiftyoneDegreesWKBToT_WriteDouble(
     const fiftyoneDegreesWKBToT_ProcessingContext * const context, const double value) {
 
-    int remDigits = context->decimalPlaces;
+    int remDigits = MAX_DOUBLE_DECIMAL_PLACES < context->decimalPlaces
+        ? MAX_DOUBLE_DECIMAL_PLACES : context->decimalPlaces;
 
     int intPart = (int)value;
     double fracPart = value - intPart;
@@ -145,7 +148,7 @@ static void fiftyoneDegreesWKBToT_WriteDouble(
         return;
     }
 
-    char floatTail[remDigits + 2];
+    char floatTail[MAX_DOUBLE_DECIMAL_PLACES + 2];
     floatTail[0] = '.';
     char *digits = floatTail + 1;
 
@@ -178,6 +181,8 @@ static void fiftyoneDegreesWKBToT_WriteDouble(
 
     fiftyoneDegreesStringBuilderAddChars(context->stringBuilder, floatTail, digitsToAdd + 1);
 }
+
+#undef MAX_DOUBLE_DECIMAL_PLACES
 
 static void fiftyoneDegreesWKBToT_WriteEmpty(
     fiftyoneDegreesWKBToT_ProcessingContext * const context) {
