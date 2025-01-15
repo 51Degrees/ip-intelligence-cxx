@@ -278,6 +278,9 @@ Common::ResultsBase* EngineIpi::processBase(
 }
 
 void EngineIpi::initHttpHeaderKeys(fiftyoneDegreesHeaders *uniqueHeaders) {
+	if (!uniqueHeaders) {
+		return;
+	}
 	uint32_t i, p;
 	const char *prefixes[] = { "query.", "server." };
 	for (i = 0; i < uniqueHeaders->count; i++) {

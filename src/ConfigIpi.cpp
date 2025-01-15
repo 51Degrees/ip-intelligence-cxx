@@ -120,7 +120,7 @@ void ConfigIpi::initCollectionConfig() {
  * @return the underlying configuration data structure.
  */
 fiftyoneDegreesConfigIpi* ConfigIpi::getConfig() {
-	return &config;
+	return this ? &config : nullptr;
 }
 
 /**
