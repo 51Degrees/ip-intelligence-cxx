@@ -44,16 +44,8 @@ ExampleBase::ExampleBase(string dataFilePath, ConfigIpi *config) {
 	this->config = config;
 	
 	// Set the properties to be returned for each Ip Address.
-	string propertiesString = "IpRangeStart,IpRangeEnd,CountryCode,CityName,AverageLocation";
+	string propertiesString = "networkname,coordinate";
 	properties = new RequiredPropertiesConfig(propertiesString);
-
-	// TODO: James
-	//
-	// terminate called after throwing an instance of 'FiftyoneDegrees::Common::StatusCodeException'
-	//	 what():  None of the properties requested could be found in the data file ('C:\Projects\Work\ip-intelligence-cxx/ip-in
-	// telligence-data/51Degrees-LiteV4.1.ipi'), so no properties can be initialised. To initialise all available properties, s
-	// et the field to null.
-	properties = nullptr;
 
 	// Initialise the engine for ip intelligence.
 	engine = new EngineIpi(dataFilePath, config, properties);
