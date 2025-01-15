@@ -1,6 +1,6 @@
-[submodule "src/common-cxx"]
-	path = src/common-cxx
-	url = ../common-cxx 
 [submodule "ip-intelligence-data"]
 	path = ip-intelligence-data
 	url = ../ip-intelligence-data
+[submodule "src/common-cxx"]
+	path = src/common-cxx
+	url = ../../postindustria-tech/common-cxx
