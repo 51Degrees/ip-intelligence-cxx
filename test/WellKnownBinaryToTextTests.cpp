@@ -58,17 +58,18 @@ static void convertAndCompare_base(
 		EXPECT_TRUE(FIFTYONE_DEGREES_EXCEPTION_CHECK(statusCode)) <<
 			"Got wrong exception while converting WKB: " << fiftyoneDegreesExceptionGetMessage(exception)
 			<< " -- expected: "
-			<< fiftyoneDegreesStatusGetMessage(static_cast<fiftyoneDegreesStatusCode>(statusCode), nullptr);
+			<< fiftyoneDegreesStatusGetMessage(static_cast<fiftyoneDegreesStatusCode>(statusCode), nullptr)
+			<< std::endl;
 	}
 
 	EXPECT_FALSE(result.bufferTooSmall) <<
 		"Buffer was deemed too small, requested " << result.written <<
-		", available " <<  std::size(buffer);
+		", available " <<  std::size(buffer) << std::endl;
 
 	EXPECT_TRUE(
 		CheckResult(buffer, expected, strlen(expected))) <<
-		"The value of " << comment << " is not correctly converted -- '" << buffer <<
-		"' -- vs expected -- '" << expected << "'";
+		"The value of " << comment << " is not correctly converted:\n -- '" << buffer <<
+		"'\nvs expected\n -- '" << expected << "'" << std::endl;
 }
 
 static void convertAndCompare_withDecimalPlaces(
@@ -82,7 +83,7 @@ static void convertAndCompare_withDecimalPlaces(
 		expected,
 		comment,
 		decimalPlaces,
-		static_cast<fiftyoneDegreesStatusCode>(-1));  // no exception expected
+		-1);  // no exception expected
 }
 
 static void convertAndCompare(
@@ -94,7 +95,7 @@ static void convertAndCompare(
 		wkbBytes,
 		expected,
 		comment,
-		-17); // max precision, 'g'-format
+		15); // max precision
 }
 
 static void convertAndCompare_withExceptionStatus(
@@ -142,10 +143,10 @@ TEST(WKBToT, WKBToT_Test_Point_2D_3places)
 	const uint8_t wkbBytes[] = {
 		0x00,
 		0x00, 0x00, 0x00, 0x01,
-      	0x40, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x40, 0x31, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00,
+      	0x40, 0x8b, 0xe0, 0xc0, 0x00, 0x00, 0x00, 0x00,
 	};
-	const char * const expected = "POINT(4 17.250)";
+	const char * const expected = "POINT(17.25 892.094)";
 
 	convertAndCompare_withDecimalPlaces(wkbBytes, expected, "Point 2D (3 decimal places)", 3);
 }

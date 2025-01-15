@@ -102,7 +102,7 @@ typedef struct {
     fiftyoneDegreesWKBToT_ByteOrder const machineByteOrder;
     const fiftyoneDegreesWKBToT_NumReader *numReader;
 
-    const char * const doubleFormat;
+    uint8_t const decimalPlaces;
     fiftyoneDegreesException * const exception;
 } fiftyoneDegreesWKBToT_ProcessingContext;
 
@@ -126,24 +126,57 @@ static double fiftyoneDegreesWKBToT_ReadDouble(
 
 static void fiftyoneDegreesWKBToT_WriteDouble(
     const fiftyoneDegreesWKBToT_ProcessingContext * const context, const double value) {
-    // 64-bit max-length double is `-X.{X:16}e-308` => 24 characters + NULL
-    char temp[27];
-    if (snprintf(temp, sizeof(temp), context->doubleFormat, value) > 0) {
-        fiftyoneDegreesStringBuilderAddChars(
-            context->stringBuilder,
-            temp,
-            strlen(temp));
-    }
-}
 
-static void fiftyoneDegreesWKBToT_WriteNumber(
-    const fiftyoneDegreesWKBToT_ProcessingContext * const context, const double value) {
-    const int intValue = (int)value;
-    if (value == (double)intValue) {
-        fiftyoneDegreesStringBuilderAddInteger(context->stringBuilder, intValue);
-    } else {
-        fiftyoneDegreesWKBToT_WriteDouble(context, value);
+    int remDigits = context->decimalPlaces;
+
+    int intPart = (int)value;
+    double fracPart = value - intPart;
+
+    if (fracPart < 0) {
+        fracPart = -fracPart;
     }
+    if (remDigits <= 0 && fracPart >= 0.5) {
+        intPart++;
+    }
+
+    fiftyoneDegreesStringBuilderAddInteger(context->stringBuilder, intPart);
+
+    if (!fracPart || remDigits <= 0) {
+        return;
+    }
+
+    char floatTail[remDigits + 2];
+    floatTail[0] = '.';
+    char *digits = floatTail + 1;
+
+    char *nextDigit = digits;
+    while (remDigits > 0 && fracPart) {
+        remDigits--;
+        fracPart *= 10;
+        *nextDigit = (char)fracPart;
+        fracPart -= *nextDigit;
+        if (!remDigits && fracPart >= 0.5) {
+            (*nextDigit)++;
+        }
+        ++nextDigit;
+    }
+    *nextDigit = '\0';
+
+    int digitsToAdd = context->decimalPlaces - remDigits;
+    for (nextDigit = digits + digitsToAdd - 1; nextDigit >= digits; --nextDigit) {
+        if (*nextDigit) {
+            break;
+        }
+        --digitsToAdd;
+    }
+    if (digitsToAdd <= 0) {
+        return;
+    }
+    for (; nextDigit >= digits; --nextDigit) {
+        *nextDigit += '0';
+    }
+
+    fiftyoneDegreesStringBuilderAddChars(context->stringBuilder, floatTail, digitsToAdd + 1);
 }
 
 static void fiftyoneDegreesWKBToT_WriteEmpty(
@@ -203,7 +236,7 @@ static void fiftyoneDegreesWKBToT_HandlePointSegment(
             fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, ' ');
         }
         const double nextCoord = fiftyoneDegreesWKBToT_ReadDouble(context);
-        fiftyoneDegreesWKBToT_WriteNumber(context, nextCoord);
+        fiftyoneDegreesWKBToT_WriteDouble(context, nextCoord);
     }
 }
 
@@ -456,16 +489,8 @@ static void fiftyoneDegreesWKBToT_HandleKnownGeometry(
 static void fiftyoneDegreesWKBToT_HandleWKBRoot(
     const unsigned char *binaryBuffer,
     fiftyoneDegreesStringBuilder * const stringBuilder,
-    int8_t const decimalPlaces,
+    uint8_t const decimalPlaces,
     fiftyoneDegreesException * const exception) {
-
-    char doubleFormat[10] = { 0 }; // "%0.127f" -- max 7 chars + '\0'
-    if (decimalPlaces >= 0) {
-        snprintf(doubleFormat, sizeof(doubleFormat), "%%0.%df", decimalPlaces);
-    } else {
-        const int gDigits = -(int)decimalPlaces;
-        snprintf(doubleFormat, sizeof(doubleFormat), "%%.%dg", gDigits);
-    }
 
     fiftyoneDegreesWKBToT_ProcessingContext context = {
         binaryBuffer,
@@ -476,7 +501,7 @@ static void fiftyoneDegreesWKBToT_HandleWKBRoot(
         fiftyoneDegreesWKBToT_GetBitness(),
         NULL,
 
-        doubleFormat,
+        decimalPlaces,
         exception,
     };
 
@@ -488,7 +513,7 @@ fiftyoneDegreesWkbtotResult
 fiftyoneDegreesConvertWkbToWkt(
     const unsigned char * const wellKnownBinary,
     char * const buffer, size_t const length,
-    int8_t const decimalPlaces,
+    uint8_t const decimalPlaces,
     fiftyoneDegreesException * const exception) {
 
     fiftyoneDegreesStringBuilder stringBuilder = { buffer, length };
