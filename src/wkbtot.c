@@ -22,6 +22,7 @@
 
 #include "wkbtot.h"
 #include "common-cxx/string.h"
+#include <math.h>
 
 typedef struct {
     short dimensionsCount;
@@ -95,10 +96,13 @@ static fiftyoneDegreesWKBToT_ByteOrder fiftyoneDegreesWKBToT_GetBitness() {
 typedef struct {
     const unsigned char *binaryBuffer;
     fiftyoneDegreesStringBuilder * const stringBuilder;
+
     fiftyoneDegreesWKBToT_CoordMode coordMode;
     fiftyoneDegreesWKBToT_ByteOrder wkbByteOrder;
     fiftyoneDegreesWKBToT_ByteOrder const machineByteOrder;
     const fiftyoneDegreesWKBToT_NumReader *numReader;
+
+    const char * const doubleFormat;
 } fiftyoneDegreesWKBToT_ProcessingContext;
 
 
@@ -123,11 +127,21 @@ static void fiftyoneDegreesWKBToT_WriteDouble(
     const fiftyoneDegreesWKBToT_ProcessingContext * const context, const double value) {
     // 64-bit max-length double is `-X.{X:16}e-308` => 24 characters + NULL
     char temp[27];
-    if (snprintf(temp, sizeof(temp), "%.17g", value) > 0) {
+    if (snprintf(temp, sizeof(temp), context->doubleFormat, value) > 0) {
         fiftyoneDegreesStringBuilderAddChars(
             context->stringBuilder,
             temp,
             strlen(temp));
+    }
+}
+
+static void fiftyoneDegreesWKBToT_WriteNumber(
+    const fiftyoneDegreesWKBToT_ProcessingContext * const context, const double value) {
+    const int intValue = (int)value;
+    if (value == (double)intValue) {
+        fiftyoneDegreesStringBuilderAddInteger(context->stringBuilder, intValue);
+    } else {
+        fiftyoneDegreesWKBToT_WriteDouble(context, value);
     }
 }
 
@@ -185,7 +199,7 @@ static void fiftyoneDegreesWKBToT_HandlePointSegment(
             fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, ' ');
         }
         const double nextCoord = fiftyoneDegreesWKBToT_ReadDouble(context);
-        fiftyoneDegreesWKBToT_WriteDouble(context, nextCoord);
+        fiftyoneDegreesWKBToT_WriteNumber(context, nextCoord);
     }
 }
 
@@ -424,7 +438,16 @@ static void fiftyoneDegreesWKBToT_HandleKnownGeometry(
 
 static void fiftyoneDegreesWKBToT_HandleWKBRoot(
     const unsigned char *binaryBuffer,
-    fiftyoneDegreesStringBuilder * const stringBuilder) {
+    fiftyoneDegreesStringBuilder * const stringBuilder,
+    int8_t const decimalPlaces) {
+
+    char doubleFormat[10] = { 0 }; // "%0.127f" -- max 7 chars + '\0'
+    if (decimalPlaces >= 0) {
+        snprintf(doubleFormat, sizeof(doubleFormat), "%%0.%df", decimalPlaces);
+    } else {
+        const int gDigits = -(int)decimalPlaces;
+        snprintf(doubleFormat, sizeof(doubleFormat), "%%.%dg", gDigits);
+    }
 
     fiftyoneDegreesWKBToT_ProcessingContext context = {
         binaryBuffer,
@@ -434,6 +457,8 @@ static void fiftyoneDegreesWKBToT_HandleWKBRoot(
         ~*binaryBuffer,
         fiftyoneDegreesWKBToT_GetBitness(),
         NULL,
+
+        doubleFormat,
     };
 
     fiftyoneDegreesWKBToT_HandleUnknownGeometry(&context);
@@ -444,12 +469,13 @@ fiftyoneDegreesWkbtotResult
 fiftyoneDegreesConvertWkbToWkt(
     const unsigned char * const wellKnownBinary,
     char * const buffer, size_t const length,
+    int8_t const decimalPlaces,
     fiftyoneDegreesException * const exception) {
 
     fiftyoneDegreesStringBuilder stringBuilder = { buffer, length };
     fiftyoneDegreesStringBuilderInit(&stringBuilder);
 
-    fiftyoneDegreesWKBToT_HandleWKBRoot(wellKnownBinary, &stringBuilder);
+    fiftyoneDegreesWKBToT_HandleWKBRoot(wellKnownBinary, &stringBuilder, decimalPlaces);
 
     fiftyoneDegreesStringBuilderComplete(&stringBuilder);
 

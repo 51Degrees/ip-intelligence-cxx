@@ -48,6 +48,7 @@ typedef struct fiftyone_degrees_transform_wkb_to_t_result {
 EXTERNAL fiftyoneDegreesWkbtotResult
 fiftyoneDegreesConvertWkbToWkt
 (const unsigned char *wellKnownBinary, char *buffer, size_t length,
+ int8_t decimalPlaces,
  fiftyoneDegreesException *exception);
 
 #endif //FIFTYONE_DEGREES_WKBTOT_H_INCLUDED

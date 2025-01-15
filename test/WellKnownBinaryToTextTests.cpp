@@ -35,16 +35,18 @@ static bool CheckResult(const char *result, const char *expected, size_t const s
 
 static size_t constexpr DEFAULT_BUFFER_SIZE = 1024;
 
-static void convertAndCompare(
+static void convertAndCompare_withDecimalPlaces(
 	const uint8_t * const wkbBytes,
 	const char * const expected,
-	const char * const comment) {
+	const char * const comment,
+	int8_t const decimalPlaces) {
 	char buffer[DEFAULT_BUFFER_SIZE] = { 0 };
 	FIFTYONE_DEGREES_EXCEPTION_CREATE;
 
 	auto const result = fiftyoneDegreesConvertWkbToWkt(
 		wkbBytes,
 		buffer, std::size(buffer),
+		decimalPlaces,
 		exception);
 
 	EXPECT_TRUE(FIFTYONE_DEGREES_EXCEPTION_OKAY) <<
@@ -58,6 +60,13 @@ static void convertAndCompare(
 		CheckResult(buffer, expected, strlen(expected))) <<
 		"The value of " << comment << " is not correctly converted -- '" << buffer <<
 		"' -- vs expected -- '" << expected << "'";
+}
+
+static void convertAndCompare(
+	const uint8_t * const wkbBytes,
+	const char * const expected,
+	const char * const comment) {
+	convertAndCompare_withDecimalPlaces(wkbBytes, expected, comment, -17); // max precision, 'g'-format
 }
 
 TEST(WKBToT, WKBToT_Test_Point_2D_NDR)
@@ -84,6 +93,19 @@ TEST(WKBToT, WKBToT_Test_Point_2D_XDR)
 	const char * const expected = "Point (3.5 17.25)";
 
 	convertAndCompare(wkbBytes, expected, "Point 2D (XDR)");
+}
+
+TEST(WKBToT, WKBToT_Test_Point_2D_3places)
+{
+	const uint8_t wkbBytes[] = {
+		0x00,
+		0x00, 0x00, 0x00, 0x01,
+      	0x40, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x40, 0x31, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00,
+	};
+	const char * const expected = "Point (4 17.250)";
+
+	convertAndCompare_withDecimalPlaces(wkbBytes, expected, "Point 2D (3 decimal places)", 3);
 }
 
 TEST(WKBToT, WKBToT_Test_LineStringZ_XDR)
