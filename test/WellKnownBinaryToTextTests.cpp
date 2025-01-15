@@ -35,11 +35,13 @@ static bool CheckResult(const char *result, const char *expected, size_t const s
 
 static size_t constexpr DEFAULT_BUFFER_SIZE = 1024;
 
-static void convertAndCompare_withDecimalPlaces(
+static void convertAndCompare_base(
 	const uint8_t * const wkbBytes,
 	const char * const expected,
 	const char * const comment,
-	int8_t const decimalPlaces) {
+	int8_t const decimalPlaces,
+	int const statusCode) {
+
 	char buffer[DEFAULT_BUFFER_SIZE] = { 0 };
 	FIFTYONE_DEGREES_EXCEPTION_CREATE;
 
@@ -49,8 +51,15 @@ static void convertAndCompare_withDecimalPlaces(
 		decimalPlaces,
 		exception);
 
-	EXPECT_TRUE(FIFTYONE_DEGREES_EXCEPTION_OKAY) <<
-		"Got exception while converting WKB: " << fiftyoneDegreesExceptionGetMessage(exception);
+	if (statusCode < 0) {
+		EXPECT_TRUE(FIFTYONE_DEGREES_EXCEPTION_OKAY) <<
+			"Got exception while converting WKB: " << fiftyoneDegreesExceptionGetMessage(exception);
+	} else {
+		EXPECT_TRUE(FIFTYONE_DEGREES_EXCEPTION_CHECK(statusCode)) <<
+			"Got wrong exception while converting WKB: " << fiftyoneDegreesExceptionGetMessage(exception)
+			<< " -- expected: "
+			<< fiftyoneDegreesStatusGetMessage(static_cast<fiftyoneDegreesStatusCode>(statusCode), nullptr);
+	}
 
 	EXPECT_FALSE(result.bufferTooSmall) <<
 		"Buffer was deemed too small, requested " << result.written <<
@@ -62,11 +71,44 @@ static void convertAndCompare_withDecimalPlaces(
 		"' -- vs expected -- '" << expected << "'";
 }
 
+static void convertAndCompare_withDecimalPlaces(
+	const uint8_t * const wkbBytes,
+	const char * const expected,
+	const char * const comment,
+	int8_t const decimalPlaces) {
+
+	convertAndCompare_base(
+		wkbBytes,
+		expected,
+		comment,
+		decimalPlaces,
+		static_cast<fiftyoneDegreesStatusCode>(-1));  // no exception expected
+}
+
 static void convertAndCompare(
 	const uint8_t * const wkbBytes,
 	const char * const expected,
 	const char * const comment) {
-	convertAndCompare_withDecimalPlaces(wkbBytes, expected, comment, -17); // max precision, 'g'-format
+
+	convertAndCompare_withDecimalPlaces(
+		wkbBytes,
+		expected,
+		comment,
+		-17); // max precision, 'g'-format
+}
+
+static void convertAndCompare_withExceptionStatus(
+	const uint8_t * const wkbBytes,
+	const char * const expected,
+	const char * const comment,
+	fiftyoneDegreesStatusCode const statusCode) {
+
+	convertAndCompare_base(
+		wkbBytes,
+		expected,
+		comment,
+		-17, // max precision, 'g'-format
+		statusCode);
 }
 
 TEST(WKBToT, WKBToT_Test_Point_2D_NDR)
@@ -77,7 +119,7 @@ TEST(WKBToT, WKBToT_Test_Point_2D_NDR)
         0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00, // 2.0: x-coordinate
       	0x40,0x10,0x00,0x00,0x00,0x00,0x00,0x00, // 4.0: y-coordinate
     };
-	const char * const expected = "Point (2 4)";
+	const char * const expected = "POINT(2 4)";
 
 	convertAndCompare(wkbBytes, expected, "Point 2D (NDR)");
 }
@@ -90,7 +132,7 @@ TEST(WKBToT, WKBToT_Test_Point_2D_XDR)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0c, 0x40,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x31, 0x40,
 	};
-	const char * const expected = "Point (3.5 17.25)";
+	const char * const expected = "POINT(3.5 17.25)";
 
 	convertAndCompare(wkbBytes, expected, "Point 2D (XDR)");
 }
@@ -103,7 +145,7 @@ TEST(WKBToT, WKBToT_Test_Point_2D_3places)
       	0x40, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x40, 0x31, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00,
 	};
-	const char * const expected = "Point (4 17.250)";
+	const char * const expected = "POINT(4 17.250)";
 
 	convertAndCompare_withDecimalPlaces(wkbBytes, expected, "Point 2D (3 decimal places)", 3);
 }
@@ -127,10 +169,10 @@ TEST(WKBToT, WKBToT_Test_LineStringZ_XDR)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xd4, 0x3f,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x3f,
 	};
-	const char * const expected = "LineString Z ("
-	"2 11.125 63.0625, "
-	"892.09375 16.28125 190.46875, "
-	"9.59375 273.8125 23.15625, "
+	const char * const expected = "LINESTRING Z("
+	"2 11.125 63.0625,"
+	"892.09375 16.28125 190.46875,"
+	"9.59375 273.8125 23.15625,"
 	"2.9375 0.3125 1)";
 
 	convertAndCompare(wkbBytes, expected, "LineString Z (XDR)");
@@ -166,7 +208,7 @@ TEST(WKBToT, WKBToT_Test_PolygonM_XDR)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x3f,
 	};
-	const char * const expected = "Polygon M ((2 -11 -63, -7 3 -5, 6 -9 17, -2 11 63), (892 16 190, 9 273 23, 2 0 1))";
+	const char * const expected = "POLYGON M((2 -11 -63,-7 3 -5,6 -9 17,-2 11 63),(892 16 190,9 273 23,2 0 1))";
 
 	convertAndCompare(wkbBytes, expected, "Polygon M (XDR)");
 }
@@ -204,7 +246,7 @@ TEST(WKBToT, WKBToT_Test_TriangleZM_XDR)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3e, 0x40,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3e, 0x40,
 	};
-	const char * const expected = "Triangle ZM ((-1 -1 1 1, 2 -2 2 2, -2 2 3 3), (-10 -10 10 10, 20 -20 20 20, -20 20 30 30))";
+	const char * const expected = "TRIANGLE ZM((-1 -1 1 1,2 -2 2 2,-2 2 3 3),(-10 -10 10 10,20 -20 20 20,-20 20 30 30))";
 
 	convertAndCompare(wkbBytes, expected, "Triangle ZM (XDR)");
 }
@@ -217,7 +259,7 @@ TEST(WKBToT, WKBToT_Standard_Point2D_Simple)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x24, 0x40,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x24, 0x40,
 	};
-	const char * const expected = "Point (10 10)";
+	const char * const expected = "POINT(10 10)";
 
 	convertAndCompare(wkbBytes, expected, "Point 2D");
 }
@@ -235,7 +277,7 @@ TEST(WKBToT, WKBToT_Standard_LineString)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3e, 0x40,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x44, 0x40,
 	};
-	const char * const expected = "LineString (10 10, 20 20, 30 40)";
+	const char * const expected = "LINESTRING(10 10,20 20,30 40)";
 
 	convertAndCompare(wkbBytes, expected, "LineString");
 }
@@ -258,8 +300,8 @@ TEST(WKBToT, WKBToT_Standard_Polygon)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x24, 0x40,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x24, 0x40,
 	};
-	const char * const expected = "Polygon "
-	"((10 10, 10 20, 20 20, 20 15, 10 10))";
+	const char * const expected = "POLYGON"
+	"((10 10,10 20,20 20,20 15,10 10))";
 
 	convertAndCompare(wkbBytes, expected, "Polygon");
 }
@@ -279,7 +321,7 @@ TEST(WKBToT, WKBToT_Standard_MultiPoint)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x34, 0x40,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x34, 0x40,
 	};
-	const char * const expected = "MultiPoint ((10 10), (20 20))";
+	const char * const expected = "MULTIPOINT((10 10),(20 20))";
 
 	convertAndCompare(wkbBytes, expected, "MultiPoint");
 }
@@ -305,9 +347,9 @@ TEST(WKBToT, WKBToT_Standard_MultiLineString)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3e, 0x40,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2e, 0x40,
 	};
-	const char * const expected = "MultiLineString "
+	const char * const expected = "MULTILINESTRING"
 	"("
-	"(10 10, 20 20), (15 15, 30 15)"
+	"(10 10,20 20),(15 15,30 15)"
 	")";
 
 	convertAndCompare(wkbBytes, expected, "MultiLineString");
@@ -346,10 +388,10 @@ TEST(WKBToT, WKBToT_Standard_MultiPolygon)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4e, 0x40,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4e, 0x40,
 	};
-	const char * const expected = "MultiPolygon "
+	const char * const expected = "MULTIPOLYGON"
 	"("
-	"((10 10, 10 20, 20 20, 20 15, 10 10)), "
-	"((60 60, 70 70, 80 60, 60 60))"
+	"((10 10,10 20,20 20,20 15,10 10)),"
+	"((60 60,70 70,80 60,60 60))"
 	")";
 
 	convertAndCompare(wkbBytes, expected, "MultiPolygon");
@@ -377,11 +419,11 @@ TEST(WKBToT, WKBToT_Standard_GeometryCollection)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x34, 0x40,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x34, 0x40,
 	};
-	const char * const expected = "GeometryCollection "
+	const char * const expected = "GEOMETRYCOLLECTION"
 	"("
-	"Point (10 10), "
-	"Point (30 30), "
-	"LineString (15 15, 20 20)"
+	"POINT(10 10),"
+	"POINT(30 30),"
+	"LINESTRING(15 15,20 20)"
 	")";
 
 	convertAndCompare(wkbBytes, expected, "GeometryCollection");
@@ -508,14 +550,14 @@ TEST(WKBToT, WKBToT_Standard_PolyhedronZ)
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x3f,
     };
-	const char * const expected = "PolyhedralSurface Z "
+	const char * const expected = "POLYHEDRALSURFACE Z"
 	"("
-	"((0 0 0, 0 0 1, 0 1 1, 0 1 0, 0 0 0)), "
-	"((0 0 0, 0 1 0, 1 1 0, 1 0 0, 0 0 0)), "
-	"((0 0 0, 1 0 0, 1 0 1, 0 0 1, 0 0 0)), "
-	"((1 1 0, 1 1 1, 1 0 1, 1 0 0, 1 1 0)), "
-	"((0 1 0, 0 1 1, 1 1 1, 1 1 0, 0 1 0)), "
-	"((0 0 1, 1 0 1, 1 1 1, 0 1 1, 0 0 1))"
+	"((0 0 0,0 0 1,0 1 1,0 1 0,0 0 0)),"
+	"((0 0 0,0 1 0,1 1 0,1 0 0,0 0 0)),"
+	"((0 0 0,1 0 0,1 0 1,0 0 1,0 0 0)),"
+	"((1 1 0,1 1 1,1 0 1,1 0 0,1 1 0)),"
+	"((0 1 0,0 1 1,1 1 1,1 1 0,0 1 0)),"
+	"((0 0 1,1 0 1,1 1 1,0 1 1,0 0 1))"
 	")";
 
 	convertAndCompare(wkbBytes, expected, "PolyhedralSurface Z");
@@ -592,11 +634,11 @@ TEST(WKBToT, WKBToT_Standard_TinZ)
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     };
-	const char * const expected = "Tin Z ("
-	"((0 0 0, 0 0 1, 0 1 0, 0 0 0)), "
-	"((0 0 0, 0 1 0, 1 0 0, 0 0 0)), "
-	"((0 0 0, 1 0 0, 0 0 1, 0 0 0)), "
-	"((1 0 0, 0 1 0, 0 0 1, 1 0 0))"
+	const char * const expected = "TIN Z("
+	"((0 0 0,0 0 1,0 1 0,0 0 0)),"
+	"((0 0 0,0 1 0,1 0 0,0 0 0)),"
+	"((0 0 0,1 0 0,0 0 1,0 0 0)),"
+	"((1 0 0,0 1 0,0 0 1,1 0 0))"
 	")";
 
 	convertAndCompare(wkbBytes, expected, "Tin Z");
@@ -611,7 +653,7 @@ TEST(WKBToT, WKBToT_Standard_PointZ)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x24, 0x40,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14, 0x40,
 	};
-	const char * const expected = "Point Z (10 10 5)";
+	const char * const expected = "POINT Z(10 10 5)";
 
 	convertAndCompare(wkbBytes, expected, "Point Z");
 }
@@ -626,7 +668,7 @@ TEST(WKBToT, WKBToT_Standard_PointZM)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14, 0x40,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x44, 0x40,
 	};
-	const char * const expected = "Point ZM (10 10 5 40)";
+	const char * const expected = "POINT ZM(10 10 5 40)";
 
 	convertAndCompare(wkbBytes, expected, "Point ZM");
 }
@@ -640,7 +682,7 @@ TEST(WKBToT, WKBToT_Standard_PointM)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x24, 0x40,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x44, 0x40,
 	};
-	const char * const expected = "Point M (10 10 40)";
+	const char * const expected = "POINT M(10 10 40)";
 
 	convertAndCompare(wkbBytes, expected, "Point M");
 }
@@ -664,7 +706,7 @@ TEST(WKBToT, WKBToT_SampleWKB_OpenLayers)
 		0x54,0xE3,0xA5,0x9B,0xC4,0x60,0x25,0x40,
 		0x64,0x3B,0xDF,0x4F,0x8D,0x17,0x39,0xC0,
 	};
-	const char * const expected = "Polygon ((10.689 -25.091999999999999, 34.594999999999999 -20.170000000000002, 38.814 -35.639000000000003, 13.502000000000001 -39.155000000000001, 10.689 -25.091999999999999))";
+	const char * const expected = "POLYGON((10.689 -25.091999999999999,34.594999999999999 -20.170000000000002,38.814 -35.639000000000003,13.502000000000001 -39.155000000000001,10.689 -25.091999999999999))";
 
 	convertAndCompare(wkbBytes, expected, "SampleWKB from OpenLayers");
 }
@@ -714,7 +756,7 @@ TEST(WKBToT, WKBToT_SampleWKB_GitHub)
 		0x40, 0x3E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x40, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	};
-	const char * const expected = "MultiPolygon (((40 40, 20 45, 45 30, 40 40)), ((20 35, 10 30, 10 10, 30 5, 45 20, 20 35), (30 20, 20 15, 20 25, 30 20)))";
+	const char * const expected = "MULTIPOLYGON(((40 40,20 45,45 30,40 40)),((20 35,10 30,10 10,30 5,45 20,20 35),(30 20,20 15,20 25,30 20)))";
 
 	convertAndCompare(wkbBytes, expected, "SampleWKB from OpenLayers");
 }
@@ -738,7 +780,7 @@ TEST(WKBToT, WKBToT_SampleWKB_OsGeo_Collection)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x40,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x24, 0x40,
 	};
-	const char * const expected = "GeometryCollection (Point (4 6), LineString (4 6, 7 10))";
+	const char * const expected = "GEOMETRYCOLLECTION(POINT(4 6),LINESTRING(4 6,7 10))";
 
 	convertAndCompare(wkbBytes, expected, "GeometryCollection from osgeo.cn");
 }
@@ -771,7 +813,7 @@ TEST(WKBToT, WKBToT_SampleWKB_OsGeo_MultiLineString)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3e, 0x40,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x24, 0x40,
 	};
-	const char * const expected = "MultiLineString ((10 10, 20 20, 10 40), (40 40, 30 30, 40 20, 30 10))";
+	const char * const expected = "MULTILINESTRING((10 10,20 20,10 40),(40 40,30 30,40 20,30 10))";
 
 	convertAndCompare(wkbBytes, expected, "MultiLineString from osgeo.cn");
 }
@@ -810,7 +852,50 @@ TEST(WKBToT, WKBToT_SampleWKB_OsGeo_MultiPolygon)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2e, 0x40,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14, 0x40,
 	};
-	const char * const expected = "MultiPolygon (((30 20, 45 40, 10 40, 30 20)), ((15 5, 40 10, 10 20, 5 10, 15 5)))";
+	const char * const expected = "MULTIPOLYGON(((30 20,45 40,10 40,30 20)),((15 5,40 10,10 20,5 10,15 5)))";
 
 	convertAndCompare(wkbBytes, expected, "MultiPolygon from osgeo.cn");
+}
+
+TEST(WKBToT, WKBToT_Exception_UnknownGeometryRoot)
+{
+	const uint8_t wkbBytes[] = {
+		0x01,
+		0xd3, 0x00, 0x00, 0x00, // garbage?
+		// exception expected here, the rest does not matter
+	};
+	const char * const expected = "";
+
+	convertAndCompare_withExceptionStatus(
+		wkbBytes,
+		expected,
+		"Unknown Geometry (Root)",
+		FIFTYONE_DEGREES_STATUS_INVALID_INPUT);
+}
+
+TEST(WKBToT, WKBToT_Test_LineStringZ_UnknownGeometryEmbedded)
+{
+	const uint8_t wkbBytes[] = {
+		0x01,
+		0x04, 0x00, 0x00, 0x00,
+		0x03, 0x00, 0x00, 0x00, // 3 points
+		0x01,
+		0x01, 0x00, 0x00, 0x00, // point
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x24, 0x40,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x24, 0x40,
+		0x01,
+		0x09, 0x00, 0x00, 0x00, // CompoundCurve
+		// exception expected here, the rest does not matter
+		0x01,
+		0x01, 0x00, 0x00, 0x00, // point
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x34, 0x40,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x34, 0x40,
+	};
+	const char * const expected = "MULTIPOINT((10 10),";
+
+	convertAndCompare_withExceptionStatus(
+		wkbBytes,
+		expected,
+		"Unknown Geometry (Embedded)",
+		FIFTYONE_DEGREES_STATUS_INVALID_INPUT);
 }

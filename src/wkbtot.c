@@ -103,6 +103,7 @@ typedef struct {
     const fiftyoneDegreesWKBToT_NumReader *numReader;
 
     const char * const doubleFormat;
+    fiftyoneDegreesException * const exception;
 } fiftyoneDegreesWKBToT_ProcessingContext;
 
 
@@ -167,7 +168,6 @@ static void fiftyoneDegreesWKBToT_WriteTaggedGeometryName(
             context->coordMode.tag,
             context->coordMode.tagLength);
     }
-    fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, ' ');
 }
 
 
@@ -180,13 +180,17 @@ static void fiftyoneDegreesWKBToT_WithParenthesesIterate(
     const fiftyoneDegreesWKBToT_LoopVisitor visitor,
     const uint32_t count) {
 
+    fiftyoneDegreesException * const exception = context->exception;
+
     fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, '(');
     for (uint32_t i = 0; i < count; i++) {
         if (i) {
             fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, ',');
-            fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, ' ');
         }
         visitor(context);
+        if (FIFTYONE_DEGREES_EXCEPTION_FAILED) {
+            return;
+        }
     }
     fiftyoneDegreesStringBuilderAddChar(context->stringBuilder, ')');
 }
@@ -237,116 +241,116 @@ static void fiftyoneDegreesWKBToT_HandleUnknownGeometry(
 
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_Geometry = {
     // ABSTRACT -- ANY GEOMETRY BELOW QUALIFIES
-    "Geometry",
+    "GEOMETRY",
     false,
     NULL,
     fiftyoneDegreesWKBToT_WriteEmpty,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_Point = {
-    "Point",
+    "POINT",
     false,
     NULL,
     fiftyoneDegreesWKBToT_HandlePointSegment,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_LineString = {
-    "LineString",
+    "LINESTRING",
     true,
     NULL,
     fiftyoneDegreesWKBToT_HandlePointSegment,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_Polygon = {
-    "Polygon",
+    "POLYGON",
     true,
     NULL,
     fiftyoneDegreesWKBToT_HandleLinearRing,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_MultiPoint = {
-    "MultiPoint",
+    "MULTIPOINT",
     true,
     &fiftyoneDegreesWKBToT_Geometry_Point,
     NULL,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_MultiLineString = {
-    "MultiLineString",
+    "MULTILINESTRING",
     true,
     &fiftyoneDegreesWKBToT_Geometry_LineString,
     NULL,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_MultiPolygon = {
-    "MultiPolygon",
+    "MULTIPOLYGON",
     true,
     &fiftyoneDegreesWKBToT_Geometry_Polygon,
     NULL,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_GeometryCollection = {
-    "GeometryCollection",
+    "GEOMETRYCOLLECTION",
     true,
     NULL,
     fiftyoneDegreesWKBToT_HandleUnknownGeometry,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_CircularString = {
     // RESERVED IN STANDARD (OGC 06-103r4) FOR FUTURE USE
-    "CircularString",
+    "CIRCULARSTRING",
     false,
     NULL,
     NULL,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_CompoundCurve = {
     // RESERVED IN STANDARD (OGC 06-103r4) FOR FUTURE USE
-    "CompoundCurve",
+    "COMPOUNDCURVE",
     false,
     NULL,
     NULL,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_CurvePolygon = {
     // RESERVED IN STANDARD (OGC 06-103r4) FOR FUTURE USE
-    "CurvePolygon",
+    "CURVEPOLYGON",
     false,
     NULL,
     NULL,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_MultiCurve = {
     // NON-INSTANTIABLE -- SEE `MultiLineString` SUBCLASS
-    "MultiCurve",
+    "MULTICURVE",
     false,
     NULL,
     NULL,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_MultiSurface = {
     // NON-INSTANTIABLE -- SEE `MultiPolygon` SUBCLASS
-    "MultiSurface",
+    "MULTISURFACE",
     false,
     NULL,
     NULL,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_Curve = {
     // NON-INSTANTIABLE -- SEE `LineString` SUBCLASS. ALSO `LinearRing` and `Line`
-    "Curve",
+    "CURVE",
     false,
     NULL,
     NULL,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_Surface = {
     // NON-INSTANTIABLE -- SEE `Polygon` AND `PolyhedralSurface` SUBCLASSES.
-    "Surface",
+    "SURFACE",
     false,
     NULL,
     NULL,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_PolyhedralSurface = {
-    "PolyhedralSurface",
+    "POLYHEDRALSURFACE",
     true,
     &fiftyoneDegreesWKBToT_Geometry_Polygon,
     NULL,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_TIN = {
-    "Tin",
+    "TIN",
     true,
     &fiftyoneDegreesWKBToT_Geometry_Polygon,
     NULL,
 };
 static const fiftyoneDegreesWKBToT_GeometryParser fiftyoneDegreesWKBToT_Geometry_Triangle = {
-    "Triangle",
+    "TRIANGLE",
     true,
     NULL,
     fiftyoneDegreesWKBToT_HandleLinearRing,
@@ -405,6 +409,15 @@ static void fiftyoneDegreesWKBToT_HandleGeometry(
 
     context->coordMode = fiftyoneDegreesWKBToT_CoordModes[coordType];
 
+    static size_t const fiftyoneDegreesWKBToT_GeometriesCount =
+        sizeof(fiftyoneDegreesWKBToT_Geometries) / sizeof(fiftyoneDegreesWKBToT_Geometries[0]);
+    if (geometryCode >= fiftyoneDegreesWKBToT_GeometriesCount) {
+        fiftyoneDegreesException * const exception = context->exception;
+        // TODO: New status code -- Unknown geometry
+        FIFTYONE_DEGREES_EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_INVALID_INPUT);
+        return;
+    }
+
     const fiftyoneDegreesWKBToT_GeometryParser * const parser =
         fiftyoneDegreesWKBToT_Geometries[geometryCode];
     if (!typeIsKnown && parser->nameToPrint) {
@@ -413,9 +426,13 @@ static void fiftyoneDegreesWKBToT_HandleGeometry(
 
     const fiftyoneDegreesWKBToT_LoopVisitor visitor = (parser->childGeometry
         ? fiftyoneDegreesWKBToT_HandleKnownGeometry
-        : (parser->childParser
-            ? parser->childParser
-            : fiftyoneDegreesWKBToT_HandleUnknownGeometry));
+        : parser->childParser);
+    if (!visitor) {
+        fiftyoneDegreesException * const exception = context->exception;
+        // TODO: New status code -- Abstract/reserved geometry
+        FIFTYONE_DEGREES_EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_INVALID_INPUT);
+        return;
+    }
 
     if (parser->hasChildCount) {
         fiftyoneDegreesWKBToT_HandleLoop(context, visitor);
@@ -439,7 +456,8 @@ static void fiftyoneDegreesWKBToT_HandleKnownGeometry(
 static void fiftyoneDegreesWKBToT_HandleWKBRoot(
     const unsigned char *binaryBuffer,
     fiftyoneDegreesStringBuilder * const stringBuilder,
-    int8_t const decimalPlaces) {
+    int8_t const decimalPlaces,
+    fiftyoneDegreesException * const exception) {
 
     char doubleFormat[10] = { 0 }; // "%0.127f" -- max 7 chars + '\0'
     if (decimalPlaces >= 0) {
@@ -459,6 +477,7 @@ static void fiftyoneDegreesWKBToT_HandleWKBRoot(
         NULL,
 
         doubleFormat,
+        exception,
     };
 
     fiftyoneDegreesWKBToT_HandleUnknownGeometry(&context);
@@ -475,7 +494,7 @@ fiftyoneDegreesConvertWkbToWkt(
     fiftyoneDegreesStringBuilder stringBuilder = { buffer, length };
     fiftyoneDegreesStringBuilderInit(&stringBuilder);
 
-    fiftyoneDegreesWKBToT_HandleWKBRoot(wellKnownBinary, &stringBuilder, decimalPlaces);
+    fiftyoneDegreesWKBToT_HandleWKBRoot(wellKnownBinary, &stringBuilder, decimalPlaces, exception);
 
     fiftyoneDegreesStringBuilderComplete(&stringBuilder);
 
