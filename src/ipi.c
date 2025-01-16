@@ -1547,16 +1547,19 @@ static bool setResultFromEvidence(
 }
 
 static void fiftyoneDegreesIterateHeadersWithEvidence(
-	ResultsIpi* results,
+	ResultsIpi* const results,
 	EvidenceKeyValuePairArray* evidence,
 	int prefixes,
 	stateWithUniqueHeaderIndex *state) {
-	DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
+
+	const DataSetIpi * const dataSet = (DataSetIpi *)results->b.dataSet;
+	const uint32_t headersCount = dataSet->b.b.uniqueHeaders ? dataSet->b.b.uniqueHeaders->count : 0;
+
 	// Each unique header is checked against the evidence
 	// in the order that its added to the headers array.
 	// The order represents the prioritis of the headers.
 	for (uint32_t i = 0;
-		i < dataSet->b.b.uniqueHeaders->count && results->count == 0;
+		i < headersCount && results->count == 0;
 		i++) {
 		state->headerIndex = i;
 		EvidenceIterate(
