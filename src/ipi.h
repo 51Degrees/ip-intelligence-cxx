@@ -93,46 +93,46 @@
 #define FIFTYONE_DEGREES_STRING_LOADED 100
 #endif
 /**
- * Default value for the ipv4 range cache size used in the default collection
+ * Default value for the ip roots cache size used in the default collection
  * configuration.
  */
-#ifndef FIFTYONE_DEGREES_IP_V4_CACHE_SIZE
-#define FIFTYONE_DEGREES_IP_ROOTS_CACHE_SIZE 50000
+#ifndef FIFTYONE_DEGREES_IP_ROOTS_CACHE_SIZE
+#define FIFTYONE_DEGREES_IP_ROOTS_CACHE_SIZE 10
 #endif
 /**
- * Default value for the ipv4 range cache loaded size used in the default collection
- * configuration.
+ * Default value for the ip roots cache loaded size used in the default 
+ * collection configuration.
  */
-#ifndef FIFTYONE_DEGREES_IP_V4_RANGE_LOADED
-#define FIFTYONE_DEGREES_IP_V4_RANGE_LOADED 100
+#ifndef FIFTYONE_DEGREES_IP_ROOTS_LOADED
+#define FIFTYONE_DEGREES_IP_ROOTS_LOADED 10
 #endif
 /**
- * Default value for the ipv6 range cache size used in the default collection
+ * Default value for the ip nodes cache size used in the default collection
  * configuration.
  */
-#ifndef FIFTYONE_DEGREES_IP_V6_CACHE_SIZE
+#ifndef FIFTYONE_DEGREES_IP_NODES_CACHE_SIZE
 #define FIFTYONE_DEGREES_IP_NODES_CACHE_SIZE 50000
 #endif
 /**
- * Default value for the ipv6 range cache loaded size used in the default collection
- * configuration.
+ * Default value for the ip nodes cache loaded size used in the default 
+ * collection configuration.
  */
-#ifndef FIFTYONE_DEGREES_IP_V6_RANGE_LOADED
-#define FIFTYONE_DEGREES_IP_V6_RANGE_LOADED 100
+#ifndef FIFTYONE_DEGREES_IP_NODES_LOADED
+#define FIFTYONE_DEGREES_IP_NODES_LOADED 5000
 #endif
 /**
- * Default value for the profile combination cache size used in the default collection
- * configuration.
+ * Default value for the profile groups cache size used in the default 
+ * collection configuration.
  */
-#ifndef FIFTYONE_DEGREES_PROFILE_COMBINATION_CACHE_SIZE
-#define FIFTYONE_DEGREES_PROFILE_COMBINATION_CACHE_SIZE 50000
+#ifndef FIFTYONE_DEGREES_PROFILE_GROUPS_CACHE_SIZE
+#define FIFTYONE_DEGREES_PROFILE_GROUPS_CACHE_SIZE 50000
 #endif
 /**
- * Default value for the profile combination cache loaded size used in the default collection
+ * Default value for the profile groups cache loaded size used in the default collection
  * configuration.
  */
-#ifndef FIFTYONE_DEGREES_PROFILE_COMBINATION_LOADED
-#define FIFTYONE_DEGREES_PROFILE_COMBINATION_LOADED 100
+#ifndef FIFTYONE_DEGREES_PROFILE_GROUPS_LOADED
+#define FIFTYONE_DEGREES_PROFILE_GROUPS_LOADED 100
 #endif
 /**
  * Default value for the profile cache size used in the default collection
@@ -218,8 +218,14 @@ typedef struct fiftyone_degrees_ipi_dataset_header_t {
 												  values collection */
 	const fiftyoneDegreesCollectionHeader profiles; /**< Size and location of
 													the profiles collection */
-	const fiftyoneDegreesCollectionHeader ipRoots; /**< Roots collection config */
-	const fiftyoneDegreesCollectionHeader ipNodes; /**< Nodes collection config */
+	const fiftyoneDegreesCollectionHeader ipRoots; /**< Roots collection config
+												   */
+	const fiftyoneDegreesCollectionHeader ipNodes; /**< Nodes collection config
+												   */
+	const fiftyoneDegreesCollectionHeader profileGroups; /**< Size and
+														  location of the
+														  profile groups
+														  collection */
 	const fiftyoneDegreesCollectionHeader profileOffsets; /**< Size and
 														  location of the
 														  profile offsets
@@ -239,10 +245,14 @@ typedef struct fiftyone_degrees_config_ipi_t {
 	fiftyoneDegreesCollectionConfig properties; /**< Properties collection
 												config */
 	fiftyoneDegreesCollectionConfig values; /**< Values collection config */
-	fiftyoneDegreesCollectionConfig profiles; /**< Profiles collection config */
+	fiftyoneDegreesCollectionConfig profiles; /**< Profiles collection config 
+											  */
 	fiftyoneDegreesCollectionConfig ipRoots; /**< Roots collection config */
 	fiftyoneDegreesCollectionConfig ipNodes; /**< Nodes collection config */
-	fiftyoneDegreesCollectionConfig profileOffsets; /**< ProfileOffsets collection config */
+	fiftyoneDegreesCollectionConfig profileGroups; /**< profileGroups
+												   collection config */
+	fiftyoneDegreesCollectionConfig profileOffsets; /**< ProfileOffsets
+													collection config */
 } fiftyoneDegreesConfigIpi;
 
 /**
@@ -275,24 +285,21 @@ typedef struct fiftyone_degrees_dataset_ipi_t {
 							   any properties available for the component with
 							   the matching index in componentsList */
 	fiftyoneDegreesCollection *maps; /**< Collection data file maps */
-	fiftyoneDegreesCollection *properties; /**< Collection data file properties */
+	fiftyoneDegreesCollection *properties; /**< Collection data file properties
+										   */
 	fiftyoneDegreesCollection *values; /**< Collection data file values */
 	fiftyoneDegreesCollection *profiles; /**< Collection data file profiles */
 	fiftyoneDegreesCollection *ipRoots; /**< Collection data file ipv4Graph */
 	fiftyoneDegreesCollection *ipNodes; /**< Collection data file ipv6Graph */
-	fiftyoneDegreesCollection *profileOffsets; /**< Collection of all offsets to
-											   profiles in the profiles
+	fiftyoneDegreesCollection *profileGroups; /**< Collection of all profile 
+											  groups where more than one 
+											  profile is required with a weight
+											  */
+	fiftyoneDegreesCollection *profileOffsets; /**< Collection of all offsets
+											   to profiles in the profiles
 											   collection */
 } fiftyoneDegreesDataSetIpi;
 
-/**
- * The structure to hold a IP Address in byte array format
- */
-typedef struct fiftyone_degrees_ip_address_t {
-	byte value[FIFTYONE_DEGREES_IPV6_LENGTH]; /**< Buffer to hold the IP address bytes array. */
-	int length; /**< Length of the byte array. */
-	fiftyoneDegreesEvidenceIpType type; /**< The of the IP. */
-} fiftyoneDegreesIpAddress;
 
 /**
  * The structure to hold a pair of result item and its percentage
@@ -304,7 +311,7 @@ typedef struct fiftyone_degrees_ip_address_t {
  */
 typedef struct fiftyone_degrees_profile_percentage_t {
 	fiftyoneDegreesCollectionItem item; /**< A collection item which contains the value */
-	fiftyoneDegreesFloat percentage; /**< The propotion of the item in the returned values */
+	fiftyoneDegreesFloat percentage; /**< The proportion of the item in the returned values */
 } fiftyoneDegreesProfilePercentage;
 
 /**
@@ -335,15 +342,15 @@ typedef struct fiftyone_degrees_ipi_list_t {
  * Singular IP address result returned by a detection process method.
  */
 typedef struct fiftyone_degrees_result_ipi_t {
-	fiftyoneDegreesEvidenceIpType type; /**< The version of the IP */
-	uint32_t profileCombinationOffset; /**< The offset in the profile combination
+	fiftyoneDegreesIpEvidenceType type; /**< The version of the IP */
+	uint32_t profileCombinationOffset; /**< The offset in the profile groups
 							collection, which matches the target IP address */
 	fiftyoneDegreesIpAddress targetIpAddress; /**< The target IP address
 											  to find a matching range for */
 } fiftyoneDegreesResultIpi;
 
 /**
- * Macro defining the common memebers of an Ipi result.
+ * Macro defining the common members of an Ipi result.
  */
 #define FIFTYONE_DEGREES_RESULTS_IPI_MEMBERS \
 	fiftyoneDegreesResultsBase b; \
@@ -361,7 +368,7 @@ FIFTYONE_DEGREES_ARRAY_TYPE(
 typedef fiftyoneDegreesResultIpiArray fiftyoneDegreesResultsIpi;
 
 /**
- * The structure of a profile combination item data.
+ * The structure of a profile groups item data.
  */
 #pragma pack(push, 1)
 typedef struct fiftyone_degrees_dataset_profile_combination_t {
@@ -379,20 +386,21 @@ typedef struct fiftyone_degrees_dataset_profile_combination_t {
 #define FIFTYONE_DEGREES_IP_RANGE(v, s) \
 typedef struct fiftyone_degrees_dataset_ip_v##v##_range_t { \
 	byte start[s]; /**< the start of the range in byte array format */ \
-	uint32_t profileCombinationOffset; /**< The off set the matching profile combination */ \
+	uint32_t profileCombinationOffset; /**< The off set the matching profile groups */ \
 } fiftyoneDegreesIpv##v##Range;
 
 /**
- * Define the ipv4 range structure
+ * Define the ip roots structure
  */
 FIFTYONE_DEGREES_IP_RANGE(4, 4)
+
 /**
- * Define the ipv6 range structure
+ * Define the ip nodes structure
  */
 FIFTYONE_DEGREES_IP_RANGE(6, 16)
 
 /**
- * Index of a profile in a profile combination item
+ * Index of a profile in a profile groups item
  * This include the component Index to indicate in which component
  * it belong to.
  */
@@ -402,7 +410,7 @@ typedef struct fiftyone_degrees_combination_profile_index_t {
 } fiftyoneDegreesCombinationProfileIndex;
 
 /**
- * Index of a profile in a profile combination item of a result
+ * Index of a profile in a profile groups item of a result
  * This include the component and result Indices to indicate in which
  * component the profile belong to in which result. 
  */
@@ -484,7 +492,8 @@ EXTERNAL_VAR fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig;
  * by one of the IP intelligence data set init methods
  * @return a fixed pointer to the data set in manager
  */
-EXTERNAL fiftyoneDegreesDataSetIpi* fiftyoneDegreesDataSetIpiGet(fiftyoneDegreesResourceManager* manager);
+EXTERNAL fiftyoneDegreesDataSetIpi* fiftyoneDegreesDataSetIpiGet(
+	fiftyoneDegreesResourceManager* manager);
 
 /**
  * Release the reference to a data set returned by the
@@ -594,12 +603,12 @@ EXTERNAL fiftyoneDegreesStatusCode fiftyoneDegreesIpiInitManagerFromMemory(
 	fiftyoneDegreesException* exception);
 
 /**
- * Read a profile combination item from the file collection provided and 
+ * Read a profile groups item from the file collection provided and 
  * store in the data pointer. This method is used when creating a collection
  * from file.
  * @param file collection to read from
- * @param offset of the profile combination in the collection
- * @param data to store the resulting profile combination in
+ * @param offset of the profile groups in the collection
+ * @param data to store the resulting profile groups in
  * @param exception pointer to an exception data structure to be used if an
  * exception occurs. See exceptions.h
  * @return pointer to the component allocated within the data structure
@@ -676,17 +685,18 @@ EXTERNAL fiftyoneDegreesStatusCode fiftyoneDegreesIpiReloadManagerFromMemory(
  * #FIFTYONE_DEGREES_STATUS_SUCCESS means the data set was not reloaded
  * correctly
  */
-EXTERNAL fiftyoneDegreesStatusCode  fiftyoneDegreesIpiReloadManagerFromOriginalFile(
+EXTERNAL fiftyoneDegreesStatusCode  
+fiftyoneDegreesIpiReloadManagerFromOriginalFile(
 	fiftyoneDegreesResourceManager* manager,
 	fiftyoneDegreesException* exception);
 
 /**
- * Allocates a results structure containing a reference to the IP Intelligence data set
- * managed by the resource manager provided. The referenced data set will be
- * kept active until the results structure is freed.
+ * Allocates a results structure containing a reference to the IP Intelligence
+ * data set managed by the resource manager provided. The referenced data set
+ * will be kept active until the results structure is freed.
  * There can only be one result for per input IP address
- * @param manager pointer to the resource manager which manages a IP Intelligence data
- * set
+ * @param manager pointer to the resource manager which manages a IP 
+ * Intelligence data set
  * @return newly created results structure
  */
 EXTERNAL fiftyoneDegreesResultsIpi* fiftyoneDegreesResultsIpiCreate(
@@ -698,11 +708,12 @@ EXTERNAL fiftyoneDegreesResultsIpi* fiftyoneDegreesResultsIpiCreate(
  * the IP Intelligence data set resource is released.
  * @param results pointer to the results structure to release
  */
-EXTERNAL void fiftyoneDegreesResultsIpiFree(fiftyoneDegreesResultsIpi* results);
+EXTERNAL void fiftyoneDegreesResultsIpiFree(
+	fiftyoneDegreesResultsIpi* results);
 
 /**
- * Process a single byte array format IP Address and populate the IP range offset
- * in the results structure. The result IP type will need to be checked
+ * Process a single byte array format IP Address and populate the IP range 
+ * offset in the results structure. The result IP type will need to be checked
  * to determined the version of IP being processed.
  * @param results preallocated results structure to populate
  * @param ipAddress byte array to process
@@ -715,7 +726,7 @@ EXTERNAL void fiftyoneDegreesResultsIpiFromIpAddress(
 	fiftyoneDegreesResultsIpi* results,
 	const unsigned char* ipAddress,
 	size_t ipAddressLength,
-	fiftyoneDegreesEvidenceIpType type,
+	fiftyoneDegreesIpEvidenceType type,
 	fiftyoneDegreesException* exception);
 
 /**
@@ -938,7 +949,7 @@ EXTERNAL uint32_t fiftyoneDegreesIpiIterateProfilesForPropertyAndValue(
  */
 EXTERNAL size_t fiftyoneDegreesIpiGetIpAddressAsString(
 	fiftyoneDegreesCollectionItem *item,
-	fiftyoneDegreesEvidenceIpType type,
+	fiftyoneDegreesIpEvidenceType type,
 	char *buffer,
 	uint32_t bufferLength,
 	fiftyoneDegreesException *exception);

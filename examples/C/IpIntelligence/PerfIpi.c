@@ -208,22 +208,22 @@ static void reportProgress(performanceThreadState* state) {
 static void executeTest(const char* ipAddress, void* state) {
 	performanceThreadState* threadState = (performanceThreadState*)state;
 	fiftyoneDegreesResultIpi* result;
-	fiftyoneDegreesEvidenceIpAddress* eIpAddress;
+	fiftyoneDegreesIpAddressEvidence* eIpAddress;
 	size_t ipAddressLength = 0;
 	EXCEPTION_CREATE;
 
 	// Parse the IP Address string to a byte array
-	eIpAddress = fiftyoneDegreesIpParseAddress(
+	eIpAddress = fiftyoneDegreesIpAddressParse(
 			malloc,
 			ipAddress, 
 			ipAddress + strlen(ipAddress));
 
 	if (eIpAddress != NULL) {
 		switch (eIpAddress->type) {
-		case FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4:
+		case FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4:
 			ipAddressLength = FIFTYONE_DEGREES_IPV4_LENGTH;
 			break;
-		case FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6:
+		case FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV6:
 			ipAddressLength = FIFTYONE_DEGREES_IPV6_LENGTH;
 			break;
 		default:
@@ -236,7 +236,7 @@ static void executeTest(const char* ipAddress, void* state) {
 			ResultsIpiFromIpAddress(
 				threadState->results,
 				eIpAddress->address,
-				eIpAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ? 
+				eIpAddress->type == FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4 ? 
 					FIFTYONE_DEGREES_IPV4_LENGTH : 
 					FIFTYONE_DEGREES_IPV6_LENGTH,
 				eIpAddress->type,

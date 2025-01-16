@@ -462,10 +462,10 @@ bool EngineIpIntelligenceTests::validateIpAddress(IpAddress ipAddress) {
 	bool result = false;
 
 	switch(ipAddress.getType()) {
-	case FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4:
+	case FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4:
 		result = validateIpAddressInternal(ipAddress, FIFTYONE_DEGREES_IPV4_LENGTH);
 		break;
-	case FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6:
+	case FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV6:
 		result = validateIpAddressInternal(ipAddress, FIFTYONE_DEGREES_IPV6_LENGTH);
 		break;
 	default:
@@ -514,7 +514,7 @@ void EngineIpIntelligenceTests::boundIpAddressPresent(const char *ipAddress) {
 			<< "IpRangeStart and IpRangeEnd types are not the same, where it should "
 			"be at IP address: " << ipAddress;
 
-	if (rangeStart.getValue().getType() == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
+	if (rangeStart.getValue().getType() == FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4) {
 		EXPECT_TRUE(
 			memcmp(
 				lowerBoundIpAddress,
@@ -559,7 +559,7 @@ void EngineIpIntelligenceTests::randomIpAddressPresent(int count) {
 		EXPECT_EQ(rangeStart.getValue().getType(), rangeEnd.getValue().getType())
 			<< "IpRangeStart and IpRangeEnd types are not the same, where it should "
 			"be at IP address: " << ipAddress;
-		EXPECT_TRUE(fiftyoneDegreesCompareIpAddresses(
+		EXPECT_TRUE(fiftyoneDegreesIpAddressesCompare(
 			rangeStart.getValue().getIpAddress(),
 			rangeEnd.getValue().getIpAddress(),
 			rangeStart.getValue().getType()) < 0) << "Range start IP address should "

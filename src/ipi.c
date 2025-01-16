@@ -100,7 +100,7 @@ typedef struct state_with_unique_header_index_t {
 } stateWithUniqueHeaderIndex;
 
 /**
- * Used to represent the structure within a profile combination item
+ * Used to represent the structure within a profile groups item
  */
 #pragma pack(push, 2)
 typedef struct profile_combination_component_index_t {
@@ -136,8 +136,9 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiInMemoryConfig = {
 	{0,0,0}, // Properties
 	{0,0,0}, // Values
 	{0,0,0}, // Profiles
-	{0,0,0}, // Ipv4 Ranges
-	{0,0,0}, // Ipv6 Ranges
+	{0,0,0}, // IpRoots
+	{0,0,0}, // IpNodes
+	{0,0,0}, // ProfileGroups
 	{0,0,0}  // ProfileOffsets
 };
 #undef FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY
@@ -152,8 +153,9 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiHighPerformanceConfig = {
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Properties
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Values
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Ipv4 Ranges
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Ipv6 Ranges
+	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // IpRoots
+	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // IpNodes
+	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // ProfileOffsets
 };
 
@@ -165,8 +167,9 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiLowMemoryConfig = {
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Properties
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Values
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Ipv4 Ranges
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Ipv6 Ranges
+	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // IpRoots
+	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // IpNodes
+	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // ProfileOffsets
 };
 
@@ -178,8 +181,9 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig = {
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Properties
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Values
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Ipv4 Ranges
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Ipv6 Ranges
+	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // IpRoots
+	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // IpNodes
+	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // ProfileOffsets
 };
 
@@ -191,8 +195,9 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig = {
 { FIFTYONE_DEGREES_PROPERTY_LOADED, FIFTYONE_DEGREES_PROPERTY_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Properties */ \
 { FIFTYONE_DEGREES_VALUE_LOADED, FIFTYONE_DEGREES_VALUE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Values */ \
 { FIFTYONE_DEGREES_PROFILE_LOADED, FIFTYONE_DEGREES_PROFILE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Profiles */ \
-{ FIFTYONE_DEGREES_IP_V4_RANGE_LOADED, FIFTYONE_DEGREES_IP_ROOTS_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Ip Roots */ \
-{ FIFTYONE_DEGREES_IP_V6_RANGE_LOADED, FIFTYONE_DEGREES_IP_NODES_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Ip Nodes */ \
+{ FIFTYONE_DEGREES_IP_ROOTS_LOADED, FIFTYONE_DEGREES_IP_ROOTS_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Ip Roots */ \
+{ FIFTYONE_DEGREES_IP_NODES_LOADED, FIFTYONE_DEGREES_IP_NODES_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Ip Nodes */ \
+{ FIFTYONE_DEGREES_PROFILE_GROUPS_LOADED, FIFTYONE_DEGREES_PROFILE_GROUPS_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* ProfileGroups */ \
 { FIFTYONE_DEGREES_PROFILE_LOADED, FIFTYONE_DEGREES_PROFILE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY } /* ProfileOffsets */ \
 
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiBalancedConfig = {
@@ -219,7 +224,7 @@ FIFTYONE_DEGREES_CONFIG_USE_TEMP_FILE_DEFAULT
 static void resultIpiReset(ResultIpi* result) {
 	memset(result->targetIpAddress.value, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
 	result->targetIpAddress.length = 0;
-	result->targetIpAddress.type = FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID;
+	result->targetIpAddress.type = FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_INVALID;
 }
 
 static int compareIpAddresses(
@@ -322,7 +327,7 @@ static void setResultFromIpAddress(
 	Item item;
 	DataReset(&item.data);
 	switch (result->targetIpAddress.type) {
-	case FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4:
+	case FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4:
 		rangeOffset = CollectionBinarySearch(
 			dataSet->ipRoots,
 			&item,
@@ -337,7 +342,7 @@ static void setResultFromIpAddress(
 		}
 		COLLECTION_RELEASE(dataSet->ipRoots, &item);
 		break;
-	case FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6:
+	case FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV6:
 	default:
 		rangeOffset = CollectionBinarySearch(
 			dataSet->ipNodes,
@@ -777,10 +782,10 @@ static void initDataSet(DataSetIpi* dataSet, ConfigIpi** config) {
 #ifndef FIFTYONE_DEGREES_MEMORY_ONLY
 
 /**
- * Get the actual size of the profile combination by using
+ * Get the actual size of the profile groups by using
  * its intial value.
- * @param initial the intial value of a profile combination after read from file
- * @return the actual size of the profile combination
+ * @param initial the intial value of a profile groups after read from file
+ * @return the actual size of the profile groups
  */
 static uint32_t getProfileCombinationFinalSize(void* initial) {
 	return (uint32_t)(sizeof(int16_t) + (*(int16_t*)initial));
@@ -1393,41 +1398,44 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 	fiftyoneDegreesResultsIpi* results,
 	const unsigned char* ipAddress,
 	size_t ipAddressLength,
-	fiftyoneDegreesEvidenceIpType type,
+	fiftyoneDegreesIpEvidenceType type,
 	fiftyoneDegreesException* exception) {
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 
 	// Make sure the input is always in the correct format
-	if (type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID
-		|| (type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 
-			&& ipAddressLength < FIFTYONE_DEGREES_IPV4_LENGTH)
-		|| (type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6 
-			&& ipAddressLength < FIFTYONE_DEGREES_IPV6_LENGTH)) {
+	if (type == IP_EVIDENCE_TYPE_INVALID
+		|| (type == IP_EVIDENCE_TYPE_IPV4 
+			&& ipAddressLength < IPV4_LENGTH)
+		|| (type == IP_EVIDENCE_TYPE_IPV6 
+			&& ipAddressLength < IPV6_LENGTH)) {
 		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 		return;
 	}
 
 	resultIpiReset(&results->items[0]);
-	results->items[0].profileCombinationOffset = NULL_PROFILE_OFFSET; // Default IP range offset
+	// Default IP range offset
+	results->items[0].profileCombinationOffset = NULL_PROFILE_OFFSET; 
 	results->items[0].targetIpAddress.type = type;
 	results->items[0].type = type;
 
-	memset(results->items[0].targetIpAddress.value, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
-	if (type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
+	memset(results->items[0].targetIpAddress.value, 0, IPV6_LENGTH);
+	if (type == IP_EVIDENCE_TYPE_IPV4) {
 		// We only get the exact length of ipv4
-		memcpy(results->items[0].targetIpAddress.value, ipAddress, FIFTYONE_DEGREES_IPV4_LENGTH);
+		memcpy(results->items[0].targetIpAddress.value, ipAddress, IPV4_LENGTH);
 		// Make sure we only operate on the valid range
-		results->items[0].targetIpAddress.length = FIFTYONE_DEGREES_IPV4_LENGTH;
+		results->items[0].targetIpAddress.length = IPV4_LENGTH;
 	}
 	else {
 		// We only get the exact length of ipv6
-		memcpy(results->items[0].targetIpAddress.value, ipAddress, FIFTYONE_DEGREES_IPV6_LENGTH);
+		memcpy(results->items[0].targetIpAddress.value, ipAddress, IPV6_LENGTH);
 		// Make sure we only operate on the valid range
-		results->items[0].targetIpAddress.length = FIFTYONE_DEGREES_IPV6_LENGTH;
+		results->items[0].targetIpAddress.length = IPV6_LENGTH;
 	}
 	results->count = 1;
 
 	if (results != (ResultsIpi*)NULL) {
+		// TODO: Fake the processing of the IP address and just set the results
+		// to fixed profiles.
 		setResultFromIpAddress(
 			&results->items[0],
 			dataSet,
@@ -1443,8 +1451,8 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 	const char* ipAddress,
 	size_t ipLength,
 	fiftyoneDegreesException* exception) {
-	fiftyoneDegreesEvidenceIpAddress *ip = 
-		fiftyoneDegreesIpParseAddress(Malloc, ipAddress, ipAddress + ipLength);
+	IpAddressEvidence *ip = 
+		IpAddressParse(Malloc, ipAddress, ipAddress + ipLength);
 	// Check if the IP address was successfully created
 	if (ip == NULL) {
 		EXCEPTION_SET(INSUFFICIENT_MEMORY);
@@ -1453,23 +1461,23 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 	
 	// Perform the search on the IP address byte array
 	switch(ip->type) {
-	case FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4:
+	case IP_EVIDENCE_TYPE_IPV4:
 		fiftyoneDegreesResultsIpiFromIpAddress(
 			results,
 			ip->address,
-			FIFTYONE_DEGREES_IPV4_LENGTH,
-			FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4,
+			IPV4_LENGTH,
+			IP_EVIDENCE_TYPE_IPV4,
 			exception);
 		break;
-	case FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6:
+	case IP_EVIDENCE_TYPE_IPV6:
 		fiftyoneDegreesResultsIpiFromIpAddress(
 			results,
 			ip->address,
-			FIFTYONE_DEGREES_IPV6_LENGTH,
-			FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6,
+			IPV6_LENGTH,
+			IP_EVIDENCE_TYPE_IPV6,
 			exception);
 		break;
-	case FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID:
+	case IP_EVIDENCE_TYPE_INVALID:
 	default:
 		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 		break;
@@ -1500,14 +1508,14 @@ static bool setResultFromEvidence(
 			// Get the parsed Value
 			const char *ipAddressString = (const char *)pair->parsedValue;
 			// Obtain the byte array first
-			fiftyoneDegreesEvidenceIpAddress *ipAddress = 
-				fiftyoneDegreesIpParseAddress(Malloc, ipAddressString, ipAddressString + strlen(ipAddressString));
+			fiftyoneDegreesIpAddressEvidence *ipAddress = 
+				fiftyoneDegreesIpAddressParse(Malloc, ipAddressString, ipAddressString + strlen(ipAddressString));
 			// Check if the IP address was successfully created
 			if (ipAddress == NULL) {
 				EXCEPTION_SET(INSUFFICIENT_MEMORY);
 				return false;
 			}
-			else if(ipAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID) {
+			else if(ipAddress->type == FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_INVALID) {
 				Free(ipAddress);
 				EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 				return false;
@@ -1515,7 +1523,7 @@ static bool setResultFromEvidence(
 
 			// Obtain the correct IP address
 			int ipLength = 
-				ipAddress->type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ?
+				ipAddress->type == FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4 ?
 				FIFTYONE_DEGREES_IPV4_LENGTH : 
 				FIFTYONE_DEGREES_IPV6_LENGTH;
 			// Configure the next result in the array of results.
@@ -1727,8 +1735,8 @@ static uint32_t addValuesFromDynamicProperty(
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 
 	offsetPercentage* values;
-	// Set pointer to the values list in the profile combination block
-	// The structure  of the profile combination block is
+	// Set pointer to the values list in the profile groups block
+	// The structure  of the profile groups block is
 	// an array of componentIndexes,
 	// an array of profile offsets and percentages,
 	// an array of values offsets and percentages
@@ -1812,7 +1820,7 @@ static uint32_t addValuesFromResult(
 
 	if (results->count > 0) {
 		if (result->profileCombinationOffset != NULL_PROFILE_OFFSET) {
-			// Get the profile combination
+			// Get the profile groups
 			DataReset(&profileCombinationItem.data);
 			/*profileCombination = 
 				(ProfileCombination*)dataSet->profileCombinations->get(
@@ -1953,7 +1961,7 @@ static bool resultGetHasValidPropertyValueOffset(
 				requiredPropertyIndex));
 		if (propertyName != NULL && EXCEPTION_OKAY) {
 			// We will only execute this step if successfully obtained the
-			// profile combination offset from the previous step
+			// profile groups offset from the previous step
 			if (result->profileCombinationOffset != NULL_PROFILE_OFFSET) {
 				DataReset(&item.data);
 				//profileCombination = dataSet->profileCombinations->get(
@@ -1966,11 +1974,11 @@ static bool resultGetHasValidPropertyValueOffset(
 					componentIndex* indices;
 					offsetPercentage* profiles;
 					offsetPercentage* values;
-					// Set pointer to the component index list in the profile combination block
+					// Set pointer to the component index list in the profile groups block
 					indices = (componentIndex*)&profileCombination->firstByte;
-					// Set pointer to the profiles list in the profile combination block
+					// Set pointer to the profiles list in the profile groups block
 					profiles = (offsetPercentage*)(indices + dataSet->componentsList.count);
-					// Set pointer to the values list in the profile combination block
+					// Set pointer to the values list in the profile groups block
 					values = profiles + profileCombination->profileCount;
 
 					Component* component = (Component*)dataSet->componentsList.items[
@@ -2139,7 +2147,7 @@ static size_t getIpv6RangeString(
 static size_t getRangeString(
 	ProfilePercentage *profilePercentage,
 	uint32_t count,
-	fiftyoneDegreesEvidenceIpType type,
+	fiftyoneDegreesIpEvidenceType type,
 	char *buffer,
 	size_t bufferLength) {
 	String *value;
@@ -2157,7 +2165,7 @@ static size_t getRangeString(
 		}
 
 		value = (String *)profilePercentage->item.data.ptr;
-		if (type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
+		if (type == FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4) {
 			charactersAdded += getIpv4RangeString(
 				(unsigned char *)&value->trail.secondValue,
 				buffer + charactersAdded,
@@ -2522,7 +2530,7 @@ fiftyoneDegreesIpiGetNetworkIdFromResult(
 	if (combProfileIndex.componentIndex >= 0 &&
 		combProfileIndex.profileIndex >= 0)
 	// We will only execute this step if successfully obtained the
-	// profile combination offset from the previous step
+	// profile groups offset from the previous step
 	if (result->profileCombinationOffset != NULL_PROFILE_OFFSET) {
 		DataReset(&profileCombinationItem.data);
 		/*profileCombination = dataSet->profileCombinations->get(
@@ -2533,9 +2541,9 @@ fiftyoneDegreesIpiGetNetworkIdFromResult(
 		if (profileCombination != NULL && EXCEPTION_OKAY) {
 			componentIndex* index,* cur;
 			offsetPercentage* profiles;
-			// Set pointer to the component index list in the profile combination block
+			// Set pointer to the component index list in the profile groups block
 			index = (componentIndex*)&profileCombination->firstByte;
-			// Set pointer to the profiles list in the profile combination block
+			// Set pointer to the profiles list in the profile groups block
 			profiles = (offsetPercentage*)(index + dataSet->componentsList.count);
 			DataReset(&profileItem.data);
 			cur = index;
@@ -2668,14 +2676,14 @@ fiftyoneDegreesIpiGetNetworkIdFromResults(
 
 size_t fiftyoneDegreesIpiGetIpAddressAsString(
 	fiftyoneDegreesCollectionItem *item,
-	fiftyoneDegreesEvidenceIpType type,
+	fiftyoneDegreesIpEvidenceType type,
 	char *buffer,
 	uint32_t bufferLength,
 	fiftyoneDegreesException *exception) {
 	size_t charactersAdded = 0;
 	String *ipAddress = (String *)item->data.ptr;
 	int32_t ipLength = 
-		type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4 ?
+		type == FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4 ?
 		FIFTYONE_DEGREES_IPV4_LENGTH :
 		FIFTYONE_DEGREES_IPV6_LENGTH;
 	// Get the actual length of the byte array
@@ -2685,9 +2693,9 @@ size_t fiftyoneDegreesIpiGetIpAddressAsString(
 	// format
 	if (ipAddress->value == FIFTYONE_DEGREES_STRING_IP_ADDRESS
 		&& ipLength == actualLength
-		&& type != FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID) {
+		&& type != FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_INVALID) {
 
-		if (type == FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4) {
+		if (type == FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4) {
 			charactersAdded += getIpv4RangeString(
 				(unsigned char *)&ipAddress->trail.secondValue,
 				buffer,

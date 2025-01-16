@@ -196,7 +196,7 @@ namespace FiftyoneDegrees {
 			ResultsIpi *process(
 				unsigned char ipAddress[],
 				long length,
-				fiftyoneDegreesEvidenceIpType type);
+				fiftyoneDegreesIpEvidenceType type);
 
 			/**
 			 * @}
