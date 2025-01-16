@@ -36,7 +36,7 @@ EngineIpi::EngineIpi(
 	StatusCode status = IpiInitManagerFromFile(
 		manager.get(),
 		config->getConfig(),
-		properties->getConfig(),
+		properties ? properties->getConfig() : nullptr,
 		fileName,
 		exception);
 	if (status != SUCCESS) {
