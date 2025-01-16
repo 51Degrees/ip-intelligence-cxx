@@ -1433,16 +1433,16 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 	}
 	results->count = 1;
 
-	if (results != (ResultsIpi*)NULL) {
-		// TODO: Fake the processing of the IP address and just set the results
-		// to fixed profiles.
-		setResultFromIpAddress(
-			&results->items[0],
-			dataSet,
-			exception);
-		if (EXCEPTION_FAILED) {
-			return;
-		}
+	results->items[0].profileCombinationOffset
+
+	// TODO: Fake the processing of the IP address and just set the results
+	// to fixed profiles.
+	setResultFromIpAddress(
+		&results->items[0],
+		dataSet,
+		exception);
+	if (EXCEPTION_FAILED) {
+		return;
 	}
 }
 
