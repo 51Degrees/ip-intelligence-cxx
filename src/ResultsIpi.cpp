@@ -228,7 +228,7 @@ IpIntelligence::ResultsIpi::getValueAsCoordinate(
         ResultsBase::getRequiredPropertyIndex(propertyName->c_str()));
 }
 
-Common::Value<IpAddress> 
+Common::Value<IpIntelligence::IpAddress>
 IpIntelligence::ResultsIpi::getValueAsIpAddress(int requiredPropertyIndex) {
     EXCEPTION_CREATE;
     ProfilePercentage *valuesItems;
@@ -285,19 +285,19 @@ IpIntelligence::ResultsIpi::getValueAsIpAddress(int requiredPropertyIndex) {
     return result;
 }
 
-Common::Value<IpAddress>
+Common::Value<IpIntelligence::IpAddress>
 IpIntelligence::ResultsIpi::getValueAsIpAddress(const char *propertyName) {
     return getValueAsIpAddress(
         ResultsBase::getRequiredPropertyIndex(propertyName));
 }
 
-Common::Value<IpAddress>
+Common::Value<IpIntelligence::IpAddress>
 IpIntelligence::ResultsIpi::getValueAsIpAddress(const string &propertyName) {
     return getValueAsIpAddress(
         ResultsBase::getRequiredPropertyIndex(propertyName.c_str()));
 }
 
-Common::Value<IpAddress>
+Common::Value<IpIntelligence::IpAddress>
 IpIntelligence::ResultsIpi::getValueAsIpAddress(const string *propertyName) {
     return getValueAsIpAddress(
         ResultsBase::getRequiredPropertyIndex(propertyName->c_str()));

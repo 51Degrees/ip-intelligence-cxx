@@ -102,7 +102,7 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted boolean values for the property
 			 */
 			Common::Value<vector<WeightedValue<bool>>>
-                        getValuesAsWeightedBoolList(const char *propertyName);
+				getValuesAsWeightedBoolList(const char *propertyName);
 
 			/**
 			 * Get a vector with all weighted boolean representations of the 
@@ -113,7 +113,7 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted boolean values for the property
 			 */
 			Common::Value<vector<WeightedValue<bool>>>
-                        getValuesAsWeightedBoolList(const string *propertyName);
+				getValuesAsWeightedBoolList(const string *propertyName);
 			
 			/**
 			 * Get a vector with all weighted boolean representations of the 
@@ -124,7 +124,7 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted boolean values for the property
 			 */
 			Common::Value<vector<WeightedValue<bool>>>
-                        getValuesAsWeightedBoolList(const string &propertyName);
+				getValuesAsWeightedBoolList(const string &propertyName);
 
 			/**
 			 * Get a vector with all weighted boolean representations of the 
@@ -134,7 +134,7 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted boolean values for the property
 			 */
 			Common::Value<vector<WeightedValue<bool>>>
-                        getValuesAsWeightedBoolList(int requiredPropertyIndex);
+				getValuesAsWeightedBoolList(int requiredPropertyIndex);
 			
 			/**
 			 * Get a vector with all weighted string representations of the 
@@ -145,7 +145,7 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted string values for the property
 			 */
 			Common::Value<vector<WeightedValue<string>>>
-                        getValuesAsWeightedStringList(const char *propertyName);
+				getValuesAsWeightedStringList(const char *propertyName);
 
 			/**
 			 * Get a vector with all weighted string representations of the 
@@ -156,7 +156,7 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted string values for the property
 			 */
 			Common::Value<vector<WeightedValue<string>>>
-						getValuesAsWeightedStringList(const string *propertyName);
+				getValuesAsWeightedStringList(const string *propertyName);
 			
 			/**
 			 * Get a vector with all weighted string representations of the 
@@ -167,7 +167,7 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted string values for the property
 			 */
 			Common::Value<vector<WeightedValue<string>>>
-                        getValuesAsWeightedStringList(const string &propertyName);
+				getValuesAsWeightedStringList(const string &propertyName);
 
 			/**
 			 * Get a vector with all weighted string representations of the 
@@ -177,7 +177,7 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted string values for the property
 			 */
 			Common::Value<vector<WeightedValue<string>>>
-                        getValuesAsWeightedStringList(int requiredPropertyIndex);
+				getValuesAsWeightedStringList(int requiredPropertyIndex);
 			
 			/**
 			 * Get a vector with all weighted integer representations of the 
@@ -188,7 +188,7 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted integer values for the property
 			 */
 			Common::Value<vector<WeightedValue<int>>>
-						getValuesAsWeightedIntegerList(const char *propertyName);
+				getValuesAsWeightedIntegerList(const char *propertyName);
 
 			/**
 			 * Get a vector with all weighted integer representations of the 
@@ -199,7 +199,7 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted integer values for the property
 			 */
 			Common::Value<vector<WeightedValue<int>>>
-                        getValuesAsWeightedIntegerList(const string *propertyName);
+				getValuesAsWeightedIntegerList(const string *propertyName);
 			
 			/**
 			 * Get a vector with all weighted integer representations of the 
@@ -210,7 +210,7 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted integer values for the property
 			 */
 			Common::Value<vector<WeightedValue<int>>>
-						getValuesAsWeightedIntegerList(const string &propertyName);
+				getValuesAsWeightedIntegerList(const string &propertyName);
 
 			/**
 			 * Get a vector with all weighted integer representations of the 
@@ -220,7 +220,7 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted integer values for the property
 			 */
 			Common::Value<vector<WeightedValue<int>>>
-                        getValuesAsWeightedIntegerList(int requiredPropertyIndex);
+				getValuesAsWeightedIntegerList(int requiredPropertyIndex);
 
 			/**
 			 * Get a vector with all weighted double representations of the 
@@ -231,7 +231,7 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted double values for the property
 			 */
 			Common::Value<vector<WeightedValue<double>>>
-						getValuesAsWeightedDoubleList(const char *propertyName);
+				getValuesAsWeightedDoubleList(const char *propertyName);
 
 			/**
 			 * Get a vector with all weighted double representations of the 
@@ -242,7 +242,7 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted double values for the property
 			 */
 			Common::Value<vector<WeightedValue<double>>>
-                        getValuesAsWeightedDoubleList(const string *propertyName);
+				getValuesAsWeightedDoubleList(const string *propertyName);
 			
 			/**
 			 * Get a vector with all weighted double representations of the 
@@ -253,7 +253,7 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted double values for the property
 			 */
 			Common::Value<vector<WeightedValue<double>>>
-						getValuesAsWeightedDoubleList(const string &propertyName);
+				getValuesAsWeightedDoubleList(const string &propertyName);
 
 			/**
 			 * Get a vector with all weighted double representations of the 
@@ -263,7 +263,7 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted double values for the property
 			 */
 			Common::Value<vector<WeightedValue<double>>>
-                        getValuesAsWeightedDoubleList(int requiredPropertyIndex);
+                getValuesAsWeightedDoubleList(int requiredPropertyIndex);
 			
 			/**
 			 * Get a float pair representation of the value associated with the
@@ -273,7 +273,7 @@ namespace FiftyoneDegrees {
 			 * @return a coordinate representation of the value for the property
 			 */
 			Common::Value<fiftyoneDegreesCoordinate>
-						getValueAsCoordinate(const char *propertyName);
+				getValueAsCoordinate(const char *propertyName);
 
 			/**
 			 * Get a float pair representation of the value associated with the
@@ -283,7 +283,7 @@ namespace FiftyoneDegrees {
 			 * @return a coordinate representation of the value for the property
 			 */
 			Common::Value<fiftyoneDegreesCoordinate>
-						getValueAsCoordinate(const string *propertyName);
+				getValueAsCoordinate(const string *propertyName);
 
 			/**
 			 * Get a float pair representation of the value associated with the
@@ -293,7 +293,7 @@ namespace FiftyoneDegrees {
 			 * @return a coordinate representation of the value for the property
 			 */
 			Common::Value<fiftyoneDegreesCoordinate>
-						getValueAsCoordinate(const string &propertyName);
+				getValueAsCoordinate(const string &propertyName);
 			
 			/**
 			 * Get a float pair representation of the value associated with the
@@ -303,43 +303,47 @@ namespace FiftyoneDegrees {
 			 * @return a coordinate representation of the value for the property
 			 */
 			Common::Value<fiftyoneDegreesCoordinate>
-						getValueAsCoordinate(int requiredPropertyIndex);
+				getValueAsCoordinate(int requiredPropertyIndex);
 
 			/**
-			 * Get an IpAddress instace representation of the value associated 
+			 * Get an IpAddress instance representation of the value associated 
 			 * with the required property name. If the property name is not valid
 			 * then hasValue returns false with NoValueReason and its message.
 			 * @param propertyName string containing the property name
 			 * @return an IpAddress representation of the value for the property
 			 */
-			Common::Value<IpAddress> getValueAsIpAddress(const char *propertyName);
+			Common::Value<IpIntelligence::IpAddress> getValueAsIpAddress(
+				const char *propertyName);
 
 			/**
-			 * Get an IpAddress instace representation of the value associated 
+			 * Get an IpAddress instance representation of the value associated 
 			 * with the required property name. If the property name is not valid
 			 * then hasValue returns false with NoValueReason and its message.
 			 * @param propertyName string containing the property name
 			 * @return an IpAddress representation of the value for the property
 			 */
-			Common::Value<IpAddress> getValueAsIpAddress(const string &propertyName);
+			Common::Value<IpIntelligence::IpAddress> getValueAsIpAddress(
+				const string &propertyName);
 
 			/**
-			 * Get an IpAddress instace representation of the value associated 
+			 * Get an IpAddress instance representation of the value associated 
 			 * with the required property name. If the property name is not valid
 			 * then hasValue returns false with NoValueReason and its message.
 			 * @param propertyName string containing the property name
 			 * @return an IpAddress representation of the value for the property
 			 */
-			Common::Value<IpAddress> getValueAsIpAddress(const string *propertyName);
+			Common::Value<IpIntelligence::IpAddress> getValueAsIpAddress(
+				const string *propertyName);
 			
 			/**
-			 * Get an IpAddress instace representation of the value associated 
+			 * Get an IpAddress instance representation of the value associated 
 			 * with the required property index. If the index is not valid
 			 * then hasValue returns false with NoValueReason and its message.
 			 * @param propertyName string containing the property name
 			 * @return an IpAddress representation of the value for the property
 			 */
-			Common::Value<IpAddress> getValueAsIpAddress(int requiredPropertyIndex);
+			Common::Value<IpIntelligence::IpAddress> getValueAsIpAddress(
+				int requiredPropertyIndex);
 
 			/**
 			 * Override the get boolean representation of the value associated
