@@ -441,8 +441,7 @@ int main(int argc, char* argv[]) {
 	fiftyoneDegreesIpiReloadFromFileRun(
 		dataFilePath,
 		ipAddressFilePath,
-		argc > 3 ? argv[3] : "CountryCode,CountyName,"
-			"CityName,IspName,TimezoneName",
+		argc > 3 ? argv[3] : "networkname,coordinate",
 		CONFIG);
 
 #ifdef _DEBUG
