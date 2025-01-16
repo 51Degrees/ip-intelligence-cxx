@@ -136,7 +136,7 @@ LocationBoundSouthEast: "0.000000,0.000000":"1.000000"
 
 static const char* dataDir = "ip-intelligence-data";
 
-static const char* dataFileName = "IpIntelligence-LiteV4.1.ipi";
+static const char* dataFileName = "51Degrees-LiteV4.1.ipi";
 
 static char valueBuffer[1024] = "";
 
