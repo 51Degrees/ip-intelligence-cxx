@@ -90,7 +90,7 @@ static const char* dataDir = "ip-intelligence-data";
 
 static const char* dataFileName = "51Degrees-LiteV4.1.ipi";
 
-static const char* ipAddressFileName = "20000 IP Addresses.csv";
+static const char* ipAddressFileName = "evidence.yml";
 
 /**
  * CHOOSE THE DEFAULT MEMORY CONFIGURATION BY UNCOMMENTING ONE OF THE FOLLOWING
