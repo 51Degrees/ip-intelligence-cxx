@@ -21,15 +21,9 @@
     <ClInclude Include="..\..\src\ipi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\wkbtot.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ipi.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\wkbtot.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

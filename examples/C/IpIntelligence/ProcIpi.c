@@ -50,18 +50,18 @@ static void buildString(
 			if (strncmp("IpRange", property, strlen("IpRange")) == 0) {
 				// The collection item is and ipRange which has ipAddress byte array at the start
 				// and a offset to the profileCombination collection item
-				if (results->items[0].type == FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4) {
+				if (results->items[0].type == IP_TYPE_IPV4) {
 					IpiGetIpAddressAsString(
 						&results->values.items[0].item,
-						FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4,
+						IP_TYPE_IPV4,
 						ipAddress,
 						50,
 						exception);
 				}
-				else if (results->items[0].type == FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV6) {
+				else if (results->items[0].type == IP_TYPE_IPV6) {
 					IpiGetIpAddressAsString(
 						&results->values.items[0].item,
-						FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV6,
+						IP_TYPE_IPV6,
 						ipAddress,
 						50,
 						exception);

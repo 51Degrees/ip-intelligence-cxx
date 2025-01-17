@@ -208,7 +208,7 @@ static void reportProgress(performanceThreadState* state) {
 static void executeTest(const char* ipAddress, void* state) {
 	performanceThreadState* threadState = (performanceThreadState*)state;
 	fiftyoneDegreesResultIpi* result;
-	fiftyoneDegreesIpAddressEvidence* eIpAddress;
+	IpAddress* eIpAddress;
 	size_t ipAddressLength = 0;
 	EXCEPTION_CREATE;
 
@@ -220,10 +220,10 @@ static void executeTest(const char* ipAddress, void* state) {
 
 	if (eIpAddress != NULL) {
 		switch (eIpAddress->type) {
-		case FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4:
+		case IP_TYPE_IPV4:
 			ipAddressLength = FIFTYONE_DEGREES_IPV4_LENGTH;
 			break;
-		case FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV6:
+		case IP_TYPE_IPV6:
 			ipAddressLength = FIFTYONE_DEGREES_IPV6_LENGTH;
 			break;
 		default:
@@ -235,11 +235,11 @@ static void executeTest(const char* ipAddress, void* state) {
 		if (threadState->main->calibration == false) {
 			ResultsIpiFromIpAddress(
 				threadState->results,
-				eIpAddress->address,
-				eIpAddress->type == FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4 ? 
+				eIpAddress->value,
+				eIpAddress->type == IP_TYPE_IPV4 ?
 					FIFTYONE_DEGREES_IPV4_LENGTH : 
 					FIFTYONE_DEGREES_IPV6_LENGTH,
-				eIpAddress->type,
+				(IpType)eIpAddress->type,
 				exception);
 			EXCEPTION_THROW;
 			result = (ResultIpi*)threadState->results->items;

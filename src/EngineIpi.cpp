@@ -245,7 +245,7 @@ IpIntelligence::ResultsIpi* EngineIpi::process(
 IpIntelligence::ResultsIpi *EngineIpi::process(
 	unsigned char ipAddress[], 
 	long length,
-	fiftyoneDegreesIpEvidenceType type) {
+	fiftyoneDegreesIpType type) {
 	EXCEPTION_CREATE;
 	fiftyoneDegreesResultsIpi *results = ResultsIpiCreate(manager.get());
 	ResultsIpiFromIpAddress(

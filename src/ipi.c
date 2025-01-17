@@ -224,7 +224,7 @@ FIFTYONE_DEGREES_CONFIG_USE_TEMP_FILE_DEFAULT
 static void resultIpiReset(ResultIpi* result) {
 	memset(result->targetIpAddress.value, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
 	result->targetIpAddress.length = 0;
-	result->targetIpAddress.type = FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_INVALID;
+	result->targetIpAddress.type = IP_TYPE_INVALID;
 }
 
 static int compareIpAddresses(
@@ -327,7 +327,7 @@ static void setResultFromIpAddress(
 	Item item;
 	DataReset(&item.data);
 	switch (result->targetIpAddress.type) {
-	case FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4:
+	case IP_TYPE_IPV4:
 		rangeOffset = CollectionBinarySearch(
 			dataSet->ipRoots,
 			&item,
@@ -342,7 +342,7 @@ static void setResultFromIpAddress(
 		}
 		COLLECTION_RELEASE(dataSet->ipRoots, &item);
 		break;
-	case FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV6:
+	case IP_TYPE_IPV6:
 	default:
 		rangeOffset = CollectionBinarySearch(
 			dataSet->ipNodes,
@@ -1398,15 +1398,15 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 	fiftyoneDegreesResultsIpi* results,
 	const unsigned char* ipAddress,
 	size_t ipAddressLength,
-	fiftyoneDegreesIpEvidenceType type,
+	fiftyoneDegreesIpType type,
 	fiftyoneDegreesException* exception) {
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 
 	// Make sure the input is always in the correct format
-	if (type == IP_EVIDENCE_TYPE_INVALID
-		|| (type == IP_EVIDENCE_TYPE_IPV4 
+	if (type == IP_TYPE_INVALID
+		|| (type == IP_TYPE_IPV4
 			&& ipAddressLength < IPV4_LENGTH)
-		|| (type == IP_EVIDENCE_TYPE_IPV6 
+		|| (type == IP_TYPE_IPV6
 			&& ipAddressLength < IPV6_LENGTH)) {
 		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 		return;
@@ -1419,7 +1419,7 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 	results->items[0].type = type;
 
 	memset(results->items[0].targetIpAddress.value, 0, IPV6_LENGTH);
-	if (type == IP_EVIDENCE_TYPE_IPV4) {
+	if (type == IP_TYPE_IPV4) {
 		// We only get the exact length of ipv4
 		memcpy(results->items[0].targetIpAddress.value, ipAddress, IPV4_LENGTH);
 		// Make sure we only operate on the valid range
@@ -1433,7 +1433,7 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 	}
 	results->count = 1;
 
-	results->items[0].profileCombinationOffset
+	// results->items[0].profileCombinationOffset
 
 	// TODO: Fake the processing of the IP address and just set the results
 	// to fixed profiles.
@@ -1451,7 +1451,7 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 	const char* ipAddress,
 	size_t ipLength,
 	fiftyoneDegreesException* exception) {
-	IpAddressEvidence *ip = 
+	IpAddress *ip =
 		IpAddressParse(Malloc, ipAddress, ipAddress + ipLength);
 	// Check if the IP address was successfully created
 	if (ip == NULL) {
@@ -1461,23 +1461,23 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 	
 	// Perform the search on the IP address byte array
 	switch(ip->type) {
-	case IP_EVIDENCE_TYPE_IPV4:
+	case IP_TYPE_IPV4:
 		fiftyoneDegreesResultsIpiFromIpAddress(
 			results,
-			ip->address,
+			ip->value,
 			IPV4_LENGTH,
-			IP_EVIDENCE_TYPE_IPV4,
+			IP_TYPE_IPV4,
 			exception);
 		break;
-	case IP_EVIDENCE_TYPE_IPV6:
+	case IP_TYPE_IPV6:
 		fiftyoneDegreesResultsIpiFromIpAddress(
 			results,
-			ip->address,
+			ip->value,
 			IPV6_LENGTH,
-			IP_EVIDENCE_TYPE_IPV6,
+			IP_TYPE_IPV6,
 			exception);
 		break;
-	case IP_EVIDENCE_TYPE_INVALID:
+	case IP_TYPE_INVALID:
 	default:
 		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 		break;
@@ -1508,14 +1508,14 @@ static bool setResultFromEvidence(
 			// Get the parsed Value
 			const char *ipAddressString = (const char *)pair->parsedValue;
 			// Obtain the byte array first
-			fiftyoneDegreesIpAddressEvidence *ipAddress = 
+			IpAddress *ipAddress =
 				fiftyoneDegreesIpAddressParse(Malloc, ipAddressString, ipAddressString + strlen(ipAddressString));
 			// Check if the IP address was successfully created
 			if (ipAddress == NULL) {
 				EXCEPTION_SET(INSUFFICIENT_MEMORY);
 				return false;
 			}
-			else if(ipAddress->type == FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_INVALID) {
+			else if(ipAddress->type == IP_TYPE_INVALID) {
 				Free(ipAddress);
 				EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 				return false;
@@ -1523,7 +1523,7 @@ static bool setResultFromEvidence(
 
 			// Obtain the correct IP address
 			int ipLength = 
-				ipAddress->type == FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4 ?
+				ipAddress->type == IP_TYPE_IPV4 ?
 				FIFTYONE_DEGREES_IPV4_LENGTH : 
 				FIFTYONE_DEGREES_IPV6_LENGTH;
 			// Configure the next result in the array of results.
@@ -1531,9 +1531,9 @@ static bool setResultFromEvidence(
 			resultIpiReset(result);
 			results->items[0].profileCombinationOffset = NULL_PROFILE_OFFSET; // Default IP range offset
 			result->targetIpAddress.length = ipLength;
-			memset(result->targetIpAddress.value, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
-			memcpy(result->targetIpAddress.value, ipAddress->address, ipLength);
-			memcpy(result->targetIpAddress.value, ipAddress->address, FIFTYONE_DEGREES_IPV6_LENGTH);
+			memset(result->targetIpAddress.value, 0, IPV6_LENGTH);
+			memcpy(result->targetIpAddress.value, ipAddress->value, ipLength);
+			memcpy(result->targetIpAddress.value, ipAddress->value, IPV6_LENGTH);
 			result->targetIpAddress.type = ipAddress->type;
 			result->type = ipAddress->type;
 			results->count++;
@@ -2147,7 +2147,7 @@ static size_t getIpv6RangeString(
 static size_t getRangeString(
 	ProfilePercentage *profilePercentage,
 	uint32_t count,
-	fiftyoneDegreesIpEvidenceType type,
+	fiftyoneDegreesIpType type,
 	char *buffer,
 	size_t bufferLength) {
 	String *value;
@@ -2165,7 +2165,7 @@ static size_t getRangeString(
 		}
 
 		value = (String *)profilePercentage->item.data.ptr;
-		if (type == FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4) {
+		if (type == IP_TYPE_IPV4) {
 			charactersAdded += getIpv4RangeString(
 				(unsigned char *)&value->trail.secondValue,
 				buffer + charactersAdded,
@@ -2676,14 +2676,14 @@ fiftyoneDegreesIpiGetNetworkIdFromResults(
 
 size_t fiftyoneDegreesIpiGetIpAddressAsString(
 	fiftyoneDegreesCollectionItem *item,
-	fiftyoneDegreesIpEvidenceType type,
+	fiftyoneDegreesIpType type,
 	char *buffer,
 	uint32_t bufferLength,
 	fiftyoneDegreesException *exception) {
 	size_t charactersAdded = 0;
 	String *ipAddress = (String *)item->data.ptr;
 	int32_t ipLength = 
-		type == FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4 ?
+		type == IP_TYPE_IPV4 ?
 		FIFTYONE_DEGREES_IPV4_LENGTH :
 		FIFTYONE_DEGREES_IPV6_LENGTH;
 	// Get the actual length of the byte array
@@ -2693,9 +2693,9 @@ size_t fiftyoneDegreesIpiGetIpAddressAsString(
 	// format
 	if (ipAddress->value == FIFTYONE_DEGREES_STRING_IP_ADDRESS
 		&& ipLength == actualLength
-		&& type != FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_INVALID) {
+		&& type != IP_TYPE_INVALID) {
 
-		if (type == FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4) {
+		if (type == IP_TYPE_IPV4) {
 			charactersAdded += getIpv4RangeString(
 				(unsigned char *)&ipAddress->trail.secondValue,
 				buffer,

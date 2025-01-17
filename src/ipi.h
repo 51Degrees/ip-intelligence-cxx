@@ -342,7 +342,7 @@ typedef struct fiftyone_degrees_ipi_list_t {
  * Singular IP address result returned by a detection process method.
  */
 typedef struct fiftyone_degrees_result_ipi_t {
-	fiftyoneDegreesIpEvidenceType type; /**< The version of the IP */
+	fiftyoneDegreesIpType type; /**< The version of the IP */
 	uint32_t profileCombinationOffset; /**< The offset in the profile groups
 							collection, which matches the target IP address */
 	fiftyoneDegreesIpAddress targetIpAddress; /**< The target IP address
@@ -726,7 +726,7 @@ EXTERNAL void fiftyoneDegreesResultsIpiFromIpAddress(
 	fiftyoneDegreesResultsIpi* results,
 	const unsigned char* ipAddress,
 	size_t ipAddressLength,
-	fiftyoneDegreesIpEvidenceType type,
+	fiftyoneDegreesIpType type,
 	fiftyoneDegreesException* exception);
 
 /**
@@ -949,7 +949,7 @@ EXTERNAL uint32_t fiftyoneDegreesIpiIterateProfilesForPropertyAndValue(
  */
 EXTERNAL size_t fiftyoneDegreesIpiGetIpAddressAsString(
 	fiftyoneDegreesCollectionItem *item,
-	fiftyoneDegreesIpEvidenceType type,
+	fiftyoneDegreesIpType type,
 	char *buffer,
 	uint32_t bufferLength,
 	fiftyoneDegreesException *exception);

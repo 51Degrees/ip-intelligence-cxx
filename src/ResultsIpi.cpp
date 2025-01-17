@@ -273,7 +273,7 @@ IpIntelligence::ResultsIpi::getValueAsIpAddress(int requiredPropertyIndex) {
             }
             else {
                 // Default to the smallest IP address
-                if (results->items[0].type == FIFTYONE_DEGREES_IP_EVIDENCE_TYPE_IPV4) {
+                if (results->items[0].type == IP_TYPE_IPV4) {
                     result.setValue(IpAddress("0.0.0.0"));
                 }
                 else {
