@@ -199,7 +199,11 @@ typedef struct fiftyone_degrees_ipi_graph_member_t {
 typedef struct fiftyone_degrees_ipi_component_graph_t {
 	fiftyoneDegreesCollectionHeader header; /**< Collection for the fixed width
 											nodes. See recordSize. */
-	fiftyoneDegreesIpEvidenceType version; /**< IP address version (4 or 6). */
+	byte version; /**< IP address version (4 or 6). The reason byte is used here 
+ 			instead of fiftyoneDegreesIpEvidenceType, is that enum is not
+    			necessarily a fixed size, so the struct may not always map to
+       			the data file. The value can still be cast to the enum type
+	  		fiftyoneDegreesIpEvidenceType*/
 	byte componentId; /**< The component id the graph relates to. */
 	uint32_t recordSize; /**< The number of bytes per fixed width node. Never 
 						 more than 8 bytes. */
