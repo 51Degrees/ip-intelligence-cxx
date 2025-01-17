@@ -181,6 +181,36 @@
  * DATA STRUCTURES
  */
 
+/**
+ * Data structure used to extract a value from the bytes that form a fixed 
+ * width graph node.
+ */
+typedef struct fiftyone_degrees_ipi_graph_member_t {
+	uint64_t mask; /**< Mask applied to a node record to obtain the members 
+				   bits */
+	uint64_t shift; /**< Shift to apply to the result of the mask to obtain the
+					value */
+} fiftyoneDegreesIpiMember;
+
+/** 
+ * Fixed width record in the ipRoots collection where the record relates to a 
+ * component and IP version.
+ */
+typedef struct fiftyone_degrees_ipi_component_graph_t {
+	fiftyoneDegreesCollectionHeader header; /**< Collection for the fixed width
+											nodes. See recordSize. */
+	fiftyoneDegreesIpEvidenceType version; /**< IP address version (4 or 6). */
+	byte componentId; /**< The component id the graph relates to. */
+	uint32_t recordSize; /**< The number of bytes per fixed width node. Never 
+						 more than 8 bytes. */
+	fiftyoneDegreesIpiMember zeroFlag; /**< Single bit to indicate if the node 
+									   is zero leaf */
+	fiftyoneDegreesIpiMember zeroSkip; /**< Bits used to obtain the zero skip */
+	fiftyoneDegreesIpiMember oneSkip; /**< Bits used to obtain the one skip */
+	fiftyoneDegreesIpiMember value; /**< Bits used to obtain node positive 
+									value for next node or profile */
+} fiftyoneDegreesIpiComponentGraph;
+
 /** Dataset header containing information about the dataset. */
 #pragma pack(push, 1)
 typedef struct fiftyone_degrees_ipi_dataset_header_t {
@@ -219,12 +249,12 @@ typedef struct fiftyone_degrees_ipi_dataset_header_t {
 	const fiftyoneDegreesCollectionHeader profiles; /**< Size and location of
 													the profiles collection */
 	const fiftyoneDegreesCollectionHeader ipRoots; /**< Roots collection config
-												   */
-	const fiftyoneDegreesCollectionHeader ipNodes; /**< Nodes collection config
-												   */
+												   where there is one record for 
+												   each component and IP version of the structure 
+												   fiftyoneDegreesIpiComponentGraph */
 	const fiftyoneDegreesCollectionHeader profileGroups; /**< Size and
 														  location of the
-														  profile groups
+														  profile group offsets
 														  collection */
 	const fiftyoneDegreesCollectionHeader profileOffsets; /**< Size and
 														  location of the
@@ -298,6 +328,8 @@ typedef struct fiftyone_degrees_dataset_ipi_t {
 	fiftyoneDegreesCollection *profileOffsets; /**< Collection of all offsets
 											   to profiles in the profiles
 											   collection */
+	bytes per node record
+
 } fiftyoneDegreesDataSetIpi;
 
 
