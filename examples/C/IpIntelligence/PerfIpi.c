@@ -266,6 +266,9 @@ static void executeTest(const char* ipAddress, void* state) {
 #define SIZE_OF_VALUE 1000
 #define MAX_EVIDENCE 20
 
+/**
+ * Data for TextFileIterate-to-YamlFileIterate callback adapter.
+ */
 typedef struct {
 	char * const ipAddressBuffer;
 	const int bufferLength;
@@ -273,9 +276,17 @@ typedef struct {
 	void(* const callback)(const char*, void *);
 } YamlCallbackState;
 
+/**
+ * Adapter of TextFileIterate-compatible callback
+ * to YamlFileIterate-compatible one.
+ *
+ * @param pairs Pairs of YAML document
+ * @param size Number of pairs in the YAML document
+ * @param callbackState Wrapped callback and parameters
+ */
 static void yamlCallback(
 	fiftyoneDegreesKeyValuePair * const pairs,
-	uint16_t size,
+	const uint16_t size,
 	void * const callbackState) {
 
 	const YamlCallbackState * const state =
@@ -289,6 +300,19 @@ static void yamlCallback(
 	}
 }
 
+/**
+ * Iterates over the YAML file
+ * calling the callback method with each value.
+ *
+ * @param fileName name of the file to iterate over
+ * @param buffer to use for reading lines into. The buffer needs
+ * to be big enough to hold the biggest record, including its line ending.
+ * @param length of the buffer
+ * @param state pointer to pass to the callback method
+ * @param callback method to call with each line
+ *
+ * @see fiftyoneDegreesTextFileIterate
+ */
 static void evidenceFileIterate(
 	const char * const fileName,
 	char * const buffer,
