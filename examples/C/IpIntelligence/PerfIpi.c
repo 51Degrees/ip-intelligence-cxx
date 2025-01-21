@@ -500,7 +500,7 @@ void fiftyoneDegreesPerfIpiRun(
 
 	// Configure to return the Country property.
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "IpRangeStart,IpRangeEnd,CountryCode,AverageLocation";
+	properties.string = "network,coordinate";
 
 	ResourceManager manager;
 	EXCEPTION_CREATE;
