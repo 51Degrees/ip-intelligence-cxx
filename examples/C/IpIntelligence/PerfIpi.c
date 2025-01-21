@@ -261,6 +261,70 @@ static void executeTest(const char* ipAddress, void* state) {
 	}
 }
 
+// Parameters used for allocating memory when reading evidence.
+#define SIZE_OF_KEY 500
+#define SIZE_OF_VALUE 1000
+#define MAX_EVIDENCE 20
+
+typedef struct {
+	char * const ipAddressBuffer;
+	const int bufferLength;
+	void * const state;
+	void(* const callback)(const char*, void *);
+} YamlCallbackState;
+
+static void yamlCallback(
+	fiftyoneDegreesKeyValuePair * const pairs,
+	uint16_t size,
+	void * const callbackState) {
+
+	const YamlCallbackState * const state =
+		(const YamlCallbackState *)callbackState;
+	for (uint16_t i = 0; i < size; i++) {
+		size_t const length = (state->bufferLength - 1 < pairs[i].valueLength
+			? state->bufferLength - 1 : pairs[i].valueLength);
+		memcpy(state->ipAddressBuffer, pairs[i].value, length);
+		state->ipAddressBuffer[length] = '\0';
+		state->callback(state->ipAddressBuffer, state->state);
+	}
+}
+
+static void evidenceFileIterate(
+	const char * const fileName,
+	char * const buffer,
+	const int length,
+	void * const state,
+	void(* const callback)(const char*, void *)) {
+
+	// Allocate working memory for iterating over the YAML evidence source.
+	char evidenceBuffer[MAX_EVIDENCE * (SIZE_OF_KEY + SIZE_OF_VALUE)];
+	KeyValuePair pair[MAX_EVIDENCE];
+	char key[MAX_EVIDENCE][SIZE_OF_KEY];
+	char value[MAX_EVIDENCE][SIZE_OF_VALUE];
+	for (int i = 0; i < MAX_EVIDENCE; i++) {
+		pair[i].key = key[i];
+		pair[i].keyLength = SIZE_OF_KEY;
+		pair[i].value = value[i];
+		pair[i].valueLength = SIZE_OF_VALUE;
+	}
+
+	YamlCallbackState callbackState = {
+		buffer,
+		length,
+		state,
+		callback,
+	};
+
+	YamlFileIterate(
+		fileName,
+		evidenceBuffer,
+		sizeof(evidenceBuffer),
+		pair,
+		MAX_EVIDENCE,
+		&callbackState,
+		yamlCallback);
+}
+
 /**
  * A single threaded performance test. Many of these will run in parallel to
  * ensure the single managed resource is being used.
@@ -295,7 +359,7 @@ static void runPerformanceThread(void* mainState) {
 	}
 
 	// Execute the performance test or calibration.
-	TextFileIterate(
+	evidenceFileIterate(
 		threadState.main->ipAddressFilePath,
 		ipAddress,
 		sizeof(ipAddress),
@@ -363,6 +427,9 @@ static double runTests(performanceState* state, int passes, const char* test) {
 
 	// Set the progress indicator.
 	state->progress = state->ipAddressesCount / PROGRESS_MARKS;
+	if (!state->progress) {
+		state->progress = 1;
+	}
 
 	// Perform a number of passes of the test.
 #ifdef _MSC_VER
@@ -408,7 +475,7 @@ static void ipAddressCount(const char* ipAddress, void* state) {
 static int getIpAddressesCount(const char* ipAddressFilePath) {
 	int count = 0;
 	char ipAddress[BUFFER];
-	TextFileIterate(
+	evidenceFileIterate(
 		ipAddressFilePath,
 		ipAddress,
 		sizeof(ipAddress),
