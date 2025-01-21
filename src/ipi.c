@@ -727,7 +727,8 @@ static StatusCode initWithMemory(
 	COLLECTION_CREATE_MEMORY(ipRoots);
 	COLLECTION_CREATE_MEMORY(ipNodes);
 
-	COLLECTION_CREATE_MEMORY(profileOffsets)
+	COLLECTION_CREATE_MEMORY(profileGroups);
+	COLLECTION_CREATE_MEMORY(profileOffsets);
 
 	/* Check that the current pointer equals the last byte */
 	if (reader->lastByte != reader->current) {
