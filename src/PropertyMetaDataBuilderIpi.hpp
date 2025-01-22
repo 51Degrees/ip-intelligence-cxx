@@ -110,7 +110,7 @@ namespace FiftyoneDegrees {
 			 * id of
 			 * @return unique component id
 			 */
-			static byte getComponentId(
+			static ::byte getComponentId(
 				fiftyoneDegreesDataSetIpi *dataSet,
 				fiftyoneDegreesProperty *property);
 

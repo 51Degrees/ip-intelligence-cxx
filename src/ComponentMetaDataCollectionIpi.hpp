@@ -37,7 +37,7 @@ namespace FiftyoneDegrees {
 		 * engine.
 		 */
 		class ComponentMetaDataCollectionIpi
-			: public Collection<byte, ComponentMetaData> {
+			: public Collection<::byte, ComponentMetaData> {
 		public:
 			/**
 			 * @name Constructors and Destructors
@@ -66,7 +66,7 @@ namespace FiftyoneDegrees {
 
 			ComponentMetaData* getByIndex(uint32_t index) const;
 
-			ComponentMetaData* getByKey(byte componentId) const;
+			ComponentMetaData* getByKey(::byte componentId) const;
 
 			uint32_t getSize() const;
 

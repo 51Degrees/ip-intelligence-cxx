@@ -124,7 +124,7 @@ typedef struct offset_percentage_t {
 
 /* The expected version of the data file */
 #define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MAJOR 4
-#define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MINOR 1
+#define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MINOR 4
 
 #undef FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY
 #define FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY true
@@ -138,7 +138,6 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiInMemoryConfig = {
 	{0,0,0}, // Profiles
 	{0,0,0}, // Ipv4 Ranges
 	{0,0,0}, // Ipv6 Ranges
-	{0,0,0}, // Profile Combinations
 	{0,0,0}  // ProfileOffsets
 };
 #undef FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY
@@ -155,7 +154,6 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiHighPerformanceConfig = {
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Ipv4 Ranges
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Ipv6 Ranges
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profile Combinations
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // ProfileOffsets
 };
 
@@ -169,7 +167,6 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiLowMemoryConfig = {
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Ipv4 Ranges
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Ipv6 Ranges
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profile Combinations
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // ProfileOffsets
 };
 
@@ -183,7 +180,6 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig = {
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Ipv4 Ranges
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Ipv6 Ranges
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profile Combinations
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // ProfileOffsets
 };
 
@@ -195,9 +191,8 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig = {
 { FIFTYONE_DEGREES_PROPERTY_LOADED, FIFTYONE_DEGREES_PROPERTY_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Properties */ \
 { FIFTYONE_DEGREES_VALUE_LOADED, FIFTYONE_DEGREES_VALUE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Values */ \
 { FIFTYONE_DEGREES_PROFILE_LOADED, FIFTYONE_DEGREES_PROFILE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Profiles */ \
-{ FIFTYONE_DEGREES_IP_V4_RANGE_LOADED, FIFTYONE_DEGREES_IP_V4_RANGE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Ipv4 Ranges */ \
-{ FIFTYONE_DEGREES_IP_V6_RANGE_LOADED, FIFTYONE_DEGREES_IP_V6_RANGE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Ipv6 Ranges */ \
-{ FIFTYONE_DEGREES_PROFILE_COMBINATION_LOADED, FIFTYONE_DEGREES_PROFILE_COMBINATION_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Profile Combinations */ \
+{ FIFTYONE_DEGREES_IP_V4_RANGE_LOADED, FIFTYONE_DEGREES_IP_ROOTS_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Ip Roots */ \
+{ FIFTYONE_DEGREES_IP_V6_RANGE_LOADED, FIFTYONE_DEGREES_IP_NODES_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Ip Nodes */ \
 { FIFTYONE_DEGREES_PROFILE_LOADED, FIFTYONE_DEGREES_PROFILE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY } /* ProfileOffsets */ \
 
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiBalancedConfig = {
@@ -329,10 +324,10 @@ static void setResultFromIpAddress(
 	switch (result->targetIpAddress.type) {
 	case FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4:
 		rangeOffset = CollectionBinarySearch(
-			dataSet->ipv4Graph,
+			dataSet->ipRoots,
 			&item,
 			0,
-			CollectionGetCount(dataSet->ipv4Graph) - 1,
+			CollectionGetCount(dataSet->ipRoots) - 1,
 			(void*)&result->targetIpAddress,
 			compareToIpv4Range,
 			exception);
@@ -340,15 +335,15 @@ static void setResultFromIpAddress(
 			result->profileCombinationOffset = 
 				((Ipv4Range *)item.data.ptr)->profileCombinationOffset;
 		}
-		COLLECTION_RELEASE(dataSet->ipv4Graph, &item);
+		COLLECTION_RELEASE(dataSet->ipRoots, &item);
 		break;
 	case FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6:
 	default:
 		rangeOffset = CollectionBinarySearch(
-			dataSet->ipv6Graph,
+			dataSet->ipNodes,
 			&item,
 			0,
-			CollectionGetCount(dataSet->ipv6Graph) - 1,
+			CollectionGetCount(dataSet->ipNodes) - 1,
 			(void*)&result->targetIpAddress,
 			compareToIpv6Range,
 			exception);
@@ -356,7 +351,7 @@ static void setResultFromIpAddress(
 			result->profileCombinationOffset = 
 				((Ipv6Range *)item.data.ptr)->profileCombinationOffset;
 		}
-		COLLECTION_RELEASE(dataSet->ipv6Graph, &item);
+		COLLECTION_RELEASE(dataSet->ipNodes, &item);
 		break;
 	}
 }
@@ -371,9 +366,8 @@ static void resetDataSet(DataSetIpi* dataSet) {
 	dataSet->componentsAvailable = NULL;
 	dataSet->components = NULL;
 	dataSet->maps = NULL;
-	dataSet->ipv4Graph = NULL;
-	dataSet->ipv6Graph = NULL;
-	dataSet->profileCombinations = NULL;
+	dataSet->ipRoots = NULL;
+	dataSet->ipNodes = NULL;
 	dataSet->profileOffsets = NULL;
 	dataSet->profiles = NULL;
 	dataSet->properties = NULL;
@@ -396,9 +390,8 @@ static void freeDataSet(void* dataSetPtr) {
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->maps);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->values);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->profiles);
-	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->ipv4Graph);
-	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->ipv6Graph);
-	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->profileCombinations);
+	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->ipRoots);
+	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->ipNodes);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->profileOffsets);
 
 	// Finally free the memory used by the resource itself as this is always
@@ -619,21 +612,12 @@ static StatusCode initPropertiesAndHeaders(
 	stateWithException state;
 	state.state = (void*)dataSet;
 	state.exception = exception;
-	StatusCode status = DataSetInitProperties(
+	return DataSetInitProperties(
 		&dataSet->b.b,
 		properties,
 		&state,
 		initGetPropertyString,
 		initGetEvidenceProperties);
-	if (status != SUCCESS) {
-		return status;
-	}
-
-	return DataSetInitHeaders(
-		&dataSet->b.b,
-		&state,
-		initGetHttpHeaderString, 
-		exception);
 }
 
 static StatusCode readHeaderFromMemory(
@@ -735,13 +719,8 @@ static StatusCode initWithMemory(
 	COLLECTION_CREATE_MEMORY(profiles)
 	*(uint32_t*)(&dataSet->header.profiles.count) = profileCount;
 
-	COLLECTION_CREATE_MEMORY(ipv4Graph);
-	COLLECTION_CREATE_MEMORY(ipv6Graph);
-
-	uint32_t nodesCount = dataSet->header.profileCombinations.count;
-	*(uint32_t*)(&dataSet->header.profileCombinations.count) = 0;
-	COLLECTION_CREATE_MEMORY(profileCombinations)
-	*(uint32_t*)(&dataSet->header.profileCombinations.count) = nodesCount;
+	COLLECTION_CREATE_MEMORY(ipRoots);
+	COLLECTION_CREATE_MEMORY(ipNodes);
 
 	COLLECTION_CREATE_MEMORY(profileOffsets)
 
@@ -878,13 +857,8 @@ static StatusCode readDataSetFromFile(
 	COLLECTION_CREATE_FILE(profiles, fiftyoneDegreesProfileReadFromFile);
 	*(uint32_t*)(&dataSet->header.profiles.count) = profileCount;
 
-	COLLECTION_CREATE_FILE(ipv4Graph, CollectionReadFileFixed);
-	COLLECTION_CREATE_FILE(ipv6Graph, CollectionReadFileFixed);
-
-	uint32_t profileCombinationCount = dataSet->header.profileCombinations.count;
-	*(uint32_t*)(&dataSet->header.profileCombinations.count) = 0;
-	COLLECTION_CREATE_FILE(profileCombinations, fiftyoneDegreesProfileCombinationReadFromFile);
-	*(uint32_t*)(&dataSet->header.profileCombinations.count) = profileCombinationCount;
+	COLLECTION_CREATE_FILE(ipRoots, CollectionReadFileFixed);
+	COLLECTION_CREATE_FILE(ipNodes, CollectionReadFileFixed);
 
 	COLLECTION_CREATE_FILE(profileOffsets, CollectionReadFileFixed);
 
@@ -911,9 +885,8 @@ static uint16_t getMaxConcurrency(const ConfigIpi* config) {
 	MAX_CONCURRENCY(properties);
 	MAX_CONCURRENCY(values);
 	MAX_CONCURRENCY(profiles);
-	MAX_CONCURRENCY(ipv4Graph);
-	MAX_CONCURRENCY(ipv6Graph);
-	MAX_CONCURRENCY(profileCombinations);
+	MAX_CONCURRENCY(ipRoots);
+	MAX_CONCURRENCY(ipNodes);
 	MAX_CONCURRENCY(profileOffsets);
 	return concurrency;
 }
@@ -1830,7 +1803,7 @@ static uint32_t addValuesFromResult(
 	Property* property,
 	Exception* exception) {
 	uint32_t count = 0;
-	ProfileCombination* profileCombination;
+	ProfileCombination* profileCombination = NULL;
 	Item profileCombinationItem;
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 
@@ -1838,12 +1811,12 @@ static uint32_t addValuesFromResult(
 		if (result->profileCombinationOffset != NULL_PROFILE_OFFSET) {
 			// Get the profile combination
 			DataReset(&profileCombinationItem.data);
-			profileCombination = 
+			/*profileCombination = 
 				(ProfileCombination*)dataSet->profileCombinations->get(
 				dataSet->profileCombinations,
 				result->profileCombinationOffset,
 				&profileCombinationItem,
-				exception);
+				exception);*/
 
 			if (profileCombination != NULL && EXCEPTION_OKAY) {
 				Component* component = (Component*)dataSet->componentsList.items[
@@ -1872,7 +1845,7 @@ static uint32_t addValuesFromResult(
 						profileCombination,
 						exception);
 				}
-				COLLECTION_RELEASE(dataSet->profileCombinations, &profileCombinationItem);
+				//COLLECTION_RELEASE(dataSet->profileCombinations, &profileCombinationItem);
 			}
 		}
 	}
@@ -1953,7 +1926,7 @@ static bool resultGetHasValidPropertyValueOffset(
 	fiftyoneDegreesException* exception) {
 	bool hasValidOffset = false;
 	Item item;
-	ProfileCombination *profileCombination;
+	ProfileCombination *profileCombination = NULL;
 	DataSetIpi *dataSet = (DataSetIpi*)results->b.dataSet;
 
 	// Work out the property index from the required property index.
@@ -1980,11 +1953,11 @@ static bool resultGetHasValidPropertyValueOffset(
 			// profile combination offset from the previous step
 			if (result->profileCombinationOffset != NULL_PROFILE_OFFSET) {
 				DataReset(&item.data);
-				profileCombination = dataSet->profileCombinations->get(
-					dataSet->profileCombinations,
-					result->profileCombinationOffset,
-					&item,
-					exception);
+				//profileCombination = dataSet->profileCombinations->get(
+				//	dataSet->profileCombinations,
+				//	result->profileCombinationOffset,
+				//	&item,
+				//	exception);
 
 				if (profileCombination != NULL && EXCEPTION_OKAY) {
 					componentIndex* indices;
@@ -2022,7 +1995,7 @@ static bool resultGetHasValidPropertyValueOffset(
 				else {
 					EXCEPTION_SET(CORRUPT_DATA);
 				}
-				COLLECTION_RELEASE(dataSet->profileCombinations, &item);
+				//COLLECTION_RELEASE(dataSet->profileCombinations, &item);
 			}
 		}
 	}
@@ -2540,7 +2513,7 @@ fiftyoneDegreesIpiGetNetworkIdFromResult(
 	size_t charactersAdded = 0;
 	bool sufficientSpace = true;
 	fiftyoneDegreesCombinationProfileIndex curCompProfileIndex = {-1, -1};
-	ProfileCombination* profileCombination;
+	ProfileCombination* profileCombination = NULL;
 	DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
 	
 	if (combProfileIndex.componentIndex >= 0 &&
@@ -2549,11 +2522,11 @@ fiftyoneDegreesIpiGetNetworkIdFromResult(
 	// profile combination offset from the previous step
 	if (result->profileCombinationOffset != NULL_PROFILE_OFFSET) {
 		DataReset(&profileCombinationItem.data);
-		profileCombination = dataSet->profileCombinations->get(
+		/*profileCombination = dataSet->profileCombinations->get(
 			dataSet->profileCombinations,
 			result->profileCombinationOffset,
 			&profileCombinationItem,
-			exception);
+			exception);*/
 		if (profileCombination != NULL && EXCEPTION_OKAY) {
 			componentIndex* index,* cur;
 			offsetPercentage* profiles;
@@ -2645,7 +2618,7 @@ fiftyoneDegreesIpiGetNetworkIdFromResult(
 					}
 				}
 			}
-			COLLECTION_RELEASE(dataSet->profileCombinations, &profileCombinationItem);
+			//COLLECTION_RELEASE(dataSet->profileCombinations, &profileCombinationItem);
 		}
 	}
 	else {

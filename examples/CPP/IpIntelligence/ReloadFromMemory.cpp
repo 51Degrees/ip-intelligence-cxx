@@ -115,7 +115,7 @@ namespace FiftyoneDegrees {
 				 * IP Addresses to process
 				 */
 				ReloadFromMemory(
-					byte* data,
+					::byte* data,
 					long length,
 					string ipAddressFilePath,
 					ConfigIpi *config)
@@ -173,7 +173,7 @@ namespace FiftyoneDegrees {
 
 			private:
 				string ipAddressFilePath;
-				byte *data;
+				::byte *data;
 				long length;
 			};
 		}

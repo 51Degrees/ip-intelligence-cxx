@@ -35,7 +35,7 @@ namespace FiftyoneDegrees {
 				 * @param length of the data in bytes
 				 * @param config to configure the engine with
 				 */
-				ExampleBase(byte *data, long length, ConfigIpi *config);
+				ExampleBase(::byte *data, long length, ConfigIpi *config);
 				
 				/**
 				 * Construct a new instance of the example to be run using the

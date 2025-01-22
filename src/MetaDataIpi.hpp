@@ -68,7 +68,7 @@ namespace FiftyoneDegrees {
 			 * @{
 			 */
 
-			Collection<byte, ComponentMetaData>* getComponents() const;
+			Collection<::byte, ComponentMetaData>* getComponents() const;
 
 			Collection<string, PropertyMetaData>* getProperties() const;
 

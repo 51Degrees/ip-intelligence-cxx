@@ -36,7 +36,7 @@ MetaDataIpi::MetaDataIpi(
 MetaDataIpi::~MetaDataIpi() {
 }
 
-Collection<byte, ComponentMetaData>* MetaDataIpi::getComponents() const
+Collection<::byte, ComponentMetaData>* MetaDataIpi::getComponents() const
 {
 	return new ComponentMetaDataCollectionIpi(manager.get());
 }
@@ -75,7 +75,7 @@ MetaDataIpi::getValuesForProfile(
 ComponentMetaData* MetaDataIpi::getComponentForProfile(
 	ProfileMetaData *profile) const {
 	ComponentMetaData *result = nullptr;
-	Collection<byte, ComponentMetaData> *components = getComponents();
+	Collection<::byte, ComponentMetaData> *components = getComponents();
 	if (components != nullptr) {
 		result = components->getByKey(profile->getComponentId());
 		delete components;
@@ -86,7 +86,7 @@ ComponentMetaData* MetaDataIpi::getComponentForProfile(
 ComponentMetaData* MetaDataIpi::getComponentForProperty(
 	PropertyMetaData *property) const {
 	ComponentMetaData *result = nullptr;
-	Collection<byte, ComponentMetaData> *components = getComponents();
+	Collection<::byte, ComponentMetaData> *components = getComponents();
 	if (components != nullptr) {
 		result = components->getByKey(property->getComponentId());
 		delete components;
