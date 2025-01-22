@@ -69,7 +69,9 @@ foreach (api "IP-Intelligence")
 					target_link_libraries(${name} fiftyone-${lowerapi}-cxx)
 				elseif("${langext}" STREQUAL "c")
 					MESSAGE("-- Found C example '${name}'")
-					add_executable(${name} ${file})
+					add_executable(${name} ${file}
+					${CMAKE_CURRENT_LIST_DIR}/examples/${upperlangext}/${EXAMPLES_FOLDER}/ExampleBase.c
+					${CMAKE_CURRENT_LIST_DIR}/examples/${upperlangext}/${EXAMPLES_FOLDER}/ExampleBase.h)
 					target_link_libraries(${name} fiftyone-${lowerapi}-c)
 				endif()
 				set_target_properties(${name}

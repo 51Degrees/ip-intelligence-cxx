@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 #endif
-#include "../../../src/hash/fiftyone.h"
+#include "../../../src/fiftyone.h"
 
 #ifdef _MSC_VER
 #define TIMER_CREATE double start, end
@@ -64,7 +64,7 @@ typedef struct fiftyoneDegrees_example_parameters_t{
     char *evidenceFilePath; /**< Path to a evidence file */
     char *outputFilePath; /**< Path to an output file */
     char *propertiesString; /**< Required properties string */
-    fiftyoneDegreesConfigHash *config; /**< Hash Configuration */
+    fiftyoneDegreesConfigIpi *config; /**< IPI Configuration */
     uint16_t numberOfThreads; /**< Concurrent threads */
     int iterations; /**< Count of evidence per thread */
     FILE* output; /**< Output target for the example */
@@ -85,7 +85,7 @@ typedef void (*fiftyoneDegreesExampleRunPtr)(
  * @param config configuration
  */
 EXTERNAL const char* fiftyoneDegreesExampleGetConfigName(
-    fiftyoneDegreesConfigHash config);
+    fiftyoneDegreesConfigIpi config);
 
 /**
  * Function that perform memory check on example function to run. This function
@@ -102,6 +102,6 @@ EXTERNAL void fiftyoneDegreesExampleMemCheck(
  * @param dataset pointer to the dataset structure
  */
 EXTERNAL void fiftyoneDegreesExampleCheckDataFile(
-    fiftyoneDegreesDataSetHash *dataset);
+    fiftyoneDegreesDataSetIpi *dataset);
 
 #endif

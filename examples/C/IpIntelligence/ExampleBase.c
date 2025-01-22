@@ -21,28 +21,28 @@
  * ********************************************************************* */
 
 #include "ExampleBase.h"
-#include "../../../src/hash/fiftyone.h"
+#include "../../../src/fiftyone.h"
 #include <string.h>
 
-#define CONFIG_EQUALS(h) memcmp(&config, &h, sizeof(ConfigHash)) == 0
+#define CONFIG_EQUALS(h) memcmp(&config, &h, sizeof(ConfigIpi)) == 0
 
-const char* fiftyoneDegreesExampleGetConfigName(ConfigHash config) {
-	if (CONFIG_EQUALS(HashInMemoryConfig)) {
+const char* fiftyoneDegreesExampleGetConfigName(ConfigIpi config) {
+	if (CONFIG_EQUALS(IpiInMemoryConfig)) {
 		return "InMemory";
 	}
-	if (CONFIG_EQUALS(HashHighPerformanceConfig)) {
+	if (CONFIG_EQUALS(IpiHighPerformanceConfig)) {
 		return "HighPerformance";
 	}
-	if (CONFIG_EQUALS(HashLowMemoryConfig)) {
+	if (CONFIG_EQUALS(IpiLowMemoryConfig)) {
 		return "LowMemory";
 	}
-	if (CONFIG_EQUALS(HashBalancedConfig)) {
+	if (CONFIG_EQUALS(IpiBalancedConfig)) {
 		return "Balanced";
 	}
-	if (CONFIG_EQUALS(HashBalancedTempConfig)) {
+	if (CONFIG_EQUALS(IpiBalancedTempConfig)) {
 		return "BalancedTemp";
 	}
-	if (CONFIG_EQUALS(fiftyoneDegreesHashSingleLoadedConfig)) {
+	if (CONFIG_EQUALS(fiftyoneDegreesIpiSingleLoadedConfig)) {
 		return "SingleLoaded";
 	}
 	return "Unknown";
@@ -83,7 +83,7 @@ void fiftyoneDegreesExampleMemCheck(
 }
 
 void fiftyoneDegreesExampleCheckDataFile(
-	fiftyoneDegreesDataSetHash *dataset) {
+	fiftyoneDegreesDataSetIpi *dataset) {
 	Item item;
 	DataReset(&item.data);
 
