@@ -459,7 +459,7 @@ int main(int argc, char* argv[]) {
 	fiftyoneDegreesIpiReloadFromMemoryRun(
 		dataFilePath,
 		ipAddressFilePath,
-		argc > 3 ? argv[3] : "networkname,coordinate",
+		argc > 3 ? argv[3] : "coordinate",
 		CONFIG);
 
 #ifdef _DEBUG
