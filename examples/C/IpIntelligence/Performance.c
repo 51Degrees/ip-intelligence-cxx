@@ -570,11 +570,11 @@ void executeBenchmark(
 	TIMER_END;
 	state->startUpMillis = TIMER_ELAPSED;
 
-	// // Check data file
-	// DataSetHash* dataset = DataSetHashGet(&state->manager);
-	// state->availableProperties = dataset->b.b.available->count;
-	// fiftyoneDegreesExampleCheckDataFile(dataset);
-	// DataSetHashRelease(dataset);
+	// Check data file
+	DataSetIpi* dataset = DataSetIpiGet(&state->manager);
+	state->availableProperties = dataset->b.b.available->count;
+	fiftyoneDegreesExampleCheckDataFile(dataset);
+	DataSetIpiRelease(dataset);
 
 	// run the benchmarks twice, once to warm up any caches
 	fprintf(state->output, "Warming up\n");
@@ -733,6 +733,11 @@ void fiftyoneDegreesIpiPerformance(
 		// evaluation for core device detection.
 		performanceConfig config = performanceConfigs[i];
 		//config.config->b.processSpecialEvidence = false;
+		{
+			// IGNORE FILE READING ERROR (allocated size mismatch)
+			// TODO: Remove this section
+			config.config->b.allInMemory = false;
+		}
 
 		if (CollectionGetIsMemoryOnly() == false ||
 			config.config->b.allInMemory == true) {

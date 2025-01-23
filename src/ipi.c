@@ -1871,18 +1871,7 @@ static ProfilePercentage* getValuesFromResult(
 	return results->values.items;
 }
 
-// static char fakeValueInFakeProfile[] = "\27\0fake-value-in-fake-profile";
-// static const fiftyoneDegreesProfilePercentage fakeProfilePercentage = {
-// 	{
-// 		{
-// 			fakeValueInFakeProfile,
-// 		   sizeof(fakeValueInFakeProfile),
-// 		   sizeof(fakeValueInFakeProfile),
-// 		},
-// 		NULL,
-// 		NULL,
-// 	}
-// };
+static char fakeValueInFakeProfile[] = "\x1C\0fake-value-in-fake-profile";
 
 const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	fiftyoneDegreesResultsIpi* results,
@@ -1892,16 +1881,54 @@ const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	DataSetIpi* dataSet;
 	ProfilePercentage* firstValue = NULL;
 
-	// {
-	// 	// FAKE RESULTS
-	// 	extendIpiList(&results->values, 4);
-	// 	addIpiListItem(&results->values, &fakeProfilePercentage);
-	// 	return &fakeProfilePercentage;
-	// }
-
-
 	// Ensure any previous uses of the results to get values are released.
 	resultsIpiRelease(results);
+
+	{
+		// FAKE RESULTS
+		// TODO: Remove this section
+		fiftyoneDegreesMemoryReader reader = {
+			fakeValueInFakeProfile,
+			fakeValueInFakeProfile,
+			(byte*)fakeValueInFakeProfile + sizeof(fakeValueInFakeProfile),
+			sizeof(fakeValueInFakeProfile),
+		};
+		fiftyoneDegreesCollectionHeader const h = {
+			0,
+			sizeof(fakeValueInFakeProfile),
+			1,
+		};
+		Collection * const q = CollectionCreateFromMemory(&reader, h);
+
+		fiftyoneDegreesProfilePercentage * const fakeProfile =
+			Malloc(sizeof(ProfilePercentage));
+
+		union {
+			uint32_t x;
+			uint8_t b[4];
+		} endianCheck;
+		endianCheck.x = 1;
+
+		// set profile percentage to 0.5f
+		fakeProfile->percentage.value[0] = 0;
+		fakeProfile->percentage.value[1] = 0;
+		fakeProfile->percentage.value[2] = 0;
+		fakeProfile->percentage.value[3] = 0x3F;
+
+		// Initialise the item ready to store data from the collection
+		fiftyoneDegreesDataReset(&(fakeProfile->item.data));
+
+		// Get a pointer to the value from the collection
+		byte *valuePtr = q->get(
+		    q,
+		    0,
+		    &(fakeProfile->item),
+		    exception);
+
+		extendIpiList(&results->values, 4);
+		addIpiListItem(&results->values, fakeProfile);
+		return fakeProfile;
+	}
 
 	dataSet = (DataSetIpi*)results->b.dataSet;
 
@@ -2416,20 +2443,6 @@ size_t fiftyoneDegreesResultsIpiGetValuesString(
 	int requiredPropertyIndex = PropertiesGetRequiredPropertyIndexFromName(
 		dataSet->b.b.available,
 		propertyName);
-
-	{
-		// FAKE RESULT OUTPUT
-		StringBuilder builder = { buffer, bufferLength };
-		StringBuilderInit(&builder);
-		const char * outData = "fake-value";
-		StringBuilderAddChars(&builder, outData, strlen(outData));
-		StringBuilderAddChar(&builder, ' ');
-		StringBuilderAddChar(&builder, '(');
-		StringBuilderAddChars(&builder, propertyName, strlen(propertyName));
-		StringBuilderAddChar(&builder, ')');
-		StringBuilderComplete(&builder);
-		return builder.added;
-	}
 
 	if (requiredPropertyIndex >= 0) {
 		charactersAdded = fiftyoneDegreesResultsIpiGetValuesStringInternal(
