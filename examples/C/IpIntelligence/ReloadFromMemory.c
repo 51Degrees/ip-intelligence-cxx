@@ -121,6 +121,7 @@ Failed to reload '0' times.
 #endif
 #endif
 
+#include "ExampleBase.h"
 #include "../../../src/common-cxx/textfile.h"
 #include "../../../src/ipi.h"
 #include "../../../src/fiftyone.h"
@@ -237,18 +238,20 @@ static void executeTest(const char *ipAddress, void *state) {
 }
 
 static void runRequestsSingle(sharedState *state) {
-	char ipAddress[500] = "";
 	sharedState *shared = (sharedState*)state;
 	threadState thread;
 	thread.hashCode = 0;
 	thread.manager = shared->manager;
-	TextFileIterate(
-		shared->ipAddressFilePath,
-		ipAddress,
-		sizeof(ipAddress),
-		&thread,
-		executeTest);
-	printf("Finished with hashcode '%lu'\r\n", thread.hashCode);
+
+	const uint32_t ipsCount = fiftyoneDegreesIterateFakeIPv4s(
+		0x00000000U,
+		0xFFFFFFFFU,
+		0x000003FFU,
+		executeTest,
+		&thread);
+
+	printf("Finished '%lu' addresses with hash code '%lu'\r\n",
+		ipsCount, thread.hashCode);
 }
 
 static void runRequestsMulti(void *state) {
