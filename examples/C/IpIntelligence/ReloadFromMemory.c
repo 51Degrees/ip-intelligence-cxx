@@ -251,7 +251,7 @@ static void runRequestsSingle(sharedState *state) {
 		&thread);
 
 	printf("Finished '%lu' addresses with hash code '%lu'\r\n",
-		ipsCount, thread.hashCode);
+		(unsigned long)ipsCount, (unsigned long)thread.hashCode);
 }
 
 static void runRequestsMulti(void *state) {
