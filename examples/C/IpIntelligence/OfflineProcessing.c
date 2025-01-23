@@ -291,7 +291,6 @@ void fiftyoneDegreesOfflineProcessingRun(
 
 	// Set concurrency to ensure sufficient shared resources available.
 	config.ipRoots.concurrency =
-		config.ipNodes.concurrency =
 		config.profiles.concurrency =
 		config.profileOffsets.concurrency =
 		config.values.concurrency =

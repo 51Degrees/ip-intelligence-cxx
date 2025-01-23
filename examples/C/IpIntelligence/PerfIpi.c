@@ -292,8 +292,10 @@ static void yamlCallback(
 	const YamlCallbackState * const state =
 		(const YamlCallbackState *)callbackState;
 	for (uint16_t i = 0; i < size; i++) {
-		size_t const length = (state->bufferLength - 1 < pairs[i].valueLength
-			? state->bufferLength - 1 : pairs[i].valueLength);
+		const size_t writeableBufferLength = (state->bufferLength > 0
+			? (size_t)(state->bufferLength - 1) : 0);
+		size_t const length = (writeableBufferLength < pairs[i].valueLength
+			? writeableBufferLength : pairs[i].valueLength);
 		memcpy(state->ipAddressBuffer, pairs[i].value, length);
 		state->ipAddressBuffer[length] = '\0';
 		state->callback(state->ipAddressBuffer, state->state);
@@ -582,7 +584,6 @@ void fiftyoneDegreesPerfIpiRun(
 
 	// Set concurrency to ensure sufficient shared resources available.
 	config.ipRoots.concurrency =
-		config.ipNodes.concurrency =
 		config.profiles.concurrency =
 		config.profileOffsets.concurrency =
 		config.values.concurrency =

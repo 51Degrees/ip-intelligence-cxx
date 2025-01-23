@@ -60,7 +60,7 @@ void
 IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<string> &values) {
     EXCEPTION_CREATE;
 	uint32_t i;
-	ProfilePercentage *valuesItems;
+	const ProfilePercentage *valuesItems;
 	fiftyoneDegreesPropertyValueType valueType;
 
     // We should not have any undefined data type in the data file
@@ -160,7 +160,7 @@ Common::Value<fiftyoneDegreesCoordinate>
 IpIntelligence::ResultsIpi::getValueAsCoordinate(
     int requiredPropertyIndex) {
     EXCEPTION_CREATE;
-    ProfilePercentage *valuesItems;
+    const ProfilePercentage *valuesItems;
     Common::Value<fiftyoneDegreesCoordinate> result;
     if (!(hasValuesInternal(requiredPropertyIndex)))
     {
@@ -231,7 +231,7 @@ IpIntelligence::ResultsIpi::getValueAsCoordinate(
 Common::Value<IpIntelligence::IpAddress>
 IpIntelligence::ResultsIpi::getValueAsIpAddress(int requiredPropertyIndex) {
     EXCEPTION_CREATE;
-    ProfilePercentage *valuesItems;
+    const ProfilePercentage *valuesItems;
     Common::Value<IpAddress> result;
     if (!(hasValuesInternal(requiredPropertyIndex)))
     {
@@ -353,7 +353,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedBoolList(
     int requiredPropertyIndex) {
     EXCEPTION_CREATE;
     uint32_t i;
-    ProfilePercentage *valuesItems;
+    const ProfilePercentage *valuesItems;
     Common::Value<vector<WeightedValue<bool>>> result;
     vector<WeightedValue<bool>> values;
     if (!(hasValuesInternal(requiredPropertyIndex)))
@@ -428,7 +428,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
     int requiredPropertyIndex) {
     EXCEPTION_CREATE;
     uint32_t i;
-    ProfilePercentage *valuesItems;
+    const ProfilePercentage *valuesItems;
     Common::Value<vector<WeightedValue<string>>> result;
     vector<WeightedValue<string>> values;
     if (!(hasValuesInternal(requiredPropertyIndex)))
@@ -522,7 +522,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedIntegerList(
     int requiredPropertyIndex) {
     EXCEPTION_CREATE;
     uint32_t i;
-    ProfilePercentage *valuesItems;
+    const ProfilePercentage *valuesItems;
     Common::Value<vector<WeightedValue<int>>> result;
     vector<WeightedValue<int>> values;
     if (!(hasValuesInternal(requiredPropertyIndex)))
@@ -598,7 +598,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedDoubleList(
     int requiredPropertyIndex) {
     EXCEPTION_CREATE;
     uint32_t i;
-    ProfilePercentage *valuesItems;
+    const ProfilePercentage *valuesItems;
     Common::Value<vector<WeightedValue<double>>> result;
     vector<WeightedValue<double>> values;
     if (!(hasValuesInternal(requiredPropertyIndex)))

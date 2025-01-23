@@ -173,7 +173,7 @@ static unsigned long generateHash(unsigned char* value) {
  */
 static unsigned long getHashCode(ResultsIpi* results) {
 	EXCEPTION_CREATE;
-	ProfilePercentage* valueItem;
+	const ProfilePercentage* valueItem;
 	unsigned long hashCode = 0;
 	uint32_t requiredPropertyIndex;
 	const char* valueName;
@@ -352,7 +352,6 @@ void fiftyoneDegreesIpiReloadFromFileRun(
 
 	// Set concurrency to ensure sufficient shared resources available.
 	config.ipRoots.concurrency =
-		config.ipNodes.concurrency =
 		config.components.concurrency =
 		config.properties.concurrency =
 		config.profiles.concurrency =

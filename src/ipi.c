@@ -326,39 +326,19 @@ static void setResultFromIpAddress(
 	long rangeOffset = -1;
 	Item item;
 	DataReset(&item.data);
-	switch (result->targetIpAddress.type) {
-	case IP_TYPE_IPV4:
-		rangeOffset = CollectionBinarySearch(
-			dataSet->ipRoots,
-			&item,
-			0,
-			CollectionGetCount(dataSet->ipRoots) - 1,
-			(void*)&result->targetIpAddress,
-			compareToIpv4Range,
-			exception);
-		if (rangeOffset >= 0 && EXCEPTION_OKAY) {
-			result->profileCombinationOffset = 
-				((Ipv4Range *)item.data.ptr)->profileCombinationOffset;
-		}
-		COLLECTION_RELEASE(dataSet->ipRoots, &item);
-		break;
-	case IP_TYPE_IPV6:
-	default:
-		rangeOffset = CollectionBinarySearch(
-			dataSet->ipNodes,
-			&item,
-			0,
-			CollectionGetCount(dataSet->ipNodes) - 1,
-			(void*)&result->targetIpAddress,
-			compareToIpv6Range,
-			exception);
-		if (rangeOffset >= 0 && EXCEPTION_OKAY) {
-			result->profileCombinationOffset = 
-				((Ipv6Range *)item.data.ptr)->profileCombinationOffset;
-		}
-		COLLECTION_RELEASE(dataSet->ipNodes, &item);
-		break;
+	rangeOffset = CollectionBinarySearch(
+		dataSet->ipRoots,
+		&item,
+		0,
+		CollectionGetCount(dataSet->ipRoots) - 1,
+		(void*)&result->targetIpAddress,
+		compareToIpv4Range,
+		exception);
+	if (rangeOffset >= 0 && EXCEPTION_OKAY) {
+		result->profileCombinationOffset =
+			((Ipv4Range *)item.data.ptr)->profileCombinationOffset;
 	}
+	COLLECTION_RELEASE(dataSet->ipRoots, &item);
 }
 
 /**
@@ -372,7 +352,8 @@ static void resetDataSet(DataSetIpi* dataSet) {
 	dataSet->components = NULL;
 	dataSet->maps = NULL;
 	dataSet->ipRoots = NULL;
-	dataSet->ipNodes = NULL;
+	dataSet->componentGraphs = NULL;
+	dataSet->profileGroups = NULL;
 	dataSet->profileOffsets = NULL;
 	dataSet->profiles = NULL;
 	dataSet->properties = NULL;
@@ -396,8 +377,9 @@ static void freeDataSet(void* dataSetPtr) {
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->values);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->profiles);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->ipRoots);
-	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->ipNodes);
+	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->componentGraphs);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->profileOffsets);
+	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->profileGroups);
 
 	// Finally free the memory used by the resource itself as this is always
 	// allocated within the IP Intelligence init manager method.
@@ -724,11 +706,14 @@ static StatusCode initWithMemory(
 	COLLECTION_CREATE_MEMORY(profiles)
 	*(uint32_t*)(&dataSet->header.profiles.count) = profileCount;
 
-	COLLECTION_CREATE_MEMORY(ipRoots);
-	COLLECTION_CREATE_MEMORY(ipNodes);
+	COLLECTION_CREATE_MEMORY(componentGraphs);
 
 	COLLECTION_CREATE_MEMORY(profileGroups);
 	COLLECTION_CREATE_MEMORY(profileOffsets);
+
+#ifndef NO_51_IP_ROOTS_HEADER_IN_IPI_DATA_FILE
+	COLLECTION_CREATE_MEMORY(ipRoots);
+#endif
 
 	/* Check that the current pointer equals the last byte */
 	if (reader->lastByte != reader->current) {
@@ -856,17 +841,21 @@ static StatusCode readDataSetFromFile(
 
 	COLLECTION_CREATE_FILE(maps, CollectionReadFileFixed);
 	COLLECTION_CREATE_FILE(properties, CollectionReadFileFixed);
-	COLLECTION_CREATE_FILE(values, CollectionReadFileFixed);
+	// COLLECTION_CREATE_FILE(values, CollectionReadFileFixed);
 
 	uint32_t profileCount = dataSet->header.profiles.count;
 	*(uint32_t*)(&dataSet->header.profiles.count) = 0;
 	COLLECTION_CREATE_FILE(profiles, fiftyoneDegreesProfileReadFromFile);
 	*(uint32_t*)(&dataSet->header.profiles.count) = profileCount;
 
-	COLLECTION_CREATE_FILE(ipRoots, CollectionReadFileFixed);
-	COLLECTION_CREATE_FILE(ipNodes, CollectionReadFileFixed);
+	COLLECTION_CREATE_FILE(componentGraphs, CollectionReadFileFixed);
 
+	COLLECTION_CREATE_FILE(profileGroups, CollectionReadFileFixed);
 	COLLECTION_CREATE_FILE(profileOffsets, CollectionReadFileFixed);
+
+#ifndef NO_51_IP_ROOTS_HEADER_IN_IPI_DATA_FILE
+	COLLECTION_CREATE_FILE(ipRoots, CollectionReadFileFixed);
+#endif
 
 	initDataSetPost(dataSet, exception);
 
@@ -892,8 +881,9 @@ static uint16_t getMaxConcurrency(const ConfigIpi* config) {
 	MAX_CONCURRENCY(values);
 	MAX_CONCURRENCY(profiles);
 	MAX_CONCURRENCY(ipRoots);
-	MAX_CONCURRENCY(ipNodes);
+	MAX_CONCURRENCY(componentGraphs);
 	MAX_CONCURRENCY(profileOffsets);
+	MAX_CONCURRENCY(profileGroups);
 	return concurrency;
 }
 
@@ -1327,8 +1317,8 @@ static void extendIpiList(
 }
 
 static void addIpiListItem(
-	fiftyoneDegreesIpiList* list,
-	fiftyoneDegreesProfilePercentage* item) {
+	fiftyoneDegreesIpiList* const list,
+	const fiftyoneDegreesProfilePercentage* const item) {
 	assert(list->count < list->capacity);
 	assert(item->item.collection != NULL);
 	list->items[list->count++] = *item;
@@ -1436,6 +1426,11 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 
 	// TODO: Fake the processing of the IP address and just set the results
 	// to fixed profiles.
+	{
+		results->items[0].profileCombinationOffset = 0;
+		return;
+	}
+
 	setResultFromIpAddress(
 		&results->items[0],
 		dataSet,
@@ -1481,6 +1476,7 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 		break;
 	}
+
 	// Free parsed IP address
 	Free(ip);
 }
@@ -1875,13 +1871,34 @@ static ProfilePercentage* getValuesFromResult(
 	return results->values.items;
 }
 
-fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
+// static char fakeValueInFakeProfile[] = "\27\0fake-value-in-fake-profile";
+// static const fiftyoneDegreesProfilePercentage fakeProfilePercentage = {
+// 	{
+// 		{
+// 			fakeValueInFakeProfile,
+// 		   sizeof(fakeValueInFakeProfile),
+// 		   sizeof(fakeValueInFakeProfile),
+// 		},
+// 		NULL,
+// 		NULL,
+// 	}
+// };
+
+const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	fiftyoneDegreesResultsIpi* results,
 	int requiredPropertyIndex,
 	fiftyoneDegreesException* exception) {
 	Property* property;
 	DataSetIpi* dataSet;
 	ProfilePercentage* firstValue = NULL;
+
+	// {
+	// 	// FAKE RESULTS
+	// 	extendIpiList(&results->values, 4);
+	// 	addIpiListItem(&results->values, &fakeProfilePercentage);
+	// 	return &fakeProfilePercentage;
+	// }
+
 
 	// Ensure any previous uses of the results to get values are released.
 	resultsIpiRelease(results);
@@ -2144,7 +2161,7 @@ static size_t getIpv6RangeString(
 }
 
 static size_t getRangeString(
-	ProfilePercentage *profilePercentage,
+	const ProfilePercentage *profilePercentage,
 	uint32_t count,
 	fiftyoneDegreesIpType type,
 	char *buffer,
@@ -2200,7 +2217,7 @@ static size_t getRangeString(
 }
 
 static size_t getLocationString(
-	ProfilePercentage *profilePercentage,
+	const ProfilePercentage *profilePercentage,
 	uint32_t count,
 	char *buffer,
 	size_t bufferLength) {
@@ -2251,7 +2268,7 @@ static size_t getLocationString(
 }
 
 static size_t getNormalString(
-	ProfilePercentage *profilePercentage,
+	const ProfilePercentage *profilePercentage,
 	uint32_t count,
 	char *buffer,
 	size_t bufferLength,
@@ -2330,7 +2347,7 @@ static size_t fiftyoneDegreesResultsIpiGetValuesStringInternal(
 	size_t bufferLength,
 	const char* separator,
 	fiftyoneDegreesException* exception) {
-	ProfilePercentage *profilePercentage;
+	const ProfilePercentage *profilePercentage;
 	size_t charactersAdded = 0;
 	Item propertyItem;
 	Property *property;
@@ -2399,6 +2416,21 @@ size_t fiftyoneDegreesResultsIpiGetValuesString(
 	int requiredPropertyIndex = PropertiesGetRequiredPropertyIndexFromName(
 		dataSet->b.b.available,
 		propertyName);
+
+	{
+		// FAKE RESULT OUTPUT
+		StringBuilder builder = { buffer, bufferLength };
+		StringBuilderInit(&builder);
+		const char * outData = "fake-value";
+		StringBuilderAddChars(&builder, outData, strlen(outData));
+		StringBuilderAddChar(&builder, ' ');
+		StringBuilderAddChar(&builder, '(');
+		StringBuilderAddChars(&builder, propertyName, strlen(propertyName));
+		StringBuilderAddChar(&builder, ')');
+		StringBuilderComplete(&builder);
+		return builder.added;
+	}
+
 	if (requiredPropertyIndex >= 0) {
 		charactersAdded = fiftyoneDegreesResultsIpiGetValuesStringInternal(
 			results,
@@ -2674,7 +2706,7 @@ fiftyoneDegreesIpiGetNetworkIdFromResults(
 }
 
 size_t fiftyoneDegreesIpiGetIpAddressAsString(
-	fiftyoneDegreesCollectionItem *item,
+	const fiftyoneDegreesCollectionItem *item,
 	fiftyoneDegreesIpType type,
 	char *buffer,
 	uint32_t bufferLength,

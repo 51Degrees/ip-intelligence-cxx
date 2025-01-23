@@ -385,8 +385,8 @@ void runPerformanceThread(void* state) {
 		// ResultsHashFromEvidence(results, evidence, exception);
 		ResultsIpiFromIpAddressString(
 			results,
-			evidence->items[0].item.value,
-			evidence->items[0].item.valueLength,
+			evidence->items[0].parsedValue,
+			evidence->items[0].parsedLength,
 			exception);
 		EXCEPTION_THROW;
 
@@ -528,7 +528,7 @@ void executeBenchmark(
 
 	PropertiesRequired properties = PropertiesDefault;
 	if (config.allProperties == false) {
-		properties.string = "IsMobile";
+		properties.string = "networkname,coordinate";
 	}
 
 	// // Multi graph operation is being deprecated. There is only one graph.
@@ -542,7 +542,6 @@ void executeBenchmark(
 	dataSetConfig.values.concurrency = state->numberOfThreads;
 	dataSetConfig.profiles.concurrency = state->numberOfThreads;
 	dataSetConfig.ipRoots.concurrency = state->numberOfThreads;
-	dataSetConfig.ipNodes.concurrency = state->numberOfThreads;
 	dataSetConfig.profileGroups.concurrency = state->numberOfThreads;
 	dataSetConfig.profileOffsets.concurrency = state->numberOfThreads;
 
@@ -637,7 +636,7 @@ void freeSharedStrings(performanceState* state) {
  * @param iterations number of evidence pairs to include
  * @param resultsOutput file pointer to print results file to
  */
-void fiftyoneDegreesHashPerformance(
+void fiftyoneDegreesIpiPerformance(
 	const char* dataFilePath,
 	const char* evidenceFilePath,
 	uint16_t numberOfThreads,
@@ -774,7 +773,7 @@ void fiftyoneDegreesHashPerformance(
  */
 void fiftyoneDegreesExampleCPerformanceRun(ExampleParameters* params) {
 	// Call the actual function.
-	fiftyoneDegreesHashPerformance(
+	fiftyoneDegreesIpiPerformance(
 		params->dataFilePath,
 		params->evidenceFilePath,
 		params->numberOfThreads,

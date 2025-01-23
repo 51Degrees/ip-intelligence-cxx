@@ -223,7 +223,6 @@ void memReloadRun(
 
 	// Set concurrency to ensure sufficient shared resources available.
 	config.ipRoots.concurrency =
-		config.ipNodes.concurrency =
 		config.components.concurrency =
 		config.properties.concurrency =
 		config.profiles.concurrency =

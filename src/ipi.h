@@ -252,10 +252,7 @@ typedef struct fiftyone_degrees_ipi_dataset_header_t {
 												  values collection */
 	const fiftyoneDegreesCollectionHeader profiles; /**< Size and location of
 													the profiles collection */
-	const fiftyoneDegreesCollectionHeader ipRoots; /**< Roots collection config
-												   where there is one record for 
-												   each component and IP version of the structure 
-												   fiftyoneDegreesIpiComponentGraph */
+	const fiftyoneDegreesCollectionHeader componentGraphs;
 	const fiftyoneDegreesCollectionHeader profileGroups; /**< Size and
 														  location of the
 														  profile group offsets
@@ -264,6 +261,13 @@ typedef struct fiftyone_degrees_ipi_dataset_header_t {
 														  location of the
 														  profile offsets
 														  collection */
+#define NO_51_IP_ROOTS_HEADER_IN_IPI_DATA_FILE 1
+#ifndef NO_51_IP_ROOTS_HEADER_IN_IPI_DATA_FILE
+	const fiftyoneDegreesCollectionHeader ipRoots; /**< Roots collection config
+												   where there is one record for
+												   each component and IP version of the structure
+												   fiftyoneDegreesIpiComponentGraph */
+#endif
 } fiftyoneDegreesDataSetIpiHeader;
 #pragma pack(pop)
 
@@ -282,7 +286,7 @@ typedef struct fiftyone_degrees_config_ipi_t {
 	fiftyoneDegreesCollectionConfig profiles; /**< Profiles collection config 
 											  */
 	fiftyoneDegreesCollectionConfig ipRoots; /**< Roots collection config */
-	fiftyoneDegreesCollectionConfig ipNodes; /**< Nodes collection config */
+	fiftyoneDegreesCollectionConfig componentGraphs; /**< Nodes collection config */
 	fiftyoneDegreesCollectionConfig profileGroups; /**< profileGroups
 												   collection config */
 	fiftyoneDegreesCollectionConfig profileOffsets; /**< ProfileOffsets
@@ -324,7 +328,7 @@ typedef struct fiftyone_degrees_dataset_ipi_t {
 	fiftyoneDegreesCollection *values; /**< Collection data file values */
 	fiftyoneDegreesCollection *profiles; /**< Collection data file profiles */
 	fiftyoneDegreesCollection *ipRoots; /**< Collection data file ipv4Graph */
-	fiftyoneDegreesCollection *ipNodes; /**< Collection data file ipv6Graph */
+	fiftyoneDegreesCollection *componentGraphs; /**< Collection data file ipv6Graph */
 	fiftyoneDegreesCollection *profileGroups; /**< Collection of all profile 
 											  groups where more than one 
 											  profile is required with a weight
@@ -332,7 +336,7 @@ typedef struct fiftyone_degrees_dataset_ipi_t {
 	fiftyoneDegreesCollection *profileOffsets; /**< Collection of all offsets
 											   to profiles in the profiles
 											   collection */
-	bytes per node record
+	//bytes per node record
 
 } fiftyoneDegreesDataSetIpi;
 
@@ -846,7 +850,7 @@ EXTERNAL const char* fiftyoneDegreesResultsIpiGetNoValueReasonMessage(
  * exception occurs. See exceptions.h.
  * @return a pointer to the first value item 
  */
-EXTERNAL fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
+EXTERNAL const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	fiftyoneDegreesResultsIpi* results,
 	int requiredPropertyIndex,
 	fiftyoneDegreesException* exception);
@@ -984,7 +988,7 @@ EXTERNAL uint32_t fiftyoneDegreesIpiIterateProfilesForPropertyAndValue(
  * @return the number of characters added to the buffer
  */
 EXTERNAL size_t fiftyoneDegreesIpiGetIpAddressAsString(
-	fiftyoneDegreesCollectionItem *item,
+	const fiftyoneDegreesCollectionItem *item,
 	fiftyoneDegreesIpType type,
 	char *buffer,
 	uint32_t bufferLength,

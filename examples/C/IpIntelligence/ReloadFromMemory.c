@@ -186,7 +186,7 @@ static unsigned long generateHash(unsigned char *value) {
  */
 static unsigned long getHashCode(ResultsIpi *results) {
 	EXCEPTION_CREATE;
-	ProfilePercentage* valueItem;
+	const ProfilePercentage* valueItem;
 	unsigned long hashCode = 0;
 	uint32_t requiredPropertyIndex;
 	const char* valueName;

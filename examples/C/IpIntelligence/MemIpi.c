@@ -355,7 +355,6 @@ void fiftyoneDegreesMemIpiRun(
 
 	// Set concurrency to ensure sufficient shared resouces available.
 	config.ipRoots.concurrency =
-		config.ipNodes.concurrency =
 		config.profiles.concurrency =
 		config.profileOffsets.concurrency =
 		config.values.concurrency =

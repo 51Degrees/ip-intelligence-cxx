@@ -44,7 +44,6 @@ void ConfigIpi::setPerformanceFromExistingConfig(
 	config.values = existing->values;
 	config.profiles = existing->profiles;
 	config.ipRoots = existing->ipRoots;
-    config.ipNodes = existing->ipNodes;
 	config.profileOffsets = existing->profileOffsets;
 	config.maps = existing->maps;
 	config.components = existing->components;
@@ -109,7 +108,6 @@ void ConfigIpi::initCollectionConfig() {
 	values = CollectionConfig(&config.values);
 	profiles = CollectionConfig(&config.profiles);
 	ipRoots = CollectionConfig(&config.ipRoots);
-    ipNodes = CollectionConfig(&config.ipNodes);
 	profileOffsets = CollectionConfig(&config.profileOffsets);
 	maps = CollectionConfig(&config.maps);
 	components = CollectionConfig(&config.components);
