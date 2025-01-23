@@ -147,3 +147,30 @@ void fiftyoneDegreesExampleCheckDataFile(
 		COLLECTION_RELEASE(dataset->strings, &item);
 	}
 }
+
+uint32_t fiftyoneDegreesIterateFakeIPv4s(
+	uint32_t const rangeStart,
+	uint32_t const rangeEnd,
+	uint32_t const increment,
+	fiftyoneDegreesIpAddressHandlerPtr const ipAddressHandler,
+	void * const state) {
+
+	char buffer[16];
+	uint32_t count = 0;
+	for (uint64_t i = rangeStart; i <= rangeEnd; i += increment, ++count) {
+		{
+			StringBuilder builder = { buffer, sizeof(buffer) };
+			StringBuilderInit(&builder);
+			StringBuilderAddInteger(&builder, (uint8_t)((i >> 24) & 0xFF));
+			StringBuilderAddChar(&builder, '.');
+			StringBuilderAddInteger(&builder, (uint8_t)((i >> 16) & 0xFF));
+			StringBuilderAddChar(&builder, '.');
+			StringBuilderAddInteger(&builder, (uint8_t)((i >> 8) & 0xFF));
+			StringBuilderAddChar(&builder, '.');
+			StringBuilderAddInteger(&builder, (uint8_t)(i & 0xFF));
+			StringBuilderComplete(&builder);
+		}
+		ipAddressHandler(buffer, state);
+	}
+	return count;
+}

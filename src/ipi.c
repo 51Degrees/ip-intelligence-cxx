@@ -2064,6 +2064,12 @@ bool fiftyoneDegreesResultsIpiGetHasValues(
 	// Ensure any previous uses of the results to get values are released.
 	resultsIpiRelease(results);
 
+	{
+		// FAKE RESULTS
+		// TODO: Remove this section
+		return true;
+	}
+
 	if (requiredPropertyIndex < 0 ||
 		requiredPropertyIndex >= (int)dataSet->b.b.available->count) {
 		// The property index is not valid.

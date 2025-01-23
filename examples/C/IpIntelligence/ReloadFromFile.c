@@ -107,6 +107,7 @@ Failed to reload '0' times.
 #endif
 #endif
 
+#include "ExampleBase.h"
 #include "../../../src/common-cxx/textfile.h"
 #include "../../../src/ipi.h"
 #include "../../../src/fiftyone.h"
@@ -209,33 +210,32 @@ static void executeTest(const char* ipAddress, void* state) {
 	threadState* thread = (threadState*)state;
 	ResultsIpi* results = ResultsIpiCreate(
 		thread->manager);
-	EvidenceKeyValuePairArray* evidence = EvidenceCreate(1);
-	EvidenceAddString(
-		evidence,
-		FIFTYONE_DEGREES_EVIDENCE_QUERY,
-		"client-ip-51d",
-		ipAddress);
 	EXCEPTION_CREATE;
-	ResultsIpiFromEvidence(results, evidence, exception);
+	ResultsIpiFromIpAddressString(
+		results,
+		ipAddress,
+		strlen(ipAddress),
+		exception);
 	EXCEPTION_THROW;
 	thread->hashCode ^= getHashCode(results);
-	EvidenceFree(evidence);
 	ResultsIpiFree(results);
 }
 
 static void runRequestsSingle(sharedState* state) {
-	char ipAddress[500] = "";
-	sharedState* shared = (sharedState*)state;
+	sharedState* const shared = (sharedState*)state;
 	threadState thread;
 	thread.hashCode = 0;
 	thread.manager = shared->manager;
-	TextFileIterate(
-		shared->ipAddressFilePath,
-		ipAddress,
-		sizeof(ipAddress),
-		&thread,
-		executeTest);
-	printf("Finished with hash code '%lu'\r\n", thread.hashCode);
+
+	const uint32_t ipsCount = fiftyoneDegreesIterateFakeIPv4s(
+		0x00000000U,
+		0xFFFFFFFFU,
+		0x000003FFU,
+		executeTest,
+		&thread);
+
+	printf("Finished '%lu' addresses with hash code '%lu'\r\n",
+		ipsCount, thread.hashCode);
 }
 
 static void runRequestsMulti(void* state) {
@@ -440,7 +440,7 @@ int main(int argc, char* argv[]) {
 	fiftyoneDegreesIpiReloadFromFileRun(
 		dataFilePath,
 		ipAddressFilePath,
-		argc > 3 ? argv[3] : "networkname,coordinate",
+		argc > 3 ? argv[3] : "networkname",
 		CONFIG);
 
 #ifdef _DEBUG

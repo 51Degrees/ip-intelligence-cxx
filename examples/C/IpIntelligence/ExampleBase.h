@@ -78,7 +78,7 @@ typedef fiftyoneDegreesExampleParameters ExampleParameters;
  * @param param1 example parameters
  */
 typedef void (*fiftyoneDegreesExampleRunPtr)(
-    fiftyoneDegreesExampleParameters *);
+    fiftyoneDegreesExampleParameters *param1);
 
 /**
  * Gets the common name of the configuration as a string.
@@ -103,5 +103,26 @@ EXTERNAL void fiftyoneDegreesExampleMemCheck(
  */
 EXTERNAL void fiftyoneDegreesExampleCheckDataFile(
     fiftyoneDegreesDataSetIpi *dataset);
+
+/**
+ * Function pointer for generic function to be handle IP address.
+ * @param ipAddress IP address
+ * @param state callback-specific state
+ */
+typedef void (*fiftyoneDegreesIpAddressHandlerPtr)
+    (const char* ipAddress, void* state);
+
+/**
+ * Function that generates IP addresses and passes them to a callback.
+ * @param ipAddressHandler function pointer to IP address handler.
+ * @param state state to pass into callback.
+ */
+EXTERNAL uint32_t fiftyoneDegreesIterateFakeIPv4s(
+    uint32_t rangeStart,
+    uint32_t rangeEnd,
+    uint32_t increment,
+    fiftyoneDegreesIpAddressHandlerPtr ipAddressHandler,
+    void *state);
+
 
 #endif
