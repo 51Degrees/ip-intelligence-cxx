@@ -4,6 +4,9 @@ set (CMAKE_CXX_STANDARD 11)
 
 # Include the common API
 
+include(CMakeDependentOption)
+cmake_dependent_option(FIFTYONE_COMMON_CXX_BUILD_TESTING "" OFF "BUILD_TESTING" OFF)
+
 include(${CMAKE_CURRENT_LIST_DIR}/src/common-cxx/CMakeLists.txt NO_POLICY_SCOPE)
 
 project(51DegreesIpIntelligence VERSION 4.0.1 LANGUAGES CXX C)
