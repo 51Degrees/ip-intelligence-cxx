@@ -97,7 +97,8 @@ add_executable(IpiTests
 	${IPI_TEST_SRC} ${IPI_TEST_H}
 	${COMMON_TEST}/Base.cpp
 	${COMMON_TEST}/EngineTests.cpp
-	${COMMON_TEST}/ExampleTests.cpp)
+	${COMMON_TEST}/ExampleTests.cpp
+	${CMAKE_CURRENT_LIST_DIR}/examples/C/${EXAMPLES_FOLDER}/ExampleBase.c)
 target_link_libraries(IpiTests
     fiftyone-ip-intelligence-cxx
 	gtest_main)

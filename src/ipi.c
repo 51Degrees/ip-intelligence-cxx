@@ -1917,10 +1917,7 @@ const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 		endianCheck.x = 1;
 
 		// set profile percentage to 0.5f
-		fakeProfile->percentage.value[0] = 0;
-		fakeProfile->percentage.value[1] = 0;
-		fakeProfile->percentage.value[2] = 0;
-		fakeProfile->percentage.value[3] = 0x3F;
+		fakeProfile->percentage = FIFTYONE_DEGREES_NATIVE_TO_FLOAT(0.5f);
 
 		// Initialise the item ready to store data from the collection
 		fiftyoneDegreesDataReset(&(fakeProfile->item.data));

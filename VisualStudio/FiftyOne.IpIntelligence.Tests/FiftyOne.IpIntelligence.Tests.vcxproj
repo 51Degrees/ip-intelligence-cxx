@@ -39,6 +39,9 @@
     <ProjectReference Include="..\Examples\CPP\Meta Data\Meta Data.vcxproj">
       <Project>{fb4580bd-7ace-48c7-ba82-31e218758f58}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Examples\C\ExampleBase\ExampleBase.vcxproj">
+      <Project>{24a02087-1038-47c2-953e-de2ff5a520fb}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Examples\C\Find Profiles\Find Profiles.vcxproj">
       <Project>{c7554674-ac5e-4a29-97db-3ff11297d14b}</Project>
     </ProjectReference>
