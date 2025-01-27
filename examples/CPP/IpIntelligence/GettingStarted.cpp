@@ -158,7 +158,7 @@ namespace FiftyoneDegrees {
 							= ipv4Address;
 					results = engine->process(evidence);
 					Common::Value<vector<WeightedValue<string>>> ipv4Value
-						= results->getValuesAsWeightedStringList("CountryCode");
+						= results->getValuesAsWeightedStringList("networkname"); // TODO: Revert to CountryCode
 					for (WeightedValue<string> w : ipv4Value.getValue()) {
 						cout << "   Country Code: " <<
 							w.getValue() <<
@@ -173,7 +173,7 @@ namespace FiftyoneDegrees {
 							= ipv6Address;
 					results = engine->process(evidence);
 					Common::Value<vector<WeightedValue<string>>> ipv6Value
-						= results->getValuesAsWeightedStringList("CountryCode");
+						= results->getValuesAsWeightedStringList("networkname"); // TODO: Revert to CountryCode
 					for (WeightedValue<string> w : ipv6Value.getValue()) {
 						cout << "   Country Code: " <<
 							w.getValue() <<
