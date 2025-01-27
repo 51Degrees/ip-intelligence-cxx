@@ -56,6 +56,6 @@ public:
     ResultsIpi* process(
         unsigned char ipAddress[],
         long length,
-        fiftyoneDegreesEvidenceIpType type);
+        fiftyoneDegreesIpType type);
     ResultsBase* processBase(EvidenceBase *evidence);
 };
