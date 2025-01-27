@@ -1880,7 +1880,7 @@ static ProfilePercentage* getValuesFromResult(
 
 static char fakeValueInFakeProfile[] = "\x1C\0fake-value-in-fake-profile";
 static byte fakeCoordValue[] = {
-	0x09,
+	0x09, 0x00,
 	FIFTYONE_DEGREES_STRING_COORDINATE,
 	0x00, 0x00, 0x80, 0xBF, // -1.0
 	0x00, 0x00, 0x00, 0x41, //  8.0

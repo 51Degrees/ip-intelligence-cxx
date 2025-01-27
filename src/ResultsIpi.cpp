@@ -697,7 +697,7 @@ Common::Value<vector<WeightedValue<Coordinate>>>
             // Add the values in their original form to the result.
             for (i = 0; i < results->values.count; i++) {
                 WeightedValue<Coordinate> weightedCoordinate;
-                if (valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE) {
+                if (valueType == 9) { // TODO: Add to enum
                     auto const rawCoord =
                         reinterpret_cast<const String *>(valuesItems[i].item.data.ptr);
                     const Coordinate coordinate = {
