@@ -279,6 +279,9 @@ Common::ResultsBase* EngineIpi::processBase(
 
 void EngineIpi::initHttpHeaderKeys(fiftyoneDegreesHeaders *uniqueHeaders) {
 	if (!uniqueHeaders) {
+		// TODO: Ask Ben if these will actually arrive in data file
+		addKey("server.client-ip");
+		addKey("query.client-ip-51d");
 		return;
 	}
 	uint32_t i, p;
