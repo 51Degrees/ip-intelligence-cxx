@@ -30,6 +30,7 @@
 #include "WeightedValue.hpp"
 #include "common-cxx/IpAddress.hpp"
 #include "ipi.h"
+#include "common-cxx/fiftyone.h"
 
 using namespace FiftyoneDegrees::Common;
 
@@ -263,7 +264,39 @@ namespace FiftyoneDegrees {
 			 * @return a vector of weighted double values for the property
 			 */
 			Common::Value<vector<WeightedValue<double>>>
-                getValuesAsWeightedDoubleList(int requiredPropertyIndex);
+			getValuesAsWeightedDoubleList(int requiredPropertyIndex);
+
+			/**
+			 * Get a vector with all weighted coordinate representations of the
+			 * values associated with the required property name. If the name
+			 * is not valid an empty vector is returned.
+			 * @param propertyName pointer to a string containing the property
+			 * name
+			 * @return a vector of weighted coordinate values for the property
+			 */
+			Common::Value<vector<WeightedValue<Coordinate>>>
+				getValuesAsWeightedCoordinateList(const string *propertyName);
+
+			/**
+			 * Get a vector with all weighted coordinate representations of the
+			 * values associated with the required property name. If the name
+			 * is not valid an empty vector is returned.
+			 * @param propertyName pointer to a string containing the property
+			 * name
+			 * @return a vector of weighted coordinate values for the property
+			 */
+			Common::Value<vector<WeightedValue<Coordinate>>>
+				getValuesAsWeightedCoordinateList(const string &propertyName);
+
+			/**
+			 * Get a vector with all weighted coordinate representations of the
+			 * values associated with the required property index. If the index
+			 * is not valid an empty vector is returned.
+			 * @param requiredPropertyIndex in the required properties
+			 * @return a vector of weighted coordinate values for the property
+			 */
+			Common::Value<vector<WeightedValue<Coordinate>>>
+				getValuesAsWeightedCoordinateList(int requiredPropertyIndex);
 			
 			/**
 			 * Get a float pair representation of the value associated with the

@@ -647,6 +647,78 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedDoubleList(
     }
     return result;
 }
+Common::Value<vector<WeightedValue<Coordinate>>>
+IpIntelligence::ResultsIpi::getValuesAsWeightedCoordinateList(
+    const string *propertyName) {
+    return getValuesAsWeightedCoordinateList(
+        ResultsBase::getRequiredPropertyIndex(propertyName->c_str()));
+}
+
+Common::Value<vector<WeightedValue<Coordinate>>>
+IpIntelligence::ResultsIpi::getValuesAsWeightedCoordinateList(
+    const string &propertyName) {
+    return getValuesAsWeightedCoordinateList(
+        ResultsBase::getRequiredPropertyIndex(propertyName.c_str()));
+}
+
+Common::Value<vector<WeightedValue<Coordinate>>>
+    IpIntelligence::ResultsIpi::getValuesAsWeightedCoordinateList(
+        int requiredPropertyIndex) {
+    EXCEPTION_CREATE;
+    uint32_t i;
+    const ProfilePercentage *valuesItems;
+    Common::Value<vector<WeightedValue<Coordinate>>> result;
+    vector<WeightedValue<Coordinate>> values;
+    if (!(hasValuesInternal(requiredPropertyIndex)))
+    {
+        fiftyoneDegreesResultsNoValueReason reason =
+			getNoValueReasonInternal(requiredPropertyIndex);
+		result.setNoValueReason(
+			reason,
+			getNoValueMessageInternal(reason));
+    }
+    else {
+        fiftyoneDegreesPropertyValueType valueType =
+            getPropertyValueType(requiredPropertyIndex, exception);
+        if (EXCEPTION_OKAY) {
+            // Get a pointer to the first value item for the property.
+            valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
+            EXCEPTION_THROW;
+
+            if (valuesItems == NULL) {
+                // No pointer to values was returned.
+                throw NoValuesAvailableException();
+            }
+
+            // Set enough space in the vector for all the strings that will be
+            // inserted.
+            values.reserve(results->values.count);
+
+            // Add the values in their original form to the result.
+            for (i = 0; i < results->values.count; i++) {
+                WeightedValue<Coordinate> weightedCoordinate;
+                if (valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE) {
+                    auto const rawCoord =
+                        reinterpret_cast<const String *>(valuesItems[i].item.data.ptr);
+                    const Coordinate coordinate = {
+                        FLOAT_TO_NATIVE(rawCoord->trail.coordinate.lat),
+                        FLOAT_TO_NATIVE(rawCoord->trail.coordinate.lon),
+                    };
+                    weightedCoordinate.setValue(coordinate);
+                }
+                else {
+                    // Coordinate and IP address cannot be converted to double
+                    // so default to 0
+                    weightedCoordinate.setValue({0, 0});
+                }
+                weightedCoordinate.setWeight(FLOAT_TO_NATIVE(valuesItems[i].percentage));
+                values.push_back(weightedCoordinate);
+            }
+            result.setValue(values);
+        }
+    }
+    return result;
+}
 
 Common::Value<vector<WeightedValue<double>>>
 IpIntelligence::ResultsIpi::getValuesAsWeightedDoubleList(

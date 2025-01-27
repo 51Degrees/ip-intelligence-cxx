@@ -1879,6 +1879,14 @@ static ProfilePercentage* getValuesFromResult(
 }
 
 static char fakeValueInFakeProfile[] = "\x1C\0fake-value-in-fake-profile";
+static byte fakeCoordValue[] = {
+	0x09,
+	FIFTYONE_DEGREES_STRING_COORDINATE,
+	0x00, 0x00, 0x80, 0xBF, // -1.0
+	0x00, 0x00, 0x00, 0x41, //  8.0
+	0x00,
+};
+#define FAKE_PROFILE_PERCENTAGE_VALUE fakeCoordValue
 
 const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	fiftyoneDegreesResultsIpi* results,
@@ -1895,14 +1903,15 @@ const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 		// FAKE RESULTS
 		// TODO: Remove this section
 		fiftyoneDegreesMemoryReader reader = {
-			fakeValueInFakeProfile,
-			fakeValueInFakeProfile,
-			(byte*)fakeValueInFakeProfile + sizeof(fakeValueInFakeProfile),
-			sizeof(fakeValueInFakeProfile),
+			FAKE_PROFILE_PERCENTAGE_VALUE,
+			FAKE_PROFILE_PERCENTAGE_VALUE,
+			(byte*)FAKE_PROFILE_PERCENTAGE_VALUE
+			+ sizeof(FAKE_PROFILE_PERCENTAGE_VALUE),
+			sizeof(FAKE_PROFILE_PERCENTAGE_VALUE),
 		};
 		fiftyoneDegreesCollectionHeader const h = {
 			0,
-			sizeof(fakeValueInFakeProfile),
+			sizeof(FAKE_PROFILE_PERCENTAGE_VALUE),
 			1,
 		};
 		Collection * const q = CollectionCreateFromMemory(&reader, h);

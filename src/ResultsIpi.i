@@ -33,11 +33,13 @@
 %template(WeightedBoolListSwig) std::vector<WeightedValue<bool>>;
 %template(WeightedIntListSwig) std::vector<WeightedValue<int>>;
 %template(WeightedDoubleListSwig) std::vector<WeightedValue<double>>;
+%template(WeightedCoordinateListSwig) std::vector<WeightedValue<fiftyoneDegreesCoordinate>>;
 
 %template(WeightedStringListValueSwig) Value<std::vector<WeightedValue<std::string>>>;
 %template(WeightedBoolListValueSwig) Value<std::vector<WeightedValue<bool>>>;
 %template(WeightedIntListValueSwig) Value<std::vector<WeightedValue<int>>>;
 %template(WeightedDoubleListValueSwig) Value<std::vector<WeightedValue<double>>>;
+%template(WeightedCoordinateListValueSwig) Value<std::vector<WeightedValue<fiftyoneDegreesCoordinate>>>;
 %template(CoordinateValueSwig) Value<fiftyoneDegreesCoordinate>;
 %template(IpAddressValueSwig) Value<IpAddress>;
 
@@ -69,6 +71,11 @@ public:
     Value<std::vector<WeightedValue<double>>> getValuesAsWeightedDoubleList(
         const std::string &propertyName);
     Value<std::vector<WeightedValue<double>>> getValuesAsWeightedDoubleList(
+        int requiredPropertyIndex);
+
+    Value<std::vector<WeightedValue<fiftyoneDegreesCoordinate>>> getValuesAsWeightedCoordinateList(
+        const std::string &propertyName);
+    Value<std::vector<WeightedValue<fiftyoneDegreesCoordinate>>> getValuesAsWeightedCoordinateList(
         int requiredPropertyIndex);
 
     Value<fiftyoneDegreesCoordinate> getValueAsCoordinate(
