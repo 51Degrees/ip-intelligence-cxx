@@ -41,16 +41,17 @@ try {
     }
 
     $OutputFile = [IO.Path]::Combine($RepoPath, "summary.json")
-    $DataFile = [IO.Path]::Combine($RepoPath, "device-detection-data", "TAC-HashV41.hash")
+    $DataFile = [IO.Path]::Combine($RepoPath, "ip-intelligence-data", "51Degrees-LiteV4.1.ipi")
+    $EvidenceFile = [IO.Path]::Combine($RepoPath, "ip-intelligence-data", "evidence2.yml")
     if ($IsWindows) {
-        $PerfPath = [IO.Path]::Combine($RepoPath, "build", "bin", $Configuration, "PerformanceHashC.exe")
+        $PerfPath = [IO.Path]::Combine($RepoPath, "build", "bin", $Configuration, "PerformanceC.exe")
     }
     else {
-        $PerfPath = [IO.Path]::Combine($RepoPath, "build", "bin", "PerformanceHashC")
+        $PerfPath = [IO.Path]::Combine($RepoPath, "build", "bin", "PerformanceC")
     }
     
     # Run the performance test
-    . $PerfPath --json-output $OutputFile --data-file $DataFile
+    . $PerfPath --json-output $OutputFile --data-file $DataFile --ip-addresses-file $EvidenceFile
 
     # Output the results for comparison
     $Results = Get-Content $OutputFile | ConvertFrom-Json -AsHashtable
