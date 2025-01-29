@@ -1886,7 +1886,7 @@ static byte fakeCoordValue[] = {
 	0x00, 0x00, 0x00, 0x41, //  8.0
 	0x00,
 };
-#define FAKE_PROFILE_PERCENTAGE_VALUE fakeCoordValue
+#define FAKE_PROFILE_PERCENTAGE_VALUE fakeValueInFakeProfile
 
 const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	fiftyoneDegreesResultsIpi* results,
