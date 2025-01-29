@@ -848,7 +848,7 @@ static StatusCode readDataSetFromFile(
 
 	COLLECTION_CREATE_FILE(maps, CollectionReadFileFixed);
 	COLLECTION_CREATE_FILE(properties, CollectionReadFileFixed);
-	// COLLECTION_CREATE_FILE(values, CollectionReadFileFixed);
+	COLLECTION_CREATE_FILE(values, CollectionReadFileFixed);
 
 	uint32_t profileCount = dataSet->header.profiles.count;
 	*(uint32_t*)(&dataSet->header.profiles.count) = 0;
