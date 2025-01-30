@@ -147,8 +147,9 @@ void ConfigIpi::setConcurrency(uint16_t concurrency) {
 	values.setConcurrency(concurrency);
 	profiles.setConcurrency(concurrency);
 	ipRoots.setConcurrency(concurrency);
-    ipNodes.setConcurrency(concurrency);
-    profileCombinations.setConcurrency(concurrency);
+	// TODO: Restore
+    // ipNodes.setConcurrency(concurrency);
+    // profileCombinations.setConcurrency(concurrency);
 	profileOffsets.setConcurrency(concurrency);
 	maps.setConcurrency(concurrency);
 	components.setConcurrency(concurrency);
