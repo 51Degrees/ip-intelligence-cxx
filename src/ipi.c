@@ -1878,6 +1878,39 @@ static ProfilePercentage* getValuesFromResult(
 	return results->values.items;
 }
 
+typedef fiftyoneDegreesPropertyValueType PropertyValueType;
+
+// TODO: Remove or deduplicate from `ResultsIpi::getPropertyValueType`
+static PropertyValueType
+getPropertyValueType(
+	const DataSetIpi * const dataSet,
+	ResultsIpi* const results,
+	const int requiredPropertyIndex,
+	fiftyoneDegreesException * const exception) {
+	// Default to string type. Consumers of
+	// this function should always check for exception status
+	PropertyValueType valueType
+		= FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING;
+
+	// Work out the property index from the required property index.
+	const uint32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
+		dataSet->b.b.available,
+		requiredPropertyIndex);
+
+	// Set the property that will be available in the results structure.
+	// This may also be needed to work out which of a selection of results
+	// are used to obtain the values.
+	const Property * const property = PropertyGet(
+		dataSet->properties,
+		propertyIndex,
+		&results->propertyItem,
+		exception);
+	if (property != NULL && EXCEPTION_OKAY) {
+		valueType = (PropertyValueType)property->valueType;
+	}
+	return valueType;
+}
+
 static char fakeValueInFakeProfile[] = "\x1C\0fake-value-in-fake-profile";
 static byte fakeCoordValue[] = {
 	0x09, 0x00,
@@ -1886,12 +1919,109 @@ static byte fakeCoordValue[] = {
 	0x00, 0x00, 0x00, 0x41, //  8.0
 	0x00,
 };
+static byte fakeIPValue[] = {
+	0x04, 0x00,
+	FIFTYONE_DEGREES_STRING_IP_ADDRESS,
+	0xD4, 0x0C, 0x00, 0x01,
+};
+static byte fakeWKBValue[] = {
+	0x15, 0x00,
+	FIFTYONE_DEGREES_STRING_WKB,
+	0x00,
+	0x00, 0x00, 0x00, 0x01,
+	0x40, 0x31, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x40, 0x8b, 0xe0, 0xc0, 0x00, 0x00, 0x00, 0x00,
+};
+
+typedef struct {
+	const PropertyValueType valueType;
+	byte * const start;
+	const uint16_t length;
+} FakeValueRef;
+static const FakeValueRef fakeValues[] = {
+	{
+		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
+		fakeValueInFakeProfile,
+		sizeof(fakeValueInFakeProfile),
+	},
+	{
+		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE,
+		fakeCoordValue,
+		sizeof(fakeCoordValue),
+	},
+	{
+		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS,
+		fakeIPValue,
+		sizeof(fakeIPValue),
+	},
+	{
+		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB,
+		fakeWKBValue,
+		sizeof(fakeWKBValue),
+	},
+};
+
 #define FAKE_PROFILE_PERCENTAGE_VALUE fakeValueInFakeProfile
 
+static Collection * createFakeValueCollection(PropertyValueType valueType) {
+	for (size_t i = 0; i < sizeof(fakeValues) / sizeof(fakeValues[0]); i++) {
+		if (fakeValues[i].valueType == valueType) {
+			fiftyoneDegreesMemoryReader reader = {
+				fakeValues[i].start,
+				fakeValues[i].start,
+				fakeValues[i].start + fakeValues[i].length,
+				fakeValues[i].length,
+			};
+			fiftyoneDegreesCollectionHeader const h = {
+				0,
+				fakeValues[i].length,
+				1,
+			};
+			return CollectionCreateFromMemory(&reader, h);
+		}
+	}
+	return NULL;
+}
+
+static const ProfilePercentage* addFakeValueProfile(
+	const DataSetIpi * const dataSet,
+	ResultsIpi * const results,
+	const int requiredPropertyIndex,
+	Exception * const exception) {
+
+	const PropertyValueType valueType = getPropertyValueType(
+		dataSet,
+		results,
+		requiredPropertyIndex,
+		exception);
+
+	Collection * const collection = createFakeValueCollection(valueType);
+
+	fiftyoneDegreesProfilePercentage * const fakeProfile =
+		Malloc(sizeof(ProfilePercentage));
+
+	// set profile percentage to 0.5f
+	fakeProfile->percentage = FIFTYONE_DEGREES_NATIVE_TO_FLOAT(0.5f);
+
+	// Initialise the item ready to store data from the collection
+	fiftyoneDegreesDataReset(&(fakeProfile->item.data));
+
+	// Get a pointer to the value from the collection
+	byte * const valuePtr = collection->get(
+		collection,
+		0,
+		&(fakeProfile->item),
+		exception);
+
+	extendIpiList(&results->values, 4);
+	addIpiListItem(&results->values, fakeProfile);
+	return fakeProfile;
+}
+
 const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
-	fiftyoneDegreesResultsIpi* results,
-	int requiredPropertyIndex,
-	fiftyoneDegreesException* exception) {
+	fiftyoneDegreesResultsIpi* const results,
+	int const requiredPropertyIndex,
+	fiftyoneDegreesException* const exception) {
 	Property* property;
 	DataSetIpi* dataSet;
 	ProfilePercentage* firstValue = NULL;
@@ -1899,51 +2029,21 @@ const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	// Ensure any previous uses of the results to get values are released.
 	resultsIpiRelease(results);
 
+	dataSet = (DataSetIpi*)results->b.dataSet;
+
 	{
 		// FAKE RESULTS
 		// TODO: Remove this section
-		fiftyoneDegreesMemoryReader reader = {
-			FAKE_PROFILE_PERCENTAGE_VALUE,
-			FAKE_PROFILE_PERCENTAGE_VALUE,
-			(byte*)FAKE_PROFILE_PERCENTAGE_VALUE
-			+ sizeof(FAKE_PROFILE_PERCENTAGE_VALUE),
-			sizeof(FAKE_PROFILE_PERCENTAGE_VALUE),
-		};
-		fiftyoneDegreesCollectionHeader const h = {
-			0,
-			sizeof(FAKE_PROFILE_PERCENTAGE_VALUE),
-			1,
-		};
-		Collection * const q = CollectionCreateFromMemory(&reader, h);
+		const ProfilePercentage * const fakeProfile = addFakeValueProfile(
+		 	dataSet,
+		 	results,
+		 	requiredPropertyIndex,
+		 	exception);
 
-		fiftyoneDegreesProfilePercentage * const fakeProfile =
-			Malloc(sizeof(ProfilePercentage));
-
-		union {
-			uint32_t x;
-			uint8_t b[4];
-		} endianCheck;
-		endianCheck.x = 1;
-
-		// set profile percentage to 0.5f
-		fakeProfile->percentage = FIFTYONE_DEGREES_NATIVE_TO_FLOAT(0.5f);
-
-		// Initialise the item ready to store data from the collection
-		fiftyoneDegreesDataReset(&(fakeProfile->item.data));
-
-		// Get a pointer to the value from the collection
-		byte *valuePtr = q->get(
-		    q,
-		    0,
-		    &(fakeProfile->item),
-		    exception);
-
-		extendIpiList(&results->values, 4);
-		addIpiListItem(&results->values, fakeProfile);
-		return fakeProfile;
+		if (fakeProfile) {
+			return fakeProfile;
+		}
 	}
-
-	dataSet = (DataSetIpi*)results->b.dataSet;
 
 	// Work out the property index from the required property index.
 	uint32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(

@@ -22,6 +22,7 @@
 
 #include "ResultsIpi.hpp"
 #include "fiftyone.h"
+#include "common-cxx/wkbtot.h"
 
 using namespace FiftyoneDegrees;
 using namespace FiftyoneDegrees::IpIntelligence;
@@ -482,6 +483,21 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
                         stream << buffer;
                     }
                     break;
+                case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB: {
+                    const fiftyoneDegreesWkbtotResult toWktResult =
+                        fiftyoneDegreesConvertWkbToWkt(
+                            FIFTYONE_DEGREES_WKB(valuesItems[i].item.data.ptr),
+                            buffer,
+                            MAX_PROFILE_PERCENTAGE_STRING_LENGTH,
+                            16,
+                            exception
+                            );
+
+                    if (EXCEPTION_OKAY && !toWktResult.bufferTooSmall) {
+                        stream << buffer;
+                    }
+                    break;
+                }
                 default:
                     stream << STRING((String*)valuesItems[i].item.data.ptr);
                     break;
@@ -515,6 +531,101 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
     const string *propertyName) {
     return getValuesAsWeightedStringList(
         ResultsBase::getRequiredPropertyIndex(propertyName->c_str()));
+}
+
+Common::Value<vector<WeightedValue<string>>>
+IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList(
+    const int requiredPropertyIndex,
+    const byte decimalPlaces) {
+    EXCEPTION_CREATE;
+    uint32_t i;
+    const ProfilePercentage *valuesItems;
+    Common::Value<vector<WeightedValue<string>>> result;
+    vector<WeightedValue<string>> values;
+    if (!(hasValuesInternal(requiredPropertyIndex)))
+    {
+        fiftyoneDegreesResultsNoValueReason reason =
+			getNoValueReasonInternal(requiredPropertyIndex);
+		result.setNoValueReason(
+			reason,
+			getNoValueMessageInternal(reason));
+    }
+    else {
+        fiftyoneDegreesPropertyValueType valueType =
+            getPropertyValueType(requiredPropertyIndex, exception);
+        if (EXCEPTION_OKAY) {
+            // Get a pointer to the first value item for the property.
+            valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
+            EXCEPTION_THROW;
+
+            if (valuesItems == NULL) {
+                // No pointer to values was returned.
+                throw NoValuesAvailableException();
+            }
+
+            // Set enough space in the vector for all the strings that will be
+            // inserted.
+            values.reserve(results->values.count);
+
+            stringstream stream;
+            char buffer[MAX_PROFILE_PERCENTAGE_STRING_LENGTH];
+            fiftyoneDegreesCoordinate coordinate;
+            // Add the values in their original form to the result.
+            for (i = 0; i < results->values.count; i++) {
+                WeightedValue<string> weightedString;
+                // Clear stream before the construction
+                stream.str("");
+                if (valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB) {
+                    const fiftyoneDegreesWkbtotResult toWktResult =
+                        fiftyoneDegreesConvertWkbToWkt(
+                            FIFTYONE_DEGREES_WKB(valuesItems[i].item.data.ptr),
+                            buffer,
+                            MAX_PROFILE_PERCENTAGE_STRING_LENGTH,
+                            decimalPlaces,
+                            exception
+                            );
+
+                    if (EXCEPTION_OKAY && !toWktResult.bufferTooSmall) {
+                        stream << buffer;
+                    }
+                } else {
+                    stream << STRING((String*)valuesItems[i].item.data.ptr);
+                }
+                weightedString.setValue(stream.str());
+                weightedString.setWeight(FLOAT_TO_NATIVE(valuesItems[i].percentage));
+                values.push_back(weightedString);
+            }
+            result.setValue(values);
+        }
+    }
+    return result;
+}
+
+Common::Value<vector<WeightedValue<string>>>
+IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList(
+const char *propertyName,
+byte decimalPlaces) {
+    return getValuesAsWeightedWKTStringList(
+        ResultsBase::getRequiredPropertyIndex(propertyName),
+        decimalPlaces);
+}
+
+Common::Value<vector<WeightedValue<string>>>
+IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList(
+const string &propertyName,
+byte decimalPlaces) {
+    return getValuesAsWeightedWKTStringList(
+        ResultsBase::getRequiredPropertyIndex(propertyName.c_str()),
+        decimalPlaces);
+}
+
+Common::Value<vector<WeightedValue<string>>>
+IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList(
+const string *propertyName,
+byte decimalPlaces) {
+    return getValuesAsWeightedWKTStringList(
+        ResultsBase::getRequiredPropertyIndex(propertyName->c_str()),
+        decimalPlaces);
 }
 
 Common::Value<vector<WeightedValue<int>>>

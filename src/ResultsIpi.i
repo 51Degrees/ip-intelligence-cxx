@@ -58,6 +58,11 @@ public:
     Value<std::vector<WeightedValue<std::string>>> getValuesAsWeightedStringList(
         int requiredPropertyIndex);
 
+    Value<std::vector<WeightedValue<std::string>>> getValuesAsWeightedWKTStringList(
+        const std::string &propertyName, uint8_t decimalPlaces);
+    Value<std::vector<WeightedValue<std::string>>> getValuesAsWeightedWKTStringList(
+        int requiredPropertyIndex, uint8_t decimalPlaces);
+
     Value<std::vector<WeightedValue<bool>>> getValuesAsWeightedBoolList(
         const std::string &propertyName);
     Value<std::vector<WeightedValue<bool>>> getValuesAsWeightedBoolList(

@@ -179,6 +179,53 @@ namespace FiftyoneDegrees {
 			 */
 			Common::Value<vector<WeightedValue<string>>>
 				getValuesAsWeightedStringList(int requiredPropertyIndex);
+
+			/**
+			 * Get a vector with all weighted string representations of the
+			 * values associated with the required property name. If the name
+			 * is not valid an empty vector is returned.
+			 * @param propertyName pointer to a string containing the property
+			 * name
+			 * @return a vector of weighted string values for the property
+			 */
+			Common::Value<vector<WeightedValue<string>>>
+				getValuesAsWeightedWKTStringList(
+					const char *propertyName, ::byte decimalPlaces);
+
+			/**
+			 * Get a vector with all weighted string representations of the
+			 * values associated with the required property name. If the name
+			 * is not valid an empty vector is returned.
+			 * @param propertyName pointer to a string containing the property
+			 * name
+			 * @return a vector of weighted string values for the property
+			 */
+			Common::Value<vector<WeightedValue<string>>>
+				getValuesAsWeightedWKTStringList(
+					const string *propertyName, ::byte decimalPlaces);
+
+			/**
+			 * Get a vector with all weighted string representations of the
+			 * values associated with the required property name. If the name
+			 * is not valid an empty vector is returned.
+			 * @param propertyName pointer to a string containing the property
+			 * name
+			 * @return a vector of weighted string values for the property
+			 */
+			Common::Value<vector<WeightedValue<string>>>
+				getValuesAsWeightedWKTStringList(
+					const string &propertyName, ::byte decimalPlaces);
+
+			/**
+			 * Get a vector with all weighted string representations of the
+			 * values associated with the required property index. If the index
+			 * is not valid an empty vector is returned.
+			 * @param requiredPropertyIndex in the required properties
+			 * @return a vector of weighted string values for the property
+			 */
+			Common::Value<vector<WeightedValue<string>>>
+				getValuesAsWeightedWKTStringList(
+				int requiredPropertyIndex, ::byte decimalPlaces);
 			
 			/**
 			 * Get a vector with all weighted integer representations of the 
