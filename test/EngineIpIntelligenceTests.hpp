@@ -45,17 +45,18 @@ static const vector<string> n = { v1, v2, v3 }; \
 static const vector<string> *n##Pointer = &n;
 
 // Common IP intelligence properties in arrays and strings.
-ENGINE_PROPERTIES_STRING(OnePropertyString, "CountryCode")
-ENGINE_PROPERTIES_STRING(TwoPropertyStrings, "CountryCode,CityName")
-ENGINE_PROPERTIES_STRING(DuplicatePropertyStrings, "CountryCode,CountryCode")
+// TODO: Restore to CountryCode + CityName
+ENGINE_PROPERTIES_STRING(OnePropertyString, "networkname")
+ENGINE_PROPERTIES_STRING(TwoPropertyStrings, "networkname,coordinate")
+ENGINE_PROPERTIES_STRING(DuplicatePropertyStrings, "networkname,networkname")
 ENGINE_PROPERTIES_STRING(InvalidPropertyStrings, "INVALID,PROPERTIES PROVIDED")
-ENGINE_PROPERTIES_STRING(MixedPropertyStrings, "INVALID,CountryCode")
+ENGINE_PROPERTIES_STRING(MixedPropertyStrings, "INVALID,networkname")
 ENGINE_PROPERTIES_STRING(AllEdgePropertyStrings, "IpRangeStart,IpRangeEnd,AverageLocation")
-ENGINE_PROPERTIES_ARRAY_ONE(OnePropertyArray, "CountryCode")
-ENGINE_PROPERTIES_ARRAY_TWO(TwoPropertyArray, "CountryCode", "CityName")
-ENGINE_PROPERTIES_ARRAY_TWO(DuplicatePropertyArray, "CountryCode", "CountryCode")
+ENGINE_PROPERTIES_ARRAY_ONE(OnePropertyArray, "networkname")
+ENGINE_PROPERTIES_ARRAY_TWO(TwoPropertyArray, "networkname", "coordinate")
+ENGINE_PROPERTIES_ARRAY_TWO(DuplicatePropertyArray, "networkname", "networkname")
 ENGINE_PROPERTIES_ARRAY_TWO(InvalidPropertyArray, "INVALID1", "INVALID2")
-ENGINE_PROPERTIES_ARRAY_TWO(MixedPropertyArray, "CountryCode", "Invalid")
+ENGINE_PROPERTIES_ARRAY_TWO(MixedPropertyArray, "networkname", "Invalid")
 ENGINE_PROPERTIES_ARRAY_THREE(AllEdgePropertyArray, "IpRangeStart", "IpRangeEnd", "AverageLocation")
 static const string *NullPointer = nullptr;
 
@@ -150,9 +151,9 @@ protected:
 		override;
 	fiftyoneDegreesMemoryReader data = { nullptr, nullptr, 0L };
 private:
-	bool validateIpAddressInternal(IpAddress ipAddress, int length);
-	bool validateIpAddress(IpAddress ipAddress);
-	void verifyIpAddressValue(const char *ipAddress, Value<IpAddress> value);
+	bool validateIpAddressInternal(IpIntelligence::IpAddress ipAddress, int length);
+	bool validateIpAddress(IpIntelligence::IpAddress ipAddress);
+	void verifyIpAddressValue(const char *ipAddress, Common::Value<IpIntelligence::IpAddress> value);
 	static void ipAddressRead(const char *ipAddress, void *state);
 	void verifyPropertyValue(
 		ResultsBase *results,

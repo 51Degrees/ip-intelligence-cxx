@@ -229,8 +229,8 @@ static void runRequestsSingle(sharedState* state) {
 
 	const uint32_t ipsCount = fiftyoneDegreesIterateFakeIPv4s(
 		0x00000000U,
-		0xFFFFFFFFU,
-		0x000003FFU,
+		0xFFFFE381U,
+		0x00068DB8U,
 		executeTest,
 		&thread);
 

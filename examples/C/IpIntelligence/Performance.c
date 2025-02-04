@@ -893,7 +893,9 @@ int main(int argc, char* argv[]) {
 				"data file. Make sure the device-detection-data "
 				"submodule has been updated by running "
 				"`git submodule update --recursive`\n"));
+#ifndef TEST
 			fgetc(stdin);
+#endif
 			return 1;
 		}
 	}
@@ -909,7 +911,9 @@ int main(int argc, char* argv[]) {
 				"evidence file. Make sure the device-detection-data "
 				"submodule has been updated by running "
 				"`git submodule update --recursive`\n"));
+#ifndef TEST
 			fgetc(stdin);
+#endif
 			return 1;
 		}
 	}

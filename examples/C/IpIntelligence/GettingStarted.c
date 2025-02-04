@@ -194,7 +194,9 @@ void fiftyoneDegreesIpiGettingStarted(
 	EXCEPTION_THROW;
 	if (status != SUCCESS) {
 		reportStatus(status, dataFilePath);
+#ifndef TEST
 		fgetc(stdin);
+#endif
 		return;
 	}
 

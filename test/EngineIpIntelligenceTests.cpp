@@ -192,7 +192,7 @@ void EngineIpIntelligenceTests::validateIndex(
 	ResultsBase *results,
 	int index) {
 	ResultsIpi *resultsIpi = (ResultsIpi *)results;
-	Value<vector<string>> values = results->getValues(index);
+	Common::Value<vector<string>> values = results->getValues(index);
 	if (values.hasValue()) {
 		EXPECT_NO_THROW(*resultsIpi->getValueAsIpAddress(index)) << "IP address value "
 			"for property '" << resultsIpi->getPropertyName(index) << "' at "
@@ -236,7 +236,7 @@ void EngineIpIntelligenceTests::validateName(
 		ResultsIpi *resultsIpi = (ResultsIpi *)results;
 		// If the name is available so the values should be retrieved with
 		// out an exception.
-		Value<vector<string>> values = results->getValues(name);
+		Common::Value<vector<string>> values = results->getValues(name);
 
 		if (values.hasValue() && values.getValue().size() > 0) {
 			EXPECT_NO_THROW(*resultsIpi->getValueAsIpAddress(name)) << "IP address value "
@@ -275,7 +275,7 @@ void EngineIpIntelligenceTests::validateQuick(ResultsBase *results) {
 	ResultsIpi* resultsIpi = (ResultsIpi*)results;
 	for (int i = 0; i < results->getAvailableProperties(); i++) {
 		vector<string> values;
-		Value<vector<string>> value = results->getValues(i);
+		Common::Value<vector<string>> value = results->getValues(i);
 		if (value.hasValue()) {
 			EXPECT_NO_THROW(values = *value) << "Should not throw "
 			"exception for property '" << results->getPropertyName(i) << "'";
@@ -318,7 +318,7 @@ void EngineIpIntelligenceTests::verifyMixedPrefixesEvidence() {
 	mixedEvidence["query.client-ip-51d"] = lowerBoundIpv4Address;
 	mixedEvidence["server.true-client-ip-51d"] = upperBoundIpv4Address;
 	ResultsIpi *results = ((EngineIpi*)getEngine())->process(&mixedEvidence);
-	Value<IpAddress> rangeStart = results->getValueAsIpAddress("IpRangeStart");
+	Common::Value<IpIntelligence::IpAddress> rangeStart = results->getValueAsIpAddress("IpRangeStart");
 	unsigned char lowerBoundIpAddress[FIFTYONE_DEGREES_IPV4_LENGTH];
 	memset(lowerBoundIpAddress, 0, FIFTYONE_DEGREES_IPV4_LENGTH);
 	EXPECT_EQ(0,
@@ -446,7 +446,8 @@ void EngineIpIntelligenceTests::verify() {
 	verifyWithInvalidInput();
 }
 
-bool EngineIpIntelligenceTests::validateIpAddressInternal(IpAddress ipAddress, int length) {
+bool EngineIpIntelligenceTests::validateIpAddressInternal(
+	IpIntelligence::IpAddress ipAddress, int length) {
 	const unsigned char *ip = ipAddress.getIpAddress();
 	int octet;
 	for (int i = 0; i < length; i++) {
@@ -458,7 +459,8 @@ bool EngineIpIntelligenceTests::validateIpAddressInternal(IpAddress ipAddress, i
 	return true;
 }
 
-bool EngineIpIntelligenceTests::validateIpAddress(IpAddress ipAddress) {
+bool EngineIpIntelligenceTests::validateIpAddress(
+	IpIntelligence::IpAddress ipAddress) {
 	bool result = false;
 
 	switch(ipAddress.getType()) {
@@ -476,7 +478,7 @@ bool EngineIpIntelligenceTests::validateIpAddress(IpAddress ipAddress) {
 
 void EngineIpIntelligenceTests::verifyIpAddressValue(
 	const char *ipAddress, 
-	Value<IpAddress> value) {
+	Common::Value<IpIntelligence::IpAddress> value) {
 	EXPECT_EQ(true, value.hasValue()) << "Could not find an IP range that matches "
 		"the IP address: " << ipAddress;
 
@@ -487,8 +489,8 @@ void EngineIpIntelligenceTests::verifyIpAddressValue(
 void EngineIpIntelligenceTests::ipAddressPresent(const char *ipAddress) {
 	EngineIpi *engineIpi = (EngineIpi*)getEngine();
 	ResultsIpi *results = engineIpi->process(ipAddress);
-	Value<IpAddress> rangeStart = results->getValueAsIpAddress("IpRangeStart");
-	Value<IpAddress> rangeEnd = results->getValueAsIpAddress("IpRangeEnd");
+	Common::Value<IpIntelligence::IpAddress> rangeStart = results->getValueAsIpAddress("IpRangeStart");
+	Common::Value<IpIntelligence::IpAddress> rangeEnd = results->getValueAsIpAddress("IpRangeEnd");
 
 	verifyIpAddressValue(ipAddress, rangeStart);
 	verifyIpAddressValue(ipAddress, rangeEnd);
@@ -504,8 +506,8 @@ void EngineIpIntelligenceTests::boundIpAddressPresent(const char *ipAddress) {
 
 	EngineIpi *engineIpi = (EngineIpi*)getEngine();
 	ResultsIpi *results = engineIpi->process(ipAddress);
-	Value<IpAddress> rangeStart = results->getValueAsIpAddress("IpRangeStart");
-	Value<IpAddress> rangeEnd = results->getValueAsIpAddress("IpRangeEnd");
+	Common::Value<IpIntelligence::IpAddress> rangeStart = results->getValueAsIpAddress("IpRangeStart");
+	Common::Value<IpIntelligence::IpAddress> rangeEnd = results->getValueAsIpAddress("IpRangeEnd");
 
 	verifyIpAddressValue(ipAddress, rangeStart);
 	verifyIpAddressValue(ipAddress, rangeEnd);
@@ -550,8 +552,8 @@ void EngineIpIntelligenceTests::randomIpAddressPresent(int count) {
 		ResultsIpi *results = engineIpi->process(
 			ipAddress.c_str());
 
-		Value<IpAddress> rangeStart = results->getValueAsIpAddress("IpRangeStart");
-		Value<IpAddress> rangeEnd = results->getValueAsIpAddress("IpRangeEnd");
+		Common::Value<IpIntelligence::IpAddress> rangeStart = results->getValueAsIpAddress("IpRangeStart");
+		Common::Value<IpIntelligence::IpAddress> rangeEnd = results->getValueAsIpAddress("IpRangeEnd");
 
 		verifyIpAddressValue(ipAddress.c_str(), rangeStart);
 		verifyIpAddressValue(ipAddress.c_str(), rangeEnd);
@@ -605,7 +607,7 @@ void EngineIpIntelligenceTests::verifyCoordinate() {
 		string ipAddress = ipAddresses[rand() % ipAddresses.size()];
 		ResultsIpi *results = engineIpi->process(
 			ipAddress.c_str());
-		Value<fiftyoneDegreesCoordinate> value = results->getValueAsCoordinate("AverageLocation");
+		Common::Value<fiftyoneDegreesCoordinate> value = results->getValueAsCoordinate("AverageLocation");
 		fiftyoneDegreesCoordinate coordinate;
 
 		EXPECT_EQ(true, value.hasValue()) << "Could not find an IP range that matches "
@@ -691,8 +693,8 @@ void EngineIpIntelligenceTests::multiThreadRandom(uint16_t concurrency) {
  	EXPECT_EQ(a->getAvailableProperties(), b->getAvailableProperties()) <<
  		"Number of properties available does not match.";
  	for (size_t i = 0; i < a->getProperties().size(); i++) {
-		Value<vector<string>> av = a->getValues((int)i);
-		Value<vector<string>> bv = b->getValues((int)i);
+		Common::Value<vector<string>> av = a->getValues((int)i);
+		Common::Value<vector<string>> bv = b->getValues((int)i);
 		if (av.hasValue()) {
 			EXPECT_TRUE(bv.hasValue()) << "Expected both has values.";
 			vector<string> avs = *a->getValues((int)i);

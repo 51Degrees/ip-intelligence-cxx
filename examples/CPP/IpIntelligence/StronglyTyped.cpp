@@ -198,7 +198,9 @@ int main(int argc, char* argv[]) {
 	}
 	if (status != FIFTYONE_DEGREES_STATUS_SUCCESS) {
 		ExampleBase::reportStatus(status, dataFileName);
+#ifndef TEST
 		fgetc(stdin);
+#endif
 		return 1;
 	}
 
@@ -222,7 +224,9 @@ int main(int argc, char* argv[]) {
 #endif
 
 	// Wait for a character to be pressed.
+#ifndef TEST
 	fgetc(stdin);
+#endif
 
 	return 0;
 }

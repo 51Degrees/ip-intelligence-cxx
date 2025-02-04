@@ -282,6 +282,7 @@ void EngineIpi::initHttpHeaderKeys(fiftyoneDegreesHeaders *uniqueHeaders) {
 		// TODO: Ask Ben if these will actually arrive in data file
 		addKey("server.client-ip");
 		addKey("query.client-ip-51d");
+		addKey("server.true-client-ip-51d");
 		return;
 	}
 	uint32_t i, p;

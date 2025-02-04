@@ -241,7 +241,9 @@ void fiftyoneDegreesIpiStronglyTyped(
 		exception);
 	if (status != SUCCESS) {
 		reportStatus(status, dataFilePath);
+#ifndef TEST
 		fgetc(stdin);
+#endif
 		return;
 	}
 
