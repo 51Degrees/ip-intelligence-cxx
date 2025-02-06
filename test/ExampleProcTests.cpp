@@ -36,8 +36,9 @@ public:
         testing::internal::CaptureStdout();
 
         // Start to process Ip Addresses.
+        // TODO: Revert to CountryCode
         int count =
-            fiftyoneDegreesProcIpiRun(dataFilePath.c_str(), "CountryCode", &config);
+            fiftyoneDegreesProcIpiRun(dataFilePath.c_str(), "networkname", &config);
 
         // Get the output from the processing.
         stringstream output = stringstream(testing::internal::GetCapturedStdout());
