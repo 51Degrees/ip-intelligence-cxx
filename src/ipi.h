@@ -807,7 +807,8 @@ EXTERNAL fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	fiftyoneDegreesException* exception);
 
 /**
- * Sets the buffer the values associated in the results for the property name.
+ * Prints the list of values for the requested property to the string buffer
+ * provided.
  * @param results pointer to the results structure to release
  * @param propertyName name of the property to be used with the values
  * @param buffer character buffer allocated by the caller
@@ -819,6 +820,31 @@ EXTERNAL fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
  * bufferLength if the buffer is not long enough to return the result.
  */
 EXTERNAL size_t fiftyoneDegreesResultsIpiGetValuesString(
+	fiftyoneDegreesResultsIpi* results,
+	const char* propertyName,
+	char* buffer,
+	size_t bufferLength,
+	const char* separator,
+	fiftyoneDegreesException* exception);
+
+/**
+ * Prints the list of weightings for the values of the requested property
+ * to the string buffer provided. Weightings are printed in their raw format,
+ * i.e. ushort values which add up to ushort max value.
+ * The length and order of the list returned is the same as the one returned
+ * by fiftyoneDegreesResultsIpiGetValuesString for the same combination of
+ * results and property name.
+ * @param results pointer to the results structure
+ * @param propertyName name of the property to get the weightings for
+ * @param buffer character buffer allocated by the caller
+ * @param bufferLength length of the character buffer
+ * @param separator string to be used to separate multiple values if available
+ * @param exception pointer to an exception data structure to be used if an
+ * exception occurs. See exceptions.h.
+ * @return the number of characters available for values. May be larger than
+ * bufferLength if the buffer is not long enough to return the result.
+ */
+EXTERNAL size_t fiftyoneDegreesresultsIpiGetWeightingsString(
 	fiftyoneDegreesResultsIpi* results,
 	const char* propertyName,
 	char* buffer,
