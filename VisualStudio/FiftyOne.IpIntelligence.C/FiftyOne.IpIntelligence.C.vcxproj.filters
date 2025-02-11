@@ -21,9 +21,15 @@
     <ClInclude Include="..\..\src\ipi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\graph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ipi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\graph.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

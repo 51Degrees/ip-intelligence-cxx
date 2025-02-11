@@ -136,10 +136,10 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiInMemoryConfig = {
 	{0,0,0}, // Properties
 	{0,0,0}, // Values
 	{0,0,0}, // Profiles
-	{0,0,0}, // IpRoots
-	{0,0,0}, // IpNodes
+	{0,0,0}, // Graphs
 	{0,0,0}, // ProfileGroups
-	{0,0,0}  // ProfileOffsets
+	{0,0,0}, // ProfileOffsets
+	{0,0,0}  // Graph
 };
 #undef FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY
 #define FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY \
@@ -153,10 +153,10 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiHighPerformanceConfig = {
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Properties
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Values
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // IpRoots
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // IpNodes
+	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Graphs
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // ProfileOffsets
+	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileOffsets
+	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // Graph
 };
 
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiLowMemoryConfig = {
@@ -167,10 +167,10 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiLowMemoryConfig = {
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Properties
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Values
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // IpRoots
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // IpNodes
+	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Graphs
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // ProfileOffsets
+	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileOffsets
+	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // Graph
 };
 
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig = {
@@ -181,10 +181,10 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig = {
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Properties
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Values
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // IpRoots
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // IpNodes
+	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Graphs
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // ProfileOffsets
+	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileOffsets
+	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // Graph
 };
 
 #define FIFTYONE_DEGREES_IPI_CONFIG_BALANCED \
@@ -195,10 +195,10 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig = {
 { FIFTYONE_DEGREES_PROPERTY_LOADED, FIFTYONE_DEGREES_PROPERTY_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Properties */ \
 { FIFTYONE_DEGREES_VALUE_LOADED, FIFTYONE_DEGREES_VALUE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Values */ \
 { FIFTYONE_DEGREES_PROFILE_LOADED, FIFTYONE_DEGREES_PROFILE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Profiles */ \
-{ FIFTYONE_DEGREES_IP_ROOTS_LOADED, FIFTYONE_DEGREES_IP_ROOTS_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Ip Roots */ \
-{ FIFTYONE_DEGREES_IP_NODES_LOADED, FIFTYONE_DEGREES_IP_NODES_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Ip Nodes */ \
+{ FIFTYONE_DEGREES_IP_GRAPHS_LOADED, FIFTYONE_DEGREES_IP_GRAPHS_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Graphs */ \
 { FIFTYONE_DEGREES_PROFILE_GROUPS_LOADED, FIFTYONE_DEGREES_PROFILE_GROUPS_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* ProfileGroups */ \
-{ FIFTYONE_DEGREES_PROFILE_LOADED, FIFTYONE_DEGREES_PROFILE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY } /* ProfileOffsets */ \
+{ FIFTYONE_DEGREES_PROFILE_LOADED, FIFTYONE_DEGREES_PROFILE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* ProfileOffsets */ \
+{ FIFTYONE_DEGREES_IP_GRAPH_LOADED, FIFTYONE_DEGREES_IP_GRAPH_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY } /* Graph */
 
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiBalancedConfig = {
 	FIFTYONE_DEGREES_IPI_CONFIG_BALANCED
@@ -323,22 +323,23 @@ static void setResultFromIpAddress(
 	ResultIpi* result,
 	DataSetIpi* dataSet,
 	Exception* exception) {
-	long rangeOffset = -1;
-	Item item;
-	DataReset(&item.data);
-	rangeOffset = CollectionBinarySearch(
-		dataSet->ipRoots,
-		&item,
-		0,
-		CollectionGetCount(dataSet->ipRoots) - 1,
-		(void*)&result->targetIpAddress,
-		compareToIpv4Range,
-		exception);
-	if (rangeOffset >= 0 && EXCEPTION_OKAY) {
-		result->profileCombinationOffset =
-			((Ipv4Range *)item.data.ptr)->profileCombinationOffset;
-	}
-	COLLECTION_RELEASE(dataSet->ipRoots, &item);
+	// TODO
+	//long rangeOffset = -1;
+	//Item item;
+	//DataReset(&item.data);
+	//rangeOffset = CollectionBinarySearch(
+	//	dataSet->componentGraphs,
+	//	&item,
+	//	0,
+	//	CollectionGetCount(dataSet->componentGraphs) - 1,
+	//	(void*)&result->targetIpAddress,
+	//	compareToIpv4Range,
+	//	exception);
+	//if (rangeOffset >= 0 && EXCEPTION_OKAY) {
+	//	result->profileCombinationOffset =
+	//		((Ipv4Range *)item.data.ptr)->profileCombinationOffset;
+	//}
+	//COLLECTION_RELEASE(dataSet->componentGraphs, &item);
 }
 
 /**
@@ -351,8 +352,7 @@ static void resetDataSet(DataSetIpi* dataSet) {
 	dataSet->componentsAvailable = NULL;
 	dataSet->components = NULL;
 	dataSet->maps = NULL;
-	dataSet->ipRoots = NULL;
-	dataSet->componentGraphs = NULL;
+	dataSet->graphs = NULL;
 	dataSet->profileGroups = NULL;
 	dataSet->profileOffsets = NULL;
 	dataSet->profiles = NULL;
@@ -367,6 +367,9 @@ static void freeDataSet(void* dataSetPtr) {
 	// Free the common data set fields.
 	DataSetFree(&dataSet->b.b);
 
+	// Free the resources associated with the graphs.
+	fiftyoneDegreesIpiGraphFree(dataSet->graphs);
+
 	// Free the memory used for the lists and collections.
 	ListFree(&dataSet->componentsList);
 	Free(dataSet->componentsAvailable);
@@ -376,11 +379,9 @@ static void freeDataSet(void* dataSetPtr) {
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->maps);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->values);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->profiles);
-	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->ipRoots);
-	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->componentGraphs);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->profileOffsets);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->profileGroups);
-
+	
 	// Finally free the memory used by the resource itself as this is always
 	// allocated within the IP Intelligence init manager method.
 	Free(dataSet);
@@ -706,21 +707,15 @@ static StatusCode initWithMemory(
 	COLLECTION_CREATE_MEMORY(profiles)
 	*(uint32_t*)(&dataSet->header.profiles.count) = profileCount;
 
-	COLLECTION_CREATE_MEMORY(componentGraphs);
+	COLLECTION_CREATE_MEMORY(graphs);
 
 	COLLECTION_CREATE_MEMORY(profileGroups);
 	COLLECTION_CREATE_MEMORY(profileOffsets);
 
-#ifndef NO_51_IP_ROOTS_HEADER_IN_IPI_DATA_FILE
-	COLLECTION_CREATE_MEMORY(ipRoots);
-#endif
-
-	{
-		// IGNORE FILE READING ERROR (allocated size mismatch)
-		// TODO: Remove this section
-		reader->lastByte = reader->current;
-		reader->length = reader->current - reader->startByte;
-	}
+	dataSet->graphsArray = fiftyoneDegreesIpiGraphCreateFromMemory(
+		dataSet->graphs,
+		reader,
+		exception);
 
 	/* Check that the current pointer equals the last byte */
 	if (reader->lastByte != reader->current) {
@@ -855,14 +850,19 @@ static StatusCode readDataSetFromFile(
 	COLLECTION_CREATE_FILE(profiles, fiftyoneDegreesProfileReadFromFile);
 	*(uint32_t*)(&dataSet->header.profiles.count) = profileCount;
 
-	COLLECTION_CREATE_FILE(componentGraphs, CollectionReadFileFixed);
+	COLLECTION_CREATE_FILE(graphs, CollectionReadFileFixed);
 
 	COLLECTION_CREATE_FILE(profileGroups, CollectionReadFileFixed);
 	COLLECTION_CREATE_FILE(profileOffsets, CollectionReadFileFixed);
 
-#ifndef NO_51_IP_ROOTS_HEADER_IN_IPI_DATA_FILE
-	COLLECTION_CREATE_FILE(ipRoots, CollectionReadFileFixed);
-#endif
+	dataSet->graphsArray = fiftyoneDegreesIpiGraphCreateFromFile(
+		dataSet->graphs,
+		file,
+		&dataSet->b.b.filePool,
+		// This is not the configuration for the collection of all graphs, but
+		// the configuration for each individual graph.
+		dataSet->config.graph,
+		exception);
 
 	initDataSetPost(dataSet, exception);
 
@@ -887,10 +887,10 @@ static uint16_t getMaxConcurrency(const ConfigIpi* config) {
 	MAX_CONCURRENCY(properties);
 	MAX_CONCURRENCY(values);
 	MAX_CONCURRENCY(profiles);
-	MAX_CONCURRENCY(ipRoots);
-	MAX_CONCURRENCY(componentGraphs);
+	MAX_CONCURRENCY(graphs);
 	MAX_CONCURRENCY(profileOffsets);
 	MAX_CONCURRENCY(profileGroups);
+	MAX_CONCURRENCY(graph);
 	return concurrency;
 }
 
@@ -1953,12 +1953,12 @@ static const FakeValueRef fakeValues[] = {
 		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS,
 		fakeIPValue,
 		sizeof(fakeIPValue),
-	},
+	},/*
 	{
 		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB,
 		fakeWKBValue,
 		sizeof(fakeWKBValue),
-	},
+	},*/
 };
 
 #define FAKE_PROFILE_PERCENTAGE_VALUE fakeValueInFakeProfile

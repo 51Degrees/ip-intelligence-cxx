@@ -426,9 +426,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\fiftyone.h" />
+    <ClInclude Include="..\..\src\graph.h" />
     <ClInclude Include="..\..\src\ipi.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\graph.c" />
     <ClCompile Include="..\..\src\ipi.c" />
   </ItemGroup>
   <ItemGroup>
