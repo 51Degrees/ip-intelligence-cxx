@@ -87,13 +87,13 @@ static bool isBitSet(Cursor* cursor) {
 	return (cursor->ip.value[byteIndex] & masks[bitIndex]) != 0;
 }
 
-// Creates a cursor ready for evaluation with the graph and ip address.
-static Cursor cursorCreate(IpiCg* graph, IpAddress ip, Exception* ex) {
+// Creates a cursor ready for evaluation with the graph and IP address.
+static Cursor cursorCreate(IpiCg* graph, IpAddress ip, Exception* exception) {
 	Cursor cursor = {
 		graph,
 		ip,
 		graph->startBitIndex,
-		ex,
+		exception,
 		0,
 		0,
 		0
@@ -139,8 +139,10 @@ static uint64_t getValue(Cursor* cursor) {
 // The index of the profile associated with the value if this is a leaf value.
 // A return value must be positive to relate to a profile, if negative then the
 // value is not a leaf.
-static uint64_t getProfileIndex(Cursor* cursor) {
-	return getValue(cursor) - CollectionGetCount(cursor->graph->collection);
+static uint32_t getProfileIndex(Cursor* cursor) {
+	return (uint32_t)(
+		getValue(cursor) - 
+		CollectionGetCount(cursor->graph->collection));
 }
 
 // True if the cursor value is leaf, otherwise false.
@@ -167,7 +169,7 @@ static byte getZeroSkip(Cursor* cursor) {
 
 // True if the cursor value is a one leaf.
 static bool isOneLeaf(Cursor* cursor) {
-	isZeroFlag(cursor) == false && isLeaf(cursor);
+	return isZeroFlag(cursor) == false && isLeaf(cursor);
 }
 
 // True if the next index is a one leaf.
@@ -301,7 +303,7 @@ static bool selectOne(Cursor* cursor) {
 
 // Evaluates the cursor until a profile index is found and then returns the
 // profile index.
-static uint64_t evaluate(Cursor* cursor) {
+static uint32_t evaluate(Cursor* cursor) {
 	bool found = false;
 	do
 	{
@@ -355,7 +357,7 @@ static IpiCgArray* ipiGraphCreate(
 		DataReset(&graphs->items[i].itemInfo.data);
 		graphs->items[i].info = (IpiCgInfo*)collection->get(
 			collection, 
-			i, 
+			i,
 			&graphs->items[i].itemInfo,
 			exception);
 		if (EXCEPTION_OKAY == false) {
@@ -419,4 +421,23 @@ fiftyoneDegreesIpiCgArray* fiftyoneDegreesIpiGraphCreateFromFile(
 		ipiGraphCreateFromFile,
 		(void*)&state,
 		exception);
+}
+
+uint32_t fiftyoneDegreesIpiGraphEvaluate(
+	fiftyoneDegreesIpiCgArray* graphs,
+	byte componentId,
+	fiftyoneDegreesIpAddress address,
+	fiftyoneDegreesException* exception) {
+	uint32_t profileIndex = 0;
+	IpiCg* graph;
+	for (uint32_t i = 0; graphs->count; i++) {
+		graph = &graphs->items[i];
+		if (address.type == graph->info->version &&
+			componentId == graph->info->componentId) {
+			Cursor cursor = cursorCreate(graph, address, exception);
+			profileIndex = evaluate(&cursor);
+			break;
+		}
+	}
+	return profileIndex;
 }

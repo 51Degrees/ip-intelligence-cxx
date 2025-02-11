@@ -220,11 +220,11 @@ namespace FiftyoneDegrees {
 			/** The underlying profiles configuration structure */
 			CollectionConfig profiles;
 
-			/** The underlying ipv4 ranges configuration structure */
-			CollectionConfig ipRoots;
+			/** The records that form an individual graph */
+			CollectionConfig graph;
 
-			/** The underlyig ipv6 ranges configuration structure */
-			CollectionConfig ipNodes;
+			/** The information about each of the available graphs */
+			CollectionConfig graphs;
 
 			/** The underlying profile combinations configuration structure */
 			CollectionConfig profileCombinations;

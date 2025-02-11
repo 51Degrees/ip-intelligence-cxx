@@ -43,7 +43,8 @@ void ConfigIpi::setPerformanceFromExistingConfig(
 	config.properties = existing->properties;
 	config.values = existing->values;
 	config.profiles = existing->profiles;
-	config.ipRoots = existing->ipRoots;
+	config.graphs = existing->graphs;
+	config.graph = existing->graph;
 	config.profileOffsets = existing->profileOffsets;
 	config.maps = existing->maps;
 	config.components = existing->components;
@@ -87,11 +88,11 @@ CollectionConfig ConfigIpi::getProfiles() {
 }
 
 CollectionConfig ConfigIpi::getIpv4Ranges() {
-	return ipRoots;
+	return graph;
 }
 
 CollectionConfig ConfigIpi::getIpv6Ranges() { 
-	return ipNodes;
+	return graphs;
 }
 
 CollectionConfig ConfigIpi::getProfileCombinations() {
@@ -107,7 +108,8 @@ void ConfigIpi::initCollectionConfig() {
 	properties = CollectionConfig(&config.properties);
 	values = CollectionConfig(&config.values);
 	profiles = CollectionConfig(&config.profiles);
-	ipRoots = CollectionConfig(&config.ipRoots);
+	graphs = CollectionConfig(&config.graphs);
+	graph = CollectionConfig(&config.graph);
 	profileOffsets = CollectionConfig(&config.profileOffsets);
 	maps = CollectionConfig(&config.maps);
 	components = CollectionConfig(&config.components);
@@ -131,8 +133,8 @@ uint16_t ConfigIpi::getConcurrency() const {
 		properties.getConcurrency(),
 		values.getConcurrency(),
 		profiles.getConcurrency(),
-		ipRoots.getConcurrency(),
-		ipNodes.getConcurrency(),
+		graph.getConcurrency(),
+		graphs.getConcurrency(),
         profileCombinations.getConcurrency(),
 		profileOffsets.getConcurrency(),
 		maps.getConcurrency(),
@@ -146,7 +148,7 @@ void ConfigIpi::setConcurrency(uint16_t concurrency) {
 	properties.setConcurrency(concurrency);
 	values.setConcurrency(concurrency);
 	profiles.setConcurrency(concurrency);
-	ipRoots.setConcurrency(concurrency);
+	graph.setConcurrency(concurrency);
 	// TODO: Restore
     // ipNodes.setConcurrency(concurrency);
     // profileCombinations.setConcurrency(concurrency);

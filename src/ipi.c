@@ -323,23 +323,14 @@ static void setResultFromIpAddress(
 	ResultIpi* result,
 	DataSetIpi* dataSet,
 	Exception* exception) {
-	// TODO
-	//long rangeOffset = -1;
-	//Item item;
-	//DataReset(&item.data);
-	//rangeOffset = CollectionBinarySearch(
-	//	dataSet->componentGraphs,
-	//	&item,
-	//	0,
-	//	CollectionGetCount(dataSet->componentGraphs) - 1,
-	//	(void*)&result->targetIpAddress,
-	//	compareToIpv4Range,
-	//	exception);
-	//if (rangeOffset >= 0 && EXCEPTION_OKAY) {
-	//	result->profileCombinationOffset =
-	//		((Ipv4Range *)item.data.ptr)->profileCombinationOffset;
-	//}
-	//COLLECTION_RELEASE(dataSet->componentGraphs, &item);
+	uint32_t profileIndex = fiftyoneDegreesIpiGraphEvaluate(
+		dataSet->graphsArray, 
+		1, 
+		result->targetIpAddress, 
+		exception);
+	if (profileIndex >= 0 && EXCEPTION_OKAY) {
+		result->profileCombinationOffset = profileIndex;
+	}
 }
 
 /**
@@ -368,7 +359,7 @@ static void freeDataSet(void* dataSetPtr) {
 	DataSetFree(&dataSet->b.b);
 
 	// Free the resources associated with the graphs.
-	fiftyoneDegreesIpiGraphFree(dataSet->graphs);
+	fiftyoneDegreesIpiGraphFree(dataSet->graphsArray);
 
 	// Free the memory used for the lists and collections.
 	ListFree(&dataSet->componentsList);
@@ -379,6 +370,7 @@ static void freeDataSet(void* dataSetPtr) {
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->maps);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->values);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->profiles);
+	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->graphs);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->profileOffsets);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->profileGroups);
 	
@@ -982,7 +974,7 @@ static StatusCode initDataSetFromFile(
 #endif
 	}
 
-	// Return the status code if comthing has gone wrong.
+	// Return the status code if something has gone wrong.
 	if (status != SUCCESS || EXCEPTION_FAILED) {
 		// Delete the temp file if one has been created.
 		if (config->b.useTempFile == true) {
