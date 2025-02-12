@@ -354,7 +354,8 @@ void fiftyoneDegreesMemIpiRun(
 	FreeAligned = MemoryTrackingFreeAligned;
 
 	// Set concurrency to ensure sufficient shared resouces available.
-	config.ipRoots.concurrency =
+	config.graph.concurrency =
+		config.graphs.concurrency =
 		config.profiles.concurrency =
 		config.profileOffsets.concurrency =
 		config.values.concurrency =

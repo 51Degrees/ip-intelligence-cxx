@@ -222,7 +222,8 @@ void memReloadRun(
 	reqProps.string = requiredProperties;
 
 	// Set concurrency to ensure sufficient shared resources available.
-	config.ipRoots.concurrency =
+	config.graph.concurrency =
+		config.graphs.concurrency =
 		config.components.concurrency =
 		config.properties.concurrency =
 		config.profiles.concurrency =

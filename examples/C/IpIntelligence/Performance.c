@@ -541,7 +541,8 @@ void executeBenchmark(
 	dataSetConfig.properties.concurrency = state->numberOfThreads;
 	dataSetConfig.values.concurrency = state->numberOfThreads;
 	dataSetConfig.profiles.concurrency = state->numberOfThreads;
-	dataSetConfig.ipRoots.concurrency = state->numberOfThreads;
+	dataSetConfig.graph.concurrency = state->numberOfThreads;
+	dataSetConfig.graphs.concurrency = state->numberOfThreads;
 	dataSetConfig.profileGroups.concurrency = state->numberOfThreads;
 	dataSetConfig.profileOffsets.concurrency = state->numberOfThreads;
 

@@ -290,7 +290,8 @@ void fiftyoneDegreesOfflineProcessingRun(
 	EXCEPTION_CREATE;
 
 	// Set concurrency to ensure sufficient shared resources available.
-	config.ipRoots.concurrency =
+	config.graph.concurrency =
+		config.graphs.concurrency =
 		config.profiles.concurrency =
 		config.profileOffsets.concurrency =
 		config.values.concurrency =
