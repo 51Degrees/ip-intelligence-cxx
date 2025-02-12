@@ -44,7 +44,7 @@ namespace FiftyoneDegrees {
 				 */
 				WeightedValue<T>() {
 					this->value = T();
-					this->weight = 0;
+					this->rawWeight = 0;
 				};
 
 				/**
@@ -52,9 +52,9 @@ namespace FiftyoneDegrees {
 				 * @param value the value of the instance
 				 * @param weight of the value
 				 */
-				WeightedValue<T>(T value, float weight) {
+				WeightedValue<T>(T value, uint16_t weight) {
 					this->value = value;
-					this->weight = weight;
+					this->rawWeight = weight;
 				};
 
 				/**
@@ -76,16 +76,22 @@ namespace FiftyoneDegrees {
 				void setValue(T v) { value = v; };
 
 				/**
-				 * Get the weight
+				 * Get the weight (0.0 ~ 1.0)
 				 * @return the weight
 				 */
-				float getWeight() { return weight; };
+				float getWeight() const { return rawWeight / 65535.f; };
 
 				/**
-				 * Set the weight
-				 * @param w the weight to set
+				 * Get the raw weight (1 ~ 65535)
+				 * @return the raw weight
 				 */
-				void setWeight(float w) { weight = w; };
+				uint16_t getRawWeight() const { return rawWeight; };
+
+				/**
+				 * Set the raw weight (1 ~ 65535)
+				 * @param w the raw weight to set
+				 */
+				void setRawWeight(uint16_t w) { rawWeight = w; };
 
 				/**
 				 * @}
@@ -93,8 +99,8 @@ namespace FiftyoneDegrees {
 			private:
 				/** The value */
 				T value;
-				/** The weight of the value */
-				float weight;
+				/** The weight of the value, (1 ~ 65535) */
+				uint16_t rawWeight;
 		};
 	}
 }

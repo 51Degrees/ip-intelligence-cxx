@@ -74,7 +74,7 @@ static void buildString(
 			}
 			else if (strstr(property, "Location") != NULL) {
 				fiftyoneDegreesCoordinate coordinate = IpiGetCoordinate(&results->values.items[i].item, exception);
-				percentage = FLOAT_TO_NATIVE(results->values.items[i].percentage);
+				percentage = (float)results->values.items[i].rawWeighting / 65535.f;
 				output = output + sprintf(output, "%s: %f,%f,%f\n",
 					property,
 					coordinate.lat,
@@ -88,7 +88,7 @@ static void buildString(
 						output = output + sprintf(output, " | ");
 					}
 					value = STRING(results->values.items[0].item.data.ptr);
-					percentage = FLOAT_TO_NATIVE(results->values.items[0].percentage);
+					percentage = (float)results->values.items[0].rawWeighting / 65535.f;
 					output = output + sprintf(output, "\"%s\" : \"%s,%f\"",
 						property,
 						value,

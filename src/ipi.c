@@ -87,7 +87,7 @@ typedef struct state_with_exception_t {
 
 typedef struct state_with_percentage_t {
 	void* subState; /* Pointer to a data set or other information */
-	Float percentage;
+	uint16_t rawWeighting;
 } stateWithPercentage;
 
 /**
@@ -114,7 +114,7 @@ typedef struct profile_combination_component_index_t {
 #pragma pack(push, 1)
 typedef struct offset_percentage_t {
 	uint32_t offset; /* Offset to a collection item */
-	Float percentage; /* The weight of the item in the matched IP range */
+	uint16_t rawWeighting; /* The weight of the item in the matched IP range, out of 65535 */
 } offsetPercentage;
 #pragma pack(pop)
 
@@ -1632,7 +1632,7 @@ static bool addValueWithPercentage(void* state, Item* item) {
 			&stringItem,
 			exception) != NULL && EXCEPTION_OKAY) {
 			profilePercentageItem.item = stringItem;
-			profilePercentageItem.percentage = percentageState->percentage;
+			profilePercentageItem.rawWeighting = percentageState->rawWeighting;
 			addIpiListItem(&results->values, &profilePercentageItem);
 		}
 	}
@@ -1645,7 +1645,7 @@ static uint32_t addValuesFromProfile(
 	ResultsIpi* results,
 	Profile* profile,
 	Property* property,
-	Float percentage,
+	uint16_t percentage,
 	Exception* exception) {
 	uint32_t count;
 
@@ -1653,7 +1653,7 @@ static uint32_t addValuesFromProfile(
 	stateWithException state;
 	stateWithPercentage percentageState;
 	percentageState.subState = results;
-	percentageState.percentage = percentage;
+	percentageState.rawWeighting = percentage;
 	state.state = &percentageState;
 	state.exception = exception;
 
@@ -1748,7 +1748,7 @@ static uint32_t addValuesFromDynamicProperty(
 			if (EXCEPTION_OKAY) {
 				ProfilePercentage profilePercentage;
 				profilePercentage.item = stringItem;
-				profilePercentage.percentage = values[i].percentage;
+				profilePercentage.rawWeighting = values[i].rawWeighting;
 				addIpiListItem(&results->values, &profilePercentage);
 				count++;
 			}
@@ -1793,7 +1793,7 @@ static uint32_t addValuesFromNormalProperty(
 					results,
 					profile,
 					property,
-					profiles[cur].percentage,
+					profiles[cur].rawWeighting,
 					exception);
 				COLLECTION_RELEASE(dataSet->profiles, &profileItem);
 			}
@@ -1992,8 +1992,8 @@ static const ProfilePercentage* addFakeValueProfile(
 	fiftyoneDegreesProfilePercentage * const fakeProfile =
 		Malloc(sizeof(ProfilePercentage));
 
-	// set profile percentage to 0.5f
-	fakeProfile->percentage = FIFTYONE_DEGREES_NATIVE_TO_FLOAT(0.5f);
+	// set profile percentage to 0.5f(+)
+	fakeProfile->rawWeighting = 0x7FFFU;
 
 	// Initialise the item ready to store data from the collection
 	fiftyoneDegreesDataReset(&(fakeProfile->item.data));
@@ -2344,7 +2344,7 @@ static size_t getRangeString(
 				buffer + charactersAdded,
 				remainerLength,
 				":\"%f\"",
-				FLOAT_TO_NATIVE(profilePercentage->percentage));
+				(float)profilePercentage->rawWeighting / 65535.f);
 			if (tempAdded > 0) {
 				charactersAdded += MIN(tempAdded, remainerLength);
 				buffer[charactersAdded] = '\0';
@@ -2395,7 +2395,7 @@ static size_t getLocationString(
 				buffer + charactersAdded,
 				remainerLength,
 				":\"%f\"",
-				FLOAT_TO_NATIVE(profilePercentage->percentage));
+				(float)profilePercentage->rawWeighting / 65535.f);
 			if (tempAdded > 0) {
 				charactersAdded += MIN(tempAdded, remainerLength);
 				buffer[charactersAdded] = '\0';
@@ -2465,7 +2465,7 @@ static size_t getNormalString(
 			buffer + charactersAdded,
 			remainerLength,
 			":\"%f\"",
-			FLOAT_TO_NATIVE(profilePercentage[i].percentage));
+			(float)profilePercentage[i].rawWeighting / 65535.f);
 		if (tempAdded > 0) {
 			charactersAdded += MIN(tempAdded, remainerLength);
 		}
@@ -2745,7 +2745,7 @@ fiftyoneDegreesIpiGetNetworkIdFromResult(
 								destination, 
 								buffer, 
 								size, 
-								FLOAT_TO_NATIVE(profiles[k].percentage));
+								(float)profiles[k].rawWeighting / 65535.f);
 						}
 						else {
 							charactersAdded = PRINT_PROFILE_ID(
@@ -2754,7 +2754,7 @@ fiftyoneDegreesIpiGetNetworkIdFromResult(
 								size,
 								"%i:%f",
 								profile->profileId,
-								FLOAT_TO_NATIVE(profiles[k].percentage));
+								(float)profiles[k].rawWeighting / 65535.f);
 						}
 						COLLECTION_RELEASE(dataSet->profiles, &profileItem);
 						if (charactersAdded == 0) {

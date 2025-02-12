@@ -312,7 +312,7 @@ typedef struct fiftyone_degrees_dataset_ipi_t {
  */
 typedef struct fiftyone_degrees_profile_percentage_t {
 	fiftyoneDegreesCollectionItem item; /**< A collection item which contains the value */
-	fiftyoneDegreesFloat percentage; /**< The proportion of the item in the returned values */
+	uint16_t rawWeighting; /**< The proportion of the item in the returned values (out of 65535) */
 } fiftyoneDegreesProfilePercentage;
 
 /**
