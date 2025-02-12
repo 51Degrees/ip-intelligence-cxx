@@ -1945,12 +1945,12 @@ static const FakeValueRef fakeValues[] = {
 		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS,
 		fakeIPValue,
 		sizeof(fakeIPValue),
-	},/*
+	},
 	{
 		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB,
 		fakeWKBValue,
 		sizeof(fakeWKBValue),
-	},*/
+	},
 };
 
 #define FAKE_PROFILE_PERCENTAGE_VALUE fakeValueInFakeProfile

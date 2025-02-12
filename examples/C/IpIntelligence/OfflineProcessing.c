@@ -387,12 +387,12 @@ int main(int argc, char* argv[]) {
 #endif
 
 	// Start the offline processing.
+	// TODO: Revert to "IpRangeStart,IpRangeEnd,CountryCode,AverageLocation"
 	fiftyoneDegreesOfflineProcessingRun(
 		dataFilePath,
 		ipAddressFilePath,
 		outputFilePath,
-		argc > 4 ? argv[4] : "IpRangeStart,IpRangeEnd,"
-		"CountryCode,AverageLocation",
+		argc > 4 ? argv[4] : "networkname,coordinate",
 		CONFIG);
 
 #ifdef _DEBUG
