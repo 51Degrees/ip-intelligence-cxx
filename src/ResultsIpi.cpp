@@ -118,7 +118,7 @@ IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<
         }
         if (EXCEPTION_OKAY) {
             stream << ":";
-            stream << FLOAT_TO_NATIVE(valuesItems[i].percentage);
+            stream << (float)valuesItems[i].rawWeighting / 65535.f;
             values.push_back(stream.str());
         }
 	}
@@ -394,7 +394,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedBoolList(
                     // Coordinate and IP range cannot be converted to boolean so default to false
                     weightedBool.setValue(false);
                 }
-                weightedBool.setWeight(FLOAT_TO_NATIVE(valuesItems[i].percentage));
+                weightedBool.setRawWeight(valuesItems[i].rawWeighting);
                 values.push_back(weightedBool);
             }
             result.setValue(values);
@@ -503,7 +503,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
                     break;
                 }
                 weightedString.setValue(stream.str());
-                weightedString.setWeight(FLOAT_TO_NATIVE(valuesItems[i].percentage));
+                weightedString.setRawWeight(valuesItems[i].rawWeighting);
                 values.push_back(weightedString);
             }
             result.setValue(values);
@@ -592,7 +592,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList(
                     stream << STRING((String*)valuesItems[i].item.data.ptr);
                 }
                 weightedString.setValue(stream.str());
-                weightedString.setWeight(FLOAT_TO_NATIVE(valuesItems[i].percentage));
+                weightedString.setRawWeight(valuesItems[i].rawWeighting);
                 values.push_back(weightedString);
             }
             result.setValue(values);
@@ -674,7 +674,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedIntegerList(
                     // so default to 0
                     weightedInteger.setValue(0);
                 }
-                weightedInteger.setWeight(FLOAT_TO_NATIVE(valuesItems[i].percentage));
+                weightedInteger.setRawWeight(valuesItems[i].rawWeighting);
                 values.push_back(weightedInteger);
             }
             result.setValue(values);
@@ -750,7 +750,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedDoubleList(
                     // so default to 0
                     weightedDouble.setValue(0);
                 }
-                weightedDouble.setWeight(FLOAT_TO_NATIVE(valuesItems[i].percentage));
+                weightedDouble.setRawWeight(valuesItems[i].rawWeighting);
                 values.push_back(weightedDouble);
             }
             result.setValue(values);
@@ -822,7 +822,7 @@ Common::Value<vector<WeightedValue<Coordinate>>>
                     // so default to 0
                     weightedCoordinate.setValue({0, 0});
                 }
-                weightedCoordinate.setWeight(FLOAT_TO_NATIVE(valuesItems[i].percentage));
+                weightedCoordinate.setRawWeight(valuesItems[i].rawWeighting);
                 values.push_back(weightedCoordinate);
             }
             result.setValue(values);

@@ -32,7 +32,8 @@ public:
     T getValue();
     void setValue(T v);
     float getWeight();
-    void setWeight(float w);
+    uint16_t getRawWeight();
+    void setRawWeight(uint16_t w);
 };
 
 %template(WeightedValueStringSwig) WeightedValue<std::string>;
