@@ -4,3 +4,6 @@
 [submodule "src/common-cxx"]
 	path = src/common-cxx
 	url = ../../postindustria-tech/common-cxx
+[submodule "src/ip-graph-cxx"]
+	path = src/ip-graph-cxx
+	url = https://github.com/51Degrees/ip-graph-cxx.git

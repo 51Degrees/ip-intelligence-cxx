@@ -21,7 +21,7 @@
     <ClInclude Include="..\..\src\ipi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\graph.h">
+    <ClInclude Include="..\..\src\ip-graph-cxx\graph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -29,7 +29,7 @@
     <ClCompile Include="..\..\src\ipi.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\graph.c">
+    <ClCompile Include="..\..\src\ip-graph-cxx\graph.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

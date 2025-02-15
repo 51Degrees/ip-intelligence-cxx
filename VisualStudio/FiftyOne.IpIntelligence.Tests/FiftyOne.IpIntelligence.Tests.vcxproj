@@ -9,6 +9,7 @@
     <ClCompile Include="..\..\src\common-cxx\tests\EngineTests.cpp" />
     <ClCompile Include="..\..\src\common-cxx\tests\ExampleTests.cpp" />
     <ClCompile Include="..\..\src\common-cxx\textfile.c" />
+    <ClCompile Include="..\..\src\GraphIpi.cpp" />
     <ClCompile Include="..\..\test\EngineIpIntelligenceTests.cpp" />
     <ClCompile Include="..\..\test\EngineIpiTestsFile.cpp" />
     <ClCompile Include="..\..\test\EngineIpiTestsMemory.cpp" />
@@ -22,6 +23,7 @@
     <ClCompile Include="..\..\test\ExampleReloadFromFileTests.cpp" />
     <ClCompile Include="..\..\test\ExampleReloadFromMemoryTests.cpp" />
     <ClCompile Include="..\..\test\ExampleStronglyTypedTests.cpp" />
+    <ClCompile Include="..\..\test\GraphIpIntelligenceTests.cpp" />
     <ClCompile Include="..\..\test\MemLeakReloadFromFileTests.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -31,9 +33,11 @@
     <ClInclude Include="..\..\src\common-cxx\tests\pch.h" />
     <ClInclude Include="..\..\src\common-cxx\textfile.h" />
     <ClInclude Include="..\..\src\EngineIpi.hpp" />
+    <ClInclude Include="..\..\src\GraphIpi.hpp" />
     <ClInclude Include="..\..\test\Constants.hpp" />
     <ClInclude Include="..\..\test\EngineIpIntelligenceTests.hpp" />
     <ClInclude Include="..\..\test\ExampleIpIntelligenceTests.hpp" />
+    <ClInclude Include="..\..\test\GraphIpIntelligenceTests.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Examples\CPP\Meta Data\Meta Data.vcxproj">
