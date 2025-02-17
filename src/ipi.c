@@ -1444,20 +1444,21 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 	const char* ipAddress,
 	size_t ipLength,
 	fiftyoneDegreesException* exception) {
-	IpAddress *ip =
-		IpAddressParse(Malloc, ipAddress, ipAddress + ipLength);
+	IpAddress ip;
+	const bool parsed =
+		IpAddressParse(ipAddress, ipAddress + ipLength, &ip);
 	// Check if the IP address was successfully created
-	if (ip == NULL) {
+	if (!parsed) {
 		EXCEPTION_SET(INSUFFICIENT_MEMORY);
 		return;
 	}
 	
 	// Perform the search on the IP address byte array
-	switch(ip->type) {
+	switch(ip.type) {
 	case IP_TYPE_IPV4:
 		fiftyoneDegreesResultsIpiFromIpAddress(
 			results,
-			ip->value,
+			ip.value,
 			IPV4_LENGTH,
 			IP_TYPE_IPV4,
 			exception);
@@ -1465,7 +1466,7 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 	case IP_TYPE_IPV6:
 		fiftyoneDegreesResultsIpiFromIpAddress(
 			results,
-			ip->value,
+			ip.value,
 			IPV6_LENGTH,
 			IP_TYPE_IPV6,
 			exception);
@@ -1475,9 +1476,6 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 		break;
 	}
-
-	// Free parsed IP address
-	Free(ip);
 }
 
 static bool setResultFromEvidence(
@@ -1502,22 +1500,22 @@ static bool setResultFromEvidence(
 			// Get the parsed Value
 			const char *ipAddressString = (const char *)pair->parsedValue;
 			// Obtain the byte array first
-			IpAddress *ipAddress =
-				fiftyoneDegreesIpAddressParse(Malloc, ipAddressString, ipAddressString + strlen(ipAddressString));
+			IpAddress ipAddress;
+			const bool parsed =
+				fiftyoneDegreesIpAddressParse(ipAddressString, ipAddressString + strlen(ipAddressString), &ipAddress);
 			// Check if the IP address was successfully created
-			if (ipAddress == NULL) {
+			if (!parsed) {
 				EXCEPTION_SET(INSUFFICIENT_MEMORY);
 				return false;
 			}
-			else if(ipAddress->type == IP_TYPE_INVALID) {
-				Free(ipAddress);
+			else if(ipAddress.type == IP_TYPE_INVALID) {
 				EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 				return false;
 			}
 
 			// Obtain the correct IP address
 			int ipLength = 
-				ipAddress->type == IP_TYPE_IPV4 ?
+				ipAddress.type == IP_TYPE_IPV4 ?
 				FIFTYONE_DEGREES_IPV4_LENGTH : 
 				FIFTYONE_DEGREES_IPV6_LENGTH;
 			// Configure the next result in the array of results.
@@ -1526,14 +1524,11 @@ static bool setResultFromEvidence(
 			results->items[0].profileCombinationOffset = NULL_PROFILE_OFFSET; // Default IP range offset
 			result->targetIpAddress.length = ipLength;
 			memset(result->targetIpAddress.value, 0, IPV6_LENGTH);
-			memcpy(result->targetIpAddress.value, ipAddress->value, ipLength);
-			memcpy(result->targetIpAddress.value, ipAddress->value, IPV6_LENGTH);
-			result->targetIpAddress.type = ipAddress->type;
-			result->type = ipAddress->type;
+			memcpy(result->targetIpAddress.value, ipAddress.value, ipLength);
+			memcpy(result->targetIpAddress.value, ipAddress.value, IPV6_LENGTH);
+			result->targetIpAddress.type = ipAddress.type;
+			result->type = ipAddress.type;
 			results->count++;
-
-			// Freed the allocated memory for ipAddress
-			Free(ipAddress);
 
 			setResultFromIpAddress(
 				result,

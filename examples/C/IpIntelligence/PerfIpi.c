@@ -208,18 +208,18 @@ static void reportProgress(performanceThreadState* state) {
 static void executeTest(const char* ipAddress, void* state) {
 	performanceThreadState* threadState = (performanceThreadState*)state;
 	fiftyoneDegreesResultIpi* result;
-	IpAddress* eIpAddress;
+	IpAddress eIpAddress;
 	size_t ipAddressLength = 0;
 	EXCEPTION_CREATE;
 
 	// Parse the IP Address string to a byte array
-	eIpAddress = fiftyoneDegreesIpAddressParse(
-			malloc,
+	const bool parsed = fiftyoneDegreesIpAddressParse(
 			ipAddress, 
-			ipAddress + strlen(ipAddress));
+			ipAddress + strlen(ipAddress),
+			&eIpAddress);
 
-	if (eIpAddress != NULL) {
-		switch (eIpAddress->type) {
+	if (parsed) {
+		switch (eIpAddress.type) {
 		case IP_TYPE_IPV4:
 			ipAddressLength = FIFTYONE_DEGREES_IPV4_LENGTH;
 			break;
@@ -235,16 +235,15 @@ static void executeTest(const char* ipAddress, void* state) {
 		if (threadState->main->calibration == false) {
 			ResultsIpiFromIpAddress(
 				threadState->results,
-				eIpAddress->value,
-				eIpAddress->type == IP_TYPE_IPV4 ?
+				eIpAddress.value,
+				eIpAddress.type == IP_TYPE_IPV4 ?
 					FIFTYONE_DEGREES_IPV4_LENGTH : 
 					FIFTYONE_DEGREES_IPV6_LENGTH,
-				(IpType)eIpAddress->type,
+				(IpType)eIpAddress.type,
 				exception);
 			EXCEPTION_THROW;
 			result = (ResultIpi*)threadState->results->items;
 		}
-		free(eIpAddress);
 	}
 	else {
 		// Terminates as failed to allocate memory for IP address
