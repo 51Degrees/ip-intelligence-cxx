@@ -167,8 +167,8 @@ static void reportStatus(StatusCode status,
 
 static void printPropertyValueFromResults(ResultsIpi *results) {
 	if (results != NULL && results->count > 0) {
-		printf("networkname: %s\n", getPropertyValueAsString(results, "networkname"));
-		printf("coordinate: %s\n", getPropertyValueAsString(results, "coordinate"));
+		printf("name: %s\n", getPropertyValueAsString(results, "name"));
+		printf("areas: %s\n", getPropertyValueAsString(results, "areas"));
 	}
 	else {
 		printf("No results.");
@@ -183,7 +183,7 @@ void fiftyoneDegreesIpiGettingStarted(
 
 	// Set the properties to be returned for each ip
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "networkname,coordinate";
+	properties.string = "name,areas";
 
 	StatusCode status = IpiInitManagerFromFile(
 		&manager,

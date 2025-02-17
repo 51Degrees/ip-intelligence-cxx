@@ -33,7 +33,7 @@ ExampleBase::ExampleBase(::byte *data, long length, ConfigIpi *config) {
 	this->config = config;
 	
 	// Set the properties to be returned for each Ip Address.
-	string propertiesString = "IpRangeStart,IpRangeEnd,CountryCode,CityName,AverageLocation";
+	string propertiesString = "IpRangeStart,IpRangeEnd,CountryCode,CityName,AccuracyRadius";
 	properties = new RequiredPropertiesConfig(propertiesString);
 	
 	// Initialise the engine for IP intelligence.
@@ -44,7 +44,7 @@ ExampleBase::ExampleBase(string dataFilePath, ConfigIpi *config) {
 	this->config = config;
 	
 	// Set the properties to be returned for each Ip Address.
-	string propertiesString = "networkname,coordinate";
+	string propertiesString = "IpRangeStart,IpRangeEnd,CountryCode,CityName,AccuracyRadius";
 	properties = new RequiredPropertiesConfig(propertiesString);
 
 	// Initialise the engine for ip intelligence.
