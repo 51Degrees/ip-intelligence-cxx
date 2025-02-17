@@ -2018,20 +2018,6 @@ const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 
 	dataSet = (DataSetIpi*)results->b.dataSet;
 
-	{
-		// FAKE RESULTS
-		// TODO: Remove this section
-		const ProfilePercentage * const fakeProfile = addFakeValueProfile(
-		 	dataSet,
-		 	results,
-		 	requiredPropertyIndex,
-		 	exception);
-
-		if (fakeProfile) {
-			return fakeProfile;
-		}
-	}
-
 	// Work out the property index from the required property index.
 	uint32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
 		dataSet->b.b.available,
