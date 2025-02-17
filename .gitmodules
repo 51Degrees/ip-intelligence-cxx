@@ -6,4 +6,4 @@
 	url = ../common-cxx
 [submodule "src/ip-graph-cxx"]
 	path = src/ip-graph-cxx
-	url = https://github.com/51Degrees/ip-graph-cxx.git
+	url = ../ip-graph-cxx
