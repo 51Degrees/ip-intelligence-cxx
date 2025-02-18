@@ -572,30 +572,6 @@ void EngineIpIntelligenceTests::randomIpAddressPresent(int count) {
 	}
 }
 
-void EngineIpIntelligenceTests::verifyNetworkId(const char *ipAddress) {
-	EngineIpi *engineIpi = (EngineIpi*)getEngine();
-	ResultsIpi *results = engineIpi->process(ipAddress);
-	string networkId = results->getNetworkId();
-	// By default regex use ECMAScript regex
-	// For special pattern character such as '\d'
-	// the '\' need to be escaped. eg. '\\d'
-	regex matchPattern;
-	if (strcmp(ipAddress, "") == 0) {
-		// If ipAddress is empty the default network id should
-		// be in the form of 0:1.00...|0:1.00...|...
-		matchPattern = regex("^(0:1.0+)(\\|(0:1.0+))*");
-	}
-	else {
-		matchPattern = regex("^(\\d+\\:\\d+.\\d+)(\\|(\\d+\\:\\d+.\\d+))*");
-	}
-	
-	EXPECT_EQ(true, regex_match(networkId, matchPattern)) << "An "
-		"invalid network ID has been returned, where it should be for IP address: "
-		<< ipAddress;
-
-	delete results;
-}
-
 void EngineIpIntelligenceTests::verifyCoordinate() {
 	EngineIpi *engineIpi = (EngineIpi*)getEngine();
 	uint32_t defaultCount = 0;

@@ -24,6 +24,7 @@
 #include "ValueMetaDataBuilderIpi.hpp"
 #include "common-cxx/Exceptions.hpp"
 #include "fiftyone.h"
+#include "common-cxx/wkbtot.h"
 
 using namespace FiftyoneDegrees::IpIntelligence;
 
@@ -84,6 +85,22 @@ string ValueMetaDataBuilderIpi::getDynamicString(
 				stream << buffer;
 			}
 			break;
+			case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB: {
+				char buffer[FIFTYONE_DEGREES_REASONABLE_WKT_STRING_LENGTH];
+				const fiftyoneDegreesWkbtotResult toWktResult =
+					fiftyoneDegreesConvertWkbToWkt(
+						FIFTYONE_DEGREES_WKB(str),
+						buffer,
+						FIFTYONE_DEGREES_REASONABLE_WKT_STRING_LENGTH,
+						16,
+						exception
+						);
+
+				if (EXCEPTION_OKAY && !toWktResult.bufferTooSmall) {
+					stream << buffer;
+				}
+				break;
+			}
 		default:
 			stream << &str->value;
 			break;
