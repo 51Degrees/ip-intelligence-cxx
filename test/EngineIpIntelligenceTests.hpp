@@ -112,7 +112,6 @@ public:
 	void ipAddressPresent(const char *ipAddress);
 	void boundIpAddressPresent(const char *ipAddress);
 	void randomIpAddressPresent(int count);
-	void verifyNetworkId(const char *ipAddress);
 	void verifyCoordinate();
 	void validateIndex(ResultsBase *results, int index) override;
 	void validateName(ResultsBase *results, string *name) override;
@@ -204,12 +203,6 @@ TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestIpAddress) { \
 	randomIpAddressPresent(50); \
 	verifyMixedPrefixesEvidence(); }
 	//boundIpAddressPresent(outOfRangeIpv6Address); \ /* This will give undefined behaviour */
-
-#define ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e,t,c,p) \
-TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestNetworkId) { \
-	verifyNetworkId(ipv4Address); \
-	verifyNetworkId(ipv6Address); \
-	verifyNetworkId(""); }
 
 #define ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e,t,c,p) \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestCoordinate) { \
@@ -318,18 +311,6 @@ ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, File, InMemory, AllEdgePropertyArray)
 ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, File, SingleLoaded, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, File, Null, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, File, Null, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e, File, LowMemory, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e, File, Balanced, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e, File, BalancedTemp, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e, File, InMemory, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e, File, SingleLoaded, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e, File, LowMemory, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e, File, Balanced, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e, File, BalancedTemp, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e, File, InMemory, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e, File, SingleLoaded, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e, File, Null, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e, File, Null, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, File, LowMemory, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, File, Balanced, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, File, BalancedTemp, AllEdgePropertyStrings) \
@@ -378,10 +359,6 @@ ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, Memory, InMemory, AllEdgePropertyStri
 ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, Memory, InMemory, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, Memory, Null, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, Memory, Null, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e, Memory, InMemory, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e, Memory, InMemory, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e, Memory, Null, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_NETWORK_ID_TESTS(e, Memory, Null, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, Memory, InMemory, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, Memory, InMemory, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, Memory, Null, AllEdgePropertyStrings) \

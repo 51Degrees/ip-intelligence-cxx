@@ -24,6 +24,7 @@
 #define FIFTYONE_DEGREES_SYNONYM_IPI_INCLUDED
 
 #include "ipi.h"
+#include "constantsIpi.h"
 #include "common-cxx/fiftyone.h"
 
 // Data types
@@ -63,6 +64,9 @@ MAP_TYPE(ResultProfileIndex)
 #define IpiGetIpAddressAsString fiftyoneDegreesIpiGetIpAddressAsString /**< Synonym for #fiftyoneDegreesIpiGetIpAddressAsString function. */
 #define IpiGetIpAddressAsByteArray fiftyoneDegreesIpiGetIpAddressAsByteArray /**< Synonym for #fiftyoneDegreesIpiGetIpAddressAsByteArray function. */
 #define IpiIterateProfilesForPropertyAndValue fiftyoneDegreesIpiIterateProfilesForPropertyAndValue /**< Synonym for #fiftyoneDegreesIpiIterateProfilesForPropertyAndValue function. */
+
+// Constants
+#define DefaultWktDecimalPlaces fiftyoneDegreesDefaultWktDecimalPlaces /**< Synonym for #fiftyoneDegreesDefaultWktDecimalPlaces config. */
 
 // Config
 #define IpiInMemoryConfig fiftyoneDegreesIpiInMemoryConfig /**< Synonym for #fiftyoneDegreesIpiInMemoryConfig config. */

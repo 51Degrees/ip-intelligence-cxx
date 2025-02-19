@@ -22,7 +22,8 @@
 
 #include "ResultsIpi.hpp"
 #include "fiftyone.h"
-#include "common-cxx/wkbtot.h"
+#include "common-cxx/wkbtot.hpp"
+#include "constantsIpi.h"
 
 using namespace FiftyoneDegrees;
 using namespace FiftyoneDegrees::IpIntelligence;
@@ -484,34 +485,11 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
                     }
                     break;
                 }
-                case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB: {
-                    char buffer[REASONABLE_WKT_STRING_LENGTH];
-                    fiftyoneDegreesWkbtotResult toWktResult =
-                        fiftyoneDegreesConvertWkbToWkt(
-                            FIFTYONE_DEGREES_WKB(valuesItems[i].item.data.ptr),
-                            buffer,
-                            REASONABLE_WKT_STRING_LENGTH,
-                            16,
-                            exception
-                            );
-                    if (toWktResult.bufferTooSmall) {
-                        EXCEPTION_CLEAR
-                        char buffer2[toWktResult.written + 1];
-                        toWktResult =
-                            fiftyoneDegreesConvertWkbToWkt(
-                                FIFTYONE_DEGREES_WKB(valuesItems[i].item.data.ptr),
-                                buffer2,
-                                toWktResult.written + 1,
-                                16,
-                                exception
-                                );
-                    }
-
-                    if (EXCEPTION_OKAY && !toWktResult.bufferTooSmall) {
-                        stream << buffer;
-                    }
+                case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB:
+                    writeWkbStringToStringStream(
+                        (const String *)valuesItems[i].item.data.ptr,
+                        stream, DefaultWktDecimalPlaces, exception);
                     break;
-                }
                 default:
                     stream << STRING((String*)valuesItems[i].item.data.ptr);
                     break;
@@ -582,7 +560,6 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList(
             values.reserve(results->values.count);
 
             stringstream stream;
-            char buffer[REASONABLE_WKT_STRING_LENGTH];
             fiftyoneDegreesCoordinate coordinate;
             // Add the values in their original form to the result.
             for (i = 0; i < results->values.count; i++) {
@@ -590,18 +567,9 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList(
                 // Clear stream before the construction
                 stream.str("");
                 if (valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB) {
-                    const fiftyoneDegreesWkbtotResult toWktResult =
-                        fiftyoneDegreesConvertWkbToWkt(
-                            FIFTYONE_DEGREES_WKB(valuesItems[i].item.data.ptr),
-                            buffer,
-                            REASONABLE_WKT_STRING_LENGTH,
-                            decimalPlaces,
-                            exception
-                            );
-
-                    if (EXCEPTION_OKAY && !toWktResult.bufferTooSmall) {
-                        stream << buffer;
-                    }
+                    writeWkbStringToStringStream(
+                        (const String *)valuesItems[i].item.data.ptr,
+                        stream, decimalPlaces, exception);
                 } else {
                     stream << STRING((String*)valuesItems[i].item.data.ptr);
                 }

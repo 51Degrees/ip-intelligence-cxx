@@ -23,6 +23,7 @@
 #include "ipi.h"
 #include "fiftyone.h"
 #include "common-cxx/config.h"
+#include "constantsIpi.h"
 
 MAP_TYPE(Collection)
 
@@ -117,6 +118,11 @@ typedef struct offset_percentage_t {
 	uint16_t rawWeighting; /* The weight of the item in the matched IP range, out of 65535 */
 } offsetPercentage;
 #pragma pack(pop)
+
+/**
+ * All profile weightings in a groups should add up to exactly this number.
+ */
+static const uint16_t FULL_RAW_WEIGHTING = 0xFFFFU;
 
 /**
  * PRESET IP INTELLIGENCE CONFIGURATIONS
@@ -1740,8 +1746,13 @@ static uint32_t addValuesFromProfileGroup(
 			exception);
 		if (weightedProfileOffset != NULL && EXCEPTION_OKAY) {
 			for (uint32_t totalWeight = 0;
-				totalWeight < 0xFFFFU;
-				totalWeight += (weightedProfileOffset++)->rawWeighting) {
+				totalWeight < FULL_RAW_WEIGHTING;
+				++weightedProfileOffset) {
+				totalWeight += weightedProfileOffset->rawWeighting;
+				if (totalWeight > FULL_RAW_WEIGHTING) {
+					EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
+					break;
+				}
 				count += addValuesFromSingleProfile(
 					results,
 					property,
@@ -1775,7 +1786,7 @@ static uint32_t addValuesFromResult(
 						results,
 						property,
 						profileOffsetValue,
-						0xFFFFU,
+						FULL_RAW_WEIGHTING,
 						exception);
 				} else {
 					const uint32_t groupOffset = 0LL - profileOffsetValue;
@@ -2085,9 +2096,13 @@ static bool resultGetHasValidPropertyValueOffset(
 								exception);
 						if (weightedProfileOffset && EXCEPTION_OKAY) {
 							for (uint32_t totalWeight = 0;
-								!hasValidOffset && totalWeight < 0xFFFFU;
-								totalWeight += (weightedProfileOffset++)->rawWeighting) {
-
+								!hasValidOffset && totalWeight < FULL_RAW_WEIGHTING;
+								++weightedProfileOffset) {
+								totalWeight += weightedProfileOffset->rawWeighting;
+								if (totalWeight > FULL_RAW_WEIGHTING) {
+									EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
+									break;
+								}
 								hasValidOffset = profileHasValidPropertyValue(
 									dataSet, weightedProfileOffset->offset, property, exception);
 							}
@@ -2462,6 +2477,23 @@ static size_t fiftyoneDegreesResultsIpiGetValuesStringInternal(
 							buffer,
 							bufferLength);
 						break;
+					case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB: {
+						if (results->values.count <= 0) {
+							break;
+						}
+						const String * const value =
+							(const String *)profilePercentage->item.data.ptr;
+						WkbtotResult toWktResult = ConvertWkbToWkt(
+							FIFTYONE_DEGREES_WKB(value),
+							buffer,
+							bufferLength,
+							DefaultWktDecimalPlaces,
+							exception);
+						if (EXCEPTION_OKAY && !toWktResult.bufferTooSmall) {
+							charactersAdded = toWktResult.written;
+						}
+						break;
+					}
 					default:
 						charactersAdded = getNormalString(
 							profilePercentage,
