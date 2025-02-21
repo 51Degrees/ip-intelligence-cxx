@@ -12,11 +12,11 @@ include(${CMAKE_CURRENT_LIST_DIR}/src/common-cxx/CMakeLists.txt NO_POLICY_SCOPE)
 project(51DegreesIpIntelligence VERSION 4.0.1 LANGUAGES CXX C)
 
 set(IPI ${CMAKE_CURRENT_LIST_DIR}/src)
+set(IPI_GRAPH ${CMAKE_CURRENT_LIST_DIR}/src/ip-graph-cxx)
 
 # IP Intelligence libraries
-
-FILE(GLOB IPIC_SRC ${IPI}/*.c)
-FILE(GLOB IPIC_H ${IPI}/*.h)
+FILE(GLOB IPIC_SRC ${IPI}/*.c ${IPI_GRAPH}/*.c)
+FILE(GLOB IPIC_H ${IPI}/*.h ${IPI_GRAPH}/*.h)
 add_library(fiftyone-ip-intelligence-c ${IPIC_SRC} ${IPIC_H})
 if (MSVC)
 	target_link_libraries(fiftyone-ip-intelligence-c fiftyone-common-c)
