@@ -24,6 +24,9 @@
 #include "ValueMetaDataBuilderIpi.hpp"
 #include "common-cxx/Exceptions.hpp"
 #include "fiftyone.h"
+#include "common-cxx/wkbtot.h"
+#include "common-cxx/wkbtot.hpp"
+#include "constantsIpi.h"
 
 using namespace FiftyoneDegrees::IpIntelligence;
 
@@ -84,6 +87,11 @@ string ValueMetaDataBuilderIpi::getDynamicString(
 				stream << buffer;
 			}
 			break;
+			case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB: {
+				writeWkbStringToStringStream(
+					str, stream, DefaultWktDecimalPlaces, exception);
+				break;
+			}
 		default:
 			stream << &str->value;
 			break;

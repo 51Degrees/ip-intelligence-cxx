@@ -23,6 +23,7 @@
 #include "ipi.h"
 #include "fiftyone.h"
 #include "common-cxx/config.h"
+#include "constantsIpi.h"
 
 MAP_TYPE(Collection)
 
@@ -117,6 +118,11 @@ typedef struct offset_percentage_t {
 	uint16_t rawWeighting; /* The weight of the item in the matched IP range, out of 65535 */
 } offsetPercentage;
 #pragma pack(pop)
+
+/**
+ * All profile weightings in a groups should add up to exactly this number.
+ */
+static const uint16_t FULL_RAW_WEIGHTING = 0xFFFFU;
 
 /**
  * PRESET IP INTELLIGENCE CONFIGURATIONS
@@ -323,13 +329,13 @@ static void setResultFromIpAddress(
 	ResultIpi* result,
 	DataSetIpi* dataSet,
 	Exception* exception) {
-	uint32_t profileIndex = fiftyoneDegreesIpiGraphEvaluate(
-		dataSet->graphsArray, 
+	const uint32_t profileOffsetIndex = fiftyoneDegreesIpiGraphEvaluate(
+		dataSet->graphsArray,
 		1, 
 		result->targetIpAddress, 
 		exception);
-	if (profileIndex >= 0 && EXCEPTION_OKAY) {
-		result->profileCombinationOffset = profileIndex;
+	if (profileOffsetIndex != NULL_PROFILE_OFFSET && EXCEPTION_OKAY) {
+		result->profileOffsetIndex = profileOffsetIndex;
 	}
 }
 
@@ -760,32 +766,6 @@ static void initDataSet(DataSetIpi* dataSet, ConfigIpi** config) {
 }
 
 #ifndef FIFTYONE_DEGREES_MEMORY_ONLY
-
-/**
- * Get the actual size of the profile groups by using
- * its intial value.
- * @param initial the intial value of a profile groups after read from file
- * @return the actual size of the profile groups
- */
-static uint32_t getProfileCombinationFinalSize(void* initial) {
-	return (uint32_t)(sizeof(int16_t) + (*(int16_t*)initial));
-}
-
-void* fiftyoneDegreesProfileCombinationReadFromFile(
-	const fiftyoneDegreesCollectionFile* file,
-	uint32_t offset,
-	fiftyoneDegreesData* data,
-	fiftyoneDegreesException* exception) {
-	ProfileCombination profileCombination = { 0, 0, 0, 0 };
-	return CollectionReadFileVariable(
-		file,
-		data,
-		offset,
-		&profileCombination,
-		sizeof(uint16_t), // Read the item header
-		getProfileCombinationFinalSize,
-		exception);
-}
 
 static StatusCode readHeaderFromFile(
 	FILE* file,
@@ -1404,7 +1384,7 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 
 	resultIpiReset(&results->items[0]);
 	// Default IP range offset
-	results->items[0].profileCombinationOffset = NULL_PROFILE_OFFSET; 
+	results->items[0].profileOffsetIndex = NULL_PROFILE_OFFSET;
 	results->items[0].targetIpAddress.type = type;
 	results->items[0].type = type;
 
@@ -1426,7 +1406,7 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 	// TODO: Fake the processing of the IP address and just set the results
 	// to fixed profiles.
 	{
-		results->items[0].profileCombinationOffset = 0;
+		results->items[0].profileOffsetIndex = 0;
 		return;
 	}
 
@@ -1444,20 +1424,21 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 	const char* ipAddress,
 	size_t ipLength,
 	fiftyoneDegreesException* exception) {
-	IpAddress *ip =
-		IpAddressParse(Malloc, ipAddress, ipAddress + ipLength);
+	IpAddress ip;
+	const bool parsed =
+		IpAddressParse(ipAddress, ipAddress + ipLength, &ip);
 	// Check if the IP address was successfully created
-	if (ip == NULL) {
+	if (!parsed) {
 		EXCEPTION_SET(INSUFFICIENT_MEMORY);
 		return;
 	}
 	
 	// Perform the search on the IP address byte array
-	switch(ip->type) {
+	switch(ip.type) {
 	case IP_TYPE_IPV4:
 		fiftyoneDegreesResultsIpiFromIpAddress(
 			results,
-			ip->value,
+			ip.value,
 			IPV4_LENGTH,
 			IP_TYPE_IPV4,
 			exception);
@@ -1465,7 +1446,7 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 	case IP_TYPE_IPV6:
 		fiftyoneDegreesResultsIpiFromIpAddress(
 			results,
-			ip->value,
+			ip.value,
 			IPV6_LENGTH,
 			IP_TYPE_IPV6,
 			exception);
@@ -1475,9 +1456,6 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 		break;
 	}
-
-	// Free parsed IP address
-	Free(ip);
 }
 
 static bool setResultFromEvidence(
@@ -1502,38 +1480,35 @@ static bool setResultFromEvidence(
 			// Get the parsed Value
 			const char *ipAddressString = (const char *)pair->parsedValue;
 			// Obtain the byte array first
-			IpAddress *ipAddress =
-				fiftyoneDegreesIpAddressParse(Malloc, ipAddressString, ipAddressString + strlen(ipAddressString));
+			IpAddress ipAddress;
+			const bool parsed =
+				fiftyoneDegreesIpAddressParse(ipAddressString, ipAddressString + strlen(ipAddressString), &ipAddress);
 			// Check if the IP address was successfully created
-			if (ipAddress == NULL) {
+			if (!parsed) {
 				EXCEPTION_SET(INSUFFICIENT_MEMORY);
 				return false;
 			}
-			else if(ipAddress->type == IP_TYPE_INVALID) {
-				Free(ipAddress);
+			else if(ipAddress.type == IP_TYPE_INVALID) {
 				EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 				return false;
 			}
 
 			// Obtain the correct IP address
 			int ipLength = 
-				ipAddress->type == IP_TYPE_IPV4 ?
+				ipAddress.type == IP_TYPE_IPV4 ?
 				FIFTYONE_DEGREES_IPV4_LENGTH : 
 				FIFTYONE_DEGREES_IPV6_LENGTH;
 			// Configure the next result in the array of results.
 			result = &((ResultIpi*)results->items)[results->count];
 			resultIpiReset(result);
-			results->items[0].profileCombinationOffset = NULL_PROFILE_OFFSET; // Default IP range offset
+			results->items[0].profileOffsetIndex = NULL_PROFILE_OFFSET; // Default IP range offset
 			result->targetIpAddress.length = ipLength;
 			memset(result->targetIpAddress.value, 0, IPV6_LENGTH);
-			memcpy(result->targetIpAddress.value, ipAddress->value, ipLength);
-			memcpy(result->targetIpAddress.value, ipAddress->value, IPV6_LENGTH);
-			result->targetIpAddress.type = ipAddress->type;
-			result->type = ipAddress->type;
+			memcpy(result->targetIpAddress.value, ipAddress.value, ipLength);
+			memcpy(result->targetIpAddress.value, ipAddress.value, IPV6_LENGTH);
+			result->targetIpAddress.type = ipAddress.type;
+			result->type = ipAddress.type;
 			results->count++;
-
-			// Freed the allocated memory for ipAddress
-			Free(ipAddress);
 
 			setResultFromIpAddress(
 				result,
@@ -1645,7 +1620,7 @@ static uint32_t addValuesFromProfile(
 	ResultsIpi* results,
 	Profile* profile,
 	Property* property,
-	uint16_t percentage,
+	uint16_t rawWeighting,
 	Exception* exception) {
 	uint32_t count;
 
@@ -1653,7 +1628,7 @@ static uint32_t addValuesFromProfile(
 	stateWithException state;
 	stateWithPercentage percentageState;
 	percentageState.subState = results;
-	percentageState.rawWeighting = percentage;
+	percentageState.rawWeighting = rawWeighting;
 	state.state = &percentageState;
 	state.exception = exception;
 
@@ -1720,85 +1695,75 @@ static Item getStringItemByValueOffset(
 	return returnedItem;
 }
 
-static uint32_t addValuesFromDynamicProperty(
+static uint32_t addValuesFromSingleProfile(
 	ResultsIpi* results,
 	Property *property,
-	ProfileCombination *profileCombination,
-	Exception* exception) {
-	uint32_t count = 0;
-	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
-
-	offsetPercentage* values;
-	// Set pointer to the values list in the profile groups block
-	// The structure  of the profile groups block is
-	// an array of componentIndexes,
-	// an array of profile offsets and percentages,
-	// an array of values offsets and percentages
-	// where the first 3 value offsets are locations
-	values = (offsetPercentage*)(&profileCombination->firstByte +
-		sizeof(componentIndex) * dataSet->componentsList.count +
-		sizeof(offsetPercentage) * profileCombination->profileCount);
-	for (int i = 0; i < profileCombination->valueCount; i++) {
-		if (values[i].offset >= property->firstValueIndex &&
-			values[i].offset <= property->lastValueIndex) {
-			Item stringItem = getStringItemByValueOffset(
-				results,
-				values[i].offset,
-				exception);
-			if (EXCEPTION_OKAY) {
-				ProfilePercentage profilePercentage;
-				profilePercentage.item = stringItem;
-				profilePercentage.rawWeighting = values[i].rawWeighting;
-				addIpiListItem(&results->values, &profilePercentage);
-				count++;
-			}
-		}
-	}
-	return count;
-}
-
-static uint32_t addValuesFromNormalProperty(
-	ResultsIpi* results,
-	Property *property,
-	ProfileCombination *profileCombination,
+	uint32_t profileOffset,
+	uint16_t rawWeighting,
 	Exception* exception) {
 	uint32_t count = 0;
 	Item profileItem;
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 
-	// Get the profiles array and values array
-	componentIndex* index = (componentIndex*)&profileCombination->firstByte;
-	offsetPercentage* profiles = (offsetPercentage*)(index + dataSet->componentsList.count);
-
 	// Add values from profiles
-	Profile* profile;
-	uint32_t profileOffset;
-	uint16_t cur = index[property->componentIndex].index;
-	uint16_t end = cur + index[property->componentIndex].count;
-	// Loop through the list of profiles and their percentage
-	DataReset(&profileItem.data);
-	for (; cur < end; cur++) {
-		profileOffset = profiles[cur].offset;
-		profile = NULL;
-		if (profileOffset != NULL_PROFILE_OFFSET) {
-			profile = (Profile*)dataSet->profiles->get(
-				dataSet->profiles,
-				profileOffset,
-				&profileItem,
+	Profile *profile = NULL;
+	if (profileOffset != NULL_PROFILE_OFFSET) {
+		profile = (Profile*)dataSet->profiles->get(
+			dataSet->profiles,
+			profileOffset,
+			&profileItem,
+			exception);
+		// If profile is found
+		if (profile != NULL && EXCEPTION_OKAY) {
+			count += addValuesFromProfile(
+				dataSet,
+				results,
+				profile,
+				property,
+				rawWeighting,
 				exception);
-			// If profile is found
-			if (profile != NULL && EXCEPTION_OKAY) {
-				count += addValuesFromProfile(
-					dataSet,
-					results,
-					profile,
-					property,
-					profiles[cur].rawWeighting,
-					exception);
-				COLLECTION_RELEASE(dataSet->profiles, &profileItem);
-			}
+			COLLECTION_RELEASE(dataSet->profiles, &profileItem);
 		}
 	}
+	return count;
+}
+
+static uint32_t addValuesFromProfileGroup(
+	ResultsIpi* results,
+	Property *property,
+	uint32_t profileGroupOffset,
+	Exception* exception) {
+	uint32_t count = 0;
+	offsetPercentage *weightedProfileOffset = NULL;
+	Item profileGroupItem;
+	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
+
+	if (profileGroupOffset != NULL_PROFILE_OFFSET) {
+		weightedProfileOffset = (offsetPercentage*)dataSet->profileGroups->get(
+			dataSet->profileGroups,
+			profileGroupOffset,
+			&profileGroupItem,
+			exception);
+		if (weightedProfileOffset != NULL && EXCEPTION_OKAY) {
+			for (uint32_t totalWeight = 0;
+				totalWeight < FULL_RAW_WEIGHTING;
+				++weightedProfileOffset) {
+				totalWeight += weightedProfileOffset->rawWeighting;
+				if (totalWeight > FULL_RAW_WEIGHTING) {
+					EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
+					break;
+				}
+				count += addValuesFromSingleProfile(
+					results,
+					property,
+					weightedProfileOffset->offset,
+					weightedProfileOffset->rawWeighting,
+					exception);
+			}
+			COLLECTION_RELEASE(dataSet->profiles, &profileGroupItem);
+		}
+	}
+
 	return count;
 }
 
@@ -1808,49 +1773,29 @@ static uint32_t addValuesFromResult(
 	Property* property,
 	Exception* exception) {
 	uint32_t count = 0;
-	ProfileCombination* profileCombination = NULL;
-	Item profileCombinationItem;
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 
 	if (results->count > 0) {
-		if (result->profileCombinationOffset != NULL_PROFILE_OFFSET) {
-			// Get the profile groups
-			DataReset(&profileCombinationItem.data);
-			/*profileCombination = 
-				(ProfileCombination*)dataSet->profileCombinations->get(
-				dataSet->profileCombinations,
-				result->profileCombinationOffset,
-				&profileCombinationItem,
-				exception);*/
+		if (result->profileOffsetIndex != NULL_PROFILE_OFFSET) {
+			const int32_t profileOffsetValue = CollectionGetInteger32(
+				dataSet->profileOffsets, result->profileOffsetIndex, exception);
 
-			if (profileCombination != NULL && EXCEPTION_OKAY) {
-				Component* component = (Component*)dataSet->componentsList.items[
-					property->componentIndex].data.ptr;
-				if (component->defaultProfileOffset == DYNAMIC_COMPONENT_OFFSET) {
-					// This is a dynamic component so check property name
-					// and get data from profileCombination instead
-					count = addValuesFromDynamicProperty(
+			if (EXCEPTION_OKAY) {
+				if (profileOffsetValue > 0) {
+					count += addValuesFromSingleProfile(
 						results,
 						property,
-						profileCombination,
+						profileOffsetValue,
+						FULL_RAW_WEIGHTING,
 						exception);
-					if (count > 1 && 
-						EXCEPTION_OKAY &&
-						(property->valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE ||
-						property->valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS)) {
-						releaseIpiList(&results->values);
-						// There should not be more than one value for this type
-						EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
-					}
-				}
-				else {
-					count = addValuesFromNormalProperty(
+				} else {
+					const uint32_t groupOffset = 0LL - profileOffsetValue;
+					count += addValuesFromProfileGroup(
 						results,
 						property,
-						profileCombination,
+						groupOffset,
 						exception);
 				}
-				//COLLECTION_RELEASE(dataSet->profileCombinations, &profileCombinationItem);
 			}
 		}
 	}
@@ -1903,113 +1848,6 @@ getPropertyValueType(
 	return valueType;
 }
 
-static char fakeValueInFakeProfile[] = "\x1C\0fake-value-in-fake-profile";
-static byte fakeCoordValue[] = {
-	0x09, 0x00,
-	FIFTYONE_DEGREES_STRING_COORDINATE,
-	0x00, 0x00, 0x80, 0xBF, // -1.0
-	0x00, 0x00, 0x00, 0x41, //  8.0
-	0x00,
-};
-static byte fakeIPValue[] = {
-	0x04, 0x00,
-	FIFTYONE_DEGREES_STRING_IP_ADDRESS,
-	0xD4, 0x0C, 0x00, 0x01,
-};
-static byte fakeWKBValue[] = {
-	0x15, 0x00,
-	FIFTYONE_DEGREES_STRING_WKB,
-	0x00,
-	0x00, 0x00, 0x00, 0x01,
-	0x40, 0x31, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x40, 0x8b, 0xe0, 0xc0, 0x00, 0x00, 0x00, 0x00,
-};
-
-typedef struct {
-	const PropertyValueType valueType;
-	byte * const start;
-	const uint16_t length;
-} FakeValueRef;
-static const FakeValueRef fakeValues[] = {
-	{
-		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
-		fakeValueInFakeProfile,
-		sizeof(fakeValueInFakeProfile),
-	},
-	{
-		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE,
-		fakeCoordValue,
-		sizeof(fakeCoordValue),
-	},
-	{
-		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS,
-		fakeIPValue,
-		sizeof(fakeIPValue),
-	},
-	{
-		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB,
-		fakeWKBValue,
-		sizeof(fakeWKBValue),
-	},
-};
-
-#define FAKE_PROFILE_PERCENTAGE_VALUE fakeValueInFakeProfile
-
-static Collection * createFakeValueCollection(PropertyValueType valueType) {
-	for (size_t i = 0; i < sizeof(fakeValues) / sizeof(fakeValues[0]); i++) {
-		if (fakeValues[i].valueType == valueType) {
-			fiftyoneDegreesMemoryReader reader = {
-				fakeValues[i].start,
-				fakeValues[i].start,
-				fakeValues[i].start + fakeValues[i].length,
-				fakeValues[i].length,
-			};
-			fiftyoneDegreesCollectionHeader const h = {
-				0,
-				fakeValues[i].length,
-				1,
-			};
-			return CollectionCreateFromMemory(&reader, h);
-		}
-	}
-	return NULL;
-}
-
-static const ProfilePercentage* addFakeValueProfile(
-	const DataSetIpi * const dataSet,
-	ResultsIpi * const results,
-	const int requiredPropertyIndex,
-	Exception * const exception) {
-
-	const PropertyValueType valueType = getPropertyValueType(
-		dataSet,
-		results,
-		requiredPropertyIndex,
-		exception);
-
-	Collection * const collection = createFakeValueCollection(valueType);
-
-	fiftyoneDegreesProfilePercentage * const fakeProfile =
-		Malloc(sizeof(ProfilePercentage));
-
-	// set profile percentage to 0.5f(+)
-	fakeProfile->rawWeighting = 0x7FFFU;
-
-	// Initialise the item ready to store data from the collection
-	fiftyoneDegreesDataReset(&(fakeProfile->item.data));
-
-	// Get a pointer to the value from the collection
-	byte * const valuePtr = collection->get(
-		collection,
-		0,
-		&(fakeProfile->item),
-		exception);
-
-	extendIpiList(&results->values, 4);
-	addIpiListItem(&results->values, fakeProfile);
-	return fakeProfile;
-}
-
 const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	fiftyoneDegreesResultsIpi* const results,
 	int const requiredPropertyIndex,
@@ -2022,20 +1860,6 @@ const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	resultsIpiRelease(results);
 
 	dataSet = (DataSetIpi*)results->b.dataSet;
-
-	{
-		// FAKE RESULTS
-		// TODO: Remove this section
-		const ProfilePercentage * const fakeProfile = addFakeValueProfile(
-		 	dataSet,
-		 	results,
-		 	requiredPropertyIndex,
-		 	exception);
-
-		if (fakeProfile) {
-			return fakeProfile;
-		}
-	}
 
 	// Work out the property index from the required property index.
 	uint32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
@@ -2078,83 +1902,110 @@ const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	return firstValue;
 }
 
+static bool visitProfilePropertyValue(
+	void *state,
+	fiftyoneDegreesCollectionItem *item) {
+
+	*((bool *)state) = true; // found
+	return false; // break
+}
+
+static bool profileHasValidPropertyValue(
+	const DataSetIpi * const dataSet,
+	const uint32_t profileOffset,
+	Property * const property,
+	Exception * const exception) {
+	Item profileItem;
+	Profile *profile = NULL;
+	bool valueFound = false;
+
+	if (profileOffset != NULL_PROFILE_OFFSET) {
+		profile = (Profile*)dataSet->profiles->get(
+			dataSet->profiles,
+			profileOffset,
+			&profileItem,
+			exception);
+		// If profile is found
+		if (profile != NULL && EXCEPTION_OKAY) {
+			ProfileIterateValuesForProperty(
+				dataSet->values,
+				profile,
+				property,
+				&valueFound,
+				visitProfilePropertyValue,
+				exception);
+			COLLECTION_RELEASE(dataSet->profiles, &profileItem);
+		}
+	}
+	return valueFound;
+}
+
 static bool resultGetHasValidPropertyValueOffset(
-	fiftyoneDegreesResultsIpi* results,
-	fiftyoneDegreesResultIpi* result,
-	int requiredPropertyIndex,
-	fiftyoneDegreesException* exception) {
+	fiftyoneDegreesResultsIpi* const results,
+	const fiftyoneDegreesResultIpi* const result,
+	const int requiredPropertyIndex,
+	fiftyoneDegreesException* const exception) {
 	bool hasValidOffset = false;
 	Item item;
-	ProfileCombination *profileCombination = NULL;
-	DataSetIpi *dataSet = (DataSetIpi*)results->b.dataSet;
+	const DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
 
 	// Work out the property index from the required property index.
-	uint32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
+	const int32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
 		dataSet->b.b.available,
 		requiredPropertyIndex);
 
 	if (propertyIndex >= 0) {
-		// Set the property that will be available in the results structure. 
-		// This may also be needed to work out which of a selection of results 
+		// Set the property that will be available in the results structure.
+		// This may also be needed to work out which of a selection of results
 		// are used to obtain the values.
-		Property *property = PropertyGet(
+		Property * const property = PropertyGet(
 			dataSet->properties,
 			propertyIndex,
 			&results->propertyItem,
 			exception);
 
-		const char *propertyName = STRING(
+		const char * const propertyName = STRING(
 			PropertiesGetNameFromRequiredIndex(
 				dataSet->b.b.available,
 				requiredPropertyIndex));
 		if (propertyName != NULL && EXCEPTION_OKAY) {
 			// We will only execute this step if successfully obtained the
 			// profile groups offset from the previous step
-			if (result->profileCombinationOffset != NULL_PROFILE_OFFSET) {
-				DataReset(&item.data);
-				//profileCombination = dataSet->profileCombinations->get(
-				//	dataSet->profileCombinations,
-				//	result->profileCombinationOffset,
-				//	&item,
-				//	exception);
+			if (result->profileOffsetIndex != NULL_PROFILE_OFFSET) {
+				const int32_t profileOffsetValue = CollectionGetInteger32(
+					dataSet->profileOffsets, result->profileOffsetIndex, exception);
 
-				if (profileCombination != NULL && EXCEPTION_OKAY) {
-					componentIndex* indices;
-					offsetPercentage* profiles;
-					offsetPercentage* values;
-					// Set pointer to the component index list in the profile groups block
-					indices = (componentIndex*)&profileCombination->firstByte;
-					// Set pointer to the profiles list in the profile groups block
-					profiles = (offsetPercentage*)(indices + dataSet->componentsList.count);
-					// Set pointer to the values list in the profile groups block
-					values = profiles + profileCombination->profileCount;
-
-					Component* component = (Component*)dataSet->componentsList.items[
-					property->componentIndex].data.ptr;
-					if (component->defaultProfileOffset == DYNAMIC_COMPONENT_OFFSET) {
-						for (int i = 0; i < profileCombination->valueCount; i++) {
-							if (values[i].offset >= property->firstValueIndex &&
-								values[i].offset <= property->lastValueIndex) {
-								if (values[i].offset != NULL_PROFILE_OFFSET) {
-									hasValidOffset = true;
+				if (profileOffsetValue != NULL_PROFILE_OFFSET && EXCEPTION_OKAY) {
+					if (profileOffsetValue >= 0) {
+						hasValidOffset = profileHasValidPropertyValue(
+							dataSet, profileOffsetValue, property, exception);
+					} else {
+						const uint32_t profileGroupOffset = 0LL - profileOffsetValue;
+						offsetPercentage *weightedProfileOffset =
+							(offsetPercentage*)dataSet->profileGroups->get(
+								dataSet->profileGroups,
+								profileGroupOffset,
+								&item,
+								exception);
+						if (weightedProfileOffset && EXCEPTION_OKAY) {
+							for (uint32_t totalWeight = 0;
+								!hasValidOffset && totalWeight < FULL_RAW_WEIGHTING;
+								++weightedProfileOffset) {
+								totalWeight += weightedProfileOffset->rawWeighting;
+								if (totalWeight > FULL_RAW_WEIGHTING) {
+									EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
 									break;
 								}
+								hasValidOffset = profileHasValidPropertyValue(
+									dataSet, weightedProfileOffset->offset, property, exception);
 							}
-						}
-					}
-					else {
-						for (int i = 0; i < indices[property->componentIndex].count; i++) {
-							if (profiles[indices[property->componentIndex].index + i].offset != NULL_PROFILE_OFFSET) {
-								hasValidOffset = true;
-								break;
-							}
+							COLLECTION_RELEASE(dataSet->profiles, &item);
 						}
 					}
 				}
 				else {
 					EXCEPTION_SET(CORRUPT_DATA);
 				}
-				//COLLECTION_RELEASE(dataSet->profileCombinations, &item);
 			}
 		}
 	}
@@ -2168,12 +2019,6 @@ bool fiftyoneDegreesResultsIpiGetHasValues(
 	DataSetIpi *dataSet = (DataSetIpi*)results->b.dataSet;
 	// Ensure any previous uses of the results to get values are released.
 	resultsIpiRelease(results);
-
-	{
-		// FAKE RESULTS
-		// TODO: Remove this section
-		return true;
-	}
 
 	if (requiredPropertyIndex < 0 ||
 		requiredPropertyIndex >= (int)dataSet->b.b.available->count) {
@@ -2244,249 +2089,53 @@ const char* fiftyoneDegreesResultsIpiGetNoValueReasonMessage(
 	}
 }
 
-static size_t getIpv4RangeString(
-	unsigned char ipAddress[FIFTYONE_DEGREES_IPV4_LENGTH],
-	char *buffer,
-	size_t bufferLength) {
-	size_t charactersAdded = snprintf(
-		buffer,
-		bufferLength,
-		"%d.%d.%d.%d",
-		(int)ipAddress[0],
-		(int)ipAddress[1],
-		(int)ipAddress[2],
-		(int)ipAddress[3]);
-	if (charactersAdded > 0) {
-		return MIN(charactersAdded, bufferLength);
-	}
-	return 0;
-}
+static void pushValues(
+	const ProfilePercentage * const profilePercentage,
+	const uint32_t count,
+	StringBuilder * const builder,
+	const char * const separator,
+	const uint8_t decimalPlaces,
+	Exception * const exception) {
 
-static size_t getIpv6RangeString(
-	unsigned char ipAddress[FIFTYONE_DEGREES_IPV6_LENGTH],
-	char *buffer,
-	size_t bufferLength) {
-	const char *separator = ":";
-	const char *hex = "0123456789abcdef";
-	const size_t charLen = 1;
-	size_t charactersAdded = 0, separatorLen = strlen(separator);
-	for (int i = 0; i < FIFTYONE_DEGREES_IPV6_LENGTH; i += 2) {
-		for (int j = 0; j < 2; j++) {
-			if (charactersAdded + charLen < bufferLength) {
-				// Get the first character of hex representation of the byte
-				memcpy(buffer + charactersAdded, &hex[(((int)ipAddress[i + j]) >> 4) & 0x0F], charLen);
-				charactersAdded += charLen;
-			}
-			if (charactersAdded + charLen < bufferLength) {
-				// Get the second character of hex representation of the byte
-				memcpy(buffer + charactersAdded, &hex[((int)ipAddress[i + j]) & 0x0F], charLen);
-				charactersAdded += charLen;
-			}
-		}
-		if (i != FIFTYONE_DEGREES_IPV6_LENGTH - 2) {
-			if (charactersAdded + separatorLen < bufferLength) {
-				memcpy(buffer + charactersAdded, separator, separatorLen);
-				charactersAdded += separatorLen;
-			}
-		}
-	}
-
-	// Terminate the string buffer if characters were added
-	if (charactersAdded < bufferLength) {
-		buffer[charactersAdded] = '\0';
-	}
-	return charactersAdded;
-}
-
-static size_t getRangeString(
-	const ProfilePercentage *profilePercentage,
-	uint32_t count,
-	fiftyoneDegreesIpType type,
-	char *buffer,
-	size_t bufferLength) {
-	String *value;
-	size_t charactersAdded = 0, tempAdded = 0;
-	size_t remainerLength = 0;
-	const size_t quoteLen = strlen("\"");
-
-	if (count > 0) {
-		// Add the opening quote
-		if (charactersAdded + quoteLen < bufferLength) {
-			tempAdded = sprintf(buffer, "\"");
-			if (tempAdded > 0) {
-				charactersAdded += tempAdded;
-			}
-		}
-
-		value = (String *)profilePercentage->item.data.ptr;
-		if (type == IP_TYPE_IPV4) {
-			charactersAdded += getIpv4RangeString(
-				(unsigned char *)&value->trail.secondValue,
-				buffer + charactersAdded,
-				bufferLength - charactersAdded);
-		}
-		else {
-			charactersAdded += getIpv6RangeString(
-				(unsigned char *)&value->trail.secondValue,
-				buffer + charactersAdded,
-				bufferLength - charactersAdded);
-		}
-		// Add the closing quote
-		if (charactersAdded + quoteLen < bufferLength) {
-			tempAdded = sprintf(buffer + charactersAdded, "\"");
-			if (tempAdded > 0) {
-				charactersAdded += tempAdded;
-			}
-		}
-		if (charactersAdded < bufferLength) {
-			remainerLength = bufferLength - charactersAdded;
-			tempAdded = snprintf(
-				buffer + charactersAdded,
-				remainerLength,
-				":\"%f\"",
-				(float)profilePercentage->rawWeighting / 65535.f);
-			if (tempAdded > 0) {
-				charactersAdded += MIN(tempAdded, remainerLength);
-				buffer[charactersAdded] = '\0';
-			}
-		}
-	}
-	return charactersAdded;
-}
-
-static size_t getLocationString(
-	const ProfilePercentage *profilePercentage,
-	uint32_t count,
-	char *buffer,
-	size_t bufferLength) {
-	size_t charactersAdded = 0, tempAdded = 0;
-	size_t remainerLength = 0;
-	const size_t quoteLen = strlen("\"");
-
-	if (count > 0) {
-		String *value =
-			(String *)profilePercentage->item.data.ptr;
-		
-		// Add the opening quote
-		if (charactersAdded + quoteLen < bufferLength) {
-			tempAdded = sprintf(buffer, "\"");
-			if (tempAdded > 0) {
-				charactersAdded += tempAdded;
-			}
-		}
-		remainerLength = bufferLength - charactersAdded;
-		tempAdded = snprintf(
-			buffer + charactersAdded,
-			remainerLength,
-			"%f,%f",
-			FLOAT_TO_NATIVE(value->trail.coordinate.lat),
-			FLOAT_TO_NATIVE(value->trail.coordinate.lon));
-		if (tempAdded > 0) {
-			charactersAdded += MIN(tempAdded, remainerLength);
-			// Add the closing quote
-			if (charactersAdded + quoteLen < bufferLength) {
-				tempAdded = sprintf(buffer + charactersAdded, "\"");
-				if (tempAdded > 0) {
-					charactersAdded += tempAdded;
-				}
-			}
-			remainerLength = bufferLength - charactersAdded;
-			tempAdded = snprintf(
-				buffer + charactersAdded,
-				remainerLength,
-				":\"%f\"",
-				(float)profilePercentage->rawWeighting / 65535.f);
-			if (tempAdded > 0) {
-				charactersAdded += MIN(tempAdded, remainerLength);
-				buffer[charactersAdded] = '\0';
-			}
-		}
-	}
-	return charactersAdded;
-}
-
-static size_t getNormalString(
-	const ProfilePercentage *profilePercentage,
-	uint32_t count,
-	char *buffer,
-	size_t bufferLength,
-	const char *separator) {
-	String *string;
-	const size_t quoteLen = strlen("\"");
-	size_t charactersAdded = 0,
-		separatorLen = strlen(separator),
-		stringLen,
-		tempAdded = 0,
-		remainerLength = 0;
+	const size_t sepLen = strlen(separator);
 
 	// Loop through the values adding them to the string buffer.
 	for (uint32_t i = 0; i < count;  i++) {
 		// Append the separator
-		if (i > 0 && charactersAdded + separatorLen < bufferLength) {
-			memcpy(buffer + charactersAdded, separator, separatorLen);
-			charactersAdded += separatorLen;
+		if (i) {
+			StringBuilderAddChars(builder, separator, sepLen);
 		}
 
 		// Add the opening quote
-		if (charactersAdded + quoteLen < bufferLength) {
-			tempAdded = sprintf(buffer + charactersAdded, "\"");
-			if (tempAdded > 0) {
-				charactersAdded += tempAdded;
-			}
-		}
+		StringBuilderAddChar(builder, '"');
 
 		// Get the string for the value index.
-		string = (String*)profilePercentage[i].item.data.ptr;
+		const String * const string =
+			(const String*)profilePercentage[i].item.data.ptr;
 
 		// Add the string to the output buffer recording the number
 		// of characters added.
-		if (string != NULL) {
-			stringLen = strlen(&string->value);
-			if (charactersAdded + stringLen < bufferLength) {
-				memcpy(
-					buffer + charactersAdded,
-					&string->value,
-					stringLen);
-			}
-			charactersAdded += stringLen;
-		}
+		StringBuilderAddStringValue(builder, string, decimalPlaces, exception);
 
 		// Add the closing quote
-		if (charactersAdded + quoteLen < bufferLength) {
-			tempAdded = sprintf(buffer + charactersAdded, "\"");
-			if (tempAdded > 0) {
-				charactersAdded += tempAdded;
-			}
-		}
-
-		// Append the percentage
-		remainerLength = bufferLength - charactersAdded;
-		tempAdded = snprintf(
-			buffer + charactersAdded,
-			remainerLength,
-			":\"%f\"",
-			(float)profilePercentage[i].rawWeighting / 65535.f);
-		if (tempAdded > 0) {
-			charactersAdded += MIN(tempAdded, remainerLength);
-		}
+		StringBuilderAddChar(builder, '"');
+		StringBuilderAddChar(builder, ':');
+		StringBuilderAddDouble(
+			builder,
+			(float)profilePercentage[i].rawWeighting / 65535.f,
+			decimalPlaces);
 	}
 
-	// Terminate the string buffer if characters were added.
-	if (charactersAdded < bufferLength) {
-		buffer[charactersAdded] = '\0';
-	}
-	return charactersAdded;
+	StringBuilderComplete(builder);
 }
 
-static size_t fiftyoneDegreesResultsIpiGetValuesStringInternal(
+static void fiftyoneDegreesResultsIpiGetValuesStringInternal(
 	fiftyoneDegreesResultsIpi* results,
 	int requiredPropertyIndex,
-	char* buffer,
-	size_t bufferLength,
+	StringBuilder * const builder,
 	const char* separator,
 	fiftyoneDegreesException* exception) {
 	const ProfilePercentage *profilePercentage;
-	size_t charactersAdded = 0;
 	Item propertyItem;
 	Property *property;
 	DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
@@ -2509,37 +2158,18 @@ static size_t fiftyoneDegreesResultsIpiGetValuesStringInternal(
 					requiredPropertyIndex,
 					exception);
 				if (profilePercentage != NULL && EXCEPTION_OKAY) {
-					switch(property->valueType) {
-					case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS:
-						charactersAdded = getRangeString(
+					pushValues(
 							profilePercentage,
 							results->values.count,
-							results->items->type,
-							buffer,
-							bufferLength);
-						break;
-					case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE:
-						charactersAdded = getLocationString(
-							profilePercentage,
-							results->values.count,
-							buffer,
-							bufferLength);
-						break;
-					default:
-						charactersAdded = getNormalString(
-							profilePercentage,
-							results->values.count,
-							buffer,
-							bufferLength,
-							separator);
-						break;
-					}
+							builder,
+							separator,
+							DefaultWktDecimalPlaces,
+							exception);
 				}
 			}
 			COLLECTION_RELEASE(dataSet->properties, &propertyItem);
 		}
 	}
-	return charactersAdded;
 }
 
 size_t fiftyoneDegreesResultsIpiGetValuesString(
@@ -2550,21 +2180,23 @@ size_t fiftyoneDegreesResultsIpiGetValuesString(
 	const char* separator,
 	fiftyoneDegreesException* exception) {
 	DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
-	size_t charactersAdded = 0;
+
+	StringBuilder builder = { buffer, bufferLength };
+	StringBuilderInit(&builder);
+
 	int requiredPropertyIndex = PropertiesGetRequiredPropertyIndexFromName(
 		dataSet->b.b.available,
 		propertyName);
 
 	if (requiredPropertyIndex >= 0) {
-		charactersAdded = fiftyoneDegreesResultsIpiGetValuesStringInternal(
+		fiftyoneDegreesResultsIpiGetValuesStringInternal(
 			results,
 			requiredPropertyIndex,
-			buffer,
-			bufferLength,
+			&builder,
 			separator,
 			exception);
 	}
-	return charactersAdded;
+	return builder.added;
 }
 
 size_t fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex(
@@ -2574,55 +2206,18 @@ size_t fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex(
 	size_t bufferLength,
 	const char* separator,
 	fiftyoneDegreesException* exception) {
-	return fiftyoneDegreesResultsIpiGetValuesStringInternal(
+
+	StringBuilder builder = { buffer, bufferLength };
+	StringBuilderInit(&builder);
+
+	fiftyoneDegreesResultsIpiGetValuesStringInternal(
 		results,
 		requiredPropertyIndex,
-		buffer,
-		bufferLength,
+		&builder,
 		separator,
 		exception);
-}
 
-static size_t printProfileSeparator(
-	char **destination, 
-	size_t size, 
-	char *format) {
-	size_t charactersAdded = snprintf(
-		*destination, 
-		size, 
-		format);
-	if (charactersAdded >= size && size > 0) {
-		// Truncate the changes as there was
-		// not enough space in the last snprinf 
-		// operation
-		(*destination)[0] = '\0';
-		charactersAdded = 0;
-	}
-	*destination += charactersAdded;
-	return charactersAdded;
-}
-
-static size_t printProfileId(
-	char **destination,
-	size_t size,
-	char *format,
-	uint32_t profileId,
-	float percentage) {
-	size_t charactersAdded = snprintf(
-		*destination,
-		size, 
-		format,
-		profileId,
-		percentage);
-	if (charactersAdded >= size && size > 0) {
-		// Truncate the changes as there was
-		// not enough space in the last snprinf 
-		// operation
-		(*destination)[0] = '\0';
-		charactersAdded = 0;
-	}
-	*destination += charactersAdded;
-	return charactersAdded;
+	return builder.added;
 }
 
 /*
@@ -2632,241 +2227,23 @@ static size_t printProfileId(
 #define PRINT_PROFILE_ID(d,b,s,f,v,p) printProfileId(&d, (b - d) + s, f, v, p)
 #define PRINT_NULL_PROFILE_ID(d,b,s,p) PRINT_PROFILE_ID(d, b, s, "%i:%f", 0, p)
 
-static fiftyoneDegreesCombinationProfileIndex
-getNullNetworkId(
-	fiftyoneDegreesDataSetIpi *dataSet,
-	char* destination,
-	fiftyoneDegreesCombinationProfileIndex combProfileIndex,
-	size_t size) {
-	fiftyoneDegreesCombinationProfileIndex curCompProfileIndex = { -1, -1 };
-	for (uint32_t i = combProfileIndex.componentIndex; 
-		i < dataSet->componentsList.count; 
-		i++) {
-		// Print separator
-		if (i != 0) {
-			if (PRINT_PROFILE_SEP(destination, destination, size, "|") == 0) {
-				curCompProfileIndex.componentIndex = i;
-				curCompProfileIndex.profileIndex = 0;
-				break;
-			}
-		}
-		// Default to 0:1.0 if there is no matching IP range
-		if (PRINT_NULL_PROFILE_ID(destination, destination, size, 1.0f) == 0) {
-			curCompProfileIndex.componentIndex = i;
-			curCompProfileIndex.profileIndex = 0;
-			if (i != 0) {
-				// Remove the last separator
-				(--destination)[0] = '\0';
-			}
-			break;
-		}
-	}
-	return curCompProfileIndex;
-}
-
-fiftyoneDegreesCombinationProfileIndex
-fiftyoneDegreesIpiGetNetworkIdFromResult(
-	fiftyoneDegreesResultsIpi* results,
-	fiftyoneDegreesResultIpi* result,
-	char* destination,
-	size_t size,
-	fiftyoneDegreesCombinationProfileIndex combProfileIndex,
-	fiftyoneDegreesException* exception) {
-	Item profileCombinationItem, profileItem;
-	Profile *profile;
-	uint32_t profileOffset;
-	char *buffer = destination;
-	size_t charactersAdded = 0;
-	bool sufficientSpace = true;
-	fiftyoneDegreesCombinationProfileIndex curCompProfileIndex = {-1, -1};
-	ProfileCombination* profileCombination = NULL;
-	DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
-	
-	if (combProfileIndex.componentIndex >= 0 &&
-		combProfileIndex.profileIndex >= 0)
-	// We will only execute this step if successfully obtained the
-	// profile groups offset from the previous step
-	if (result->profileCombinationOffset != NULL_PROFILE_OFFSET) {
-		DataReset(&profileCombinationItem.data);
-		/*profileCombination = dataSet->profileCombinations->get(
-			dataSet->profileCombinations,
-			result->profileCombinationOffset,
-			&profileCombinationItem,
-			exception);*/
-		if (profileCombination != NULL && EXCEPTION_OKAY) {
-			componentIndex* index,* cur;
-			offsetPercentage* profiles;
-			// Set pointer to the component index list in the profile groups block
-			index = (componentIndex*)&profileCombination->firstByte;
-			// Set pointer to the profiles list in the profile groups block
-			profiles = (offsetPercentage*)(index + dataSet->componentsList.count);
-			DataReset(&profileItem.data);
-			cur = index;
-			for (cur += combProfileIndex.componentIndex; 
-				cur < (componentIndex *)profiles && sufficientSpace; 
-				cur++) {
-				// Print separator if not the first processed component
-				if (cur != index + combProfileIndex.componentIndex) {
-					PRINT_PROFILE_SEP(destination, buffer, size, "|");
-				}
-
-				// Go through the component profiles if there is more than one
-				if (cur->count > 0) {
-					int j = 0;
-					if (cur == index + combProfileIndex.componentIndex) {
-						j = combProfileIndex.profileIndex;
-					}
-					for (int k = 0; j < cur->count && sufficientSpace; j++) {
-						// Print separator if not the first process profile of
-						// current component or if it is not processed profile 
-						// of the processed component
-						if ((cur != index + combProfileIndex.componentIndex &&
-								j != 0) ||
-							(cur == index + combProfileIndex.componentIndex &&
-								j != combProfileIndex.profileIndex)) {
-							if (PRINT_PROFILE_SEP(destination, buffer, size, "|") == 0) {
-								curCompProfileIndex.componentIndex = (int32_t)(cur - index);
-								curCompProfileIndex.profileIndex = j;
-								sufficientSpace = false;
-								break;
-							}
-						}
-
-						// Get the profile offset
-						k = cur->index + j;
-						profileOffset = profiles[k].offset;
-						profile = (Profile *)dataSet->profiles->get(
-						dataSet->profiles,
-						profileOffset,
-						&profileItem,
-						exception);
-						if (profile == NULL) {
-							charactersAdded = PRINT_NULL_PROFILE_ID(
-								destination, 
-								buffer, 
-								size, 
-								(float)profiles[k].rawWeighting / 65535.f);
-						}
-						else {
-							charactersAdded = PRINT_PROFILE_ID(
-								destination,
-								buffer,
-								size,
-								"%i:%f",
-								profile->profileId,
-								(float)profiles[k].rawWeighting / 65535.f);
-						}
-						COLLECTION_RELEASE(dataSet->profiles, &profileItem);
-						if (charactersAdded == 0) {
-							curCompProfileIndex.componentIndex = (int32_t)(cur - index);
-							curCompProfileIndex.profileIndex = j;
-							if (cur != index + combProfileIndex.componentIndex ||
-								j != 0) {
-								// Remove the last separator
-								(--destination)[0] = '\0';
-							}
-							sufficientSpace = false;
-							break;
-						}
-					}
-				}
-				else {
-					// Default to 0:1.0 if there is no profiles for the component
-					if (PRINT_NULL_PROFILE_ID(destination, buffer, size, 1.0f) == 0) {
-						curCompProfileIndex.componentIndex = (int32_t)(cur - index);
-						curCompProfileIndex.profileIndex = 0;
-						if (cur != index + combProfileIndex.componentIndex) {
-							// Remove the last separator.
-							(--destination)[0] = '\0';
-						}
-						sufficientSpace = false;
-						break;
-					}
-				}
-			}
-			//COLLECTION_RELEASE(dataSet->profileCombinations, &profileCombinationItem);
-		}
-	}
-	else {
-		curCompProfileIndex = 
-			getNullNetworkId(dataSet, destination, combProfileIndex, size);
-	}
-	return curCompProfileIndex;
-}
-
-fiftyoneDegreesResultProfileIndex
-fiftyoneDegreesIpiGetNetworkIdFromResults(
-	fiftyoneDegreesResultsIpi* results,
-	char* destination,
-	size_t size,
-	fiftyoneDegreesResultProfileIndex resultProfileIndex,
-	fiftyoneDegreesException* exception) {
-	fiftyoneDegreesResultProfileIndex curResultProfileIndex = {-1, -1, -1};
-	if (results->count > 0) {
-		curResultProfileIndex.componentProfileIndex =
-			fiftyoneDegreesIpiGetNetworkIdFromResult(
-				results,
-				results->items,
-				destination,
-				size,
-				resultProfileIndex.componentProfileIndex,
-				exception);
-	}
-	else {
-		curResultProfileIndex.componentProfileIndex =
-			getNullNetworkId(
-				results->b.dataSet, 
-				destination, 
-				resultProfileIndex.componentProfileIndex,
-				size);
-	}
-	if (curResultProfileIndex.componentProfileIndex.componentIndex >= 0 &&
-		curResultProfileIndex.componentProfileIndex.profileIndex >= 0) {
-		// If there are remaining profiles to fetch then set index
-		// to the first result.
-		curResultProfileIndex.resultIndex = 0;
-	}
-	return curResultProfileIndex;
-}
-
 size_t fiftyoneDegreesIpiGetIpAddressAsString(
-	const fiftyoneDegreesCollectionItem *item,
-	fiftyoneDegreesIpType type,
-	char *buffer,
-	uint32_t bufferLength,
-	fiftyoneDegreesException *exception) {
-	size_t charactersAdded = 0;
-	String *ipAddress = (String *)item->data.ptr;
-	int32_t ipLength = 
-		type == IP_TYPE_IPV4 ?
-		FIFTYONE_DEGREES_IPV4_LENGTH :
-		FIFTYONE_DEGREES_IPV6_LENGTH;
-	// Get the actual length of the byte array
-	int32_t actualLength = ipAddress->size - 1;
+	const fiftyoneDegreesCollectionItem * const item,
+	const fiftyoneDegreesIpType type,
+	char * const buffer,
+	const uint32_t bufferLength,
+	fiftyoneDegreesException * const exception) {
 
-	// Make sure the ipAddress item and everything is in correct
-	// format
-	if (ipAddress->value == FIFTYONE_DEGREES_STRING_IP_ADDRESS
-		&& ipLength == actualLength
-		&& type != IP_TYPE_INVALID) {
+	StringBuilder builder = { buffer, bufferLength };
+	StringBuilderInit(&builder);
 
-		if (type == IP_TYPE_IPV4) {
-			charactersAdded += getIpv4RangeString(
-				(unsigned char *)&ipAddress->trail.secondValue,
-				buffer,
-				bufferLength);
-		}
-		else {
-			charactersAdded += getIpv6RangeString(
-				(unsigned char *)&ipAddress->trail.secondValue,
-				buffer,
-				bufferLength);
-		}
-	}
-	else {
-		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
-	}
-	return charactersAdded;
+	StringBuilderAddIpAddress(
+		&builder,
+		(const String *)item->data.ptr,
+		type,
+		exception);
+
+	return builder.added;
 }
 
 uint32_t fiftyoneDegreesIpiIterateProfilesForPropertyAndValue(

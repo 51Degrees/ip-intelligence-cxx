@@ -137,7 +137,7 @@ static void printShortenNetworkId(char *networkId) {
  */
 void reportProgress(memoryThreadState* state) {
 	EXCEPTION_CREATE;
-	char networkId[1024] = "";
+	char networkName[1024] = "";
 	ResultProfileIndex profileIndex = {0, {0, 0}};
 
 	// Update the user interface.
@@ -147,14 +147,15 @@ void reportProgress(memoryThreadState* state) {
 	// to prove it's actually doing something!
 	if (state->results != NULL) {
 		printf(" ");
-		IpiGetNetworkIdFromResults(
+		ResultsIpiGetValuesString(
 			state->results,
-			networkId,
-			sizeof(networkId),
-			profileIndex,
+			"Name",
+			networkName,
+			sizeof(networkName),
+			", ",
 			exception);
 		EXCEPTION_THROW;
-		printShortenNetworkId(networkId);
+		printShortenNetworkId(networkName);
 	}
 }
 

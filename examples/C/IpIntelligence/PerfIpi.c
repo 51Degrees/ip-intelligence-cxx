@@ -178,24 +178,25 @@ static void printShortenNetworkId(char *networkId) {
  */
 static void reportProgress(performanceThreadState* state) {
 	EXCEPTION_CREATE;
-	char networkId[1024] = "";
+	char networkName[1024] = "";
 	ResultProfileIndex profileIndex = {0, {0, 0}};
 
 	// Update the user interface.
 	printLoadBar(state);
 
-	// If in real detection mode then print the id of the network profile found
+	// If in real detection mode then print the name of the network profile found
 	// to prove it's actually doing something!
 	if (state->results != NULL) {
 		printf(" ");
-		IpiGetNetworkIdFromResults(
+		ResultsIpiGetValuesString(
 			state->results,
-			networkId,
-			sizeof(networkId),
-			profileIndex,
+			"Name",
+			networkName,
+			sizeof(networkName),
+			", ",
 			exception);
 		EXCEPTION_THROW;
-		printShortenNetworkId(networkId);
+		printShortenNetworkId(networkName);
 	}
 }
 
@@ -208,18 +209,18 @@ static void reportProgress(performanceThreadState* state) {
 static void executeTest(const char* ipAddress, void* state) {
 	performanceThreadState* threadState = (performanceThreadState*)state;
 	fiftyoneDegreesResultIpi* result;
-	IpAddress* eIpAddress;
+	IpAddress eIpAddress;
 	size_t ipAddressLength = 0;
 	EXCEPTION_CREATE;
 
 	// Parse the IP Address string to a byte array
-	eIpAddress = fiftyoneDegreesIpAddressParse(
-			malloc,
+	const bool parsed = fiftyoneDegreesIpAddressParse(
 			ipAddress, 
-			ipAddress + strlen(ipAddress));
+			ipAddress + strlen(ipAddress),
+			&eIpAddress);
 
-	if (eIpAddress != NULL) {
-		switch (eIpAddress->type) {
+	if (parsed) {
+		switch (eIpAddress.type) {
 		case IP_TYPE_IPV4:
 			ipAddressLength = FIFTYONE_DEGREES_IPV4_LENGTH;
 			break;
@@ -235,16 +236,15 @@ static void executeTest(const char* ipAddress, void* state) {
 		if (threadState->main->calibration == false) {
 			ResultsIpiFromIpAddress(
 				threadState->results,
-				eIpAddress->value,
-				eIpAddress->type == IP_TYPE_IPV4 ?
+				eIpAddress.value,
+				eIpAddress.type == IP_TYPE_IPV4 ?
 					FIFTYONE_DEGREES_IPV4_LENGTH : 
 					FIFTYONE_DEGREES_IPV6_LENGTH,
-				(IpType)eIpAddress->type,
+				(IpType)eIpAddress.type,
 				exception);
 			EXCEPTION_THROW;
 			result = (ResultIpi*)threadState->results->items;
 		}
-		free(eIpAddress);
 	}
 	else {
 		// Terminates as failed to allocate memory for IP address

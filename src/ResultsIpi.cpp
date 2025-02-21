@@ -22,7 +22,8 @@
 
 #include "ResultsIpi.hpp"
 #include "fiftyone.h"
-#include "common-cxx/wkbtot.h"
+#include "common-cxx/wkbtot.hpp"
+#include "constantsIpi.h"
 
 using namespace FiftyoneDegrees;
 using namespace FiftyoneDegrees::IpIntelligence;
@@ -111,6 +112,11 @@ IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<
             if (EXCEPTION_OKAY) {
                 stream << buffer;
             }
+            break;
+        case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB:
+            writeWkbStringToStringStream(
+                (const String *)valuesItems[i].item.data.ptr,
+                stream, DefaultWktDecimalPlaces, exception);
             break;
         default:
             stream << STRING((String*)valuesItems[i].item.data.ptr);
@@ -458,7 +464,6 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
             values.reserve(results->values.count);
 
             stringstream stream;
-            char buffer[MAX_PROFILE_PERCENTAGE_STRING_LENGTH];
             fiftyoneDegreesCoordinate coordinate;
             // Add the values in their original form to the result.
             for (i = 0; i < results->values.count; i++) {
@@ -472,7 +477,8 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
                         stream << coordinate.lat << "," << coordinate.lon;
                     }
                     break;
-                case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS:
+                case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS: {
+                    char buffer[MAX_PROFILE_PERCENTAGE_STRING_LENGTH];
                     IpiGetIpAddressAsString(
                         &valuesItems[i].item,
                         results->items[0].type,
@@ -483,21 +489,12 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
                         stream << buffer;
                     }
                     break;
-                case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB: {
-                    const fiftyoneDegreesWkbtotResult toWktResult =
-                        fiftyoneDegreesConvertWkbToWkt(
-                            FIFTYONE_DEGREES_WKB(valuesItems[i].item.data.ptr),
-                            buffer,
-                            MAX_PROFILE_PERCENTAGE_STRING_LENGTH,
-                            16,
-                            exception
-                            );
-
-                    if (EXCEPTION_OKAY && !toWktResult.bufferTooSmall) {
-                        stream << buffer;
-                    }
-                    break;
                 }
+                case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB:
+                    writeWkbStringToStringStream(
+                        (const String *)valuesItems[i].item.data.ptr,
+                        stream, DefaultWktDecimalPlaces, exception);
+                    break;
                 default:
                     stream << STRING((String*)valuesItems[i].item.data.ptr);
                     break;
@@ -568,7 +565,6 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList(
             values.reserve(results->values.count);
 
             stringstream stream;
-            char buffer[MAX_PROFILE_PERCENTAGE_STRING_LENGTH];
             fiftyoneDegreesCoordinate coordinate;
             // Add the values in their original form to the result.
             for (i = 0; i < results->values.count; i++) {
@@ -576,18 +572,9 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList(
                 // Clear stream before the construction
                 stream.str("");
                 if (valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB) {
-                    const fiftyoneDegreesWkbtotResult toWktResult =
-                        fiftyoneDegreesConvertWkbToWkt(
-                            FIFTYONE_DEGREES_WKB(valuesItems[i].item.data.ptr),
-                            buffer,
-                            MAX_PROFILE_PERCENTAGE_STRING_LENGTH,
-                            decimalPlaces,
-                            exception
-                            );
-
-                    if (EXCEPTION_OKAY && !toWktResult.bufferTooSmall) {
-                        stream << buffer;
-                    }
+                    writeWkbStringToStringStream(
+                        (const String *)valuesItems[i].item.data.ptr,
+                        stream, decimalPlaces, exception);
                 } else {
                     stream << STRING((String*)valuesItems[i].item.data.ptr);
                 }
@@ -879,56 +866,4 @@ IpIntelligence::ResultsIpi::getNoValueReasonInternal(
 			exception);
 	EXCEPTION_THROW;
 	return reason;
-}
-
-string IpIntelligence::ResultsIpi::getNetworkId(
-	uint32_t resultIndex) {
-	EXCEPTION_CREATE;
-	char cNetworkId[1024] = "";
-    string networkId = string(cNetworkId);
-    CombinationProfileIndex profileIndex = {0, 0};
-	if (resultIndex < results->count) {
-        while (profileIndex.componentIndex >= 0 &&
-        profileIndex.profileIndex >= 0) {
-            if (profileIndex.componentIndex != 0 ||
-                profileIndex.profileIndex != 0) {
-                networkId.append("|");
-            }
-		    profileIndex = IpiGetNetworkIdFromResult(
-	            results,
-	            &results->items[resultIndex],
-	            cNetworkId,
-	            sizeof(cNetworkId),
-                profileIndex,
-	            exception);
-		    EXCEPTION_THROW;
-            networkId.append(cNetworkId);
-        }
-	}
-	return networkId;
-}
-
-string IpIntelligence::ResultsIpi::getNetworkId() {
-	EXCEPTION_CREATE;
-	char cNetworkId[1024] = "";
-    string networkId = string(cNetworkId);
-    ResultProfileIndex profileIndex = {0, {0, 0}};
-    while (profileIndex.resultIndex >= 0 &&
-        profileIndex.componentProfileIndex.componentIndex >= 0 &&
-        profileIndex.componentProfileIndex.profileIndex >= 0) {
-        if (profileIndex.resultIndex != 0 ||
-            profileIndex.componentProfileIndex.componentIndex != 0 ||
-            profileIndex.componentProfileIndex.profileIndex != 0) {
-            networkId.append("|");
-        }
-	    profileIndex = IpiGetNetworkIdFromResults(
-	    	results,
-	    	cNetworkId,
-	    	sizeof(cNetworkId),
-            profileIndex,
-	    	exception);
-        EXCEPTION_THROW;
-        networkId.append(cNetworkId);
-    }
-	return networkId;
 }

@@ -446,40 +446,6 @@ namespace FiftyoneDegrees {
 			 */
 			Common::Value<double> getValueAsDouble(int requiredPropertyIndex) override;
 
-			/**
-			 * @}
-			 * @name Metric Getters
-			 * @{
-			 */
-
-			/**
-			 * Returns the unique network id if the Id property was included
-			 * in the required list of properties when the Provider was
-			 * constructed.
-			 * For IP Intelligence there should be maximum of one result
-			 * returned so the output of this function should be the same
-			 * as getNetworkId().
-			 *
-			 * @param resultIndex index of the individual entry in the
-			 * results
-			 * @return profile ids and their percentage with ':' and '|'
-			 * e.g. 'ProfileId1:Percentage1|ProfileId2:Percentage2'
-			 */
-			string getNetworkId(uint32_t resultIndex);
-
-			/**
-			 * Returns the unique network id if the Id property was included
-			 * in the required list of properties when the Provider was
-			 * constructed.
-			 * @return profile ids and their percentage with ':' and '|'
-			 * e.g. 'ProfileId1:Percentage1|ProfileId2:Percentage2'
-			 */
-			string getNetworkId();
-
-			/**
-			 * @}
-			 */
-
 		protected:
 			void getValuesInternal(
 				int requiredPropertyIndex,

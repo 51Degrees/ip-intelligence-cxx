@@ -344,7 +344,7 @@ typedef struct fiftyone_degrees_ipi_list_t {
  */
 typedef struct fiftyone_degrees_result_ipi_t {
 	fiftyoneDegreesIpType type; /**< The version of the IP */
-	uint32_t profileCombinationOffset; /**< The offset in the profile groups
+	uint32_t profileOffsetIndex; /**< The index in the profile offsets
 							collection, which matches the target IP address */
 	fiftyoneDegreesIpAddress targetIpAddress; /**< The target IP address
 											  to find a matching range for */
@@ -369,25 +369,12 @@ FIFTYONE_DEGREES_ARRAY_TYPE(
 typedef fiftyoneDegreesResultIpiArray fiftyoneDegreesResultsIpi;
 
 /**
- * The structure of a profile groups item data.
- */
-#pragma pack(push, 1)
-typedef struct fiftyone_degrees_dataset_profile_combination_t {
-	uint16_t size; /**< size of the item data in the collection*/
-	uint16_t profileCount; /**< the number of profiles */
-	uint16_t valueCount; /**< the number of values located at the end
-						 of the data block */
-	const byte firstByte; /**< The first byte to the list of profiles */
-} fiftyoneDegreesProfileCombination;
-#pragma pack(pop)
-
-/**
  * Define the IP range structure
  */
 #define FIFTYONE_DEGREES_IP_RANGE(v, s) \
 typedef struct fiftyone_degrees_dataset_ip_v##v##_range_t { \
 	byte start[s]; /**< the start of the range in byte array format */ \
-	uint32_t profileCombinationOffset; /**< The off set the matching profile groups */ \
+	int32_t profileOffsetIndex; /**< The index of set the matching profile offset/group */ \
 } fiftyoneDegreesIpv##v##Range;
 
 /**
