@@ -24,6 +24,7 @@
 #include "fiftyone.h"
 #include "common-cxx/config.h"
 #include "constantsIpi.h"
+#include "ip-graph-cxx/graph.h"
 
 MAP_TYPE(Collection)
 
