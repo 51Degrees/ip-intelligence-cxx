@@ -45,19 +45,18 @@ static const vector<string> n = { v1, v2, v3 }; \
 static const vector<string> *n##Pointer = &n;
 
 // Common IP intelligence properties in arrays and strings.
-// TODO: Restore to CountryCode + CityName
-ENGINE_PROPERTIES_STRING(OnePropertyString, "networkname")
-ENGINE_PROPERTIES_STRING(TwoPropertyStrings, "networkname,coordinate")
-ENGINE_PROPERTIES_STRING(DuplicatePropertyStrings, "networkname,networkname")
+ENGINE_PROPERTIES_STRING(OnePropertyString, "CountryCode")
+ENGINE_PROPERTIES_STRING(TwoPropertyStrings, "CountryCode,CityName")
+ENGINE_PROPERTIES_STRING(DuplicatePropertyStrings, "CountryCode,CountryCode")
 ENGINE_PROPERTIES_STRING(InvalidPropertyStrings, "INVALID,PROPERTIES PROVIDED")
-ENGINE_PROPERTIES_STRING(MixedPropertyStrings, "INVALID,networkname")
-ENGINE_PROPERTIES_STRING(AllEdgePropertyStrings, "IpRangeStart,IpRangeEnd,AverageLocation")
-ENGINE_PROPERTIES_ARRAY_ONE(OnePropertyArray, "networkname")
-ENGINE_PROPERTIES_ARRAY_TWO(TwoPropertyArray, "networkname", "coordinate")
-ENGINE_PROPERTIES_ARRAY_TWO(DuplicatePropertyArray, "networkname", "networkname")
+ENGINE_PROPERTIES_STRING(MixedPropertyStrings, "INVALID,CountryCode")
+ENGINE_PROPERTIES_STRING(AllEdgePropertyStrings, "IpRangeStart,IpRangeEnd,AccuracyRadius")
+ENGINE_PROPERTIES_ARRAY_ONE(OnePropertyArray, "CountryCode")
+ENGINE_PROPERTIES_ARRAY_TWO(TwoPropertyArray, "CountryCode", "CityName")
+ENGINE_PROPERTIES_ARRAY_TWO(DuplicatePropertyArray, "CountryCode", "CountryCode")
 ENGINE_PROPERTIES_ARRAY_TWO(InvalidPropertyArray, "INVALID1", "INVALID2")
-ENGINE_PROPERTIES_ARRAY_TWO(MixedPropertyArray, "networkname", "Invalid")
-ENGINE_PROPERTIES_ARRAY_THREE(AllEdgePropertyArray, "IpRangeStart", "IpRangeEnd", "AverageLocation")
+ENGINE_PROPERTIES_ARRAY_TWO(MixedPropertyArray, "CountryCode", "Invalid")
+ENGINE_PROPERTIES_ARRAY_THREE(AllEdgePropertyArray, "IpRangeStart", "IpRangeEnd", "AccuracyRadius")
 static const string *NullPointer = nullptr;
 
 // An ipv4 address string.
@@ -112,7 +111,7 @@ public:
 	void ipAddressPresent(const char *ipAddress);
 	void boundIpAddressPresent(const char *ipAddress);
 	void randomIpAddressPresent(int count);
-	void verifyCoordinate();
+	void verifyCityName();
 	void validateIndex(ResultsBase *results, int index) override;
 	void validateName(ResultsBase *results, string *name) override;
 	void validateQuick(ResultsBase *results) override;
@@ -204,9 +203,9 @@ TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestIpAddress) { \
 	verifyMixedPrefixesEvidence(); }
 	//boundIpAddressPresent(outOfRangeIpv6Address); \ /* This will give undefined behaviour */
 
-#define ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e,t,c,p) \
-TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestCoordinate) { \
-	verifyCoordinate(); }
+#define ENGINE_IP_INTELLIGENCE_CityName_TESTS(e,t,c,p) \
+TEST_F(ENGINE_CLASS_NAME(e,t,c,p), TestCityName) { \
+	verifyCityName(); }
 
 #define ENGINE_TEST_CONFIGS(e) \
 fiftyoneDegreesConfig##e *ENGINE_CLASS_NAME_CONFIG_POINTER(e, Null) = nullptr; \
@@ -311,18 +310,18 @@ ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, File, InMemory, AllEdgePropertyArray)
 ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, File, SingleLoaded, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, File, Null, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, File, Null, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, File, LowMemory, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, File, Balanced, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, File, BalancedTemp, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, File, InMemory, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, File, SingleLoaded, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, File, LowMemory, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, File, Balanced, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, File, BalancedTemp, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, File, InMemory, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, File, SingleLoaded, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, File, Null, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, File, Null, AllEdgePropertyArray)
+ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, LowMemory, AllEdgePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, Balanced, AllEdgePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, BalancedTemp, AllEdgePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, InMemory, AllEdgePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, SingleLoaded, AllEdgePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, LowMemory, AllEdgePropertyArray) \
+ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, Balanced, AllEdgePropertyArray) \
+ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, BalancedTemp, AllEdgePropertyArray) \
+ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, InMemory, AllEdgePropertyArray) \
+ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, SingleLoaded, AllEdgePropertyArray) \
+ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, Null, AllEdgePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, Null, AllEdgePropertyArray)
 
 
 #define ENGINE_MEMORY_TESTS(e) \
@@ -359,9 +358,9 @@ ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, Memory, InMemory, AllEdgePropertyStri
 ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, Memory, InMemory, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, Memory, Null, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, Memory, Null, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, Memory, InMemory, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, Memory, InMemory, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, Memory, Null, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_COORDINATE_TESTS(e, Memory, Null, AllEdgePropertyArray)
+ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, Memory, InMemory, AllEdgePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, Memory, InMemory, AllEdgePropertyArray) \
+ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, Memory, Null, AllEdgePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, Memory, Null, AllEdgePropertyArray)
 
 #endif

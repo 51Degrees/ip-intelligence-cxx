@@ -47,6 +47,7 @@ MAP_TYPE(ResultProfileIndex)
 #define ResultsIpiFromIpAddressString fiftyoneDegreesResultsIpiFromIpAddressString /**< Synonym for #fiftyoneDegreesResultsIpiFromIpAddressString function. */
 #define ResultsIpiFromEvidence fiftyoneDegreesResultsIpiFromEvidence /**< Synonym for #fiftyoneDegreesResultsIpiFromEvidence function. */
 #define ResultsIpiGetValues fiftyoneDegreesResultsIpiGetValues /**< Synonym for #fiftyoneDegreesResultsIpiGetValues function. */
+#define ResultsIpiAddValuesString fiftyoneDegreesResultsIpiAddValuesString /**< Synonym for #fiftyoneDegreesResultsIpiAddValuesString function. */
 #define ResultsIpiGetValuesString fiftyoneDegreesResultsIpiGetValuesString /**< Synonym for #fiftyoneDegreesResultsIpiGetValuesString function. */
 #define ResultsIpiGetValuesStringByRequiredPropertyIndex fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex /**< Synonym for #fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex function. */
 #define ResultsIpiGetHasValues fiftyoneDegreesResultsIpiGetHasValues /**< Synonym for #fiftyoneDegreesResultsIpiGetHasValues function. */

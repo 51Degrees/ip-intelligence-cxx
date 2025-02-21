@@ -123,6 +123,7 @@ Expected content of output file:
 #endif
 #endif
 
+#include "ExampleBase.h"
 #include "../../../src/ipi.h"
 #include "../../../src/common-cxx/textfile.h"
 #include "../../../src/fiftyone.h"
@@ -248,7 +249,7 @@ void run(
 	fprintf(state.output, "\n");
 
 	// Perform offline processing.
-	TextFileIterate(
+	fiftyoneDegreesEvidenceFileIterate(
 		ipAddressFilePath,
 		ipAddress,
 		sizeof(ipAddress),
@@ -392,7 +393,7 @@ int main(int argc, char* argv[]) {
 		dataFilePath,
 		ipAddressFilePath,
 		outputFilePath,
-		argc > 4 ? argv[4] : "networkname,coordinate",
+		argc > 4 ? argv[4] : "name,areas",
 		CONFIG);
 
 #ifdef _DEBUG

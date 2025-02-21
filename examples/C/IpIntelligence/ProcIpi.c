@@ -30,9 +30,9 @@ static const char* dataDir = "ip-intelligence-data";
 static const char* dataFileName = "51Degrees-LiteV4.1.ipi";
 
 static void buildString(
-	fiftyoneDegreesResultsIpi* results,
-	char* output) {
-	EXCEPTION_CREATE;
+	fiftyoneDegreesResultsIpi* const results,
+	StringBuilder* const builder,
+	Exception *exception) {
 	int i;
 	const char* property, * value;
 	char ipAddress[50];
@@ -43,61 +43,14 @@ static void buildString(
 			PropertiesGetNameFromRequiredIndex(
 				dataSet->b.b.available,
 				i));
-		if (ResultsIpiGetValues(
-			results,
-			i,
-			exception) != NULL && EXCEPTION_OKAY) {
-			if (strncmp("IpRange", property, strlen("IpRange")) == 0) {
-				// The collection item is and ipRange which has ipAddress byte array at the start
-				// and a offset to the profileCombination collection item
-				if (results->items[0].type == IP_TYPE_IPV4) {
-					IpiGetIpAddressAsString(
-						&results->values.items[0].item,
-						IP_TYPE_IPV4,
-						ipAddress,
-						50,
-						exception);
-				}
-				else if (results->items[0].type == IP_TYPE_IPV6) {
-					IpiGetIpAddressAsString(
-						&results->values.items[0].item,
-						IP_TYPE_IPV6,
-						ipAddress,
-						50,
-						exception);
-				};
-				percentage = 1;
-				output = output + sprintf(output, "%s: %s,%f\n",
-					property,
-					ipAddress,
-					percentage);
-			}
-			else if (strstr(property, "Location") != NULL) {
-				fiftyoneDegreesCoordinate coordinate = IpiGetCoordinate(&results->values.items[i].item, exception);
-				percentage = (float)results->values.items[i].rawWeighting / 65535.f;
-				output = output + sprintf(output, "%s: %f,%f,%f\n",
-					property,
-					coordinate.lat,
-					coordinate.lon,
-					percentage);
-			}
-			else {
-				for (i = 0; i < (int)results->values.count; i++) {
-					if (i > 0) {
-						// Add separator for multiple values
-						output = output + sprintf(output, " | ");
-					}
-					value = STRING(results->values.items[0].item.data.ptr);
-					percentage = (float)results->values.items[0].rawWeighting / 65535.f;
-					output = output + sprintf(output, "\"%s\" : \"%s,%f\"",
-						property,
-						value,
-						percentage);
-				}
-				// Add line feed
-				output = output + sprintf(output, "\n");
-			}
+		if (i) {
+			StringBuilderAddChar(builder, ';');
 		}
+		StringBuilderAddChars(builder, property, strlen(property));
+		StringBuilderAddChar(builder, '=');
+		StringBuilderAddChar(builder, '[');
+		ResultsIpiAddValuesString(results, property, builder, ",", exception);
+		StringBuilderAddChar(builder, ']');
 	}
 }
 
@@ -118,6 +71,8 @@ static int run(fiftyoneDegreesResourceManager *manager) {
 	EXCEPTION_CREATE;
 	char ipAddress[50], output[50000];
 	int count = 0;
+	StringBuilder builder = { output, sizeof(output) };
+	StringBuilderInit(&builder);
 	ResultsIpi *results = ResultsIpiCreate(manager);
 	while (fgets(ipAddress, sizeof(ipAddress), stdin) != 0) {
 		// Set the results from the IP address provided from standard in.
@@ -129,8 +84,10 @@ static int run(fiftyoneDegreesResourceManager *manager) {
 		EXCEPTION_THROW;
 
 		// Print the values for all the required properties.
-		buildString(results, output);
-		printf("%s", output);
+		buildString(results, &builder, exception);
+		EXCEPTION_THROW;
+
+		printf("%s\n", output);
 
 		count++;
 	}

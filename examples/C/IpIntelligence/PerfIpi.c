@@ -73,6 +73,8 @@ Average matching per second: ***
 #endif
 
 #include <time.h>
+
+#include "ExampleBase.h"
 #include "../../../src/ipi.h"
 #include "../../../src/fiftyone.h"
 #include "../../../src/common-cxx/textfile.h"
@@ -261,96 +263,6 @@ static void executeTest(const char* ipAddress, void* state) {
 	}
 }
 
-// Parameters used for allocating memory when reading evidence.
-#define SIZE_OF_KEY 500
-#define SIZE_OF_VALUE 1000
-#define MAX_EVIDENCE 20
-
-/**
- * Data for TextFileIterate-to-YamlFileIterate callback adapter.
- */
-typedef struct {
-	char * const ipAddressBuffer;
-	const int bufferLength;
-	void * const state;
-	void(* const callback)(const char*, void *);
-} YamlCallbackState;
-
-/**
- * Adapter of TextFileIterate-compatible callback
- * to YamlFileIterate-compatible one.
- *
- * @param pairs Pairs of YAML document
- * @param size Number of pairs in the YAML document
- * @param callbackState Wrapped callback and parameters
- */
-static void yamlCallback(
-	fiftyoneDegreesKeyValuePair * const pairs,
-	const uint16_t size,
-	void * const callbackState) {
-
-	const YamlCallbackState * const state =
-		(const YamlCallbackState *)callbackState;
-	for (uint16_t i = 0; i < size; i++) {
-		const size_t writeableBufferLength = (state->bufferLength > 0
-			? (size_t)(state->bufferLength - 1) : 0);
-		size_t const length = (writeableBufferLength < pairs[i].valueLength
-			? writeableBufferLength : pairs[i].valueLength);
-		memcpy(state->ipAddressBuffer, pairs[i].value, length);
-		state->ipAddressBuffer[length] = '\0';
-		state->callback(state->ipAddressBuffer, state->state);
-	}
-}
-
-/**
- * Iterates over the YAML file
- * calling the callback method with each value.
- *
- * @param fileName name of the file to iterate over
- * @param buffer to use for reading lines into. The buffer needs
- * to be big enough to hold the biggest record, including its line ending.
- * @param length of the buffer
- * @param state pointer to pass to the callback method
- * @param callback method to call with each line
- *
- * @see fiftyoneDegreesTextFileIterate
- */
-static void evidenceFileIterate(
-	const char * const fileName,
-	char * const buffer,
-	const int length,
-	void * const state,
-	void(* const callback)(const char*, void *)) {
-
-	// Allocate working memory for iterating over the YAML evidence source.
-	char evidenceBuffer[MAX_EVIDENCE * (SIZE_OF_KEY + SIZE_OF_VALUE)];
-	KeyValuePair pair[MAX_EVIDENCE];
-	char key[MAX_EVIDENCE][SIZE_OF_KEY];
-	char value[MAX_EVIDENCE][SIZE_OF_VALUE];
-	for (int i = 0; i < MAX_EVIDENCE; i++) {
-		pair[i].key = key[i];
-		pair[i].keyLength = SIZE_OF_KEY;
-		pair[i].value = value[i];
-		pair[i].valueLength = SIZE_OF_VALUE;
-	}
-
-	YamlCallbackState callbackState = {
-		buffer,
-		length,
-		state,
-		callback,
-	};
-
-	YamlFileIterate(
-		fileName,
-		evidenceBuffer,
-		sizeof(evidenceBuffer),
-		pair,
-		MAX_EVIDENCE,
-		&callbackState,
-		yamlCallback);
-}
-
 /**
  * A single threaded performance test. Many of these will run in parallel to
  * ensure the single managed resource is being used.
@@ -385,7 +297,7 @@ static void runPerformanceThread(void* mainState) {
 	}
 
 	// Execute the performance test or calibration.
-	evidenceFileIterate(
+	fiftyoneDegreesEvidenceFileIterate(
 		threadState.main->ipAddressFilePath,
 		ipAddress,
 		sizeof(ipAddress),
@@ -501,7 +413,7 @@ static void ipAddressCount(const char* ipAddress, void* state) {
 static int getIpAddressesCount(const char* ipAddressFilePath) {
 	int count = 0;
 	char ipAddress[BUFFER];
-	evidenceFileIterate(
+	fiftyoneDegreesEvidenceFileIterate(
 		ipAddressFilePath,
 		ipAddress,
 		sizeof(ipAddress),

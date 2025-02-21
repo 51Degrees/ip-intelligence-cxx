@@ -1709,6 +1709,7 @@ static uint32_t addValuesFromSingleProfile(
 	// Add values from profiles
 	Profile *profile = NULL;
 	if (profileOffset != NULL_PROFILE_OFFSET) {
+		DataReset(&profileItem.data);
 		profile = (Profile*)dataSet->profiles->get(
 			dataSet->profiles,
 			profileOffset,
@@ -1740,6 +1741,7 @@ static uint32_t addValuesFromProfileGroup(
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 
 	if (profileGroupOffset != NULL_PROFILE_OFFSET) {
+		DataReset(&profileGroupItem.data);
 		weightedProfileOffset = (offsetPercentage*)dataSet->profileGroups->get(
 			dataSet->profileGroups,
 			profileGroupOffset,
@@ -1782,7 +1784,7 @@ static uint32_t addValuesFromResult(
 				dataSet->profileOffsets, result->profileOffsetIndex, exception);
 
 			if (EXCEPTION_OKAY) {
-				if (profileOffsetValue > 0) {
+				if (profileOffsetValue >= 0) {
 					count += addValuesFromSingleProfile(
 						results,
 						property,
@@ -1790,7 +1792,7 @@ static uint32_t addValuesFromResult(
 						FULL_RAW_WEIGHTING,
 						exception);
 				} else {
-					const uint32_t groupOffset = 0LL - profileOffsetValue;
+					const uint32_t groupOffset = -1LL - profileOffsetValue;
 					count += addValuesFromProfileGroup(
 						results,
 						property,
@@ -1921,6 +1923,7 @@ static bool profileHasValidPropertyValue(
 	bool valueFound = false;
 
 	if (profileOffset != NULL_PROFILE_OFFSET) {
+		DataReset(&profileItem.data);
 		profile = (Profile*)dataSet->profiles->get(
 			dataSet->profiles,
 			profileOffset,
@@ -1948,6 +1951,7 @@ static bool resultGetHasValidPropertyValueOffset(
 	fiftyoneDegreesException* const exception) {
 	bool hasValidOffset = false;
 	Item item;
+	DataReset(&item.data);
 	const DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
 
 	// Work out the property index from the required property index.
@@ -2126,8 +2130,6 @@ static void pushValues(
 			(float)profilePercentage[i].rawWeighting / 65535.f,
 			decimalPlaces);
 	}
-
-	StringBuilderComplete(builder);
 }
 
 static void fiftyoneDegreesResultsIpiGetValuesStringInternal(
@@ -2173,19 +2175,14 @@ static void fiftyoneDegreesResultsIpiGetValuesStringInternal(
 	}
 }
 
-size_t fiftyoneDegreesResultsIpiGetValuesString(
+void fiftyoneDegreesResultsIpiAddValuesString(
 	fiftyoneDegreesResultsIpi* results,
 	const char* propertyName,
-	char* buffer,
-	size_t bufferLength,
+	fiftyoneDegreesStringBuilder *builder,
 	const char* separator,
 	fiftyoneDegreesException* exception) {
-	DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
-
-	StringBuilder builder = { buffer, bufferLength };
-	StringBuilderInit(&builder);
-
-	int requiredPropertyIndex = PropertiesGetRequiredPropertyIndexFromName(
+	const DataSetIpi * const dataSet = (DataSetIpi *)results->b.dataSet;
+	const int requiredPropertyIndex = PropertiesGetRequiredPropertyIndexFromName(
 		dataSet->b.b.available,
 		propertyName);
 
@@ -2193,10 +2190,32 @@ size_t fiftyoneDegreesResultsIpiGetValuesString(
 		fiftyoneDegreesResultsIpiGetValuesStringInternal(
 			results,
 			requiredPropertyIndex,
-			&builder,
+			builder,
 			separator,
 			exception);
 	}
+}
+
+size_t fiftyoneDegreesResultsIpiGetValuesString(
+	fiftyoneDegreesResultsIpi* results,
+	const char* propertyName,
+	char* buffer,
+	size_t bufferLength,
+	const char* separator,
+	fiftyoneDegreesException* exception) {
+
+	StringBuilder builder = { buffer, bufferLength };
+	StringBuilderInit(&builder);
+
+	fiftyoneDegreesResultsIpiAddValuesString(
+		results,
+		propertyName,
+		&builder,
+		separator,
+		exception);
+
+	StringBuilderComplete(&builder);
+
 	return builder.added;
 }
 
@@ -2217,6 +2236,8 @@ size_t fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex(
 		&builder,
 		separator,
 		exception);
+
+	StringBuilderComplete(&builder);
 
 	return builder.added;
 }

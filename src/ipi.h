@@ -804,6 +804,22 @@ EXTERNAL const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetVal
 	fiftyoneDegreesException* exception);
 
 /**
+ * Adds to builder the values associated in the results for the property name.
+ * @param results pointer to the results structure to release
+ * @param propertyName name of the property to be used with the values
+ * @param builder string builder to fill with values
+ * @param separator string to be used to separate multiple values if available
+ * @param exception pointer to an exception data structure to be used if an
+ * exception occurs. See exceptions.h.
+ */
+EXTERNAL void fiftyoneDegreesResultsIpiAddValuesString(
+	fiftyoneDegreesResultsIpi* results,
+	const char* propertyName,
+	fiftyoneDegreesStringBuilder *builder,
+	const char* separator,
+	fiftyoneDegreesException* exception);
+
+/**
  * Sets the buffer the values associated in the results for the property name.
  * @param results pointer to the results structure to release
  * @param propertyName name of the property to be used with the values

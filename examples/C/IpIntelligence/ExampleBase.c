@@ -174,3 +174,80 @@ uint32_t fiftyoneDegreesIterateFakeIPv4s(
 	}
 	return count;
 }
+
+// Parameters used for allocating memory when reading evidence.
+#define SIZE_OF_KEY 500
+#define SIZE_OF_VALUE 1000
+#define MAX_EVIDENCE 20
+
+/**
+ * Data for TextFileIterate-to-YamlFileIterate callback adapter.
+ */
+typedef struct {
+	char * const ipAddressBuffer;
+	const int bufferLength;
+	void * const state;
+	void(* const callback)(const char*, void *);
+} YamlCallbackState;
+
+/**
+ * Adapter of TextFileIterate-compatible callback
+ * to YamlFileIterate-compatible one.
+ *
+ * @param pairs Pairs of YAML document
+ * @param size Number of pairs in the YAML document
+ * @param callbackState Wrapped callback and parameters
+ */
+static void yamlCallback(
+	fiftyoneDegreesKeyValuePair * const pairs,
+	const uint16_t size,
+	void * const callbackState) {
+
+	const YamlCallbackState * const state =
+		(const YamlCallbackState *)callbackState;
+	for (uint16_t i = 0; i < size; i++) {
+		const size_t writeableBufferLength = (state->bufferLength > 0
+			? (size_t)(state->bufferLength - 1) : 0);
+		size_t const length = (writeableBufferLength < pairs[i].valueLength
+			? writeableBufferLength : pairs[i].valueLength);
+		memcpy(state->ipAddressBuffer, pairs[i].value, length);
+		state->ipAddressBuffer[length] = '\0';
+		state->callback(state->ipAddressBuffer, state->state);
+	}
+}
+
+void fiftyoneDegreesEvidenceFileIterate(
+	const char * const fileName,
+	char * const buffer,
+	const int length,
+	void * const state,
+	void(* const callback)(const char*, void *)) {
+
+	// Allocate working memory for iterating over the YAML evidence source.
+	char evidenceBuffer[MAX_EVIDENCE * (SIZE_OF_KEY + SIZE_OF_VALUE)];
+	KeyValuePair pair[MAX_EVIDENCE];
+	char key[MAX_EVIDENCE][SIZE_OF_KEY];
+	char value[MAX_EVIDENCE][SIZE_OF_VALUE];
+	for (int i = 0; i < MAX_EVIDENCE; i++) {
+		pair[i].key = key[i];
+		pair[i].keyLength = SIZE_OF_KEY;
+		pair[i].value = value[i];
+		pair[i].valueLength = SIZE_OF_VALUE;
+	}
+
+	YamlCallbackState callbackState = {
+		buffer,
+		length,
+		state,
+		callback,
+	};
+
+	YamlFileIterate(
+		fileName,
+		evidenceBuffer,
+		sizeof(evidenceBuffer),
+		pair,
+		MAX_EVIDENCE,
+		&callbackState,
+		yamlCallback);
+}

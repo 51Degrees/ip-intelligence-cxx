@@ -34,7 +34,7 @@ ExampleIpIntelligenceTest::ExampleIpIntelligenceTest(
     }
 
     ipAddressFilePath = GetFilePath(_dataFolderName, ipAddressFileName);
-    requiredProperties = "networkname,coordinate";
+    requiredProperties = "name,areas";
 };
 
 ExampleIpIntelligenceTest::ExampleIpIntelligenceTest()

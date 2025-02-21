@@ -124,5 +124,25 @@ EXTERNAL uint32_t fiftyoneDegreesIterateFakeIPv4s(
     fiftyoneDegreesIpAddressHandlerPtr ipAddressHandler,
     void *state);
 
+/**
+ * Iterates over the YAML file
+ * calling the callback method with each value.
+ *
+ * @param fileName name of the file to iterate over
+ * @param buffer to use for reading lines into. The buffer needs
+ * to be big enough to hold the biggest record, including its line ending.
+ * @param length of the buffer
+ * @param state pointer to pass to the callback method
+ * @param callback method to call with each line
+ *
+ * @see fiftyoneDegreesTextFileIterate
+ */
+EXTERNAL void fiftyoneDegreesEvidenceFileIterate(
+    const char *fileName,
+    char * buffer,
+    int length,
+    void *state,
+    void(*callback)(const char*, void *));
+
 
 #endif

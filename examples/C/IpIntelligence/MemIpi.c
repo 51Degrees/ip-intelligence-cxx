@@ -33,6 +33,7 @@
 #endif
 #endif
 
+#include "ExampleBase.h"
 #include "../../../src/ipi.h"
 #include "../../../src/fiftyone.h"
 #include "../../../src/common-cxx/textfile.h"
@@ -217,7 +218,7 @@ static void runMemoryThread(void* mainState) {
 		threadState.main->manager);
 
 	// Execute the IP intelligence test.
-	TextFileIterate(
+	fiftyoneDegreesEvidenceFileIterate(
 		threadState.main->ipAddressFilePath,
 		ipAddress,
 		sizeof(ipAddress),
@@ -315,6 +316,9 @@ void run(
 	// Run the test once as the amount of memory used won't vary.
 	// Set the process indicator.
 	state.progress = state.ipAddressesCount / PROGRESS_MARKS;
+	if (!state.progress) {
+		state.progress = 1;
+	}
 	runMemoryTests(&state);
 
 	// Report the maximum memory usage.
