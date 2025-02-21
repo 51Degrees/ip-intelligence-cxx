@@ -1848,113 +1848,6 @@ getPropertyValueType(
 	return valueType;
 }
 
-static char fakeValueInFakeProfile[] = "\x1C\0fake-value-in-fake-profile";
-static byte fakeCoordValue[] = {
-	0x09, 0x00,
-	FIFTYONE_DEGREES_STRING_COORDINATE,
-	0x00, 0x00, 0x80, 0xBF, // -1.0
-	0x00, 0x00, 0x00, 0x41, //  8.0
-	0x00,
-};
-static byte fakeIPValue[] = {
-	0x04, 0x00,
-	FIFTYONE_DEGREES_STRING_IP_ADDRESS,
-	0xD4, 0x0C, 0x00, 0x01,
-};
-static byte fakeWKBValue[] = {
-	0x15, 0x00,
-	FIFTYONE_DEGREES_STRING_WKB,
-	0x00,
-	0x00, 0x00, 0x00, 0x01,
-	0x40, 0x31, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x40, 0x8b, 0xe0, 0xc0, 0x00, 0x00, 0x00, 0x00,
-};
-
-typedef struct {
-	const PropertyValueType valueType;
-	byte * const start;
-	const uint16_t length;
-} FakeValueRef;
-static const FakeValueRef fakeValues[] = {
-	{
-		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
-		fakeValueInFakeProfile,
-		sizeof(fakeValueInFakeProfile),
-	},
-	{
-		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE,
-		fakeCoordValue,
-		sizeof(fakeCoordValue),
-	},
-	{
-		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS,
-		fakeIPValue,
-		sizeof(fakeIPValue),
-	},
-	{
-		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB,
-		fakeWKBValue,
-		sizeof(fakeWKBValue),
-	},
-};
-
-#define FAKE_PROFILE_PERCENTAGE_VALUE fakeValueInFakeProfile
-
-static Collection * createFakeValueCollection(PropertyValueType valueType) {
-	for (size_t i = 0; i < sizeof(fakeValues) / sizeof(fakeValues[0]); i++) {
-		if (fakeValues[i].valueType == valueType) {
-			fiftyoneDegreesMemoryReader reader = {
-				fakeValues[i].start,
-				fakeValues[i].start,
-				fakeValues[i].start + fakeValues[i].length,
-				fakeValues[i].length,
-			};
-			fiftyoneDegreesCollectionHeader const h = {
-				0,
-				fakeValues[i].length,
-				1,
-			};
-			return CollectionCreateFromMemory(&reader, h);
-		}
-	}
-	return NULL;
-}
-
-static const ProfilePercentage* addFakeValueProfile(
-	const DataSetIpi * const dataSet,
-	ResultsIpi * const results,
-	const int requiredPropertyIndex,
-	Exception * const exception) {
-
-	const PropertyValueType valueType = getPropertyValueType(
-		dataSet,
-		results,
-		requiredPropertyIndex,
-		exception);
-
-	Collection * const collection = createFakeValueCollection(valueType);
-
-	fiftyoneDegreesProfilePercentage * const fakeProfile =
-		Malloc(sizeof(ProfilePercentage));
-
-	// set profile percentage to 0.5f(+)
-	fakeProfile->rawWeighting = 0x7FFFU;
-
-	// Initialise the item ready to store data from the collection
-	fiftyoneDegreesDataReset(&(fakeProfile->item.data));
-
-	// Get a pointer to the value from the collection
-	byte * const valuePtr = collection->get(
-		collection,
-		0,
-		&(fakeProfile->item),
-		exception);
-
-	extendIpiList(&results->values, 4);
-	addIpiListItem(&results->values, fakeProfile);
-	return fakeProfile;
-}
-
 const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	fiftyoneDegreesResultsIpi* const results,
 	int const requiredPropertyIndex,
@@ -2196,249 +2089,53 @@ const char* fiftyoneDegreesResultsIpiGetNoValueReasonMessage(
 	}
 }
 
-static size_t getIpv4RangeString(
-	unsigned char ipAddress[FIFTYONE_DEGREES_IPV4_LENGTH],
-	char *buffer,
-	size_t bufferLength) {
-	size_t charactersAdded = snprintf(
-		buffer,
-		bufferLength,
-		"%d.%d.%d.%d",
-		(int)ipAddress[0],
-		(int)ipAddress[1],
-		(int)ipAddress[2],
-		(int)ipAddress[3]);
-	if (charactersAdded > 0) {
-		return MIN(charactersAdded, bufferLength);
-	}
-	return 0;
-}
+static void pushValues(
+	const ProfilePercentage * const profilePercentage,
+	const uint32_t count,
+	StringBuilder * const builder,
+	const char * const separator,
+	const uint8_t decimalPlaces,
+	Exception * const exception) {
 
-static size_t getIpv6RangeString(
-	unsigned char ipAddress[FIFTYONE_DEGREES_IPV6_LENGTH],
-	char *buffer,
-	size_t bufferLength) {
-	const char *separator = ":";
-	const char *hex = "0123456789abcdef";
-	const size_t charLen = 1;
-	size_t charactersAdded = 0, separatorLen = strlen(separator);
-	for (int i = 0; i < FIFTYONE_DEGREES_IPV6_LENGTH; i += 2) {
-		for (int j = 0; j < 2; j++) {
-			if (charactersAdded + charLen < bufferLength) {
-				// Get the first character of hex representation of the byte
-				memcpy(buffer + charactersAdded, &hex[(((int)ipAddress[i + j]) >> 4) & 0x0F], charLen);
-				charactersAdded += charLen;
-			}
-			if (charactersAdded + charLen < bufferLength) {
-				// Get the second character of hex representation of the byte
-				memcpy(buffer + charactersAdded, &hex[((int)ipAddress[i + j]) & 0x0F], charLen);
-				charactersAdded += charLen;
-			}
-		}
-		if (i != FIFTYONE_DEGREES_IPV6_LENGTH - 2) {
-			if (charactersAdded + separatorLen < bufferLength) {
-				memcpy(buffer + charactersAdded, separator, separatorLen);
-				charactersAdded += separatorLen;
-			}
-		}
-	}
-
-	// Terminate the string buffer if characters were added
-	if (charactersAdded < bufferLength) {
-		buffer[charactersAdded] = '\0';
-	}
-	return charactersAdded;
-}
-
-static size_t getRangeString(
-	const ProfilePercentage *profilePercentage,
-	uint32_t count,
-	fiftyoneDegreesIpType type,
-	char *buffer,
-	size_t bufferLength) {
-	String *value;
-	size_t charactersAdded = 0, tempAdded = 0;
-	size_t remainerLength = 0;
-	const size_t quoteLen = strlen("\"");
-
-	if (count > 0) {
-		// Add the opening quote
-		if (charactersAdded + quoteLen < bufferLength) {
-			tempAdded = sprintf(buffer, "\"");
-			if (tempAdded > 0) {
-				charactersAdded += tempAdded;
-			}
-		}
-
-		value = (String *)profilePercentage->item.data.ptr;
-		if (type == IP_TYPE_IPV4) {
-			charactersAdded += getIpv4RangeString(
-				(unsigned char *)&value->trail.secondValue,
-				buffer + charactersAdded,
-				bufferLength - charactersAdded);
-		}
-		else {
-			charactersAdded += getIpv6RangeString(
-				(unsigned char *)&value->trail.secondValue,
-				buffer + charactersAdded,
-				bufferLength - charactersAdded);
-		}
-		// Add the closing quote
-		if (charactersAdded + quoteLen < bufferLength) {
-			tempAdded = sprintf(buffer + charactersAdded, "\"");
-			if (tempAdded > 0) {
-				charactersAdded += tempAdded;
-			}
-		}
-		if (charactersAdded < bufferLength) {
-			remainerLength = bufferLength - charactersAdded;
-			tempAdded = snprintf(
-				buffer + charactersAdded,
-				remainerLength,
-				":\"%f\"",
-				(float)profilePercentage->rawWeighting / 65535.f);
-			if (tempAdded > 0) {
-				charactersAdded += MIN(tempAdded, remainerLength);
-				buffer[charactersAdded] = '\0';
-			}
-		}
-	}
-	return charactersAdded;
-}
-
-static size_t getLocationString(
-	const ProfilePercentage *profilePercentage,
-	uint32_t count,
-	char *buffer,
-	size_t bufferLength) {
-	size_t charactersAdded = 0, tempAdded = 0;
-	size_t remainerLength = 0;
-	const size_t quoteLen = strlen("\"");
-
-	if (count > 0) {
-		String *value =
-			(String *)profilePercentage->item.data.ptr;
-		
-		// Add the opening quote
-		if (charactersAdded + quoteLen < bufferLength) {
-			tempAdded = sprintf(buffer, "\"");
-			if (tempAdded > 0) {
-				charactersAdded += tempAdded;
-			}
-		}
-		remainerLength = bufferLength - charactersAdded;
-		tempAdded = snprintf(
-			buffer + charactersAdded,
-			remainerLength,
-			"%f,%f",
-			FLOAT_TO_NATIVE(value->trail.coordinate.lat),
-			FLOAT_TO_NATIVE(value->trail.coordinate.lon));
-		if (tempAdded > 0) {
-			charactersAdded += MIN(tempAdded, remainerLength);
-			// Add the closing quote
-			if (charactersAdded + quoteLen < bufferLength) {
-				tempAdded = sprintf(buffer + charactersAdded, "\"");
-				if (tempAdded > 0) {
-					charactersAdded += tempAdded;
-				}
-			}
-			remainerLength = bufferLength - charactersAdded;
-			tempAdded = snprintf(
-				buffer + charactersAdded,
-				remainerLength,
-				":\"%f\"",
-				(float)profilePercentage->rawWeighting / 65535.f);
-			if (tempAdded > 0) {
-				charactersAdded += MIN(tempAdded, remainerLength);
-				buffer[charactersAdded] = '\0';
-			}
-		}
-	}
-	return charactersAdded;
-}
-
-static size_t getNormalString(
-	const ProfilePercentage *profilePercentage,
-	uint32_t count,
-	char *buffer,
-	size_t bufferLength,
-	const char *separator) {
-	String *string;
-	const size_t quoteLen = strlen("\"");
-	size_t charactersAdded = 0,
-		separatorLen = strlen(separator),
-		stringLen,
-		tempAdded = 0,
-		remainerLength = 0;
+	const size_t sepLen = strlen(separator);
 
 	// Loop through the values adding them to the string buffer.
 	for (uint32_t i = 0; i < count;  i++) {
 		// Append the separator
-		if (i > 0 && charactersAdded + separatorLen < bufferLength) {
-			memcpy(buffer + charactersAdded, separator, separatorLen);
-			charactersAdded += separatorLen;
+		if (i) {
+			StringBuilderAddChars(builder, separator, sepLen);
 		}
 
 		// Add the opening quote
-		if (charactersAdded + quoteLen < bufferLength) {
-			tempAdded = sprintf(buffer + charactersAdded, "\"");
-			if (tempAdded > 0) {
-				charactersAdded += tempAdded;
-			}
-		}
+		StringBuilderAddChar(builder, '"');
 
 		// Get the string for the value index.
-		string = (String*)profilePercentage[i].item.data.ptr;
+		const String * const string =
+			(const String*)profilePercentage[i].item.data.ptr;
 
 		// Add the string to the output buffer recording the number
 		// of characters added.
-		if (string != NULL) {
-			stringLen = strlen(&string->value);
-			if (charactersAdded + stringLen < bufferLength) {
-				memcpy(
-					buffer + charactersAdded,
-					&string->value,
-					stringLen);
-			}
-			charactersAdded += stringLen;
-		}
+		StringBuilderAddStringValue(builder, string, decimalPlaces, exception);
 
 		// Add the closing quote
-		if (charactersAdded + quoteLen < bufferLength) {
-			tempAdded = sprintf(buffer + charactersAdded, "\"");
-			if (tempAdded > 0) {
-				charactersAdded += tempAdded;
-			}
-		}
-
-		// Append the percentage
-		remainerLength = bufferLength - charactersAdded;
-		tempAdded = snprintf(
-			buffer + charactersAdded,
-			remainerLength,
-			":\"%f\"",
-			(float)profilePercentage[i].rawWeighting / 65535.f);
-		if (tempAdded > 0) {
-			charactersAdded += MIN(tempAdded, remainerLength);
-		}
+		StringBuilderAddChar(builder, '"');
+		StringBuilderAddChar(builder, ':');
+		StringBuilderAddDouble(
+			builder,
+			(float)profilePercentage[i].rawWeighting / 65535.f,
+			decimalPlaces);
 	}
 
-	// Terminate the string buffer if characters were added.
-	if (charactersAdded < bufferLength) {
-		buffer[charactersAdded] = '\0';
-	}
-	return charactersAdded;
+	StringBuilderComplete(builder);
 }
 
-static size_t fiftyoneDegreesResultsIpiGetValuesStringInternal(
+static void fiftyoneDegreesResultsIpiGetValuesStringInternal(
 	fiftyoneDegreesResultsIpi* results,
 	int requiredPropertyIndex,
-	char* buffer,
-	size_t bufferLength,
+	StringBuilder * const builder,
 	const char* separator,
 	fiftyoneDegreesException* exception) {
 	const ProfilePercentage *profilePercentage;
-	size_t charactersAdded = 0;
 	Item propertyItem;
 	Property *property;
 	DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
@@ -2461,54 +2158,18 @@ static size_t fiftyoneDegreesResultsIpiGetValuesStringInternal(
 					requiredPropertyIndex,
 					exception);
 				if (profilePercentage != NULL && EXCEPTION_OKAY) {
-					switch(property->valueType) {
-					case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS:
-						charactersAdded = getRangeString(
+					pushValues(
 							profilePercentage,
 							results->values.count,
-							results->items->type,
-							buffer,
-							bufferLength);
-						break;
-					case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE:
-						charactersAdded = getLocationString(
-							profilePercentage,
-							results->values.count,
-							buffer,
-							bufferLength);
-						break;
-					case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB: {
-						if (results->values.count <= 0) {
-							break;
-						}
-						const String * const value =
-							(const String *)profilePercentage->item.data.ptr;
-						WkbtotResult toWktResult = ConvertWkbToWkt(
-							FIFTYONE_DEGREES_WKB(value),
-							buffer,
-							bufferLength,
+							builder,
+							separator,
 							DefaultWktDecimalPlaces,
 							exception);
-						if (EXCEPTION_OKAY && !toWktResult.bufferTooSmall) {
-							charactersAdded = toWktResult.written;
-						}
-						break;
-					}
-					default:
-						charactersAdded = getNormalString(
-							profilePercentage,
-							results->values.count,
-							buffer,
-							bufferLength,
-							separator);
-						break;
-					}
 				}
 			}
 			COLLECTION_RELEASE(dataSet->properties, &propertyItem);
 		}
 	}
-	return charactersAdded;
 }
 
 size_t fiftyoneDegreesResultsIpiGetValuesString(
@@ -2519,21 +2180,23 @@ size_t fiftyoneDegreesResultsIpiGetValuesString(
 	const char* separator,
 	fiftyoneDegreesException* exception) {
 	DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
-	size_t charactersAdded = 0;
+
+	StringBuilder builder = { buffer, bufferLength };
+	StringBuilderInit(&builder);
+
 	int requiredPropertyIndex = PropertiesGetRequiredPropertyIndexFromName(
 		dataSet->b.b.available,
 		propertyName);
 
 	if (requiredPropertyIndex >= 0) {
-		charactersAdded = fiftyoneDegreesResultsIpiGetValuesStringInternal(
+		fiftyoneDegreesResultsIpiGetValuesStringInternal(
 			results,
 			requiredPropertyIndex,
-			buffer,
-			bufferLength,
+			&builder,
 			separator,
 			exception);
 	}
-	return charactersAdded;
+	return builder.added;
 }
 
 size_t fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex(
@@ -2543,13 +2206,18 @@ size_t fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex(
 	size_t bufferLength,
 	const char* separator,
 	fiftyoneDegreesException* exception) {
-	return fiftyoneDegreesResultsIpiGetValuesStringInternal(
+
+	StringBuilder builder = { buffer, bufferLength };
+	StringBuilderInit(&builder);
+
+	fiftyoneDegreesResultsIpiGetValuesStringInternal(
 		results,
 		requiredPropertyIndex,
-		buffer,
-		bufferLength,
+		&builder,
 		separator,
 		exception);
+
+	return builder.added;
 }
 
 /*
@@ -2560,43 +2228,22 @@ size_t fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex(
 #define PRINT_NULL_PROFILE_ID(d,b,s,p) PRINT_PROFILE_ID(d, b, s, "%i:%f", 0, p)
 
 size_t fiftyoneDegreesIpiGetIpAddressAsString(
-	const fiftyoneDegreesCollectionItem *item,
-	fiftyoneDegreesIpType type,
-	char *buffer,
-	uint32_t bufferLength,
-	fiftyoneDegreesException *exception) {
-	size_t charactersAdded = 0;
-	String *ipAddress = (String *)item->data.ptr;
-	int32_t ipLength = 
-		type == IP_TYPE_IPV4 ?
-		FIFTYONE_DEGREES_IPV4_LENGTH :
-		FIFTYONE_DEGREES_IPV6_LENGTH;
-	// Get the actual length of the byte array
-	int32_t actualLength = ipAddress->size - 1;
+	const fiftyoneDegreesCollectionItem * const item,
+	const fiftyoneDegreesIpType type,
+	char * const buffer,
+	const uint32_t bufferLength,
+	fiftyoneDegreesException * const exception) {
 
-	// Make sure the ipAddress item and everything is in correct
-	// format
-	if (ipAddress->value == FIFTYONE_DEGREES_STRING_IP_ADDRESS
-		&& ipLength == actualLength
-		&& type != IP_TYPE_INVALID) {
+	StringBuilder builder = { buffer, bufferLength };
+	StringBuilderInit(&builder);
 
-		if (type == IP_TYPE_IPV4) {
-			charactersAdded += getIpv4RangeString(
-				(unsigned char *)&ipAddress->trail.secondValue,
-				buffer,
-				bufferLength);
-		}
-		else {
-			charactersAdded += getIpv6RangeString(
-				(unsigned char *)&ipAddress->trail.secondValue,
-				buffer,
-				bufferLength);
-		}
-	}
-	else {
-		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
-	}
-	return charactersAdded;
+	StringBuilderAddIpAddress(
+		&builder,
+		(const String *)item->data.ptr,
+		type,
+		exception);
+
+	return builder.added;
 }
 
 uint32_t fiftyoneDegreesIpiIterateProfilesForPropertyAndValue(

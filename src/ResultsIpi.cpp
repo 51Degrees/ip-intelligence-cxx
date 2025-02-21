@@ -113,6 +113,11 @@ IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<
                 stream << buffer;
             }
             break;
+        case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB:
+            writeWkbStringToStringStream(
+                (const String *)valuesItems[i].item.data.ptr,
+                stream, DefaultWktDecimalPlaces, exception);
+            break;
         default:
             stream << STRING((String*)valuesItems[i].item.data.ptr);
             break;

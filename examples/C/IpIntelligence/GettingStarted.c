@@ -169,6 +169,8 @@ static void printPropertyValueFromResults(ResultsIpi *results) {
 	if (results != NULL && results->count > 0) {
 		printf("name: %s\n", getPropertyValueAsString(results, "name"));
 		printf("areas: %s\n", getPropertyValueAsString(results, "areas"));
+		printf("IpRangeStart: %s\n", getPropertyValueAsString(results, "IpRangeStart"));
+		printf("IpRangeEnd: %s\n", getPropertyValueAsString(results, "IpRangeEnd"));
 	}
 	else {
 		printf("No results.");
@@ -183,7 +185,7 @@ void fiftyoneDegreesIpiGettingStarted(
 
 	// Set the properties to be returned for each ip
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "name,areas";
+	properties.string = "name,areas,IpRangeStart,IpRangeEnd";
 
 	StatusCode status = IpiInitManagerFromFile(
 		&manager,
