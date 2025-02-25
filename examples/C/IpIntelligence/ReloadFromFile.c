@@ -107,7 +107,7 @@ Failed to reload '0' times.
 #endif
 #endif
 
-#include "ExampleBase.h"
+#include "../../Base/ExampleBase.h"
 #include "../../../src/common-cxx/textfile.h"
 #include "../../../src/ipi.h"
 #include "../../../src/fiftyone.h"
@@ -441,7 +441,7 @@ int main(int argc, char* argv[]) {
 	fiftyoneDegreesIpiReloadFromFileRun(
 		dataFilePath,
 		ipAddressFilePath,
-		argc > 3 ? argv[3] : "networkname",
+		argc > 3 ? argv[3] : "name",
 		CONFIG);
 
 #ifdef _DEBUG

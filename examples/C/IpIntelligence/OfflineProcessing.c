@@ -123,7 +123,7 @@ Expected content of output file:
 #endif
 #endif
 
-#include "ExampleBase.h"
+#include "../../Base/ExampleBase.h"
 #include "../../../src/ipi.h"
 #include "../../../src/common-cxx/textfile.h"
 #include "../../../src/fiftyone.h"

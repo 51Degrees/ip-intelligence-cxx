@@ -74,7 +74,7 @@ Average matching per second: ***
 
 #include <time.h>
 
-#include "ExampleBase.h"
+#include "../../Base/ExampleBase.h"
 #include "../../../src/ipi.h"
 #include "../../../src/fiftyone.h"
 #include "../../../src/common-cxx/textfile.h"
@@ -158,7 +158,7 @@ static void printLoadBar(performanceThreadState* state) {
  * too long.
  * @param networkId to be printed
  */
-static void printShortenNetworkId(char *networkId) {
+static void printShortenNetworkName(char *networkId) {
 	// Buffer to hold the printed network ID. Additional 4
 	// bytes to hold the '...' and the null terminator.
 	char buffer[54] = "";
@@ -198,7 +198,7 @@ static void reportProgress(performanceThreadState* state) {
 			", ",
 			exception);
 		EXCEPTION_THROW;
-		printShortenNetworkId(networkName);
+		printShortenNetworkName(networkName);
 	}
 }
 
@@ -505,7 +505,7 @@ void fiftyoneDegreesPerfIpiRun(
 
 	// Configure to return the Country property.
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "network,coordinate";
+	properties.string = "name,areas";
 
 	ResourceManager manager;
 	EXCEPTION_CREATE;

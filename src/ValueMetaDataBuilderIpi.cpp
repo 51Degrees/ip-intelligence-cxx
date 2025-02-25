@@ -70,11 +70,23 @@ string ValueMetaDataBuilderIpi::getDynamicString(
 
 				// Get the actual address size
 				uint16_t addressSize = str->size - 1;
+				// TODO: Deduplicate with `StringBuilderAddStringValue`
 				// Get the type of the IP address
-				fiftyoneDegreesIpType type =
-					addressSize == FIFTYONE_DEGREES_IPV4_LENGTH ?
-					IP_TYPE_IPV4 :
-					IP_TYPE_IPV6;
+				fiftyoneDegreesIpType type;
+				switch (addressSize) {
+					case FIFTYONE_DEGREES_IPV4_LENGTH: {
+						type = IP_TYPE_IPV4;
+						break;
+					}
+					case FIFTYONE_DEGREES_IPV6_LENGTH: {
+						type = IP_TYPE_IPV6;
+						break;
+					}
+					default: {
+						type = IP_TYPE_INVALID;
+						break;
+					}
+				}
 				// Get the string representation of the IP address
 				IpiGetIpAddressAsString(
 					&item, 

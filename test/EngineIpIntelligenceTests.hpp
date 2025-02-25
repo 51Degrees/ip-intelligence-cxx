@@ -105,13 +105,13 @@ public:
 	void metaData();
 	void availableProperties();
 	string getExpectedFileType();
-	void verify();
+	void verify() override;
 	void randomWithIpAddress(int count);
 	void randomWithEvidence(int count);
 	void ipAddressPresent(const char *ipAddress);
 	void boundIpAddressPresent(const char *ipAddress);
 	void randomIpAddressPresent(int count);
-	void verifyCityName();
+	void verifyCityName() {};
 	void validateIndex(ResultsBase *results, int index) override;
 	void validateName(ResultsBase *results, string *name) override;
 	void validateQuick(ResultsBase *results) override;

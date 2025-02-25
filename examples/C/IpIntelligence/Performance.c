@@ -25,7 +25,7 @@
 
  // Include ExmapleBase.h before others as it includes Windows 'crtdbg.h'
  // which requires to be included before 'malloc.h'.
-#include "ExampleBase.h"
+#include "../../Base/ExampleBase.h"
 
 /**
  * @example Hash/Performance.c

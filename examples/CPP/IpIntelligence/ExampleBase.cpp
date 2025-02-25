@@ -21,6 +21,7 @@
  * ********************************************************************* */
 
 #include "ExampleBase.hpp"
+#include "../../Base/ExampleBase.h"
 
 using namespace FiftyoneDegrees;
 using namespace FiftyoneDegrees::Examples::IpIntelligence;
@@ -29,7 +30,7 @@ const char *ExampleBase::ipv4Address = "185.28.167.77";
 
 const char *ExampleBase::ipv6Address = "2001:4860:4860::8888";
 
-ExampleBase::ExampleBase(::byte *data, long length, ConfigIpi *config) {
+ExampleBase::ExampleBase(::byte *data, long length, FiftyoneDegrees::IpIntelligence::ConfigIpi *config) {
 	this->config = config;
 	
 	// Set the properties to be returned for each Ip Address.
@@ -40,7 +41,7 @@ ExampleBase::ExampleBase(::byte *data, long length, ConfigIpi *config) {
 	engine = new EngineIpi(data, length, config, properties);
 }
 
-ExampleBase::ExampleBase(string dataFilePath, ConfigIpi *config) {
+ExampleBase::ExampleBase(string dataFilePath, FiftyoneDegrees::IpIntelligence::ConfigIpi *config) {
 	this->config = config;
 	
 	// Set the properties to be returned for each Ip Address.
@@ -52,7 +53,7 @@ ExampleBase::ExampleBase(string dataFilePath, ConfigIpi *config) {
 }
 
 ExampleBase::ExampleBase(string dataFilePath)
-    : ExampleBase(dataFilePath, new ConfigIpi()) {}
+    : ExampleBase(dataFilePath, new FiftyoneDegrees::IpIntelligence::ConfigIpi()) {}
 
 ExampleBase::~ExampleBase() {
 	delete engine;
@@ -77,7 +78,7 @@ unsigned long ExampleBase::generateHash(unsigned char *value) {
 	return hashCode;
 }
 
-unsigned long ExampleBase::getHashCode(ResultsIpi *results) {
+unsigned long ExampleBase::getHashCode(FiftyoneDegrees::IpIntelligence::ResultsIpi *results) {
 	unsigned long hashCode = 0;
 	uint32_t requiredPropertyIndex;
 	string valueName;
@@ -94,7 +95,7 @@ unsigned long ExampleBase::getHashCode(ResultsIpi *results) {
 void ExampleBase::processIpAddress(const char *ipAddress, void *state) {
 	ThreadState *thread = (ThreadState *)state;
 	
-	ResultsIpi *results = thread->engine->process(ipAddress);
+	FiftyoneDegrees::IpIntelligence::ResultsIpi *results = thread->engine->process(ipAddress);
 	
 	thread->hashCode ^= getHashCode(results);
 	
@@ -104,7 +105,7 @@ void ExampleBase::processIpAddress(const char *ipAddress, void *state) {
 void ExampleBase::SharedState::processIpAddressesSingle() {
 	char ipAddress[500] = "";
 	ThreadState thread(engine);
-	fiftyoneDegreesTextFileIterate(ipAddressFilePath.c_str(), ipAddress,
+	fiftyoneDegreesEvidenceFileIterate(ipAddressFilePath.c_str(), ipAddress,
 								sizeof(ipAddress), &thread, processIpAddress);
 	printf("Finished with hash code '%i'\r\n", thread.hashCode);
 }

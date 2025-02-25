@@ -37,6 +37,8 @@ set_target_properties(fiftyone-ip-intelligence-c fiftyone-ip-intelligence-cxx
 
 # Shared library
 
+set(EXAMPLES_BASE_SRC ${CMAKE_CURRENT_LIST_DIR}/examples/Base/ExampleBase.c)
+set(EXAMPLES_BASE_H ${CMAKE_CURRENT_LIST_DIR}/examples/Base/ExampleBase.h)
 file(WRITE null.cpp "")
 add_library(fiftyone-ip-intelligence-complete SHARED null.cpp)
 target_link_libraries(fiftyone-ip-intelligence-complete fiftyone-ip-intelligence-cxx)
@@ -68,13 +70,13 @@ foreach (api "IP-Intelligence")
 					MESSAGE("-- Found C++ example '${name}'")
 					add_executable(${name} ${file}
 					${CMAKE_CURRENT_LIST_DIR}/examples/${upperlangext}/${EXAMPLES_FOLDER}/ExampleBase.cpp
-					${CMAKE_CURRENT_LIST_DIR}/examples/${upperlangext}/${EXAMPLES_FOLDER}/ExampleBase.hpp)
+					${CMAKE_CURRENT_LIST_DIR}/examples/${upperlangext}/${EXAMPLES_FOLDER}/ExampleBase.hpp
+					${EXAMPLES_BASE_SRC} ${EXAMPLES_BASE_H})
 					target_link_libraries(${name} fiftyone-${lowerapi}-cxx)
 				elseif("${langext}" STREQUAL "c")
 					MESSAGE("-- Found C example '${name}'")
 					add_executable(${name} ${file}
-					${CMAKE_CURRENT_LIST_DIR}/examples/${upperlangext}/${EXAMPLES_FOLDER}/ExampleBase.c
-					${CMAKE_CURRENT_LIST_DIR}/examples/${upperlangext}/${EXAMPLES_FOLDER}/ExampleBase.h)
+					${EXAMPLES_BASE_SRC} ${EXAMPLES_BASE_H})
 					target_link_libraries(${name} fiftyone-${lowerapi}-c)
 				endif()
 				set_target_properties(${name}
@@ -101,7 +103,7 @@ add_executable(IpiTests
 	${COMMON_TEST}/Base.cpp
 	${COMMON_TEST}/EngineTests.cpp
 	${COMMON_TEST}/ExampleTests.cpp
-	${CMAKE_CURRENT_LIST_DIR}/examples/C/${EXAMPLES_FOLDER}/ExampleBase.c)
+	${EXAMPLES_BASE_SRC} ${EXAMPLES_BASE_H})
 target_link_libraries(IpiTests
     fiftyone-ip-intelligence-cxx
 	gtest_main)

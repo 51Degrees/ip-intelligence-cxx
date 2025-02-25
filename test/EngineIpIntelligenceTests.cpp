@@ -572,49 +572,6 @@ void EngineIpIntelligenceTests::randomIpAddressPresent(int count) {
 	}
 }
 
-void EngineIpIntelligenceTests::verifyCoordinate() {
-	EngineIpi *engineIpi = (EngineIpi*)getEngine();
-	uint32_t defaultCount = 0;
-	// Use a constant to make sure it is always
-	// testing a decent number of IP addresses
-	const int count = 50;
-
-	for (int i = 0; i < count; i++) {
-		string ipAddress = ipAddresses[rand() % ipAddresses.size()];
-		ResultsIpi *results = engineIpi->process(
-			ipAddress.c_str());
-		Common::Value<fiftyoneDegreesCoordinate> value = results->getValueAsCoordinate("AverageLocation");
-		fiftyoneDegreesCoordinate coordinate;
-
-		EXPECT_EQ(true, value.hasValue()) << "Could not find an IP range that matches "
-			"the IP address: " << ipAddress;
-
-		coordinate = value.getValue();
-		EXPECT_EQ(true, (coordinate.lat >= -90.0f && coordinate.lat <= 90.0f)) << "An "
-			"invalid latitude has been returned, where it should be for IP address: " 
-			<< ipAddress;
-
-		EXPECT_EQ(true, (coordinate.lon >= -180.0f && coordinate.lon <= 180.0f)) << "An "
-			"invalid longitude has been returned, where it should be for IP address: "
-			<< ipAddress;
-
-		if (coordinate.lat == 0 && coordinate.lon == 0) {
-			// Counting the number of default coordinate returned
-			// This is to ensure we won't run into the case where
-			// the default value is always returned.
-			defaultCount++;
-		}
-
-		delete results;
-	}
-
-	// TODO: Once data is available. Uncomment this one.
-	//
-	// EXPECT_EQ(true, defaultCount < count) << "A special case has occurs where all test "
-	// 	"addresses have returned a default coordinate of (0, 0). This need to be verified "
-	// 	"that it is not a coincidence.";
-}
-
 void EngineIpIntelligenceTests::randomWithIpAddress(int count) {
 	EngineIpi *engineIpi = (EngineIpi*)getEngine();
 	for (int i = 0; i < count; i++) {
