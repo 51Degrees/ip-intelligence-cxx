@@ -156,6 +156,9 @@
     <ProjectReference Include="..\..\..\FiftyOne.IpIntelligence.CPP\FiftyOne.IpIntelligence.CPP.vcxproj">
       <Project>{341fd8cb-9456-4711-bec8-c4a218fa1c6c}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\C\ExampleBase\ExampleBase.vcxproj">
+      <Project>{24a02087-1038-47c2-953e-de2ff5a520fb}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

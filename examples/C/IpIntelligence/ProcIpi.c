@@ -34,9 +34,7 @@ static void buildString(
 	StringBuilder* const builder,
 	Exception *exception) {
 	int i;
-	const char* property, * value;
-	char ipAddress[50];
-	float percentage;
+	const char* property;
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 	for (i = 0; i < (int)dataSet->b.b.available->count; i++) {
 		property = STRING(
