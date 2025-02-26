@@ -28,10 +28,12 @@
 #include "common-cxx/ConfigBase.hpp"
 #include "ipi.h"
 
-using namespace FiftyoneDegrees::Common;
 
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
+		using FiftyoneDegrees::Common::CollectionConfig;
+		using FiftyoneDegrees::Common::ConfigBase;
+
 		/**
 		 * C++ class wrapper for the #fiftyoneDegreesConfigIpi
 		 * configuration structure. See ipi.h.

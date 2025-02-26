@@ -25,6 +25,7 @@
 #include "fiftyone.h"
 #include "common-cxx/Exceptions.hpp"
 
+using namespace FiftyoneDegrees::Common;
 using namespace FiftyoneDegrees::IpIntelligence;
 
 ComponentMetaData* ComponentMetaDataBuilderIpi::build(

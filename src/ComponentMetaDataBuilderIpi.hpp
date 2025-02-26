@@ -28,10 +28,11 @@
 #include "common-cxx/EntityMetaDataBuilder.hpp"
 #include "ipi.h"
 
-using namespace FiftyoneDegrees::Common;
-
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
+		using Common::EntityMetaDataBuilder;
+		using Common::ComponentMetaData;
+
 		/**
 		 * Meta data builder class contains static helper methods used when
 		 * building component meta data instances from an IP Intelligence

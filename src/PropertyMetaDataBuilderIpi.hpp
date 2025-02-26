@@ -28,10 +28,14 @@
 #include "common-cxx/EntityMetaDataBuilder.hpp"
 #include "ipi.h"
 
-using namespace FiftyoneDegrees::Common;
 
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
+		using std::string;
+		using std::vector;
+		using FiftyoneDegrees::Common::EntityMetaDataBuilder;
+		using FiftyoneDegrees::Common::PropertyMetaData;
+
 		/**
 		 * Meta data builder class contains static helper methods used when
 		 * building property meta data instances from an IP Intelligence data set.

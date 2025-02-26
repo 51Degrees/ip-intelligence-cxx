@@ -29,6 +29,7 @@
 #include "constantsIpi.h"
 
 using namespace std;
+using namespace FiftyoneDegrees::Common;
 using namespace FiftyoneDegrees::IpIntelligence;
 
 /* Maximum buffer length to hold an IP address string */

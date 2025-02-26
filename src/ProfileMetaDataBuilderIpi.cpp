@@ -24,6 +24,7 @@
 
 #include "fiftyone.h"
 
+using namespace FiftyoneDegrees::Common;
 using namespace FiftyoneDegrees::IpIntelligence;
 
 ProfileMetaData* ProfileMetaDataBuilderIpi::build(

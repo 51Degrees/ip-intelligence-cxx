@@ -25,6 +25,7 @@
 #include "fiftyone.h"
 
 using namespace FiftyoneDegrees;
+using namespace FiftyoneDegrees::Common;
 using namespace FiftyoneDegrees::IpIntelligence;
 
 EngineIpi::EngineIpi(

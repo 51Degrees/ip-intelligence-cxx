@@ -24,6 +24,7 @@
 #include "common-cxx/Exceptions.hpp"
 #include "fiftyone.h"
 
+using namespace std;
 using namespace FiftyoneDegrees::IpIntelligence;
 
 ValueMetaDataCollectionBaseIpi::ValueMetaDataCollectionBaseIpi(

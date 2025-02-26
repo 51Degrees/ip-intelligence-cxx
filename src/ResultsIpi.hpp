@@ -30,14 +30,17 @@
 #include "WeightedValue.hpp"
 #include "common-cxx/IpAddress.hpp"
 #include "ipi.h"
-#include "common-cxx/fiftyone.h"
 
-using namespace FiftyoneDegrees::Common;
 
 class EngineIpIntelligenceTests;
 
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
+		using std::shared_ptr;
+		using std::string;
+		using std::vector;
+		using FiftyoneDegrees::Common::ResultsBase;
+
 		/**
 		 * Encapsulates the results of an IP Intelligence engine's
 		 * processing. The class is constructed using an instance of a C
@@ -321,7 +324,7 @@ namespace FiftyoneDegrees {
 			 * name
 			 * @return a vector of weighted coordinate values for the property
 			 */
-			Common::Value<vector<WeightedValue<Coordinate>>>
+			Common::Value<vector<WeightedValue<fiftyoneDegreesCoordinate>>>
 				getValuesAsWeightedCoordinateList(const string *propertyName);
 
 			/**
@@ -332,7 +335,7 @@ namespace FiftyoneDegrees {
 			 * name
 			 * @return a vector of weighted coordinate values for the property
 			 */
-			Common::Value<vector<WeightedValue<Coordinate>>>
+			Common::Value<vector<WeightedValue<fiftyoneDegreesCoordinate>>>
 				getValuesAsWeightedCoordinateList(const string &propertyName);
 
 			/**
@@ -342,7 +345,7 @@ namespace FiftyoneDegrees {
 			 * @param requiredPropertyIndex in the required properties
 			 * @return a vector of weighted coordinate values for the property
 			 */
-			Common::Value<vector<WeightedValue<Coordinate>>>
+			Common::Value<vector<WeightedValue<fiftyoneDegreesCoordinate>>>
 				getValuesAsWeightedCoordinateList(int requiredPropertyIndex);
 			
 			/**

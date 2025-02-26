@@ -26,6 +26,7 @@
 #include "constantsIpi.h"
 
 using namespace FiftyoneDegrees;
+using namespace FiftyoneDegrees::Common;
 using namespace FiftyoneDegrees::IpIntelligence;
 
 #define RESULT(r,i) ((ResultIpi*)r->b.items + i)

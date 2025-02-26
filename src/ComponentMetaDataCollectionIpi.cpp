@@ -23,6 +23,7 @@
 #include "ComponentMetaDataCollectionIpi.hpp"
 #include "fiftyone.h"
 
+using namespace std;
 using namespace FiftyoneDegrees::IpIntelligence;
 
 ComponentMetaDataCollectionIpi::ComponentMetaDataCollectionIpi(

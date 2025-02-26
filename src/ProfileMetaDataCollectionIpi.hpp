@@ -27,10 +27,11 @@
 #include "ProfileMetaDataBuilderIpi.hpp"
 #include "ipi.h"
 
-using namespace FiftyoneDegrees::Common;
 
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
+		using FiftyoneDegrees::Common::Collection;
+
 		/**
 		 * A collection of all profile meta data contained in an IP
 		 * Intelligence engine.

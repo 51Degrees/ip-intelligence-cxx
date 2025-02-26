@@ -50,8 +50,6 @@
 class ResultsIpi : public ResultsBase {
 public:
     virtual ~ResultsIpi();
-    std::string getNetworkId();
-    std::string getNetworkId(uint32_t resultsIndex);
 
     Value<std::vector<WeightedValue<std::string>>> getValuesAsWeightedStringList(
         const std::string &propertyName);

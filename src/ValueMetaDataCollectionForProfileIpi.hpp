@@ -29,10 +29,11 @@
 #include "ValueMetaDataBuilderIpi.hpp"
 #include "ipi.h"
 
-using namespace FiftyoneDegrees::Common;
 
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
+		using FiftyoneDegrees::Common::ProfileMetaData;
+
 		/**
 		 * A collection of value meta data relating to a profile contained
 		 * in an IP Intelligence engine.

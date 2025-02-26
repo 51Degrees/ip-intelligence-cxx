@@ -40,10 +40,13 @@
 #include "ResultsIpi.hpp"
 #include "MetaDataIpi.hpp"
 
-using namespace FiftyoneDegrees::Common;
 
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
+		using FiftyoneDegrees::Common::EngineBase;
+		using FiftyoneDegrees::Common::Date;
+		using FiftyoneDegrees::Common::RequiredPropertiesConfig;
+
 		/**
 		 * Encapsulates the IP Intelligence engine class which implements
 		 * #EngineBase. This carries out processing using an IP 

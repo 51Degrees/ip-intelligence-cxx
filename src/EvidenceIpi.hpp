@@ -24,12 +24,11 @@
 #define FIFTYONE_DEGREES_EVIDENCE_IPI_HPP
 
 #include "common-cxx/EvidenceBase.hpp"
-#include "common-cxx/IpAddress.hpp"
-
-using namespace FiftyoneDegrees::Common;
 
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
+		using Common::EvidenceBase;
+
 		/**
 		 * IP Intelligence specific evidence class containing evidence to be
 		 * processed by an IP intelligence engine.

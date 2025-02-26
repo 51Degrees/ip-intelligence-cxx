@@ -27,7 +27,6 @@
 #include "ValueMetaDataBuilderIpi.hpp"
 #include "ipi.h"
 
-using namespace FiftyoneDegrees::Common;
 
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {

@@ -31,10 +31,11 @@
 #include "ipi.h"
 #include <memory>
 
-using namespace FiftyoneDegrees::Common;
 
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
+		using std::shared_ptr;
+
 		/**
 		 * A collection of property meta data relating to a component
 		 * contained in an IP Intelligence engine.

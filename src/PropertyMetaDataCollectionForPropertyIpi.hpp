@@ -29,10 +29,11 @@
 #include "ipi.h"
 #include <memory>
 
-using namespace FiftyoneDegrees::Common;
 
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
+		using std::shared_ptr;
+
 		class PropertyMetaDataCollectionForPropertyIpi
 			: public Collection<string, PropertyMetaData> {
 		public:

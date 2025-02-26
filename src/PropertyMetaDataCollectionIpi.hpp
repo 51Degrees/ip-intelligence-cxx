@@ -27,10 +27,11 @@
 #include "PropertyMetaDataBuilderIpi.hpp"
 #include "ipi.h"
 
-using namespace FiftyoneDegrees::Common;
 
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
+		using FiftyoneDegrees::Common::Collection;
+
 		/**
 		 * A collection of all property meta data contained in an IP 
 		 * Intelligence engine.
