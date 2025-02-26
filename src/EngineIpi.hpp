@@ -40,7 +40,6 @@
 #include "ResultsIpi.hpp"
 #include "MetaDataIpi.hpp"
 
-using namespace std;
 using namespace FiftyoneDegrees::Common;
 
 namespace FiftyoneDegrees {

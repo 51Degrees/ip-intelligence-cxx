@@ -31,7 +31,6 @@
 #include "ipi.h"
 #include <memory>
 
-using namespace std;
 using namespace FiftyoneDegrees::Common;
 
 namespace FiftyoneDegrees {

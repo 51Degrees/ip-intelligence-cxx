@@ -23,6 +23,7 @@
 #include <algorithm>
 #include "ConfigIpi.hpp"
 
+using namespace std;
 using namespace FiftyoneDegrees::IpIntelligence;
 
 ConfigIpi::ConfigIpi() : ConfigBase(&this->config.b) {

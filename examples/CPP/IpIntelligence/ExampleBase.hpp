@@ -13,7 +13,7 @@ static const char *dataFileName = "51Degrees-LiteV4.1.ipi";
 
 static const char *ipAddressFileName = "evidence.yml";
 
-using namespace std;
+using std::thread;
 using namespace FiftyoneDegrees::Common;
 using namespace FiftyoneDegrees::IpIntelligence;
 

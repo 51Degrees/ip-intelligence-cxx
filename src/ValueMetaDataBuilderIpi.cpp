@@ -28,6 +28,7 @@
 #include "common-cxx/wkbtot.hpp"
 #include "constantsIpi.h"
 
+using namespace std;
 using namespace FiftyoneDegrees::IpIntelligence;
 
 /* Maximum buffer length to hold an IP address string */

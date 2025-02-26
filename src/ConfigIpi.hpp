@@ -28,7 +28,6 @@
 #include "common-cxx/ConfigBase.hpp"
 #include "ipi.h"
 
-using namespace std;
 using namespace FiftyoneDegrees::Common;
 
 namespace FiftyoneDegrees {

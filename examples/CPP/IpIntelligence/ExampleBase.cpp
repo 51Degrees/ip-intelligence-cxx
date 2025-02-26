@@ -23,6 +23,7 @@
 #include "ExampleBase.hpp"
 #include "../../Base/ExampleBase.h"
 
+using std::cout;
 using namespace FiftyoneDegrees;
 using namespace FiftyoneDegrees::Examples::IpIntelligence;
 

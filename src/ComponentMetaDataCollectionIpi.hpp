@@ -27,7 +27,6 @@
 #include "ComponentMetaDataBuilderIpi.hpp"
 #include "ipi.h"
 
-using namespace std;
 using namespace FiftyoneDegrees::Common;
 
 namespace FiftyoneDegrees {
