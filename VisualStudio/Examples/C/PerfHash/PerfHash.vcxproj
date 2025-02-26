@@ -281,6 +281,9 @@
     <ProjectReference Include="..\..\..\FiftyOne.IpIntelligence.C\FiftyOne.IpIntelligence.C.vcxproj">
       <Project>{eddf7b03-a483-4b52-9234-4585af17b284}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\Base\ExampleBase\ExampleBase.vcxproj">
+      <Project>{24a02087-1038-47c2-953e-de2ff5a520fb}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\examples\C\IpIntelligence\PerfIpi.c" />

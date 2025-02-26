@@ -150,6 +150,9 @@
     <ClCompile Include="..\..\..\..\examples\CPP\IpIntelligence\GettingStarted.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Base\ExampleBase\ExampleBase.vcxproj">
+      <Project>{24a02087-1038-47c2-953e-de2ff5a520fb}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\ExampleBase\ExampleBase.vcxproj">
       <Project>{f56d1795-93b0-4480-aebd-ff2f1a70e4d3}</Project>
     </ProjectReference>
