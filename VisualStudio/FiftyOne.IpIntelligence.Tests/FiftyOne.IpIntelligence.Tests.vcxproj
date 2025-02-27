@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(SolutionDir)..\src\common-cxx\VisualStudio\Application++.Build.props" />
+  <Import Project="$(ProjectDir)..\..\src\common-cxx\VisualStudio\Application++.Build.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1072D528-83C9-433F-95C2-8EB8401F0DF1}</ProjectGuid>
   </PropertyGroup>
