@@ -62,13 +62,13 @@ namespace FiftyoneDegrees {
 			/**
 			 * Releases the data set being referenced by the collection.
 			 */
-			~ProfileMetaDataCollectionIpi();
+			~ProfileMetaDataCollectionIpi() override;
 
-			ProfileMetaData* getByIndex(uint32_t index) const;
+			ProfileMetaData* getByIndex(uint32_t index) const override;
 
-			ProfileMetaData* getByKey(uint32_t profileId) const;
+			ProfileMetaData* getByKey(uint32_t profileId) const override;
 
-			uint32_t getSize() const;
+			uint32_t getSize() const override;
 
 			/**
 			 * @}

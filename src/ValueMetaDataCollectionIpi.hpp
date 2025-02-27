@@ -52,7 +52,7 @@ namespace FiftyoneDegrees {
 			/**
 			 * Releases the data set being referenced by the collection.
 			 */
-			~ValueMetaDataCollectionIpi();
+			~ValueMetaDataCollectionIpi() override;
 
 			/**
 			 * @}
@@ -60,11 +60,11 @@ namespace FiftyoneDegrees {
 			 * @{
 			 */
 
-			ValueMetaData* getByIndex(uint32_t index) const;
+			ValueMetaData* getByIndex(uint32_t index) const override;
 
-			ValueMetaData* getByKey(ValueMetaDataKey key) const;
+			ValueMetaData* getByKey(ValueMetaDataKey key) const override;
 
-			uint32_t getSize() const;
+			uint32_t getSize() const override;
 			/**
 			 * @}
 			 */

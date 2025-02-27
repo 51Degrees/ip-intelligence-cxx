@@ -58,7 +58,7 @@ namespace FiftyoneDegrees {
 			/**
 			 * Releases the data set being referenced by the collection.
 			 */
-			virtual ~ValueMetaDataCollectionBaseIpi();
+			~ValueMetaDataCollectionBaseIpi() override;
 
 			/**
 			 * @}
@@ -66,7 +66,7 @@ namespace FiftyoneDegrees {
 			 * @{
 			 */
 
-			ValueMetaData* getByKey(ValueMetaDataKey key) const;
+			ValueMetaData* getByKey(ValueMetaDataKey key) const override;
 
 			/**
 			 * @}

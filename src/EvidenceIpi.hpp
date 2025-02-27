@@ -76,7 +76,7 @@ namespace FiftyoneDegrees {
 			 * @}
 			 */
 		protected:
-			bool isRelevant(fiftyoneDegreesEvidencePrefix prefix);
+			bool isRelevant(fiftyoneDegreesEvidencePrefix prefix) override;
 		};
 	}
 }

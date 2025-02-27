@@ -56,7 +56,7 @@ namespace FiftyoneDegrees {
 			/**
 			 * Releases the data set being referenced by the collection.
 			 */
-			~ComponentMetaDataCollectionIpi();
+			~ComponentMetaDataCollectionIpi() override;
 
 			/**
 			 * @}
@@ -64,11 +64,11 @@ namespace FiftyoneDegrees {
 			 * @{
 			 */
 
-			ComponentMetaData* getByIndex(uint32_t index) const;
+			ComponentMetaData* getByIndex(uint32_t index) const override;
 
-			ComponentMetaData* getByKey(::byte componentId) const;
+			ComponentMetaData* getByKey(::byte componentId) const override;
 
-			uint32_t getSize() const;
+			uint32_t getSize() const override;
 
 			/**
 			 * @}

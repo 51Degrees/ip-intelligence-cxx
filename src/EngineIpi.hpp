@@ -206,27 +206,27 @@ namespace FiftyoneDegrees {
 			 * @{
 			 */
 
-			void refreshData() const;
+			void refreshData() const override;
 
-			void refreshData(const char *fileName) const;
+			void refreshData(const char *fileName) const override;
 
-			void refreshData(void *data, long length) const;
+			void refreshData(void *data, long length) const override;
 
-			void refreshData(unsigned char data[], long length) const;
+			void refreshData(unsigned char data[], long length) const override;
 
-			ResultsBase* processBase(EvidenceBase *evidence) const;
+			ResultsBase* processBase(EvidenceBase *evidence) const override;
 
-			Date getPublishedTime() const;
+			Date getPublishedTime() const override;
 
-			Date getUpdateAvailableTime() const;
+			Date getUpdateAvailableTime() const override;
 
-			string getDataFilePath() const;
+			string getDataFilePath() const override;
 
-			string getDataFileTempPath() const;
+			string getDataFileTempPath() const override;
 
-			string getProduct() const;
+			string getProduct() const override;
 
-			string getType() const;
+			string getType() const override;
 
 			/**
 			 * @}

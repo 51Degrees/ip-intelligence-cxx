@@ -61,7 +61,7 @@ namespace FiftyoneDegrees {
 			/**
 			 * @copydoc Common::MetaData::~MetaData
 			 */
-			~MetaDataIpi();
+			~MetaDataIpi() override;
 
 			/**
 			 * @}
@@ -69,42 +69,42 @@ namespace FiftyoneDegrees {
 			 * @{
 			 */
 
-			Collection<::byte, ComponentMetaData>* getComponents() const;
+			Collection<::byte, ComponentMetaData>* getComponents() const override;
 
-			Collection<string, PropertyMetaData>* getProperties() const;
+			Collection<string, PropertyMetaData>* getProperties() const override;
 
-			Collection<uint32_t, ProfileMetaData>* getProfiles() const;
+			Collection<uint32_t, ProfileMetaData>* getProfiles() const override;
 
-			Collection<ValueMetaDataKey, ValueMetaData>* getValues() const;
-
-			Collection<ValueMetaDataKey, ValueMetaData>*
-				getValuesForProperty(PropertyMetaData *property) const;
+			Collection<ValueMetaDataKey, ValueMetaData>* getValues() const override;
 
 			Collection<ValueMetaDataKey, ValueMetaData>*
-				getValuesForProfile(ProfileMetaData *profile) const;
+				getValuesForProperty(PropertyMetaData *property) const override;
+
+			Collection<ValueMetaDataKey, ValueMetaData>*
+				getValuesForProfile(ProfileMetaData *profile) const override;
 
 			ComponentMetaData* getComponentForProfile(
-				ProfileMetaData *profile) const;
+				ProfileMetaData *profile) const override;
 
 			ComponentMetaData* getComponentForProperty(
-				PropertyMetaData *property) const;
+				PropertyMetaData *property) const override;
 
 			ProfileMetaData* getDefaultProfileForComponent(
-				ComponentMetaData *component) const;
+				ComponentMetaData *component) const override;
 
 			ValueMetaData* getDefaultValueForProperty(
-				PropertyMetaData *property) const;
+				PropertyMetaData *property) const override;
 
 			Collection<string, PropertyMetaData>*
 				getPropertiesForComponent(ComponentMetaData *component) 
-				const;
+				const override;
 
 			Collection<string, PropertyMetaData>*
 				getEvidencePropertiesForProperty(PropertyMetaData *property)
-				const;
+				const override;
 
 			PropertyMetaData* getPropertyForValue(ValueMetaData *value)
-				const;
+				const override;
 
 			/**
 			 * @}
