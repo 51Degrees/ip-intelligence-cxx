@@ -92,29 +92,31 @@ endforeach()
 
 # Tests
 
-set(COMMON_TEST ${CMAKE_CURRENT_LIST_DIR}/src/common-cxx/tests)
-set(IPI_TEST	${CMAKE_CURRENT_LIST_DIR}/test)
+if(BUILD_TESTING)
+	set(COMMON_TEST ${CMAKE_CURRENT_LIST_DIR}/src/common-cxx/tests)
+	set(IPI_TEST	${CMAKE_CURRENT_LIST_DIR}/test)
 
-FILE(GLOB IPI_TEST_SRC ${IPI_TEST}/*.cpp)
-FILE(GLOB IPI_TEST_H ${IPI_TEST}/*.hpp)
+	FILE(GLOB IPI_TEST_SRC ${IPI_TEST}/*.cpp)
+	FILE(GLOB IPI_TEST_H ${IPI_TEST}/*.hpp)
 
-add_executable(IpiTests
-	${IPI_TEST_SRC} ${IPI_TEST_H}
-	${COMMON_TEST}/Base.cpp
-	${COMMON_TEST}/EngineTests.cpp
-	${COMMON_TEST}/ExampleTests.cpp
-	${EXAMPLES_BASE_SRC} ${EXAMPLES_BASE_H})
-target_link_libraries(IpiTests
-    fiftyone-ip-intelligence-cxx
-	gtest_main)
-gtest_discover_tests(IpiTests)
+	add_executable(IpiTests
+		${IPI_TEST_SRC} ${IPI_TEST_H}
+		${COMMON_TEST}/Base.cpp
+		${COMMON_TEST}/EngineTests.cpp
+		${COMMON_TEST}/ExampleTests.cpp
+		${EXAMPLES_BASE_SRC} ${EXAMPLES_BASE_H})
+	target_link_libraries(IpiTests
+		fiftyone-ip-intelligence-cxx
+		gtest_main)
+	gtest_discover_tests(IpiTests)
 
-set_target_properties(IpiTests PROPERTIES FOLDER "Tests")
+	set_target_properties(IpiTests PROPERTIES FOLDER "Tests")
 
-if (MSVC)
-	target_compile_options(IpiTests PRIVATE "/D_CRT_SECURE_NO_WARNINGS")
-endif()
+	if (MSVC)
+		target_compile_options(IpiTests PRIVATE "/D_CRT_SECURE_NO_WARNINGS")
+	endif()
 
-if (CMAKE_COMPILER_IS_GNUCC)
-	target_compile_options(IpiTests PRIVATE "-Wall" "-Wno-unused-variable" "-Wno-unused-result" "-Wno-unused-but-set-variable")
+	if (CMAKE_COMPILER_IS_GNUCC)
+		target_compile_options(IpiTests PRIVATE "-Wall" "-Wno-unused-variable" "-Wno-unused-result" "-Wno-unused-but-set-variable")
+	endif()
 endif()
