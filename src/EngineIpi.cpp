@@ -279,16 +279,9 @@ Common::ResultsBase* EngineIpi::processBase(
 }
 
 void EngineIpi::initHttpHeaderKeys(fiftyoneDegreesHeaders *uniqueHeaders) {
-	if (!uniqueHeaders) {
-		// TODO: Ask Ben if these will actually arrive in data file
-		addKey("server.client-ip");
-		addKey("query.client-ip-51d");
-		addKey("server.true-client-ip-51d");
-		return;
-	}
 	uint32_t i, p;
 	const char *prefixes[] = { "query.", "server." };
-	for (i = 0; i < uniqueHeaders->count; i++) {
+	for (i = 0; i < (uniqueHeaders ? uniqueHeaders->count : 0); i++) {
 		for (p = 0; p < sizeof(prefixes) / sizeof(const char*); p++) {
 			string key = string(prefixes[p]);
 			key.append(uniqueHeaders->items[i].name);
