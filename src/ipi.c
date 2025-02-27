@@ -1404,13 +1404,6 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 	}
 	results->count = 1;
 
-	// TODO: Fake the processing of the IP address and just set the results
-	// to fixed profiles.
-	{
-		results->items[0].profileOffsetIndex = 0;
-		return;
-	}
-
 	setResultFromIpAddress(
 		&results->items[0],
 		dataSet,
@@ -1908,6 +1901,7 @@ const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 static bool visitProfilePropertyValue(
 	void *state,
 	fiftyoneDegreesCollectionItem *item) {
+	(void)item; // suppress C4100 "unused formal parameter"
 
 	*((bool *)state) = true; // found
 	return false; // break
