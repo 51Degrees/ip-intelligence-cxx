@@ -86,10 +86,10 @@ namespace FiftyoneDegrees {
 				shared_ptr<fiftyoneDegreesResourceManager> manager);
 
 			/**
-			 * Release the reference to the underlying results and
+			 * Release the reference to the underlying results
 			 * and associated data set.
 			 */
-			virtual ~ResultsIpi();
+			~ResultsIpi() override;
 
 			/**
 			 * @}
@@ -189,6 +189,7 @@ namespace FiftyoneDegrees {
 			 * is not valid an empty vector is returned.
 			 * @param propertyName pointer to a string containing the property
 			 * name
+			 * @param decimalPlaces precision (places after decimal dot)
 			 * @return a vector of weighted string values for the property
 			 */
 			Common::Value<vector<WeightedValue<string>>>
@@ -201,6 +202,7 @@ namespace FiftyoneDegrees {
 			 * is not valid an empty vector is returned.
 			 * @param propertyName pointer to a string containing the property
 			 * name
+			 * @param decimalPlaces precision (places after decimal dot)
 			 * @return a vector of weighted string values for the property
 			 */
 			Common::Value<vector<WeightedValue<string>>>
@@ -213,6 +215,7 @@ namespace FiftyoneDegrees {
 			 * is not valid an empty vector is returned.
 			 * @param propertyName pointer to a string containing the property
 			 * name
+			 * @param decimalPlaces precision (places after decimal dot)
 			 * @return a vector of weighted string values for the property
 			 */
 			Common::Value<vector<WeightedValue<string>>>
@@ -224,6 +227,7 @@ namespace FiftyoneDegrees {
 			 * values associated with the required property index. If the index
 			 * is not valid an empty vector is returned.
 			 * @param requiredPropertyIndex in the required properties
+			 * @param decimalPlaces precision (places after decimal dot)
 			 * @return a vector of weighted string values for the property
 			 */
 			Common::Value<vector<WeightedValue<string>>>
@@ -382,7 +386,8 @@ namespace FiftyoneDegrees {
 			 * Get a float pair representation of the value associated with the
 			 * required property index. If the index is not valid then
 			 * hasValue returns false with NoValueReason and its message.
-			 * @param propertyName string containing the property name
+			 * @param requiredPropertyIndex index in the required
+			 * properties list
 			 * @return a coordinate representation of the value for the property
 			 */
 			Common::Value<fiftyoneDegreesCoordinate>
@@ -422,7 +427,8 @@ namespace FiftyoneDegrees {
 			 * Get an IpAddress instance representation of the value associated 
 			 * with the required property index. If the index is not valid
 			 * then hasValue returns false with NoValueReason and its message.
-			 * @param propertyName string containing the property name
+			 * @param requiredPropertyIndex index in the required
+			 * properties list
 			 * @return an IpAddress representation of the value for the property
 			 */
 			Common::Value<IpIntelligence::IpAddress> getValueAsIpAddress(
@@ -452,20 +458,20 @@ namespace FiftyoneDegrees {
 		protected:
 			void getValuesInternal(
 				int requiredPropertyIndex,
-				vector<string> &values);
+				vector<string> &values) override;
 
-			bool hasValuesInternal(int requiredPropertyIndex);
+			bool hasValuesInternal(int requiredPropertyIndex) override;
 
 			const char* getNoValueMessageInternal(
-				fiftyoneDegreesResultsNoValueReason reason);
+				fiftyoneDegreesResultsNoValueReason reason) override;
 
 			fiftyoneDegreesResultsNoValueReason getNoValueReasonInternal(
-				int requiredPropertyIndex);
+				int requiredPropertyIndex) override;
 
 		private:
 			/**
 			 * Utility function to check the property value type
-			 * Consumers of this function should always checked for
+			 * Consumers of this function should always check for
 			 * exception status before using the returned value.
 			 * @param requiredPropertyIndex index in the required
 			 * properties list
