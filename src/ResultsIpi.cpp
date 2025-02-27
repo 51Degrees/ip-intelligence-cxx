@@ -319,6 +319,7 @@ IpIntelligence::ResultsIpi::getValueAsIpAddress(const string *propertyName) {
  */
 Common::Value<bool> 
 IpIntelligence::ResultsIpi::getValueAsBool(int requiredPropertyIndex) {
+    (void)requiredPropertyIndex; // suppress C4100 "unused formal parameter"
     Common::Value<bool> result;
     result.setNoValueReason(
         FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
@@ -334,6 +335,7 @@ IpIntelligence::ResultsIpi::getValueAsBool(int requiredPropertyIndex) {
  */
 Common::Value<int>
 IpIntelligence::ResultsIpi::getValueAsInteger(int requiredPropertyIndex) {
+    (void)requiredPropertyIndex; // suppress C4100 "unused formal parameter"
     Common::Value<int> result;
     result.setNoValueReason(
         FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
@@ -349,6 +351,7 @@ IpIntelligence::ResultsIpi::getValueAsInteger(int requiredPropertyIndex) {
  */
 Common::Value<double> 
 IpIntelligence::ResultsIpi::getValueAsDouble(int requiredPropertyIndex) {
+    (void)requiredPropertyIndex; // suppress C4100 "unused formal parameter"
     Common::Value<double> result;
     result.setNoValueReason(
         FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
@@ -566,7 +569,6 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList(
             values.reserve(results->values.count);
 
             stringstream stream;
-            fiftyoneDegreesCoordinate coordinate;
             // Add the values in their original form to the result.
             for (i = 0; i < results->values.count; i++) {
                 WeightedValue<string> weightedString;
