@@ -397,8 +397,8 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedBoolList(
                 WeightedValue<bool> weightedBool;
                 if (valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE
                     && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS) {
-                    weightedBool.setValue(
-                        strcmp(STRING((String *)valuesItems[i].item.data.ptr), "True") == 0 ? true : false);
+                    const char * const theString = STRING((String *)valuesItems[i].item.data.ptr);
+                    weightedBool.setValue(strcmp(theString, "True") == 0);
                 }
                 else {
                     // Coordinate and IP range cannot be converted to boolean so default to false
@@ -656,8 +656,8 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedIntegerList(
                 WeightedValue<int> weightedInteger;
                 if (valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE
                     && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS) {
-                    weightedInteger.setValue(
-                        atoi(STRING((String *)valuesItems[i].item.data.ptr)));
+                    const char * const theString = STRING((String *)valuesItems[i].item.data.ptr);
+                    weightedInteger.setValue(atoi(theString));
                 }
                 else {
                     // Coordinate and IP address cannot be converted to int
@@ -732,8 +732,8 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedDoubleList(
                 WeightedValue<double> weightedDouble;
                 if (valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE
                     && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS) {
-                    weightedDouble.setValue(
-                        strtod((STRING((String *)valuesItems[i].item.data.ptr)), nullptr));
+                    const char * const theString = STRING((String *)valuesItems[i].item.data.ptr);
+                    weightedDouble.setValue(strtod(theString, nullptr));
                 }
                 else {
                     // Coordinate and IP address cannot be converted to double
