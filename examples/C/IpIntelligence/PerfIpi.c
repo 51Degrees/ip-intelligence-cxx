@@ -156,19 +156,19 @@ static void printLoadBar(performanceThreadState* state) {
  * to be displayed as full in a console interface.
  * Thus, shorten with '...' at the end if it gets
  * too long.
- * @param networkId to be printed
+ * @param networkName to be printed
  */
-static void printShortenNetworkName(char *networkId) {
+static void printShortenNetworkName(const char * const networkName) {
 	// Buffer to hold the printed network ID. Additional 4
 	// bytes to hold the '...' and the null terminator.
 	char buffer[54] = "";
 	// Triple dots to be attached
-	const char *tripleDots = "...";
+	const char tripleDots[] = "...";
 	// Max length to display the network ID string
-	const int maxLength = 50;
-	if (strlen(networkId) > maxLength) {
-		memcpy(buffer, networkId, maxLength);
-		memcpy(buffer + maxLength, tripleDots, strlen(tripleDots));
+	const size_t maxLength = 50;
+	if (strlen(networkName) > maxLength) {
+		memcpy(buffer, networkName, maxLength);
+		memcpy(buffer + maxLength, tripleDots, sizeof(tripleDots));
 		buffer[53] = '\0';
 	}
 	printf("%s", buffer);
@@ -181,7 +181,6 @@ static void printShortenNetworkName(char *networkId) {
 static void reportProgress(performanceThreadState* state) {
 	EXCEPTION_CREATE;
 	char networkName[1024] = "";
-	ResultProfileIndex profileIndex = {0, {0, 0}};
 
 	// Update the user interface.
 	printLoadBar(state);
@@ -210,9 +209,7 @@ static void reportProgress(performanceThreadState* state) {
  */
 static void executeTest(const char* ipAddress, void* state) {
 	performanceThreadState* threadState = (performanceThreadState*)state;
-	fiftyoneDegreesResultIpi* result;
 	IpAddress eIpAddress;
-	size_t ipAddressLength = 0;
 	EXCEPTION_CREATE;
 
 	// Parse the IP Address string to a byte array
@@ -222,18 +219,6 @@ static void executeTest(const char* ipAddress, void* state) {
 			&eIpAddress);
 
 	if (parsed) {
-		switch (eIpAddress.type) {
-		case IP_TYPE_IPV4:
-			ipAddressLength = FIFTYONE_DEGREES_IPV4_LENGTH;
-			break;
-		case IP_TYPE_IPV6:
-			ipAddressLength = FIFTYONE_DEGREES_IPV6_LENGTH;
-			break;
-		default:
-			ipAddressLength = 0;
-			break;
-		}
-
 		// If not calibrating the test environment perform IP intelligence.
 		if (threadState->main->calibration == false) {
 			ResultsIpiFromIpAddress(
@@ -245,7 +230,6 @@ static void executeTest(const char* ipAddress, void* state) {
 				(IpType)eIpAddress.type,
 				exception);
 			EXCEPTION_THROW;
-			result = (ResultIpi*)threadState->results->items;
 		}
 	}
 	else {
@@ -385,7 +369,7 @@ static double runTests(performanceState* state, int passes, const char* test) {
 	return (end - start) / (double)1000 / (double)passes;
 #else
 	clock_gettime(CLOCK_MONOTONIC, &end);
-	return ((end.tv_sec - start.tv_sec) +
+	return ((double)(end.tv_sec - start.tv_sec) +
 		(end.tv_nsec - start.tv_nsec) / 1.0e9) / (double)passes;
 #endif
 }

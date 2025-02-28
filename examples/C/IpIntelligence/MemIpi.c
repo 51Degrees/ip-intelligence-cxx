@@ -113,20 +113,19 @@ void printLoadBar(memoryThreadState* state) {
  * to be displayed as full in a console interface.
  * Thus, shorten with '...' at the end if it gets
  * too long.
- * @param networkId to be printed
- */
-static void printShortenNetworkName(char *networkId) {
+ * @param networkName to be printed
+*/
+static void printShortenNetworkName(const char * const networkName) {
 	// Buffer to hold the printed network ID. Additional 4
 	// bytes to hold the '...' and the null terminator.
 	char buffer[54] = "";
-
 	// Triple dots to be attached
-	const char *tripleDots = "...";
+	const char tripleDots[] = "...";
 	// Max length to display the network ID string
-	const int maxLength = 50;
-	if (strlen(networkId) > maxLength) {
-		memcpy(buffer, networkId, maxLength);
-		memcpy(buffer + maxLength, tripleDots, strlen(tripleDots));
+	const size_t maxLength = 50;
+	if (strlen(networkName) > maxLength) {
+		memcpy(buffer, networkName, maxLength);
+		memcpy(buffer + maxLength, tripleDots, sizeof(tripleDots));
 		buffer[53] = '\0';
 	}
 	printf("%s", buffer);
@@ -139,7 +138,6 @@ static void printShortenNetworkName(char *networkId) {
 void reportProgress(memoryThreadState* state) {
 	EXCEPTION_CREATE;
 	char networkName[1024] = "";
-	ResultProfileIndex profileIndex = {0, {0, 0}};
 
 	// Update the user interface.
 	printLoadBar(state);
@@ -168,7 +166,6 @@ void reportProgress(memoryThreadState* state) {
  */
 static void executeTest(const char* ipAddress, void* state) {
 	memoryThreadState* threadState = (memoryThreadState*)state;
-	ResultIpi* result;
 	EXCEPTION_CREATE;
 
 	// If not calibrating the test environment perform IP range search.
@@ -178,7 +175,6 @@ static void executeTest(const char* ipAddress, void* state) {
 		strlen(ipAddress),
 		exception);
 	EXCEPTION_THROW;
-	result = (ResultIpi*)threadState->results->items;
 
 	// Increase the count for this performance thread and update the user
 	// interface if a progress mark should be written.
