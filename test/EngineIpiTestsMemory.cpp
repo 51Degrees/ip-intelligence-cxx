@@ -39,7 +39,7 @@ public:
 			ipiFileNamesLength,
 			ipAddressesFileName) {
 	};
-	void SetUp() {
+	void SetUp() override {
 		EngineIpIntelligenceTests::SetUp();
 		if (fileReadToByteArray()) {
 			engine = new EngineIpi(
@@ -50,7 +50,7 @@ public:
 		}
 		ASSERT_NE(engine, nullptr);
 	};
-	void TearDown() {
+	void TearDown() override {
 		EngineIpIntelligenceTests::TearDown();
 	}
 	void reload() { reloadMemory(); }

@@ -98,9 +98,9 @@ public:
 		const char **fileNames,
 		int fileNamesLength,
 		const char *ipAddressesFileName);
-	~EngineIpIntelligenceTests();
-	void SetUp();
-	void TearDown();
+	~EngineIpIntelligenceTests() override;
+	void SetUp() override;
+	void TearDown() override;
 	void verifyValueMetaDataIpAddress();
 	void metaData();
 	void availableProperties();
@@ -134,7 +134,7 @@ public:
 	void multiThreadRandom(uint16_t concurrency);
 	void reloadMemory();
 	void reloadFile();
-	EngineBase *getEngine();
+	EngineBase *getEngine() override;
 	EngineIpi *engine;
 	IpIntelligence::ConfigIpi *config;
 protected:

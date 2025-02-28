@@ -39,11 +39,11 @@ public:
 			ipiFileNamesLength,
 			ipAddressesFileName) {
 	};
-	void SetUp() {
+	void SetUp() override {
 		EngineIpIntelligenceTests::SetUp();
 		engine = new EngineIpi(fullName, config, requiredProperties);
 	};
-	void TearDown() {
+	void TearDown() override {
 		EngineIpIntelligenceTests::TearDown();
 	};
 	void reload() { 
