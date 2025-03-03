@@ -599,12 +599,26 @@ static StatusCode initPropertiesAndHeaders(
 	stateWithException state;
 	state.state = (void*)dataSet;
 	state.exception = exception;
-	return DataSetInitProperties(
+	StatusCode status =  DataSetInitProperties(
 		&dataSet->b.b,
 		properties,
 		&state,
 		initGetPropertyString,
 		initGetEvidenceProperties);
+	if (status != SUCCESS) {
+		return status;
+	}
+
+	status = DataSetInitHeaders(
+		&dataSet->b.b,
+		&state,
+		initGetHttpHeaderString,
+		exception);
+	if (status != SUCCESS) {
+		return status;
+	}
+
+	return status;
 }
 
 static StatusCode readHeaderFromMemory(
