@@ -344,8 +344,8 @@ typedef struct fiftyone_degrees_ipi_list_t {
  */
 typedef struct fiftyone_degrees_result_ipi_t {
 	fiftyoneDegreesIpType type; /**< The version of the IP */
-	uint32_t profileOffsetIndex; /**< The index in the profile offsets
-							collection, which matches the target IP address */
+	fiftyoneDegreesIpiCgResult graphResult; /**< The result of
+												 graph evaluation */
 	fiftyoneDegreesIpAddress targetIpAddress; /**< The target IP address
 											  to find a matching range for */
 } fiftyoneDegreesResultIpi;

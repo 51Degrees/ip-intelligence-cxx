@@ -330,13 +330,13 @@ static void setResultFromIpAddress(
 	ResultIpi* result,
 	DataSetIpi* dataSet,
 	Exception* exception) {
-	const uint32_t profileOffsetIndex = fiftyoneDegreesIpiGraphEvaluate(
+	const fiftyoneDegreesIpiCgResult graphResult = fiftyoneDegreesIpiGraphEvaluate(
 		dataSet->graphsArray,
 		1, 
 		result->targetIpAddress, 
 		exception);
-	if (profileOffsetIndex != NULL_PROFILE_OFFSET && EXCEPTION_OKAY) {
-		result->profileOffsetIndex = profileOffsetIndex;
+	if (graphResult.rawOffset != NULL_PROFILE_OFFSET && EXCEPTION_OKAY) {
+		result->graphResult = graphResult;
 	}
 }
 
@@ -1385,7 +1385,7 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 
 	resultIpiReset(&results->items[0]);
 	// Default IP range offset
-	results->items[0].profileOffsetIndex = NULL_PROFILE_OFFSET;
+	results->items[0].graphResult = FIFTYONE_DEGREES_IPI_CG_RESULT_DEAFULT;
 	results->items[0].targetIpAddress.type = type;
 	results->items[0].type = type;
 
@@ -1495,7 +1495,8 @@ static bool setResultFromEvidence(
 			// Configure the next result in the array of results.
 			result = &((ResultIpi*)results->items)[results->count];
 			resultIpiReset(result);
-			results->items[0].profileOffsetIndex = NULL_PROFILE_OFFSET; // Default IP range offset
+			results->items[0].graphResult = FIFTYONE_DEGREES_IPI_CG_RESULT_DEAFULT;
+			results->items[0].graphResult.rawOffset = NULL_PROFILE_OFFSET; // Default IP range offset
 			result->targetIpAddress.length = ipLength;
 			memset(result->targetIpAddress.value, 0, IPV6_LENGTH);
 			memcpy(result->targetIpAddress.value, ipAddress.value, ipLength);
@@ -1769,29 +1770,22 @@ static uint32_t addValuesFromResult(
 	Property* property,
 	Exception* exception) {
 	uint32_t count = 0;
-	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 
 	if (results->count > 0) {
-		if (result->profileOffsetIndex != NULL_PROFILE_OFFSET) {
-			const int32_t profileOffsetValue = CollectionGetInteger32(
-				dataSet->profileOffsets, result->profileOffsetIndex, exception);
-
-			if (EXCEPTION_OKAY) {
-				if (profileOffsetValue >= 0) {
-					count += addValuesFromSingleProfile(
-						results,
-						property,
-						profileOffsetValue,
-						FULL_RAW_WEIGHTING,
-						exception);
-				} else {
-					const uint32_t groupOffset = -1LL - profileOffsetValue;
-					count += addValuesFromProfileGroup(
-						results,
-						property,
-						groupOffset,
-						exception);
-				}
+		if (result->graphResult.rawOffset != NULL_PROFILE_OFFSET) {
+			if (!result->graphResult.isGroupOffset) {
+				count += addValuesFromSingleProfile(
+					results,
+					property,
+					result->graphResult.offset,
+					FULL_RAW_WEIGHTING,
+					exception);
+			} else {
+				count += addValuesFromProfileGroup(
+					results,
+					property,
+					result->graphResult.offset,
+					exception);
 			}
 		}
 	}
@@ -1970,40 +1964,31 @@ static bool resultGetHasValidPropertyValueOffset(
 		if (propertyName != NULL && EXCEPTION_OKAY) {
 			// We will only execute this step if successfully obtained the
 			// profile groups offset from the previous step
-			if (result->profileOffsetIndex != NULL_PROFILE_OFFSET) {
-				const int32_t profileOffsetValue = CollectionGetInteger32(
-					dataSet->profileOffsets, result->profileOffsetIndex, exception);
-
-				if (profileOffsetValue != NULL_PROFILE_OFFSET && EXCEPTION_OKAY) {
-					if (profileOffsetValue >= 0) {
-						hasValidOffset = profileHasValidPropertyValue(
-							dataSet, profileOffsetValue, property, exception);
-					} else {
-						const uint32_t profileGroupOffset = 0LL - profileOffsetValue;
-						offsetPercentage *weightedProfileOffset =
-							(offsetPercentage*)dataSet->profileGroups->get(
-								dataSet->profileGroups,
-								profileGroupOffset,
-								&item,
-								exception);
-						if (weightedProfileOffset && EXCEPTION_OKAY) {
-							for (uint32_t totalWeight = 0;
-								!hasValidOffset && totalWeight < FULL_RAW_WEIGHTING;
-								++weightedProfileOffset) {
-								totalWeight += weightedProfileOffset->rawWeighting;
-								if (totalWeight > FULL_RAW_WEIGHTING) {
-									EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
-									break;
-								}
-								hasValidOffset = profileHasValidPropertyValue(
-									dataSet, weightedProfileOffset->offset, property, exception);
+			if (result->graphResult.rawOffset != NULL_PROFILE_OFFSET) {
+				if (!result->graphResult.isGroupOffset) {
+					hasValidOffset = profileHasValidPropertyValue(
+						dataSet, result->graphResult.offset, property, exception);
+				} else {
+					offsetPercentage *weightedProfileOffset =
+						(offsetPercentage*)dataSet->profileGroups->get(
+							dataSet->profileGroups,
+							result->graphResult.offset,
+							&item,
+							exception);
+					if (weightedProfileOffset && EXCEPTION_OKAY) {
+						for (uint32_t totalWeight = 0;
+							!hasValidOffset && totalWeight < FULL_RAW_WEIGHTING;
+							++weightedProfileOffset) {
+							totalWeight += weightedProfileOffset->rawWeighting;
+							if (totalWeight > FULL_RAW_WEIGHTING) {
+								EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
+								break;
 							}
-							COLLECTION_RELEASE(dataSet->profiles, &item);
-						}
+							hasValidOffset = profileHasValidPropertyValue(
+								dataSet, weightedProfileOffset->offset, property, exception);
+							}
+						COLLECTION_RELEASE(dataSet->profiles, &item);
 					}
-				}
-				else {
-					EXCEPTION_SET(CORRUPT_DATA);
 				}
 			}
 		}
