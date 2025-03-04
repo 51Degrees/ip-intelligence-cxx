@@ -1385,7 +1385,7 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 
 	resultIpiReset(&results->items[0]);
 	// Default IP range offset
-	results->items[0].graphResult = FIFTYONE_DEGREES_IPI_CG_RESULT_DEAFULT;
+	results->items[0].graphResult = FIFTYONE_DEGREES_IPI_CG_RESULT_DEFAULT;
 	results->items[0].targetIpAddress.type = type;
 	results->items[0].type = type;
 
@@ -1495,7 +1495,7 @@ static bool setResultFromEvidence(
 			// Configure the next result in the array of results.
 			result = &((ResultIpi*)results->items)[results->count];
 			resultIpiReset(result);
-			results->items[0].graphResult = FIFTYONE_DEGREES_IPI_CG_RESULT_DEAFULT;
+			results->items[0].graphResult = FIFTYONE_DEGREES_IPI_CG_RESULT_DEFAULT;
 			results->items[0].graphResult.rawOffset = NULL_PROFILE_OFFSET; // Default IP range offset
 			result->targetIpAddress.length = ipLength;
 			memset(result->targetIpAddress.value, 0, IPV6_LENGTH);
@@ -1770,16 +1770,24 @@ static uint32_t addValuesFromResult(
 	Property* property,
 	Exception* exception) {
 	uint32_t count = 0;
+	const DataSetIpi* const dataSet = (DataSetIpi*)results->b.dataSet;
 
 	if (results->count > 0) {
 		if (result->graphResult.rawOffset != NULL_PROFILE_OFFSET) {
 			if (!result->graphResult.isGroupOffset) {
-				count += addValuesFromSingleProfile(
-					results,
-					property,
+				const int32_t profileOffsetValue = CollectionGetInteger32(
+					dataSet->profileOffsets,
 					result->graphResult.offset,
-					FULL_RAW_WEIGHTING,
 					exception);
+
+				if (EXCEPTION_OKAY) {
+					count += addValuesFromSingleProfile(
+						results,
+						property,
+						profileOffsetValue,
+						FULL_RAW_WEIGHTING,
+						exception);
+				}
 			} else {
 				count += addValuesFromProfileGroup(
 					results,
