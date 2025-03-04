@@ -171,6 +171,7 @@ static void printPropertyValueFromResults(ResultsIpi *results) {
 		printf("areas: %s\n", getPropertyValueAsString(results, "areas"));
 		printf("IpRangeStart: %s\n", getPropertyValueAsString(results, "IpRangeStart"));
 		printf("IpRangeEnd: %s\n", getPropertyValueAsString(results, "IpRangeEnd"));
+		printf("RegisteredName: %s\n", getPropertyValueAsString(results, "RegisteredName"));
 	}
 	else {
 		printf("No results.");
