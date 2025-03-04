@@ -191,7 +191,7 @@ static void reportProgress(performanceThreadState* state) {
 		printf(" ");
 		ResultsIpiGetValuesString(
 			state->results,
-			"Name",
+			"RegisteredName",
 			networkName,
 			sizeof(networkName),
 			", ",
@@ -489,7 +489,7 @@ void fiftyoneDegreesPerfIpiRun(
 
 	// Configure to return the Country property.
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "name,areas";
+	properties.string = "RegisteredName,areas";
 
 	ResourceManager manager;
 	EXCEPTION_CREATE;
