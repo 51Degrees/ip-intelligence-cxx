@@ -441,7 +441,7 @@ int main(int argc, char* argv[]) {
 	fiftyoneDegreesIpiReloadFromFileRun(
 		dataFilePath,
 		ipAddressFilePath,
-		argc > 3 ? argv[3] : "name",
+		argc > 3 ? argv[3] : "RegisteredName",
 		CONFIG);
 
 #ifdef _DEBUG
