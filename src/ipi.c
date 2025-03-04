@@ -115,7 +115,7 @@ typedef struct profile_combination_component_index_t {
 
 #pragma pack(push, 1)
 typedef struct offset_percentage_t {
-	uint32_t offset; /* Offset to a collection item */
+	uint32_t offset; /* Offset to a profiles collection item */
 	uint16_t rawWeighting; /* The weight of the item in the matched IP range, out of 65535 */
 } offsetPercentage;
 #pragma pack(pop)
@@ -1481,8 +1481,8 @@ static bool setResultFromEvidence(
 		uint32_t curHeaderIndex = indexState->headerIndex;
 		int headerIndex = HeaderGetIndex(
 			dataSet->b.b.uniqueHeaders,
-			pair->header->name,
-			pair->header->nameLength);
+			pair->item.key,
+			pair->item.keyLength);
 		// Only the current header index should be considered
 		if (headerIndex >= 0 && headerIndex == (int)curHeaderIndex) {
 			// Get the parsed Value
@@ -1778,6 +1778,26 @@ static uint32_t addValuesFromProfileGroup(
 	return count;
 }
 
+static ProfileOffset getProfileOffset(
+	Collection * const profileOffsets,
+	const uint32_t offsetIndex,
+	Exception * const exception) {
+
+	Item item;
+	DataReset(&item.data);
+	const ProfileOffset * const resultRef = (ProfileOffset*)profileOffsets->get(
+		profileOffsets,
+		offsetIndex,
+		&item,
+		exception);
+	if (!(resultRef && EXCEPTION_OKAY)) {
+		return (ProfileOffset){ 0, 0 };
+	}
+	const ProfileOffset result = *resultRef;
+	COLLECTION_RELEASE(profileOffsets, &item);
+	return result;
+}
+
 static uint32_t addValuesFromResult(
 	ResultsIpi* results,
 	ResultIpi* result,
@@ -1789,7 +1809,7 @@ static uint32_t addValuesFromResult(
 	if (results->count > 0) {
 		if (result->graphResult.rawOffset != NULL_PROFILE_OFFSET) {
 			if (!result->graphResult.isGroupOffset) {
-				const int32_t profileOffsetValue = CollectionGetInteger32(
+				const ProfileOffset profileOffsetValue = getProfileOffset(
 					dataSet->profileOffsets,
 					result->graphResult.offset,
 					exception);
@@ -1798,7 +1818,7 @@ static uint32_t addValuesFromResult(
 					count += addValuesFromSingleProfile(
 						results,
 						property,
-						profileOffsetValue,
+						profileOffsetValue.offset,
 						FULL_RAW_WEIGHTING,
 						exception);
 				}
@@ -1988,8 +2008,17 @@ static bool resultGetHasValidPropertyValueOffset(
 			// profile groups offset from the previous step
 			if (result->graphResult.rawOffset != NULL_PROFILE_OFFSET) {
 				if (!result->graphResult.isGroupOffset) {
-					hasValidOffset = profileHasValidPropertyValue(
-						dataSet, result->graphResult.offset, property, exception);
+					const ProfileOffset profileOffsetValue = getProfileOffset(
+						dataSet->profileOffsets,
+						result->graphResult.offset,
+						exception);
+					if (EXCEPTION_OKAY) {
+						hasValidOffset = profileHasValidPropertyValue(
+							dataSet,
+							profileOffsetValue.offset,
+							property,
+							exception);
+					}
 				} else {
 					offsetPercentage *weightedProfileOffset =
 						(offsetPercentage*)dataSet->profileGroups->get(
