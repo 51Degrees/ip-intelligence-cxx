@@ -73,16 +73,6 @@ public:
     Value<std::vector<WeightedValue<double>>> getValuesAsWeightedDoubleList(
         int requiredPropertyIndex);
 
-    Value<std::vector<WeightedValue<fiftyoneDegreesCoordinate>>> getValuesAsWeightedCoordinateList(
-        const std::string &propertyName);
-    Value<std::vector<WeightedValue<fiftyoneDegreesCoordinate>>> getValuesAsWeightedCoordinateList(
-        int requiredPropertyIndex);
-
-    Value<fiftyoneDegreesCoordinate> getValueAsCoordinate(
-        const std::string &propertyName);
-    Value<fiftyoneDegreesCoordinate> getValueAsCoordinate(
-        int requiredPropertyIndex);
-
     Value<IpAddress> getValueAsIpAddress(
         const std::string &propertyName);
     Value<IpAddress> getValueAsIpAddress(

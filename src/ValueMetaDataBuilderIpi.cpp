@@ -55,17 +55,7 @@ string ValueMetaDataBuilderIpi::getDynamicString(
 	stringstream stream;
 	if (str != nullptr) {
 		switch(str->value) {
-		case FIFTYONE_DEGREES_STRING_COORDINATE:
-			{
-				Coordinate coordinate = IpiGetCoordinate(&item, exception);
-				EXCEPTION_THROW;
-				stream.precision(COORDINATE_PRECISION);
-				stream << fixed << coordinate.lat;
-				stream << ",";
-				stream << fixed << coordinate.lon;
-			}
-			break;
-		case FIFTYONE_DEGREES_STRING_IP_ADDRESS:
+		case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS:
 			{
 				char buffer[IP_ADDRESS_STRING_MAX_LENGTH];
 				memset(buffer, 0, IP_ADDRESS_STRING_MAX_LENGTH);
@@ -103,7 +93,10 @@ string ValueMetaDataBuilderIpi::getDynamicString(
 			break;
 			case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB: {
 				writeWkbStringToStringStream(
-					str, stream, DefaultWktDecimalPlaces, exception);
+					reinterpret_cast<const VarLengthByteArray *>(str),
+					stream,
+					DefaultWktDecimalPlaces,
+					exception);
 				break;
 			}
 		default:

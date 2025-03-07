@@ -2155,12 +2155,17 @@ static void pushValues(
 		StringBuilderAddChar(builder, '"');
 
 		// Get the string for the value index.
-		const String * const string =
-			(const String*)profilePercentage[i].item.data.ptr;
+		const StoredBinaryValue * const binaryValue =
+			(const StoredBinaryValue*)profilePercentage[i].item.data.ptr;
 
 		// Add the string to the output buffer recording the number
 		// of characters added.
-		StringBuilderAddStringValue(builder, string, decimalPlaces, exception);
+		StringBuilderAddStringValue(
+			builder,
+			binaryValue,
+			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING, // FIXME: Use proper type
+			decimalPlaces,
+			exception);
 
 		// Add the closing quote
 		StringBuilderAddChar(builder, '"');
@@ -2301,7 +2306,7 @@ size_t fiftyoneDegreesIpiGetIpAddressAsString(
 
 	StringBuilderAddIpAddress(
 		&builder,
-		(const String *)item->data.ptr,
+		(const VarLengthByteArray *)item->data.ptr,
 		type,
 		exception);
 

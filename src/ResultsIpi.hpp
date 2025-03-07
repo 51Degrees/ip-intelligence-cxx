@@ -25,7 +25,6 @@
 
 #include <sstream>
 #include <vector>
-#include "common-cxx/coordinate.h"
 #include "common-cxx/ResultsBase.hpp"
 #include "WeightedValue.hpp"
 #include "common-cxx/IpAddress.hpp"
@@ -319,79 +318,6 @@ namespace FiftyoneDegrees {
 			 */
 			Common::Value<vector<WeightedValue<double>>>
 			getValuesAsWeightedDoubleList(int requiredPropertyIndex);
-
-			/**
-			 * Get a vector with all weighted coordinate representations of the
-			 * values associated with the required property name. If the name
-			 * is not valid an empty vector is returned.
-			 * @param propertyName pointer to a string containing the property
-			 * name
-			 * @return a vector of weighted coordinate values for the property
-			 */
-			Common::Value<vector<WeightedValue<fiftyoneDegreesCoordinate>>>
-				getValuesAsWeightedCoordinateList(const string *propertyName);
-
-			/**
-			 * Get a vector with all weighted coordinate representations of the
-			 * values associated with the required property name. If the name
-			 * is not valid an empty vector is returned.
-			 * @param propertyName pointer to a string containing the property
-			 * name
-			 * @return a vector of weighted coordinate values for the property
-			 */
-			Common::Value<vector<WeightedValue<fiftyoneDegreesCoordinate>>>
-				getValuesAsWeightedCoordinateList(const string &propertyName);
-
-			/**
-			 * Get a vector with all weighted coordinate representations of the
-			 * values associated with the required property index. If the index
-			 * is not valid an empty vector is returned.
-			 * @param requiredPropertyIndex in the required properties
-			 * @return a vector of weighted coordinate values for the property
-			 */
-			Common::Value<vector<WeightedValue<fiftyoneDegreesCoordinate>>>
-				getValuesAsWeightedCoordinateList(int requiredPropertyIndex);
-			
-			/**
-			 * Get a float pair representation of the value associated with the
-			 * required property name. If the property name is not valid then
-			 * hasValue returns false with NoValueReason and its message.
-			 * @param propertyName string containing the property name
-			 * @return a coordinate representation of the value for the property
-			 */
-			Common::Value<fiftyoneDegreesCoordinate>
-				getValueAsCoordinate(const char *propertyName);
-
-			/**
-			 * Get a float pair representation of the value associated with the
-			 * required property name. If the property name is not valid then
-			 * hasValue returns false with NoValueReason and its message.
-			 * @param propertyName string containing the property name
-			 * @return a coordinate representation of the value for the property
-			 */
-			Common::Value<fiftyoneDegreesCoordinate>
-				getValueAsCoordinate(const string *propertyName);
-
-			/**
-			 * Get a float pair representation of the value associated with the
-			 * required property name. If the property name is not valid then
-			 * hasValue returns false with NoValueReason and its message.
-			 * @param propertyName string containing the property name
-			 * @return a coordinate representation of the value for the property
-			 */
-			Common::Value<fiftyoneDegreesCoordinate>
-				getValueAsCoordinate(const string &propertyName);
-			
-			/**
-			 * Get a float pair representation of the value associated with the
-			 * required property index. If the index is not valid then
-			 * hasValue returns false with NoValueReason and its message.
-			 * @param requiredPropertyIndex index in the required
-			 * properties list
-			 * @return a coordinate representation of the value for the property
-			 */
-			Common::Value<fiftyoneDegreesCoordinate>
-				getValueAsCoordinate(int requiredPropertyIndex);
 
 			/**
 			 * Get an IpAddress instance representation of the value associated 
