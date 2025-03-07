@@ -145,6 +145,7 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiInMemoryConfig = {
 	{0,0,0}, // Profiles
 	{0,0,0}, // Graphs
 	{0,0,0}, // ProfileGroups
+	{0,0,0}, // PropertyTypes
 	{0,0,0}, // ProfileOffsets
 	{0,0,0}  // Graph
 };
@@ -162,6 +163,7 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiHighPerformanceConfig = {
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Graphs
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
+	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // PropertyTypes
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileOffsets
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // Graph
 };
@@ -176,6 +178,7 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiLowMemoryConfig = {
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Graphs
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
+	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // PropertyTypes
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileOffsets
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // Graph
 };
@@ -190,6 +193,7 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig = {
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Graphs
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
+	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // PropertyTypes
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileOffsets
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // Graph
 };
@@ -204,6 +208,7 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig = {
 { FIFTYONE_DEGREES_PROFILE_LOADED, FIFTYONE_DEGREES_PROFILE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Profiles */ \
 { FIFTYONE_DEGREES_IP_GRAPHS_LOADED, FIFTYONE_DEGREES_IP_GRAPHS_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Graphs */ \
 { FIFTYONE_DEGREES_PROFILE_GROUPS_LOADED, FIFTYONE_DEGREES_PROFILE_GROUPS_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* ProfileGroups */ \
+{ FIFTYONE_DEGREES_PROPERTY_LOADED, FIFTYONE_DEGREES_PROPERTY_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Property Types */ \
 { FIFTYONE_DEGREES_PROFILE_LOADED, FIFTYONE_DEGREES_PROFILE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* ProfileOffsets */ \
 { FIFTYONE_DEGREES_IP_GRAPH_LOADED, FIFTYONE_DEGREES_IP_GRAPH_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY } /* Graph */
 
@@ -355,6 +360,7 @@ static void resetDataSet(DataSetIpi* dataSet) {
 	dataSet->profileOffsets = NULL;
 	dataSet->profiles = NULL;
 	dataSet->properties = NULL;
+	dataSet->propertyTypes = NULL;
 	dataSet->strings = NULL;
 	dataSet->values = NULL;
 }
@@ -377,6 +383,7 @@ static void freeDataSet(void* dataSetPtr) {
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->maps);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->values);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->profiles);
+	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->propertyTypes);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->graphs);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->profileOffsets);
 	FIFTYONE_DEGREES_COLLECTION_FREE(dataSet->profileGroups);
@@ -723,6 +730,7 @@ static StatusCode initWithMemory(
 	COLLECTION_CREATE_MEMORY(graphs);
 
 	COLLECTION_CREATE_MEMORY(profileGroups);
+	COLLECTION_CREATE_MEMORY(propertyTypes);
 	COLLECTION_CREATE_MEMORY(profileOffsets);
 
 	dataSet->graphsArray = fiftyoneDegreesIpiGraphCreateFromMemory(
@@ -840,6 +848,7 @@ static StatusCode readDataSetFromFile(
 	COLLECTION_CREATE_FILE(graphs, CollectionReadFileFixed);
 
 	COLLECTION_CREATE_FILE(profileGroups, CollectionReadFileFixed);
+	COLLECTION_CREATE_FILE(propertyTypes, CollectionReadFileFixed);
 	COLLECTION_CREATE_FILE(profileOffsets, CollectionReadFileFixed);
 
 	dataSet->graphsArray = fiftyoneDegreesIpiGraphCreateFromFile(
@@ -876,6 +885,7 @@ static uint16_t getMaxConcurrency(const ConfigIpi* config) {
 	MAX_CONCURRENCY(profiles);
 	MAX_CONCURRENCY(graphs);
 	MAX_CONCURRENCY(profileOffsets);
+	MAX_CONCURRENCY(propertyTypes);
 	MAX_CONCURRENCY(profileGroups);
 	MAX_CONCURRENCY(graph);
 	return concurrency;

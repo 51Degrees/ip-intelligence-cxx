@@ -225,6 +225,9 @@ typedef struct fiftyone_degrees_ipi_dataset_header_t {
 														  location of the
 														  profile group offsets
 														  collection */
+	const fiftyoneDegreesCollectionHeader propertyTypes; /**< Size and location of
+													     the propertyTypes
+													     collection */
 	const fiftyoneDegreesCollectionHeader profileOffsets; /**< Size and
 														  location of the
 														  profile offsets
@@ -251,6 +254,8 @@ typedef struct fiftyone_degrees_config_ipi_t {
 												   collection config */
 	fiftyoneDegreesCollectionConfig profileOffsets; /**< ProfileOffsets
 													collection config */
+	fiftyoneDegreesCollectionConfig propertyTypes; /**< Property types collection
+												   config */
 	fiftyoneDegreesCollectionConfig graph; /**< Config for each graph */
 } fiftyoneDegreesConfigIpi;
 
@@ -294,12 +299,19 @@ typedef struct fiftyone_degrees_dataset_ipi_t {
 											  groups where more than one 
 											  profile is required with a weight
 											  */
+	fiftyoneDegreesCollection *propertyTypes; /**< Collection data file properties
+											  */
 	fiftyoneDegreesCollection *profileOffsets; /**< Collection of all offsets
 											   to profiles in the profiles
 											   collection */
 	fiftyoneDegreesIpiCgArray* graphsArray; /**< Array of graphs from 
 											collection */
 } fiftyoneDegreesDataSetIpi;
+
+typedef struct fiftyone_degrees_property_type_record_t {
+	uint32_t nameOffset;
+	byte valueType;
+} fiftyoneDegreesPropertyTypeRecord;
 
 
 /**

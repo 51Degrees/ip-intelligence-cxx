@@ -173,9 +173,23 @@ namespace FiftyoneDegrees {
 							= ipv6Address;
 					results = engine->process(evidence);
 					Common::Value<vector<WeightedValue<string>>> ipv6Value
-						= results->getValuesAsWeightedStringList("RegisteredCountry");
+						= results->getValuesAsWeightedStringList("AccuracyRadius");
 					for (WeightedValue<string> w : ipv6Value.getValue()) {
-						cout << "   Country Code: " <<
+						cout << "   AccuracyRadius: " <<
+							w.getValue() <<
+							", Percentage: " <<
+							w.getWeight() * 100 << "%\n";
+					}
+					ipv6Value = results->getValuesAsWeightedStringList("Longitude");
+					for (WeightedValue<string> w : ipv6Value.getValue()) {
+						cout << "   Longitude: " <<
+							w.getValue() <<
+							", Percentage: " <<
+							w.getWeight() * 100 << "%\n";
+					}
+					ipv6Value = results->getValuesAsWeightedStringList("Latitude");
+					for (WeightedValue<string> w : ipv6Value.getValue()) {
+						cout << "   Latitude: " <<
 							w.getValue() <<
 							", Percentage: " <<
 							w.getWeight() * 100 << "%\n";

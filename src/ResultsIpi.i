@@ -24,7 +24,6 @@
 %include std_pair.i
 %include std_vector.i
 
-%include "common-cxx/Coordinate.i"
 %include "common-cxx/ResultsBase.i"
 %include "WeightedValue.i"
 %include "common-cxx/IpAddress.i"
@@ -33,13 +32,11 @@
 %template(WeightedBoolListSwig) std::vector<WeightedValue<bool>>;
 %template(WeightedIntListSwig) std::vector<WeightedValue<int>>;
 %template(WeightedDoubleListSwig) std::vector<WeightedValue<double>>;
-%template(WeightedCoordinateListSwig) std::vector<WeightedValue<fiftyoneDegreesCoordinate>>;
 
 %template(WeightedStringListValueSwig) Value<std::vector<WeightedValue<std::string>>>;
 %template(WeightedBoolListValueSwig) Value<std::vector<WeightedValue<bool>>>;
 %template(WeightedIntListValueSwig) Value<std::vector<WeightedValue<int>>>;
 %template(WeightedDoubleListValueSwig) Value<std::vector<WeightedValue<double>>>;
-%template(WeightedCoordinateListValueSwig) Value<std::vector<WeightedValue<fiftyoneDegreesCoordinate>>>;
 %template(CoordinateValueSwig) Value<fiftyoneDegreesCoordinate>;
 %template(IpAddressValueSwig) Value<IpAddress>;
 

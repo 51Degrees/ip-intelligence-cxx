@@ -21,7 +21,6 @@
  * ********************************************************************* */
 
 %include std_string.i
-%include "common-cxx/Coordinate.i"
 
 %nodefaultctor WeightedValue;
 
@@ -40,4 +39,3 @@ public:
 %template(WeightedValueBoolSwig) WeightedValue<bool>;
 %template(WeightedValueIntSwig) WeightedValue<int>;
 %template(WeightedValueDoubleSwig) WeightedValue<double>;
-%template(WeightedValueCoordinateSwig) WeightedValue<fiftyoneDegreesCoordinate>;
