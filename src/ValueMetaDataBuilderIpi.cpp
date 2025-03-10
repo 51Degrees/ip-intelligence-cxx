@@ -45,11 +45,12 @@ string ValueMetaDataBuilderIpi::getDynamicString(
 	fiftyoneDegreesCollectionItem item;
 	fiftyoneDegreesString *str;
 	fiftyoneDegreesDataReset(&item.data);
-	str = fiftyoneDegreesStringGet(
+	str = &StoredBinaryValueGet(
 		stringsCollection,
 		offset,
+		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
 		&item,
-		exception);
+		exception)->stringValue;
 	EXCEPTION_THROW;
 
 	stringstream stream;

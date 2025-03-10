@@ -81,11 +81,12 @@ bool ValueMetaDataCollectionForProfileIpi::valueFilter(
 	FilterResult *result = (FilterResult*)state;
 	value = (Value*)valueItem->data.ptr;
 	DataReset(&nameItem.data);
-	name = ValueGetName(
-		result->dataSet->strings, 
-		value, 
+	name = &ValueGetContent(
+		result->dataSet->strings,
+		value,
+		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
 		&nameItem,
-		exception);
+		exception)->stringValue;
 	EXCEPTION_THROW;
 	if (name != nullptr) {
 		if (strcmp(&name->value, result->valueName.c_str()) == 0) {

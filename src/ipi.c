@@ -546,11 +546,12 @@ static void initGetEvidencePropertyRelated(
 			&propertyItem,
 			exception);
 		if (property != NULL && EXCEPTION_OKAY) {
-			name = StringGet(
+			name = &StoredBinaryValueGet(
 				dataSet->strings,
 				property->nameOffset,
+				FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
 				&nameItem,
-				exception);
+				exception)->stringValue;
 			if (name != NULL && EXCEPTION_OKAY) {
 				if (requiredLength == name->size -1 &&
 					// Check that the available property matches the start of
@@ -827,7 +828,7 @@ static StatusCode readDataSetFromFile(
 	// Create the strings collection.
 	uint32_t stringsCount = dataSet->header.strings.count;
 	*(uint32_t*)(&dataSet->header.strings.count) = 0;
-	COLLECTION_CREATE_FILE(strings, fiftyoneDegreesStringRead);
+	COLLECTION_CREATE_FILE(strings, fiftyoneDegreesStoredBinaryValueRead);
 	*(uint32_t*)(&dataSet->header.strings.count) = stringsCount;
 
 	// Override the header count so that the variable collection can work.
@@ -1605,7 +1606,7 @@ void fiftyoneDegreesResultsIpiFromEvidence(
 }
 
 static bool addValueWithPercentage(void* state, Item* item) {
-	Item stringItem;
+	Item valueItem;
 	ProfilePercentage profilePercentageItem;
 	/**
 	 * The results values are a list of collection items and their percentage
@@ -1619,13 +1620,14 @@ static bool addValueWithPercentage(void* state, Item* item) {
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 	Value* value = (Value*)item->data.ptr;
 	if (value != NULL && results->values.count < results->values.capacity) {
-		DataReset(&stringItem.data);
-		if (StringGet(
+		DataReset(&valueItem.data);
+		if (StoredBinaryValueGet(
 			dataSet->strings,
 			value->nameOffset,
-			&stringItem,
+			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
+			&valueItem,
 			exception) != NULL && EXCEPTION_OKAY) {
-			profilePercentageItem.item = stringItem;
+			profilePercentageItem.item = valueItem;
 			profilePercentageItem.rawWeighting = percentageState->rawWeighting;
 			addIpiListItem(&results->values, &profilePercentageItem);
 		}
@@ -1685,7 +1687,7 @@ static Item getStringItemByValueOffset(
 	ResultsIpi* results,
 	uint32_t valueOffset,
 	Exception* exception) {
-	Item valueItem, stringItem;
+	Item valueItem, valueContentItem;
 	Item returnedItem;
 	Value* value;
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
@@ -1701,13 +1703,14 @@ static Item getStringItemByValueOffset(
 		valueOffset,
 		&valueItem,
 		exception)) != NULL && EXCEPTION_OKAY) {
-		DataReset(&stringItem.data);
-		if (StringGet(
+		DataReset(&valueContentItem.data);
+		if (StoredBinaryValueGet(
 			dataSet->strings,
 			value->nameOffset,
-			&stringItem,
+			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
+			&valueContentItem,
 			exception) != NULL && EXCEPTION_OKAY) {
-			returnedItem = stringItem;
+			returnedItem = valueContentItem;
 		}
 		COLLECTION_RELEASE(dataSet->values, &valueItem);
 	}
@@ -1857,8 +1860,6 @@ static ProfilePercentage* getValuesFromResult(
 	return results->values.items;
 }
 
-typedef fiftyoneDegreesPropertyValueType PropertyValueType;
-
 // TODO: Remove or deduplicate from `ResultsIpi::getPropertyValueType`
 static PropertyValueType
 getPropertyValueType(
@@ -1947,7 +1948,9 @@ const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 static bool visitProfilePropertyValue(
 	void *state,
 	fiftyoneDegreesCollectionItem *item) {
+#ifdef _MSC_VER
 	(void)item; // suppress C4100 "unused formal parameter"
+#endif
 
 	*((bool *)state) = true; // found
 	return false; // break
@@ -2322,9 +2325,10 @@ uint32_t fiftyoneDegreesIpiIterateProfilesForPropertyAndValue(
 	fiftyoneDegreesException* exception) {
 	uint32_t count = 0;
 	DataSetIpi* dataSet = DataSetIpiGet(manager);
-	count = ProfileIterateProfilesForPropertyAndValue(
+	count = fiftyoneDegreesProfileIterateProfilesForPropertyWithTypeAndValue(
 		dataSet->strings,
 		dataSet->properties,
+		dataSet->propertyTypes,
 		dataSet->values,
 		dataSet->profiles,
 		dataSet->profileOffsets,

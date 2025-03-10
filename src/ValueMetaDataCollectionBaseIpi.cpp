@@ -57,10 +57,11 @@ ValueMetaData* ValueMetaDataCollectionBaseIpi::getByKey(
 	EXCEPTION_THROW;
 	if (property != nullptr) {
 		DataReset(&valueItem.data);
-		value = ValueGetByName(
+		value = ValueGetByNameAndType(
 			dataSet->values,
 			dataSet->strings,
 			property,
+			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
 			key.getValueName().c_str(),
 			&valueItem,
 			exception);

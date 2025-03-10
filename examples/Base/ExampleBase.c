@@ -88,7 +88,12 @@ void fiftyoneDegreesExampleCheckDataFile(
 	DataReset(&item.data);
 
 	EXCEPTION_CREATE
-	StringGet(dataset->strings, dataset->header.nameOffset, &item, exception);
+	StoredBinaryValueGet(
+		dataset->strings,
+		dataset->header.nameOffset,
+		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
+		&item,
+		exception);
 	EXCEPTION_THROW
 
 	const char* dataTier = STRING(item.data.ptr);

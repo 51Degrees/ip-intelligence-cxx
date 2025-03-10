@@ -176,9 +176,10 @@ vector<string> PropertyMetaDataBuilderIpi::getPropertyMap(
 			i, 
 			exception);
 		EXCEPTION_THROW;
-		name = STRING(StringGet(
+		name = STRING(StoredBinaryValueGet(
 			stringsCollection,
 			offset,
+			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
 			&item,
 			exception));
 		EXCEPTION_THROW;
