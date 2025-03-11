@@ -241,9 +241,9 @@ IpIntelligence::ResultsIpi::getValueAsIpAddress(const string *propertyName) {
  */
 Common::Value<bool> 
 IpIntelligence::ResultsIpi::getValueAsBool(int requiredPropertyIndex) {
-#ifdef _MSC_VER
-    (void)requiredPropertyIndex; // suppress C4100 "unused formal parameter"
-#endif
+#	ifdef _MSC_VER
+    UNREFERENCED_PARAMETER(requiredPropertyIndex);
+#	endif
     Common::Value<bool> result;
     result.setNoValueReason(
         FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
@@ -259,9 +259,9 @@ IpIntelligence::ResultsIpi::getValueAsBool(int requiredPropertyIndex) {
  */
 Common::Value<int>
 IpIntelligence::ResultsIpi::getValueAsInteger(int requiredPropertyIndex) {
-#ifdef _MSC_VER
-    (void)requiredPropertyIndex; // suppress C4100 "unused formal parameter"
-#endif
+#	ifdef _MSC_VER
+    UNREFERENCED_PARAMETER(requiredPropertyIndex);
+#	endif
     Common::Value<int> result;
     result.setNoValueReason(
         FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
@@ -277,9 +277,9 @@ IpIntelligence::ResultsIpi::getValueAsInteger(int requiredPropertyIndex) {
  */
 Common::Value<double> 
 IpIntelligence::ResultsIpi::getValueAsDouble(int requiredPropertyIndex) {
-#ifdef _MSC_VER
-    (void)requiredPropertyIndex; // suppress C4100 "unused formal parameter"
-#endif
+#	ifdef _MSC_VER
+    UNREFERENCED_PARAMETER(requiredPropertyIndex);
+#	endif
     Common::Value<double> result;
     result.setNoValueReason(
         FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,

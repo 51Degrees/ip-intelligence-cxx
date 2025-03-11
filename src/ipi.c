@@ -661,7 +661,7 @@ static void dumpProperties(
 	Exception * const exception) {
 
 	Item valueItem, propNameItem, propTypeItem, propContentItem;
-	char buffer[512], buffer2[64];
+	char buffer[512];
 
 	const uint32_t valuesCount = CollectionGetCount(dataSet->values);
 	for (uint32_t i = 0; (i < valuesCount) && EXCEPTION_OKAY; i++) {
@@ -2064,9 +2064,9 @@ const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 static bool visitProfilePropertyValue(
 	void *state,
 	fiftyoneDegreesCollectionItem *item) {
-#ifdef _MSC_VER
-	(void)item; // suppress C4100 "unused formal parameter"
-#endif
+#	ifdef _MSC_VER
+	UNREFERENCED_PARAMETER(item);
+#	endif
 
 	*((bool *)state) = true; // found
 	return false; // break
