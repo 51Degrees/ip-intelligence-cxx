@@ -411,9 +411,10 @@ static long initGetHttpHeaderString(
 					(uint16_t)(index - i),
 					exception);
 			nameItem->collection = NULL;
-			dataSet->strings->get(
+			StoredBinaryValueGet(
 				dataSet->strings,
 				keyValue->key,
+				FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING, // key is string
 				nameItem,
 				exception);
 			return keyValue->key;

@@ -69,6 +69,7 @@ ProfileMetaData* ProfileMetaDataCollectionIpi::getByKey(uint32_t key) const {
 	ProfileMetaData *result = nullptr;
 	Profile *profile;
 	DataReset(&item.data);
+	// FIXME: Do not use ProfileGetByProfileId as `profileOffsets` does not contain profile IDs
 	profile = ProfileGetByProfileId(
 		profileOffsets,
 		profiles,
