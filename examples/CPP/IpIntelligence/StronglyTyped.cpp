@@ -156,11 +156,11 @@ namespace FiftyoneDegrees {
 					evidence->operator[]("query.client-ip-51d")
 							= ipv4Address;
 					results = engine->process(evidence);
-					Common::Value<fiftyoneDegreesCoordinate> ipv4Value = results->getValueAsCoordinate("AverageLocation");
-					cout << "   AverageLocation: " <<
-						ipv4Value.getValue().lat <<
-						"," <<
-						ipv4Value.getValue().lon << "\n";
+					Common::Value<vector<WeightedValue<string>>> ipv4Value = results->getValuesAsWeightedStringList("Areas");
+					cout << "   Areas (" << ipv4Value.getValue().size() << "):\n";
+					for (auto const &nextValue : ipv4Value.getValue()) {
+						cout << "    - '" << nextValue.getValue() << " x" << nextValue.getWeight() << "'\n";
+					}
 					delete results;
 
 					// Carries out a match for a ipv6 address.
@@ -168,11 +168,11 @@ namespace FiftyoneDegrees {
 					evidence->operator[]("query.client-ip-51d")
 							= ipv6Address;
 					results = engine->process(evidence);
-					Common::Value<fiftyoneDegreesCoordinate> ipv6Value = results->getValueAsCoordinate("AverageLocation");
-					cout << "   AverageLocation: " <<
-						ipv6Value.getValue().lat <<
-						"," <<
-						ipv6Value.getValue().lon << "\n";
+					Common::Value<vector<WeightedValue<string>>> ipv6Value = results->getValuesAsWeightedStringList("Areas");
+					cout << "   Areas (" << ipv6Value.getValue().size() << "):\n";
+					for (auto const &nextValue : ipv6Value.getValue()) {
+						cout << "    - '" << nextValue.getValue() << " x" << nextValue.getWeight() << "'\n";
+					}
 					delete results;
 
 					// Free the evidence.

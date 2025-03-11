@@ -91,7 +91,7 @@ void fiftyoneDegreesExampleCheckDataFile(
 	StoredBinaryValueGet(
 		dataset->strings,
 		dataset->header.nameOffset,
-		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
+		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING, // result is unused anyway
 		&item,
 		exception);
 	EXCEPTION_THROW

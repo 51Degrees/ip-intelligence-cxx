@@ -197,9 +197,6 @@ void EngineIpIntelligenceTests::validateIndex(
 		EXPECT_NO_THROW(*resultsIpi->getValueAsIpAddress(index)) << "IP address value "
 			"for property '" << resultsIpi->getPropertyName(index) << "' at "
 			"index '" << index << "' can't throw exception";
-		EXPECT_NO_THROW(*resultsIpi->getValueAsCoordinate(index)) << "Coordinate value for "
-			"property '" << resultsIpi->getPropertyName(index) << "' at "
-			"index '" << index << "' can't throw exception";
 		EXPECT_NO_THROW(*resultsIpi->getValuesAsWeightedBoolList(index)) << "Boolean list "
 			"for property '" << resultsIpi->getPropertyName(index) << "' at "
 			"index '" << index << "' can't throw exception";
@@ -240,8 +237,6 @@ void EngineIpIntelligenceTests::validateName(
 
 		if (values.hasValue() && values.getValue().size() > 0) {
 			EXPECT_NO_THROW(*resultsIpi->getValueAsIpAddress(name)) << "IP address value "
-				"for property '" << *name << "' can't throw exception";
-			EXPECT_NO_THROW(*resultsIpi->getValueAsCoordinate(name)) << "Coordinate value "
 				"for property '" << *name << "' can't throw exception";
 			EXPECT_NO_THROW(*resultsIpi->getValuesAsWeightedBoolList(name)) << "Boolean list "
 				"for property '" << *name << "' can't throw exception";

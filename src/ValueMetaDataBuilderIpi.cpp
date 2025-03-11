@@ -131,14 +131,23 @@ ValueMetaData* ValueMetaDataBuilderIpi::build(
 	if (property != nullptr) {
 		result = new ValueMetaData(
 			ValueMetaDataKey(
-				getString(dataSet->strings, property->nameOffset),
+				getValue(
+					dataSet->strings,
+					property->nameOffset,
+					FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING), // name is string
 				getDynamicString(dataSet->strings, value->nameOffset)),
 			value->descriptionOffset == -1 ?
 			"" :
-			getString(dataSet->strings, value->descriptionOffset),
+			getValue(
+				dataSet->strings,
+				value->descriptionOffset,
+				FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING), // description is string
 			value->urlOffset == -1 ?
 			"" :
-			getString(dataSet->strings, value->urlOffset));
+			getValue(
+				dataSet->strings,
+				value->urlOffset,
+				FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING)); // URL is string
 		COLLECTION_RELEASE(dataSet->properties, &item);
 	}
 	return result;

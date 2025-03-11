@@ -150,66 +150,20 @@ static const char* dataDir = "ip-intelligence-data";
 
 static const char* dataFileName = "51Degrees-LiteV4.1.ipi";
 
-static bool getPropertyIsCoordinate(
-	ResultsIpi* results,
-	const char* propertyName) {
-	EXCEPTION_CREATE;
-	Item item;
-	DataReset(&item.data);
-
-	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
-	Property* property = PropertyGetByName(
-		dataSet->properties,
-		dataSet->strings,
-		propertyName,
-		&item,
-		exception);
-	EXCEPTION_THROW;
-	bool isCoordinate = property->valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE;
-	COLLECTION_RELEASE(item.collection, &item);
-	return isCoordinate;
-}
-
-static fiftyoneDegreesCoordinate getPropertyValueAsCoordinate(
-	ResultsIpi* results,
-	const char* propertyName) {
-	EXCEPTION_CREATE;
-	fiftyoneDegreesCoordinate value = { 0, 0 };
-	int requiredPropertyIndex;
-	DataSetBase* dataSet = (DataSetBase*)results->b.dataSet;
-	if (getPropertyIsCoordinate(results, propertyName) == true) {
-		requiredPropertyIndex =
-			PropertiesGetRequiredPropertyIndexFromName(
-				dataSet->available,
-				propertyName);
-		if (requiredPropertyIndex >= 0) {
-			if (ResultsIpiGetValues(
-				results,
-				requiredPropertyIndex,
-				exception) != NULL && EXCEPTION_OKAY) {
-				value = IpiGetCoordinate(
-					&results->values.items[0].item,
-					exception);
-			}
-		}
-	}
-	return value;
-}
-
 static void printCoordinateValues(ResultsIpi* results) {
 	uint32_t i;
 	const char* propertyName;
-	fiftyoneDegreesCoordinate coordinate;
-	DataSetBase* dataSet = (DataSetBase*)results->b.dataSet;
-	for (i = 0; i < dataSet->available->count; i++) {
-		propertyName = STRING(
-			dataSet->available->items[i].name.data.ptr);
-		coordinate = getPropertyValueAsCoordinate(results, propertyName);
-		printf("   %s: %f,%f\n",
-			propertyName,
-			coordinate.lat,
-			coordinate.lon);
-	}
+	// fiftyoneDegreesCoordinate coordinate;
+	// DataSetBase* dataSet = (DataSetBase*)results->b.dataSet;
+	// for (i = 0; i < dataSet->available->count; i++) {
+	// 	propertyName = STRING(
+	// 		dataSet->available->items[i].name.data.ptr);
+	// 	coordinate = getPropertyValueAsCoordinate(results, propertyName);
+	// 	printf("   %s: %f,%f\n",
+	// 		propertyName,
+	// 		coordinate.lat,
+	// 		coordinate.lon);
+	// }
 }
 
 /**

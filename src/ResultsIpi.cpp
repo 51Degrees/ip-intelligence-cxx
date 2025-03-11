@@ -135,7 +135,7 @@ IpIntelligence::ResultsIpi::getPropertyValueType(
     // Default to string type. Consumers of
     // this function should always check for exception status
     fiftyoneDegreesPropertyValueType valueType
-        = FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING;
+        = FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING; // overwritten later
     DataSetIpi *dataSet = (DataSetIpi*)results->b.dataSet;
 
 	// Work out the property index from the required property index.

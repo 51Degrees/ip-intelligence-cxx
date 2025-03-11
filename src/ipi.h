@@ -308,11 +308,6 @@ typedef struct fiftyone_degrees_dataset_ipi_t {
 											collection */
 } fiftyoneDegreesDataSetIpi;
 
-typedef struct fiftyone_degrees_property_type_record_t {
-	uint32_t nameOffset;
-	byte valueType;
-} fiftyoneDegreesPropertyTypeRecord;
-
 
 /**
  * The structure to hold a pair of result item and its percentage

@@ -656,6 +656,121 @@ static StatusCode checkVersion(DataSetIpi* dataSet) {
 	return SUCCESS;
 }
 
+static void dumpProperties(
+	const DataSetIpi * const dataSet,
+	Exception * const exception) {
+
+	Item valueItem, propNameItem, propTypeItem, propContentItem;
+	char buffer[512], buffer2[64];
+
+	const uint32_t valuesCount = CollectionGetCount(dataSet->values);
+	for (uint32_t i = 0; (i < valuesCount) && EXCEPTION_OKAY; i++) {
+		DataReset(&valueItem.data);
+		const Value * const nextValue = (Value*)dataSet->values->get(
+			dataSet->values,
+			i,
+			&valueItem,
+			exception);
+		if (!(nextValue && EXCEPTION_OKAY)) {
+			return;
+		}
+		DataReset(&propTypeItem.data);
+		const PropertyTypeRecord * const nextPropType = (PropertyTypeRecord*)dataSet->propertyTypes->get(
+			dataSet->propertyTypes,
+			nextValue->propertyIndex,
+			&propTypeItem,
+			exception);
+		if (!(nextPropType && EXCEPTION_OKAY)) {
+			COLLECTION_RELEASE(dataSet->values, &valueItem);
+			return;
+		}
+		DataReset(&propNameItem.data);
+		const String * const nextPropName = &StoredBinaryValueGet(
+			dataSet->strings,
+			nextPropType->nameOffset,
+			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
+			&propNameItem,
+			exception)->stringValue;
+		if (!(nextPropName && EXCEPTION_OKAY)) {
+			COLLECTION_RELEASE(dataSet->values, &valueItem);
+			COLLECTION_RELEASE(dataSet->propertyTypes, &propTypeItem);
+			return;
+		}
+		const PropertyValueType storedValueType = nextPropType->storedValueType;
+		DataReset(&propContentItem.data);
+		const StoredBinaryValue * const storedValue = StoredBinaryValueGet(
+			dataSet->strings,
+			nextValue->nameOffset,
+			storedValueType,
+			&propContentItem,
+			exception);
+		if (!(storedValue && EXCEPTION_OKAY)) {
+			COLLECTION_RELEASE(dataSet->values, &valueItem);
+			COLLECTION_RELEASE(dataSet->propertyTypes, &propTypeItem);
+			COLLECTION_RELEASE(dataSet->strings, &propNameItem);
+			return;
+		}
+		StringBuilder builder = { buffer, sizeof(buffer) };
+		StringBuilderInit(&builder);
+		StringBuilderAddStringValue(
+			&builder,
+			storedValue,
+			storedValueType,
+			30,
+			exception);
+		if (!(EXCEPTION_OKAY)) {
+			COLLECTION_RELEASE(dataSet->values, &valueItem);
+			COLLECTION_RELEASE(dataSet->propertyTypes, &propTypeItem);
+			COLLECTION_RELEASE(dataSet->strings, &propNameItem);
+			COLLECTION_RELEASE(dataSet->strings, &propContentItem);
+			return;
+		}
+		StringBuilderComplete(&builder);
+		const char *propTypeText = "";
+		switch (storedValueType) {
+			case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING: {
+				propTypeText = "String";
+				break;
+			}
+			case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_INTEGER: {
+				propTypeText = "Integer";
+				break;
+			}
+			case FIFTYONE_DEGREES_PROPERTY_VALUE_SINGLE_PRECISION_FLOAT: {
+				propTypeText = "Float";
+				break;
+			}
+			case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_JAVASCRIPT: {
+				propTypeText = "Javascript";
+				break;
+			}
+			case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB: {
+				propTypeText = "WKB";
+				break;
+			}
+			case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS: {
+				propTypeText = "IP";
+				break;
+			}
+			default: {
+				break;
+			}
+		}
+		printf("- [val. %lld - prop. %lld, %s] '%s' (%s, offset = %llu/0x%llx)\n",
+			(long long)i,
+			(long long)nextValue->propertyIndex,
+			&nextPropName->value,
+			buffer,
+			propTypeText,
+			(unsigned long long)nextValue->nameOffset,
+			(unsigned long long)nextValue->nameOffset + (unsigned long long)dataSet->header.strings.startPosition);
+		COLLECTION_RELEASE(dataSet->values, &valueItem);
+		COLLECTION_RELEASE(dataSet->propertyTypes, &propTypeItem);
+		COLLECTION_RELEASE(dataSet->strings, &propNameItem);
+		COLLECTION_RELEASE(dataSet->strings, &propContentItem);
+	}
+}
+
 static void initDataSetPost(
 	DataSetIpi* dataSet,
 	Exception* exception) {
@@ -677,6 +792,7 @@ static void initDataSetPost(
 		EXCEPTION_SET(INSUFFICIENT_MEMORY);
 		return;
 	}
+	dumpProperties(dataSet, exception);
 }
 
 static StatusCode initWithMemory(

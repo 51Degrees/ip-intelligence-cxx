@@ -44,7 +44,10 @@ ComponentMetaData* ComponentMetaDataBuilderIpi::build(
 		// is dynamic through metadata class
 		result = new ComponentMetaData(
 			component->componentId,
-			getString(dataSet->strings, component->nameOffset),
+			getValue(
+				dataSet->strings,
+				component->nameOffset,
+				FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING), // name is string
 			0);
 	}
 	else {
@@ -57,7 +60,10 @@ ComponentMetaData* ComponentMetaDataBuilderIpi::build(
 		if (profile != nullptr) {
 			result = new ComponentMetaData(
 				component->componentId,
-				getString(dataSet->strings, component->nameOffset),
+				getValue(
+					dataSet->strings,
+					component->nameOffset,
+					FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING), // name is string
 				profile->profileId);
 			COLLECTION_RELEASE(dataSet->profiles, &item);
 		}

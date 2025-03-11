@@ -29,7 +29,7 @@ using namespace FiftyoneDegrees::Examples::IpIntelligence;
 
 const char *ExampleBase::ipv4Address = "185.28.167.77";
 
-const char *ExampleBase::ipv6Address = "2001:4860:4860::8888";
+const char *ExampleBase::ipv6Address = "64:ff9b::";
 
 ExampleBase::ExampleBase(::byte *data, long length, FiftyoneDegrees::IpIntelligence::ConfigIpi *config) {
 	this->config = config;

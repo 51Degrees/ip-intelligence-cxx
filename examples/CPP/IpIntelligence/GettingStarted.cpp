@@ -165,6 +165,20 @@ namespace FiftyoneDegrees {
 							", Percentage: " <<
 							w.getWeight() * 100 << "%\n";
 					}
+					ipv4Value = results->getValuesAsWeightedStringList("IpRangeStart");
+					for (WeightedValue<string> w : ipv4Value.getValue()) {
+						cout << "   IpRangeStart: " <<
+							w.getValue() <<
+							", Percentage: " <<
+							w.getWeight() * 100 << "%\n";
+					}
+					ipv4Value = results->getValuesAsWeightedStringList("IpRangeEnd");
+					for (WeightedValue<string> w : ipv4Value.getValue()) {
+						cout << "   IpRangeEnd: " <<
+							w.getValue() <<
+							", Percentage: " <<
+							w.getWeight() * 100 << "%\n";
+					}
 					delete results;
 
 					// Carries out a match for a ipv4 address.
@@ -190,6 +204,20 @@ namespace FiftyoneDegrees {
 					ipv6Value = results->getValuesAsWeightedStringList("Latitude");
 					for (WeightedValue<string> w : ipv6Value.getValue()) {
 						cout << "   Latitude: " <<
+							w.getValue() <<
+							", Percentage: " <<
+							w.getWeight() * 100 << "%\n";
+					}
+					ipv6Value = results->getValuesAsWeightedStringList("IpRangeStart");
+					for (WeightedValue<string> w : ipv6Value.getValue()) {
+						cout << "   IpRangeStart: " <<
+							w.getValue() <<
+							", Percentage: " <<
+							w.getWeight() * 100 << "%\n";
+					}
+					ipv6Value = results->getValuesAsWeightedStringList("IpRangeEnd");
+					for (WeightedValue<string> w : ipv6Value.getValue()) {
+						cout << "   IpRangeEnd: " <<
 							w.getValue() <<
 							", Percentage: " <<
 							w.getWeight() * 100 << "%\n";

@@ -111,7 +111,11 @@ void* EngineIpi::copyData(void *data, size_t length) const {
 string EngineIpi::getProduct() const {
 	stringstream stream;
 	DataSetIpi *dataSet = DataSetIpiGet(manager.get());
-	appendString(stream, dataSet->strings, dataSet->header.nameOffset);
+	appendValue(
+		stream,
+		dataSet->strings,
+		dataSet->header.nameOffset,
+		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING); // name is string
 	DataSetIpiRelease(dataSet);
 	return stream.str();
 }

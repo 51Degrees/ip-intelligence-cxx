@@ -67,7 +67,7 @@ namespace FiftyoneDegrees {
 				 * Get the value
 				 * @return the value
 				 */
-				T getValue() { return value; };
+				T getValue() const { return value; };
 
 				/**
 				 * Set the value

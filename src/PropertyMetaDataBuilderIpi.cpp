@@ -30,7 +30,10 @@ using namespace FiftyoneDegrees::IpIntelligence;
 PropertyMetaData* PropertyMetaDataBuilderIpi::build(
 	fiftyoneDegreesDataSetIpi *dataSet,
 	fiftyoneDegreesProperty *property) {
-	string name = getString(dataSet->strings, property->nameOffset);
+	string name = getValue(
+		dataSet->strings,
+		property->nameOffset,
+		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING); // name is string
 	return new PropertyMetaData(
 		name,
 		getPropertyMap(
@@ -39,10 +42,16 @@ PropertyMetaData* PropertyMetaDataBuilderIpi::build(
 			property),
 		getPropertyType(property),
 		(int)property->categoryOffset != -1 ?
-		getString(dataSet->strings, property->categoryOffset) :
+		getValue(
+			dataSet->strings,
+			property->categoryOffset,
+			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING) : // category is string
 		string(),
 		(int)property->urlOffset != -1 ?
-		getString(dataSet->strings, property->urlOffset) :
+		getValue(
+			dataSet->strings,
+			property->urlOffset,
+			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING) : // URL is string
 		string(),
 		propertyIsAvailable(dataSet, &name),
 		property->displayOrder,
@@ -52,7 +61,10 @@ PropertyMetaData* PropertyMetaDataBuilderIpi::build(
 		property->show,
 		property->showValues,
 		(int)property->descriptionOffset != -1 ?
-		getString(dataSet->strings, property->descriptionOffset) :
+		getValue(
+			dataSet->strings,
+			property->descriptionOffset,
+			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING) : // description is string
 		string(),
 		getDefaultValue(dataSet, property->defaultValueIndex),
 		getComponentId(dataSet, property),
@@ -116,10 +128,18 @@ string PropertyMetaDataBuilderIpi::getDefaultValue(
 			&item,
 			exception);
 		EXCEPTION_THROW;
-			if (value != nullptr) {
-				result = getString(dataSet->strings, value->nameOffset);
-				COLLECTION_RELEASE(dataSet->values, &item);
-			}
+		const PropertyValueType storedType = PropertyGetStoredTypeByIndex(
+			dataSet->propertyTypes,
+			value->propertyIndex,
+			exception);
+		EXCEPTION_THROW;
+		if (value != nullptr) {
+			result = getValue(
+				dataSet->strings,
+				value->nameOffset,
+				storedType);
+			COLLECTION_RELEASE(dataSet->values, &item);
+		}
 	}
 	return result;
 }
