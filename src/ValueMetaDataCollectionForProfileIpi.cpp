@@ -37,8 +37,7 @@ ValueMetaDataCollectionForProfileIpi::ValueMetaDataCollectionForProfileIpi(
 	ProfileMetaData *profile) : ValueMetaDataCollectionBaseIpi(manager) {
 	EXCEPTION_CREATE;
 	DataReset(&profileItem.data);
-	// FIXME: Do not use ProfileGetByProfileId as `profileOffsets` does not contain profile IDs
-	ProfileGetByProfileId(
+	ProfileGetByProfileIdIndirect(
 		dataSet->profileOffsets,
 		dataSet->profiles,
 		profile->getProfileId(),
