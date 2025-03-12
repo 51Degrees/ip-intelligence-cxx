@@ -76,20 +76,26 @@ bool ValueMetaDataCollectionForProfileIpi::valueFilter(
 	fiftyoneDegreesCollectionItem *valueItem) {
 	EXCEPTION_CREATE;
 	Item nameItem;
-	String *name;
+	StoredBinaryValue *valueContent;
 	Value *value;
 	FilterResult *result = (FilterResult*)state;
 	value = (Value*)valueItem->data.ptr;
+	PropertyValueType const storedValueType = PropertyGetStoredTypeByIndex(
+		result->dataSet->propertyTypes,
+		value->propertyIndex,
+		exception);
+	EXCEPTION_THROW;
 	DataReset(&nameItem.data);
-	name = &ValueGetContent(
+	valueContent = ValueGetContent(
 		result->dataSet->strings,
 		value,
-		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
+		storedValueType,
 		&nameItem,
-		exception)->stringValue;
+		exception);
 	EXCEPTION_THROW;
-	if (name != nullptr) {
-		if (strcmp(&name->value, result->valueName.c_str()) == 0) {
+	if (valueContent != nullptr) {
+		// FIXME: Switch to full binary comparer
+		if (strcmp(&valueContent->stringValue.value, result->valueName.c_str()) == 0) {
 			memcpy(&result->value, value, sizeof(Value));
 			result->found = true;
 		}

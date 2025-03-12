@@ -68,6 +68,7 @@
 #include "common-cxx/array.h"
 #include "common-cxx/results.h"
 #include "common-cxx/float.h"
+#include "common-cxx/stringBuilder.h"
 #include "ip-graph-cxx/graph.h"
 
 /** Default value for the cache concurrency used in the default configuration. */
