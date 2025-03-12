@@ -24,6 +24,7 @@
 #include "fiftyone.h"
 #include "common-cxx/wkbtot.hpp"
 #include "constantsIpi.h"
+#include "common-cxx/string.hpp"
 
 using namespace FiftyoneDegrees;
 using namespace FiftyoneDegrees::Common;
@@ -379,57 +380,45 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
 			getNoValueMessageInternal(reason));
     }
     else {
-        fiftyoneDegreesPropertyValueType valueType = 
-            getPropertyValueType(requiredPropertyIndex, exception);
-        if (EXCEPTION_OKAY) {
-            // Get a pointer to the first value item for the property.
-            valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
-            EXCEPTION_THROW;
+        DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
+        const uint32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
+            dataSet->b.b.available,
+            requiredPropertyIndex);
+        fiftyoneDegreesPropertyValueType storedValueType = PropertyGetStoredTypeByIndex(
+            dataSet->propertyTypes,
+            propertyIndex,
+            exception);
+        EXCEPTION_THROW;
+        // Get a pointer to the first value item for the property.
+        valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
+        EXCEPTION_THROW;
 
-            if (valuesItems == NULL) {
-                // No pointer to values was returned.
-                throw NoValuesAvailableException();
-            }
-
-            // Set enough space in the vector for all the strings that will be
-            // inserted.
-            values.reserve(results->values.count);
-
-            stringstream stream;
-            // Add the values in their original form to the result.
-            for (i = 0; i < results->values.count; i++) {
-                WeightedValue<string> weightedString;
-                // Clear stream before the construction
-                stream.str("");
-                switch(valueType) {
-                case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS: {
-                    char buffer[MAX_PROFILE_PERCENTAGE_STRING_LENGTH];
-                    IpiGetIpAddressAsString(
-                        &valuesItems[i].item,
-                        results->items[0].type,
-                        buffer,
-                        MAX_PROFILE_PERCENTAGE_STRING_LENGTH,
-                        exception);
-                    if (EXCEPTION_OKAY) {
-                        stream << buffer;
-                    }
-                    break;
-                }
-                case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB:
-                    writeWkbStringToStringStream(
-                        (const VarLengthByteArray *)valuesItems[i].item.data.ptr,
-                        stream, DefaultWktDecimalPlaces, exception);
-                    break;
-                default:
-                    stream << STRING((String*)valuesItems[i].item.data.ptr);
-                    break;
-                }
-                weightedString.setValue(stream.str());
-                weightedString.setRawWeight(valuesItems[i].rawWeighting);
-                values.push_back(weightedString);
-            }
-            result.setValue(values);
+        if (valuesItems == NULL) {
+            // No pointer to values was returned.
+            throw NoValuesAvailableException();
         }
+
+        // Set enough space in the vector for all the strings that will be
+        // inserted.
+        values.reserve(results->values.count);
+
+        stringstream stream;
+        // Add the values in their original form to the result.
+        for (i = 0; i < results->values.count; i++) {
+            WeightedValue<string> weightedString;
+            // Clear stream before the construction
+            stream.str("");
+            writeStoredBinaryValueToStringStream(
+                (StoredBinaryValue*)valuesItems[i].item.data.ptr,
+                storedValueType,
+                stream,
+                DefaultWktDecimalPlaces,
+                exception);
+            weightedString.setValue(stream.str());
+            weightedString.setRawWeight(valuesItems[i].rawWeighting);
+            values.push_back(weightedString);
+        }
+        result.setValue(values);
     }
     return result;
 }
