@@ -642,6 +642,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedDoubleList(
                 WeightedValue<double> weightedDouble;
                 if (valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE
                     && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS) {
+                    // FIXME: Do not expect the data to be a string.
                     const char * const theString = STRING((String *)valuesItems[i].item.data.ptr);
                     weightedDouble.setValue(strtod(theString, nullptr));
                 }
