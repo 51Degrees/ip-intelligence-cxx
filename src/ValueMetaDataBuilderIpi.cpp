@@ -23,10 +23,9 @@
 #include <sstream>
 #include "ValueMetaDataBuilderIpi.hpp"
 #include "common-cxx/Exceptions.hpp"
-#include "fiftyone.h"
-#include "common-cxx/wkbtot.h"
-#include "common-cxx/wkbtot.hpp"
 #include "constantsIpi.h"
+#include "fiftyone.h"
+#include "common-cxx/string.hpp"
 
 using namespace std;
 using namespace FiftyoneDegrees::Common;
@@ -37,79 +36,43 @@ using namespace FiftyoneDegrees::IpIntelligence;
 /* Coordinate floating point precision */
 #define COORDINATE_PRECISION 7
 
-string ValueMetaDataBuilderIpi::getDynamicString(
+/**
+ * Get the string representation of the data stored in
+ * the strings collection
+ * @param stringsCollection the string collection
+ * @param offset the offset in the string collection
+ * @param storedValueType format of byte array representation.
+ */
+static string getDynamicString(
 	fiftyoneDegreesCollection *stringsCollection,
-	uint32_t offset) {
+	uint32_t offset,
+	fiftyoneDegreesPropertyValueType storedValueType) {
 	EXCEPTION_CREATE;
 	string result;
-	fiftyoneDegreesCollectionItem item;
-	fiftyoneDegreesString *str;
-	fiftyoneDegreesDataReset(&item.data);
-	str = &StoredBinaryValueGet(
+	Item item;
+	StoredBinaryValue *binaryValue;
+	DataReset(&item.data);
+	binaryValue = StoredBinaryValueGet(
 		stringsCollection,
 		offset,
-		FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
+		storedValueType,
 		&item,
-		exception)->stringValue;
+		exception);
 	EXCEPTION_THROW;
 
 	stringstream stream;
-	if (str != nullptr) {
-		switch(str->value) {
-		case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS:
-			{
-				char buffer[IP_ADDRESS_STRING_MAX_LENGTH];
-				memset(buffer, 0, IP_ADDRESS_STRING_MAX_LENGTH);
-
-				// Get the actual address size
-				uint16_t addressSize = str->size - 1;
-				// TODO: Deduplicate with `StringBuilderAddStringValue`
-				// Get the type of the IP address
-				fiftyoneDegreesIpType type;
-				switch (addressSize) {
-					case FIFTYONE_DEGREES_IPV4_LENGTH: {
-						type = IP_TYPE_IPV4;
-						break;
-					}
-					case FIFTYONE_DEGREES_IPV6_LENGTH: {
-						type = IP_TYPE_IPV6;
-						break;
-					}
-					default: {
-						type = IP_TYPE_INVALID;
-						break;
-					}
-				}
-				// Get the string representation of the IP address
-				IpiGetIpAddressAsString(
-					&item, 
-					type, 
-					buffer, 
-					IP_ADDRESS_STRING_MAX_LENGTH, 
-					exception);
-				EXCEPTION_THROW;
-
-				stream << buffer;
-			}
-			break;
-			case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB: {
-				writeWkbStringToStringStream(
-					reinterpret_cast<const VarLengthByteArray *>(str),
-					stream,
-					DefaultWktDecimalPlaces,
-					exception);
-				break;
-			}
-		default:
-			stream << &str->value;
-			break;
-		}
-		result.append(stream.str());
+	if (binaryValue != nullptr && EXCEPTION_OKAY) {
+		writeStoredBinaryValueToStringStream(
+			binaryValue,
+			storedValueType,
+			stream,
+			DefaultWktDecimalPlaces,
+			exception);
+		FIFTYONE_DEGREES_COLLECTION_RELEASE(
+			stringsCollection,
+			&item);
 	}
-	FIFTYONE_DEGREES_COLLECTION_RELEASE(
-		stringsCollection,
-		&item);
-	return result;
+	return stream.str();
 }
 
 
@@ -128,6 +91,11 @@ ValueMetaData* ValueMetaDataBuilderIpi::build(
 		&item,
 		exception);
 	EXCEPTION_THROW;
+	PropertyValueType const storedValueType = PropertyGetStoredTypeByIndex(
+		dataSet->propertyTypes,
+		value->propertyIndex,
+		exception);
+	EXCEPTION_THROW;
 	if (property != nullptr) {
 		result = new ValueMetaData(
 			ValueMetaDataKey(
@@ -135,7 +103,10 @@ ValueMetaData* ValueMetaDataBuilderIpi::build(
 					dataSet->strings,
 					property->nameOffset,
 					FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING), // name is string
-				getDynamicString(dataSet->strings, value->nameOffset)),
+				getDynamicString(
+					dataSet->strings,
+					value->nameOffset,
+					storedValueType)),
 			value->descriptionOffset == -1 ?
 			"" :
 			getValue(

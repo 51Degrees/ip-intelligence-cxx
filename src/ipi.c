@@ -662,7 +662,7 @@ static void dumpProperties(
 	Exception * const exception) {
 
 	Item valueItem, propNameItem, propTypeItem, propContentItem;
-	char buffer[512];
+	char buffer[4096];
 
 	const uint32_t valuesCount = CollectionGetCount(dataSet->values);
 	for (uint32_t i = 0; (i < valuesCount) && EXCEPTION_OKAY; i++) {
