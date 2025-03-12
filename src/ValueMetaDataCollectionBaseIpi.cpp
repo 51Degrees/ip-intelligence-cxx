@@ -55,9 +55,9 @@ ValueMetaData* ValueMetaDataCollectionBaseIpi::getByKey(
 		&propertyItem,
 		exception);
 	EXCEPTION_THROW;
-	PropertyValueType const storedValueType = PropertyGetStoredTypeByIndex(
+	PropertyValueType const storedValueType = PropertyGetStoredType(
 		dataSet->propertyTypes,
-		value->propertyIndex,
+		property,
 		exception);
 	EXCEPTION_THROW;
 	if (property != nullptr) {

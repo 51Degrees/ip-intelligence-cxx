@@ -550,7 +550,7 @@ static void initGetEvidencePropertyRelated(
 			name = &StoredBinaryValueGet(
 				dataSet->strings,
 				property->nameOffset,
-				FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
+				FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING, // name is string
 				&nameItem,
 				exception)->stringValue;
 			if (name != NULL && EXCEPTION_OKAY) {
@@ -689,7 +689,7 @@ static void dumpProperties(
 		const String * const nextPropName = &StoredBinaryValueGet(
 			dataSet->strings,
 			nextPropType->nameOffset,
-			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
+			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING, // name is string
 			&propNameItem,
 			exception)->stringValue;
 		if (!(nextPropName && EXCEPTION_OKAY)) {
@@ -717,7 +717,7 @@ static void dumpProperties(
 			&builder,
 			storedValue,
 			storedValueType,
-			30,
+			MAX_DOUBLE_DECIMAL_PLACES,
 			exception);
 		if (!(EXCEPTION_OKAY)) {
 			COLLECTION_RELEASE(dataSet->values, &valueItem);
@@ -1737,16 +1737,22 @@ static bool addValueWithPercentage(void* state, Item* item) {
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 	Value* value = (Value*)item->data.ptr;
 	if (value != NULL && results->values.count < results->values.capacity) {
-		DataReset(&valueItem.data);
-		if (StoredBinaryValueGet(
-			dataSet->strings,
-			value->nameOffset,
-			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
-			&valueItem,
-			exception) != NULL && EXCEPTION_OKAY) {
-			profilePercentageItem.item = valueItem;
-			profilePercentageItem.rawWeighting = percentageState->rawWeighting;
-			addIpiListItem(&results->values, &profilePercentageItem);
+		PropertyValueType const storedValueType = PropertyGetStoredTypeByIndex(
+			dataSet->propertyTypes,
+			value->propertyIndex,
+			exception);
+		if (EXCEPTION_OKAY) {
+			DataReset(&valueItem.data);
+			if (StoredBinaryValueGet(
+				dataSet->strings,
+				value->nameOffset,
+				storedValueType,
+				&valueItem,
+				exception) != NULL && EXCEPTION_OKAY) {
+				profilePercentageItem.item = valueItem;
+				profilePercentageItem.rawWeighting = percentageState->rawWeighting;
+				addIpiListItem(&results->values, &profilePercentageItem);
+			}
 		}
 	}
 	COLLECTION_RELEASE(dataSet->values, item);
@@ -1789,49 +1795,6 @@ static uint32_t addValuesFromProfile(
 	assert(count <= profile->valueCount);
 
 	return count;
-}
-
-/*
- * Caller should check for EXCEPTION_OKAY before accessing
- * the returned item
- * @param results result array
- * @param valueOffset the offset in the values collection
- * @param exception the exception object that will be used
- * if an exception occurs
- * @return the item from the strings collection
- */
-static Item getStringItemByValueOffset(
-	ResultsIpi* results,
-	uint32_t valueOffset,
-	Exception* exception) {
-	Item valueItem, valueContentItem;
-	Item returnedItem;
-	Value* value;
-	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
-
-	// Initialise the returned item
-	DataReset(&returnedItem.data);
-	returnedItem.collection = NULL;
-	returnedItem.handle = NULL;
-
-	DataReset(&valueItem.data);
-	if ((value = dataSet->values->get(
-		dataSet->values,
-		valueOffset,
-		&valueItem,
-		exception)) != NULL && EXCEPTION_OKAY) {
-		DataReset(&valueContentItem.data);
-		if (StoredBinaryValueGet(
-			dataSet->strings,
-			value->nameOffset,
-			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
-			&valueContentItem,
-			exception) != NULL && EXCEPTION_OKAY) {
-			returnedItem = valueContentItem;
-		}
-		COLLECTION_RELEASE(dataSet->values, &valueItem);
-	}
-	return returnedItem;
 }
 
 static uint32_t addValuesFromSingleProfile(
@@ -1975,37 +1938,6 @@ static ProfilePercentage* getValuesFromResult(
 
 	// Return the first value in the list of items.
 	return results->values.items;
-}
-
-// TODO: Remove or deduplicate from `ResultsIpi::getPropertyValueType`
-static PropertyValueType
-getPropertyValueType(
-	const DataSetIpi * const dataSet,
-	ResultsIpi* const results,
-	const int requiredPropertyIndex,
-	fiftyoneDegreesException * const exception) {
-	// Default to string type. Consumers of
-	// this function should always check for exception status
-	PropertyValueType valueType
-		= FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING;
-
-	// Work out the property index from the required property index.
-	const uint32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
-		dataSet->b.b.available,
-		requiredPropertyIndex);
-
-	// Set the property that will be available in the results structure.
-	// This may also be needed to work out which of a selection of results
-	// are used to obtain the values.
-	const Property * const property = PropertyGet(
-		dataSet->properties,
-		propertyIndex,
-		&results->propertyItem,
-		exception);
-	if (property != NULL && EXCEPTION_OKAY) {
-		valueType = (PropertyValueType)property->valueType;
-	}
-	return valueType;
 }
 
 const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
@@ -2259,6 +2191,7 @@ static void pushValues(
 	const uint32_t count,
 	StringBuilder * const builder,
 	const char * const separator,
+	PropertyValueType storedValueType,
 	const uint8_t decimalPlaces,
 	Exception * const exception) {
 
@@ -2283,7 +2216,7 @@ static void pushValues(
 		StringBuilderAddStringValue(
 			builder,
 			binaryValue,
-			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING, // FIXME: Use proper type
+			storedValueType,
 			decimalPlaces,
 			exception);
 
@@ -2308,11 +2241,18 @@ static void fiftyoneDegreesResultsIpiGetValuesStringInternal(
 	Property *property;
 	DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
 
-	uint32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
+	const int propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
 		dataSet->b.b.available,
 		requiredPropertyIndex);
 
 	if (propertyIndex >= 0) {
+		PropertyValueType const storedValueType = PropertyGetStoredTypeByIndex(
+			dataSet->propertyTypes,
+			propertyIndex,
+			exception);
+		if (EXCEPTION_FAILED) {
+			return;
+		}
 		DataReset(&propertyItem.data);
 		property = (Property*)dataSet->properties->get(
 				dataSet->properties,
@@ -2331,6 +2271,7 @@ static void fiftyoneDegreesResultsIpiGetValuesStringInternal(
 							results->values.count,
 							builder,
 							separator,
+							storedValueType,
 							DefaultWktDecimalPlaces,
 							exception);
 				}
