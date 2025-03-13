@@ -157,6 +157,10 @@ string PropertyMetaDataBuilderIpi::getPropertyType(
 	switch (property->valueType) {
 	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_INTEGER:
 		return string("int");
+	case FIFTYONE_DEGREES_PROPERTY_VALUE_SINGLE_PRECISION_FLOAT:
+		return string("single");
+	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB:
+		return string("wkb");
 	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_BOOLEAN:
 		return string("bool");
     case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_DOUBLE:
