@@ -1872,22 +1872,22 @@ static uint32_t addValuesFromProfileGroup(
 	return count;
 }
 
-static ProfileOffset getProfileOffset(
+static uint32_t getProfileOffset(
 	Collection * const profileOffsets,
 	const uint32_t offsetIndex,
 	Exception * const exception) {
 
 	Item item;
 	DataReset(&item.data);
-	const ProfileOffset * const resultRef = (ProfileOffset*)profileOffsets->get(
+	const uint32_t * const resultRef = (uint32_t*)profileOffsets->get(
 		profileOffsets,
 		offsetIndex,
 		&item,
 		exception);
 	if (!(resultRef && EXCEPTION_OKAY)) {
-		return (ProfileOffset){ 0, 0 };
+		return 0;
 	}
-	const ProfileOffset result = *resultRef;
+	const uint32_t result = *resultRef;
 	COLLECTION_RELEASE(profileOffsets, &item);
 	return result;
 }
@@ -1903,7 +1903,7 @@ static uint32_t addValuesFromResult(
 	if (results->count > 0) {
 		if (result->graphResult.rawOffset != NULL_PROFILE_OFFSET) {
 			if (!result->graphResult.isGroupOffset) {
-				const ProfileOffset profileOffsetValue = getProfileOffset(
+				const uint32_t profileOffsetValue = getProfileOffset(
 					dataSet->profileOffsets,
 					result->graphResult.offset,
 					exception);
@@ -1912,7 +1912,7 @@ static uint32_t addValuesFromResult(
 					count += addValuesFromSingleProfile(
 						results,
 						property,
-						profileOffsetValue.offset,
+						profileOffsetValue,
 						FULL_RAW_WEIGHTING,
 						exception);
 				}
@@ -2071,14 +2071,14 @@ static bool resultGetHasValidPropertyValueOffset(
 			// profile groups offset from the previous step
 			if (result->graphResult.rawOffset != NULL_PROFILE_OFFSET) {
 				if (!result->graphResult.isGroupOffset) {
-					const ProfileOffset profileOffsetValue = getProfileOffset(
+					const uint32_t profileOffsetValue = getProfileOffset(
 						dataSet->profileOffsets,
 						result->graphResult.offset,
 						exception);
 					if (EXCEPTION_OKAY) {
 						hasValidOffset = profileHasValidPropertyValue(
 							dataSet,
-							profileOffsetValue.offset,
+							profileOffsetValue,
 							property,
 							exception);
 					}
