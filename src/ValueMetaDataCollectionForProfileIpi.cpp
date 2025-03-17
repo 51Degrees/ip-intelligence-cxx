@@ -94,7 +94,6 @@ bool ValueMetaDataCollectionForProfileIpi::valueFilter(
 		exception);
 	EXCEPTION_THROW;
 	if (valueContent != nullptr) {
-		// FIXME: Switch to full binary comparer
 		if ((StoredBinaryValueCompareWithString(
 			valueContent,
 			storedValueType,

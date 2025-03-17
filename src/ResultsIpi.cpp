@@ -98,8 +98,6 @@ IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<
 	values.reserve(results->values.count);
 
     stringstream stream;
-    char buffer[MAX_PROFILE_PERCENTAGE_STRING_LENGTH];
-    // FIXME: Use common method instead on inline switch
 	// Add the values in their original form to the result.
 	for (i = 0; i < results->values.count; i++) {
         // Clear the string stream
@@ -171,8 +169,17 @@ IpIntelligence::ResultsIpi::getValueAsIpAddress(int requiredPropertyIndex) {
         fiftyoneDegreesPropertyValueType valueType = 
             getPropertyValueType(requiredPropertyIndex, exception);
         if (EXCEPTION_OKAY) {
-            // FIXME: Use common method instead on inline if
-            if (valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS) {
+            const DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
+            const int propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
+                dataSet->b.b.available,
+                requiredPropertyIndex);
+            const PropertyValueType storedValueType = PropertyGetStoredTypeByIndex(
+                dataSet->propertyTypes,
+                propertyIndex,
+                exception);
+            EXCEPTION_THROW;
+
+            if (storedValueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS) {
                 // Get a pointer to the first value item for the property.
                 valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
                 EXCEPTION_THROW;
@@ -190,11 +197,15 @@ IpIntelligence::ResultsIpi::getValueAsIpAddress(int requiredPropertyIndex) {
                 }
                 else {
                     IpAddress ipAddress;
+                    const VarLengthByteArray * const rawIpAddress = (const VarLengthByteArray *)valuesItems->item.data.ptr;
                     const unsigned char * const ipAddressBytes =
-                        &((const VarLengthByteArray *)(valuesItems->item.data.ptr))->firstByte;
+                        &rawIpAddress->firstByte;
+                    const IpType rawIpType = (rawIpAddress->size == IPV4_LENGTH) ? IP_TYPE_IPV4 :
+                    ((rawIpAddress->size == IPV6_LENGTH) ? IP_TYPE_IPV6
+                        : IP_TYPE_INVALID);
                     if (ipAddressBytes != NULL) {
                         ipAddress = IpAddress(
-                            ipAddressBytes, results->items[0].type);
+                            ipAddressBytes, rawIpType);
                     }
                     result.setValue(ipAddress);
                 }
