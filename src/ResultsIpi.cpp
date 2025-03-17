@@ -84,43 +84,39 @@ IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<
 		throw NoValuesAvailableException();
 	}
 
+    const DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
+    const int propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
+        dataSet->b.b.available,
+        requiredPropertyIndex);
+    const PropertyValueType storedValueType = PropertyGetStoredTypeByIndex(
+        dataSet->propertyTypes,
+        propertyIndex,
+        exception);
+
 	// Set enough space in the vector for all the strings that will be 
 	// inserted.
 	values.reserve(results->values.count);
 
     stringstream stream;
     char buffer[MAX_PROFILE_PERCENTAGE_STRING_LENGTH];
+    // FIXME: Use common method instead on inline switch
 	// Add the values in their original form to the result.
 	for (i = 0; i < results->values.count; i++) {
         // Clear the string stream
         stream.str("");
-        // Check value type to appropriately retrieve the string value of
-        // the item
-        switch(valueType) {
-        case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS:
-            IpiGetIpAddressAsString(
-                &valuesItems[i].item,
-                results->items[0].type,
-                buffer,
-                MAX_PROFILE_PERCENTAGE_STRING_LENGTH,
-                exception);
-            if (EXCEPTION_OKAY) {
-                stream << buffer;
-            }
-            break;
-        case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB:
-            writeWkbStringToStringStream(
-                (const VarLengthByteArray *)valuesItems[i].item.data.ptr,
-                stream, DefaultWktDecimalPlaces, exception);
-            break;
-        default:
-            stream << STRING((String*)valuesItems[i].item.data.ptr);
-            break;
-        }
+	    const StoredBinaryValue * const binaryValue = (StoredBinaryValue *)valuesItems[i].item.data.ptr;
+	    writeStoredBinaryValueToStringStream(
+	        binaryValue,
+	        storedValueType,
+	        stream,
+	        MAX_DOUBLE_DECIMAL_PLACES,
+	        exception);
         if (EXCEPTION_OKAY) {
             stream << ":";
             stream << (float)valuesItems[i].rawWeighting / 65535.f;
             values.push_back(stream.str());
+        } else {
+            break;
         }
 	}
     // The value format in the data file should never be
@@ -175,6 +171,7 @@ IpIntelligence::ResultsIpi::getValueAsIpAddress(int requiredPropertyIndex) {
         fiftyoneDegreesPropertyValueType valueType = 
             getPropertyValueType(requiredPropertyIndex, exception);
         if (EXCEPTION_OKAY) {
+            // FIXME: Use common method instead on inline if
             if (valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS) {
                 // Get a pointer to the first value item for the property.
                 valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
@@ -317,6 +314,16 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedBoolList(
                 throw NoValuesAvailableException();
             }
 
+            const DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
+            const int propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
+                dataSet->b.b.available,
+                requiredPropertyIndex);
+            const PropertyValueType storedValueType = PropertyGetStoredTypeByIndex(
+                dataSet->propertyTypes,
+                propertyIndex,
+                exception);
+            EXCEPTION_THROW;
+
             // Set enough space in the vector for all the strings that will be
             // inserted.
             values.reserve(results->values.count);
@@ -324,15 +331,10 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedBoolList(
             // Add the values in their original form to the result.
             for (i = 0; i < results->values.count; i++) {
                 WeightedValue<bool> weightedBool;
-                if (valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE
-                    && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS) {
-                    const char * const theString = STRING((String *)valuesItems[i].item.data.ptr);
-                    weightedBool.setValue(strcmp(theString, "True") == 0);
-                }
-                else {
-                    // Coordinate and IP range cannot be converted to boolean so default to false
-                    weightedBool.setValue(false);
-                }
+                weightedBool.setValue(StoredBinaryValueToBoolOrDefault(
+                    (const StoredBinaryValue *)valuesItems[i].item.data.ptr,
+                    storedValueType,
+                    false));
                 weightedBool.setRawWeight(valuesItems[i].rawWeighting);
                 values.push_back(weightedBool);
             }
@@ -469,7 +471,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList(
             valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
             EXCEPTION_THROW;
 
-            if (valuesItems == NULL) {
+            if (valuesItems == nullptr) {
                 // No pointer to values was returned.
                 throw NoValuesAvailableException();
             }
@@ -484,13 +486,14 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList(
                 WeightedValue<string> weightedString;
                 // Clear stream before the construction
                 stream.str("");
-                if (valueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB) {
-                    writeWkbStringToStringStream(
-                        (const VarLengthByteArray *)valuesItems[i].item.data.ptr,
-                        stream, decimalPlaces, exception);
-                } else {
-                    stream << STRING((String*)valuesItems[i].item.data.ptr);
-                }
+                const StoredBinaryValue * const binaryValue = (StoredBinaryValue *)valuesItems[i].item.data.ptr;
+                writeStoredBinaryValueToStringStream(
+                    binaryValue,
+                    FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB,
+                    stream,
+                    decimalPlaces,
+                    exception);
+                EXCEPTION_THROW;
                 weightedString.setValue(stream.str());
                 weightedString.setRawWeight(valuesItems[i].rawWeighting);
                 values.push_back(weightedString);
@@ -557,6 +560,16 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedIntegerList(
                 throw NoValuesAvailableException();
             }
 
+            const DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
+            const int propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
+                dataSet->b.b.available,
+                requiredPropertyIndex);
+            const PropertyValueType storedValueType = PropertyGetStoredTypeByIndex(
+                dataSet->propertyTypes,
+                propertyIndex,
+                exception);
+            EXCEPTION_THROW;
+
             // Set enough space in the vector for all the strings that will be
             // inserted.
             values.reserve(results->values.count);
@@ -564,16 +577,10 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedIntegerList(
             // Add the values in their original form to the result.
             for (i = 0; i < results->values.count; i++) {
                 WeightedValue<int> weightedInteger;
-                if (valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE
-                    && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS) {
-                    const char * const theString = STRING((String *)valuesItems[i].item.data.ptr);
-                    weightedInteger.setValue(atoi(theString));
-                }
-                else {
-                    // Coordinate and IP address cannot be converted to int
-                    // so default to 0
-                    weightedInteger.setValue(0);
-                }
+                weightedInteger.setValue(StoredBinaryValueToIntOrDefault(
+                    (const StoredBinaryValue *)valuesItems[i].item.data.ptr,
+                    storedValueType,
+                    0));
                 weightedInteger.setRawWeight(valuesItems[i].rawWeighting);
                 values.push_back(weightedInteger);
             }
@@ -633,6 +640,16 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedDoubleList(
                 throw NoValuesAvailableException();
             }
 
+            const DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
+            const int propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
+                dataSet->b.b.available,
+                requiredPropertyIndex);
+            const PropertyValueType storedValueType = PropertyGetStoredTypeByIndex(
+                dataSet->propertyTypes,
+                propertyIndex,
+                exception);
+            EXCEPTION_THROW;
+
             // Set enough space in the vector for all the strings that will be
             // inserted.
             values.reserve(results->values.count);
@@ -640,17 +657,10 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedDoubleList(
             // Add the values in their original form to the result.
             for (i = 0; i < results->values.count; i++) {
                 WeightedValue<double> weightedDouble;
-                if (valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE
-                    && valueType != FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS) {
-                    // FIXME: Do not expect the data to be a string.
-                    const char * const theString = STRING((String *)valuesItems[i].item.data.ptr);
-                    weightedDouble.setValue(strtod(theString, nullptr));
-                }
-                else {
-                    // Coordinate and IP address cannot be converted to double
-                    // so default to 0
-                    weightedDouble.setValue(0);
-                }
+                weightedDouble.setValue(StoredBinaryValueToDoubleOrDefault(
+                    (const StoredBinaryValue *)valuesItems[i].item.data.ptr,
+                    storedValueType,
+                    0));
                 weightedDouble.setRawWeight(valuesItems[i].rawWeighting);
                 values.push_back(weightedDouble);
             }

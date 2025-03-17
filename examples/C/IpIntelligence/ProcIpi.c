@@ -37,7 +37,7 @@ static void buildString(
 	const char* property;
 	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 	for (i = 0; i < (int)dataSet->b.b.available->count; i++) {
-		property = STRING(
+		property = STRING( // name is string
 			PropertiesGetNameFromRequiredIndex(
 				dataSet->b.b.available,
 				i));

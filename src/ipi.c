@@ -657,6 +657,7 @@ static StatusCode checkVersion(DataSetIpi* dataSet) {
 	return SUCCESS;
 }
 
+// FIXME: Remove debug method
 static void dumpProperties(
 	const DataSetIpi * const dataSet,
 	Exception * const exception) {
@@ -2061,7 +2062,7 @@ static bool resultGetHasValidPropertyValueOffset(
 			&results->propertyItem,
 			exception);
 
-		const char * const propertyName = STRING(
+		const char * const propertyName = STRING( // name is string
 			PropertiesGetNameFromRequiredIndex(
 				dataSet->b.b.available,
 				requiredPropertyIndex));

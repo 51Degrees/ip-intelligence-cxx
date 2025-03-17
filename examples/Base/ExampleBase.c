@@ -96,7 +96,7 @@ void fiftyoneDegreesExampleCheckDataFile(
 		exception);
 	EXCEPTION_THROW
 
-	const char* dataTier = STRING(item.data.ptr);
+	const char* dataTier = STRING(item.data.ptr); // product is string
 
 	fiftyoneDegreesDate date = dataset->header.published;
 	struct tm gt;

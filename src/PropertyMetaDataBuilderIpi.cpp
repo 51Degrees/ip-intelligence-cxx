@@ -200,7 +200,7 @@ vector<string> PropertyMetaDataBuilderIpi::getPropertyMap(
 			i, 
 			exception);
 		EXCEPTION_THROW;
-		name = STRING(StoredBinaryValueGet(
+		name = STRING(StoredBinaryValueGet( // map is string
 			stringsCollection,
 			offset,
 			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING, // map is string

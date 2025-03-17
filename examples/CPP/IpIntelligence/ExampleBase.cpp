@@ -46,7 +46,7 @@ ExampleBase::ExampleBase(string dataFilePath, FiftyoneDegrees::IpIntelligence::C
 	this->config = config;
 	
 	// Set the properties to be returned for each Ip Address.
-	string propertiesString = "IpRangeStart,IpRangeEnd,CountryCode,CityName,AccuracyRadius,RegisteredCountry,Longitude,Latitude";
+	string propertiesString = "IpRangeStart,IpRangeEnd,CountryCode,AccuracyRadius,RegisteredCountry,Longitude,Latitude";
 	properties = new RequiredPropertiesConfig(propertiesString);
 
 	// Initialise the engine for ip intelligence.

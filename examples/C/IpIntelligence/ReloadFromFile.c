@@ -193,7 +193,7 @@ static unsigned long getHashCode(ResultsIpi* results) {
 				requiredPropertyIndex,
 				exception);
 			EXCEPTION_THROW;
-			valueName = STRING(valueItem->item.data.ptr);
+			valueName = STRING(valueItem->item.data.ptr); // FIXME: value may not be a string
 			hashCode ^= generateHash((unsigned char*)(valueName));
 		}
 	}
