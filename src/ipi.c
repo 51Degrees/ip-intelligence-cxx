@@ -1539,6 +1539,10 @@ static bool addResultsFromIpAddressNoChecks(
 		if (!dataSet->componentsAvailable[componentIndex]) {
 			continue;
 		}
+		const Component * const component = COMPONENT(dataSet, componentIndex);
+		if (!component) {
+			continue;
+		}
 		ResultIpi * const nextResult = &(results->items[results->count]);
 		results->count++;
 		resultIpiReset(nextResult);
@@ -1565,7 +1569,7 @@ static bool addResultsFromIpAddressNoChecks(
 		setResultFromIpAddress(
 			nextResult,
 			dataSet,
-			componentIndex,
+			component->componentId,
 			exception);
 		if (EXCEPTION_FAILED) {
 			return false;
