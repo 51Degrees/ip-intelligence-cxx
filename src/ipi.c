@@ -334,10 +334,11 @@ static int compareToIpv6Range(
 static void setResultFromIpAddress(
 	ResultIpi* const result,
 	const DataSetIpi* const dataSet,
+	byte componentId,
 	Exception* const exception) {
 	const fiftyoneDegreesIpiCgResult graphResult = fiftyoneDegreesIpiGraphEvaluate(
 		dataSet->graphsArray,
-		1, 
+		componentId,
 		result->targetIpAddress, 
 		exception);
 	if (graphResult.rawOffset != NULL_PROFILE_OFFSET && EXCEPTION_OKAY) {
@@ -808,7 +809,7 @@ static void initDataSetPost(
 		(char*)dataSet->componentsAvailable,
 		0,
 		sizeof(bool) * dataSet->componentsList.count);
-	dumpProperties(dataSet, exception);
+	// dumpProperties(dataSet, exception);
 }
 
 static StatusCode initWithMemory(
@@ -1564,6 +1565,7 @@ static bool addResultsFromIpAddressNoChecks(
 		setResultFromIpAddress(
 			nextResult,
 			dataSet,
+			componentIndex,
 			exception);
 		if (EXCEPTION_FAILED) {
 			return false;
@@ -2008,10 +2010,10 @@ const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 			}
 
 			// There will only be one result
-			if (results->count > 0 && EXCEPTION_OKAY) {
+			for (uint32_t i = 0; i < results->count && EXCEPTION_OKAY; i++) {
 				firstValue = getValuesFromResult(
 					results,
-					results->items,
+					&results->items[i],
 					property,
 					exception);
 			}
