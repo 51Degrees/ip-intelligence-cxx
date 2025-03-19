@@ -289,6 +289,8 @@ typedef struct fiftyone_degrees_dataset_ipi_t {
 	bool *componentsAvailable; /**< Array of flags indicating if there are
 							   any properties available for the component with
 							   the matching index in componentsList */
+	uint32_t componentsAvailableCount; /**< Number of components with
+									   properties */
 	fiftyoneDegreesCollection *maps; /**< Collection data file maps */
 	fiftyoneDegreesCollection *properties; /**< Collection data file properties
 										   */

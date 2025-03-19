@@ -332,9 +332,9 @@ static int compareToIpv6Range(
 }
 
 static void setResultFromIpAddress(
-	ResultIpi* result,
-	DataSetIpi* dataSet,
-	Exception* exception) {
+	ResultIpi* const result,
+	const DataSetIpi* const dataSet,
+	Exception* const exception) {
 	const fiftyoneDegreesIpiCgResult graphResult = fiftyoneDegreesIpiGraphEvaluate(
 		dataSet->graphsArray,
 		1, 
@@ -482,6 +482,16 @@ static StatusCode initComponentsAvailable(
 		dataSet->componentsAvailable[property->componentIndex] = true;
 		COLLECTION_RELEASE(dataSet->properties, &item);
 	}
+
+	// Count the number of components with available properties. Needed when
+	// creating results to allocate sufficient capacity for all the components.
+	dataSet->componentsAvailableCount = 0;
+	for (i = 0; i < dataSet->componentsList.count; i++) {
+		if (dataSet->componentsAvailable[i]) {
+			dataSet->componentsAvailableCount++;
+		}
+	}
+
 	return SUCCESS;
 }
 
@@ -794,6 +804,10 @@ static void initDataSetPost(
 		EXCEPTION_SET(INSUFFICIENT_MEMORY);
 		return;
 	}
+	memset(
+		(char*)dataSet->componentsAvailable,
+		0,
+		sizeof(bool) * dataSet->componentsList.count);
 	dumpProperties(dataSet, exception);
 }
 
@@ -1424,15 +1438,18 @@ static void extendIpiList(
 	uint32_t newCapacity) {
 	// Allocate new list
 	if (newCapacity > list->capacity) {
-		ProfilePercentage *newItems 
-			= (ProfilePercentage*)Malloc(newCapacity * sizeof(ProfilePercentage));
+		const size_t newSize = newCapacity * sizeof(ProfilePercentage);
+		ProfilePercentage * const newItems = (ProfilePercentage*)Malloc(newSize);
+
 		if (newItems == NULL) {
 			return;
 		}
 
-		if (list->items != NULL) {
-			memcpy(newItems, list->items, list->count * sizeof(ProfilePercentage));
-			Free(list->items);
+		ProfilePercentage * const oldItems = list->items;
+		if (oldItems != NULL) {
+			const size_t oldSize = list->count * sizeof(ProfilePercentage);
+			memcpy(newItems, oldItems, oldSize);
+			Free(oldItems);
 		}
 		list->items = newItems;
 		list->capacity = newCapacity;
@@ -1455,12 +1472,6 @@ static void addIpiListItem(
 	}
 }
 
-static void resetIpiList(fiftyoneDegreesIpiList* list) {
-	list->capacity = 0;
-	list->count = 0;
-	list->items = NULL;
-}
-
 /**
  * Results methods
  */
@@ -1470,14 +1481,17 @@ fiftyoneDegreesResultsIpi* fiftyoneDegreesResultsIpiCreate(
 	ResultsIpi* results;
 	DataSetIpi* dataSet;
 
+	// Increment the inUse counter for the active data set so that we can
+	// track any results that are created.
+	dataSet = (DataSetIpi*)DataSetGet(manager);
+
 	// Create a new instance of results.
-	FIFTYONE_DEGREES_ARRAY_CREATE(ResultIpi, results, 1);
+	FIFTYONE_DEGREES_ARRAY_CREATE(
+		ResultIpi,
+		results,
+		dataSet->componentsAvailableCount);
 
 	if (results != NULL) {
-
-		// Increment the inUse counter for the active data set so that we can
-		// track any results that are created.
-		dataSet = (DataSetIpi*)DataSetGet(manager);
 
 		// Initialise the results.
 		fiftyoneDegreesResultsInit(&results->b, (void*)(&dataSet->b));
@@ -1486,6 +1500,9 @@ fiftyoneDegreesResultsIpi* fiftyoneDegreesResultsIpiCreate(
 		// a single value to be returned.
 		initIpiList(&results->values, 1, IPI_LIST_DEFAULT_LOAD_FACTOR);
 		DataReset(&results->propertyItem.data);
+	}
+	else {
+		DataSetRelease((DataSetBase *)dataSet);
 	}
 
 	return results;
@@ -1508,13 +1525,59 @@ void fiftyoneDegreesResultsIpiFree(fiftyoneDegreesResultsIpi* results) {
 	Free(results);
 }
 
+static bool addResultsFromIpAddressNoChecks(
+	ResultsIpi* results,
+	const unsigned char* ipAddress,
+	size_t ipAddressLength,
+	fiftyoneDegreesIpType type,
+	fiftyoneDegreesException* exception) {
+	const DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
+	for (uint32_t componentIndex = 0;
+		componentIndex < dataSet->componentsList.count;
+		componentIndex++) {
+		if (!dataSet->componentsAvailable[componentIndex]) {
+			continue;
+		}
+		ResultIpi * const nextResult = &(results->items[results->count]);
+		results->count++;
+		resultIpiReset(nextResult);
+		// Default IP range offset
+		nextResult->graphResult = FIFTYONE_DEGREES_IPI_CG_RESULT_DEFAULT;
+		nextResult->graphResult.rawOffset = NULL_PROFILE_OFFSET; // Default IP range offset
+		nextResult->targetIpAddress.type = type;
+		nextResult->type = type;
+
+		if (type == IP_TYPE_IPV4) {
+			// We only get the exact length of ipv4
+			memset(nextResult->targetIpAddress.value, 0, IPV6_LENGTH);
+			memcpy(nextResult->targetIpAddress.value, ipAddress, IPV4_LENGTH);
+			// Make sure we only operate on the valid range
+			nextResult->targetIpAddress.length = IPV4_LENGTH;
+		}
+		else {
+			// We only get the exact length of ipv6
+			memcpy(nextResult->targetIpAddress.value, ipAddress, IPV6_LENGTH);
+			// Make sure we only operate on the valid range
+			nextResult->targetIpAddress.length = IPV6_LENGTH;
+		}
+
+		setResultFromIpAddress(
+			nextResult,
+			dataSet,
+			exception);
+		if (EXCEPTION_FAILED) {
+			return false;
+		}
+	}
+	return true;
+}
+
 void fiftyoneDegreesResultsIpiFromIpAddress(
 	fiftyoneDegreesResultsIpi* results,
 	const unsigned char* ipAddress,
 	size_t ipAddressLength,
 	fiftyoneDegreesIpType type,
 	fiftyoneDegreesException* exception) {
-	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 
 	// Make sure the input is always in the correct format
 	if (type == IP_TYPE_INVALID
@@ -1526,34 +1589,15 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 		return;
 	}
 
-	resultIpiReset(&results->items[0]);
-	// Default IP range offset
-	results->items[0].graphResult = FIFTYONE_DEGREES_IPI_CG_RESULT_DEFAULT;
-	results->items[0].targetIpAddress.type = type;
-	results->items[0].type = type;
+	// Reset the results data before iterating the evidence.
+	results->count = 0;
 
-	memset(results->items[0].targetIpAddress.value, 0, IPV6_LENGTH);
-	if (type == IP_TYPE_IPV4) {
-		// We only get the exact length of ipv4
-		memcpy(results->items[0].targetIpAddress.value, ipAddress, IPV4_LENGTH);
-		// Make sure we only operate on the valid range
-		results->items[0].targetIpAddress.length = IPV4_LENGTH;
-	}
-	else {
-		// We only get the exact length of ipv6
-		memcpy(results->items[0].targetIpAddress.value, ipAddress, IPV6_LENGTH);
-		// Make sure we only operate on the valid range
-		results->items[0].targetIpAddress.length = IPV6_LENGTH;
-	}
-	results->count = 1;
-
-	setResultFromIpAddress(
-		&results->items[0],
-		dataSet,
+	addResultsFromIpAddressNoChecks(
+		results,
+		ipAddress,
+		ipAddressLength,
+		type,
 		exception);
-	if (EXCEPTION_FAILED) {
-		return;
-	}
 }
 
 void fiftyoneDegreesResultsIpiFromIpAddressString(
@@ -1595,7 +1639,7 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 	}
 }
 
-static bool setResultFromEvidence(
+static bool setResultsFromEvidence(
 	void* state,
 	EvidenceKeyValuePair* pair) {
 	stateWithUniqueHeaderIndex* indexState = (stateWithUniqueHeaderIndex*)state;
@@ -1636,25 +1680,12 @@ static bool setResultFromEvidence(
 				FIFTYONE_DEGREES_IPV4_LENGTH : 
 				FIFTYONE_DEGREES_IPV6_LENGTH;
 			// Configure the next result in the array of results.
-			result = &((ResultIpi*)results->items)[results->count];
-			resultIpiReset(result);
-			results->items[0].graphResult = FIFTYONE_DEGREES_IPI_CG_RESULT_DEFAULT;
-			results->items[0].graphResult.rawOffset = NULL_PROFILE_OFFSET; // Default IP range offset
-			result->targetIpAddress.length = ipLength;
-			memset(result->targetIpAddress.value, 0, IPV6_LENGTH);
-			memcpy(result->targetIpAddress.value, ipAddress.value, ipLength);
-			memcpy(result->targetIpAddress.value, ipAddress.value, IPV6_LENGTH);
-			result->targetIpAddress.type = ipAddress.type;
-			result->type = ipAddress.type;
-			results->count++;
-
-			setResultFromIpAddress(
-				result,
-				dataSet,
+			addResultsFromIpAddressNoChecks(
+				results,
+				ipAddress.value,
+				IPV6_LENGTH,
+				ipAddress.type,
 				exception);
-			if (EXCEPTION_FAILED) {
-				return false;
-			}
 		}
 	}
 
@@ -1681,7 +1712,7 @@ static void fiftyoneDegreesIterateHeadersWithEvidence(
 			evidence,
 			prefixes,
 			state,
-			setResultFromEvidence);
+			setResultsFromEvidence);
 	}
 }
 
