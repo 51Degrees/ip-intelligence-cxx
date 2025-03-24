@@ -2157,17 +2157,21 @@ bool fiftyoneDegreesResultsIpiGetHasValues(
 		return false;
 
 	// There will only be one result
-	bool hasValidOffset = resultGetHasValidPropertyValueOffset(
-		results,
-		results->items,
-		requiredPropertyIndex,
-		exception);
-	if (!hasValidOffset || EXCEPTION_FAILED) {
-		return false;
+	for (uint32_t i = 0; i < results->count; i++) {
+		const bool hasValidOffset = resultGetHasValidPropertyValueOffset(
+			results,
+			&results->items[i],
+			requiredPropertyIndex,
+			exception);
+		if (EXCEPTION_FAILED) {
+			return false;
+		}
+		if (hasValidOffset) {
+			return true;
+		}
 	}
 
-	// None of the checks have returned false, so there must be valid values.
-	return true;
+	return false;
 }
 
 fiftyoneDegreesResultsNoValueReason fiftyoneDegreesResultsIpiGetNoValueReason(
@@ -2188,12 +2192,20 @@ fiftyoneDegreesResultsNoValueReason fiftyoneDegreesResultsIpiGetNoValueReason(
 	}
 
 	// There will only be one result
-	bool hasValidOffset = resultGetHasValidPropertyValueOffset(
-		results,
-		results->items,
-		requiredPropertyIndex,
-		exception);
-	if (EXCEPTION_OKAY && !hasValidOffset) {
+	for (uint32_t i = 0; i < results->count; i++) {
+		const bool hasValidOffset = resultGetHasValidPropertyValueOffset(
+			results,
+			&results->items[i],
+			requiredPropertyIndex,
+			exception);
+		if (EXCEPTION_FAILED) {
+			return false;
+		}
+		if (hasValidOffset) {
+			return FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_UNKNOWN;
+		}
+	}
+	if (EXCEPTION_OKAY) {
 		return FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_NULL_PROFILE;
 	}
 
