@@ -72,7 +72,7 @@ static const char* dataDir = "ip-intelligence-data";
 // limited accuracy and capabilities.
 // Find out about the Enterprise data file on our pricing page:
 // https://51degrees.com/pricing
-static const char* dataFileName = "51Degrees-LiteV4.1.ipi";
+static const char* dataFileName = "51Degrees-LiteV41.ipi";
 
 // This file contains the 20,000 most commonly seen combinations of header 
 // values that are relevant to device detection. For example, User-Agent and 

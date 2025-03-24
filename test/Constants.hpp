@@ -3,7 +3,7 @@
 
 const static char _dataFolderName[] = "ip-intelligence-data";
 
-const static char* _IpiFileNames[] = {"51Degrees-LiteV4.1.ipi"};
+const static char* _IpiFileNames[] = {"51Degrees-LiteV41.ipi"};
 
 const static int _IpiFileNamesLength = 1;
 

@@ -136,7 +136,7 @@ LocationBoundSouthEast: "0.000000,0.000000":"1.000000"
 
 static const char* dataDir = "ip-intelligence-data";
 
-static const char* dataFileName = "51Degrees-LiteV4.1.ipi";
+static const char* dataFileName = "51Degrees-LiteV41.ipi";
 
 static char valueBuffer[1024] = "";
 
@@ -176,6 +176,7 @@ static void printPropertyValueFromResults(ResultsIpi *results) {
 		printf("Longitude: %s\n", getPropertyValueAsString(results, "Longitude"));
 		printf("Latitude: %s\n", getPropertyValueAsString(results, "Latitude"));
 		printf("Areas: %s\n", getPropertyValueAsString(results, "Areas"));
+		printf("Mcc: %s\n", getPropertyValueAsString(results, "Mcc"));
 	}
 	else {
 		printf("No results.");
@@ -190,7 +191,7 @@ void fiftyoneDegreesIpiGettingStarted(
 
 	// Set the properties to be returned for each ip
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "IpRangeStart,IpRangeEnd,CountryCode,AccuracyRadius,RegisteredCountry,RegisteredName,Longitude,Latitude,Areas";
+	properties.string = "IpRangeStart,IpRangeEnd,CountryCode,AccuracyRadius,RegisteredCountry,RegisteredName,Longitude,Latitude,Areas,Mcc";
 
 	StatusCode status = IpiInitManagerFromFile(
 		&manager,
@@ -218,17 +219,37 @@ void fiftyoneDegreesIpiGettingStarted(
 
 	printf("Starting Getting Started Example.\n");
 
-	// Carries out a match for the ipv4 address
-	printf("\nIpv4 Address: %s\n", ipv4Address);
-	ResultsIpiFromIpAddressString(
-		results,
-		ipv4Address,
-		strlen(ipv4Address),
-		exception);
-	if (EXCEPTION_FAILED) {
-		printf("%s\n", ExceptionGetMessage(exception));
+	char nextIpV4[64] = { 0 };
+	const int64_t dx    = 0x01020304LL;
+	const int64_t maxIp = 0xFFFFFFFFLL;
+	for (int64_t i = 0; i < maxIp; i += dx) {
+		int64_t tk = i;
+		StringBuilder s = { nextIpV4, sizeof(nextIpV4) };
+		StringBuilderInit(&s);
+		StringBuilderAddInteger(&s, tk & 0xFFLL);
+		StringBuilderAddChar(&s, '.');
+		tk /= 256;
+		StringBuilderAddInteger(&s, tk & 0xFFLL);
+		StringBuilderAddChar(&s, '.');
+		tk /= 256;
+		StringBuilderAddInteger(&s, tk & 0xFFLL);
+		StringBuilderAddChar(&s, '.');
+		tk /= 256;
+		StringBuilderAddInteger(&s, tk & 0xFFLL);
+		StringBuilderComplete(&s);
+
+		// Carries out a match for the ipv4 address
+		printf("\nIpv4 Address: %s\n", nextIpV4);
+		ResultsIpiFromIpAddressString(
+			results,
+			nextIpV4,
+			strlen(nextIpV4),
+			exception);
+		if (EXCEPTION_FAILED) {
+			printf("%s\n", ExceptionGetMessage(exception));
+		}
+		printPropertyValueFromResults(results);
 	}
-	printPropertyValueFromResults(results);
 
 	// Carries out a match for the ipv6 address
 	printf("\nIpv6 Address: %s\n", ipv6Address);
@@ -253,8 +274,8 @@ void fiftyoneDegreesIpiGettingStarted(
 
 int main(int argc, char* argv[]) {
 	StatusCode status = SUCCESS;
-	ConfigIpi config = IpiDefaultConfig;
-	// ConfigIpi config = IpiInMemoryConfig;
+	// ConfigIpi config = IpiDefaultConfig;
+	ConfigIpi config = IpiInMemoryConfig;
 	// ConfigIpi config = IpiHighPerformanceConfig;
 	// ConfigIpi config = IpiLowMemoryConfig;
 	// ConfigIpi config = IpiBalancedConfig;

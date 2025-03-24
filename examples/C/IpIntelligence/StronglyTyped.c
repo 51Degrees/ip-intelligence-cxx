@@ -148,7 +148,7 @@ Ipv6 Address: 2001:4860:4860::8888
 
 static const char* dataDir = "ip-intelligence-data";
 
-static const char* dataFileName = "51Degrees-LiteV4.1.ipi";
+static const char* dataFileName = "51Degrees-LiteV41.ipi";
 
 static void printCoordinateValues(ResultsIpi* results) {
 	uint32_t i;

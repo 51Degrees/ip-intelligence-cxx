@@ -104,7 +104,7 @@ There are '1' countries in the data set with code 'gb'.
 
 static const char* dataDir = "ip-intelligence-data";
 
-static const char* dataFileName = "51Degrees-LiteV4.1.ipi";
+static const char* dataFileName = "51Degrees-LiteV41.ipi";
 
 /**
  * CHOOSE THE DEFAULT MEMORY CONFIGURATION BY UNCOMMENTING ONE OF THE FOLLOWING
