@@ -378,22 +378,67 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedBoolList(
 
 Common::Value<vector<WeightedValue<string>>>
 IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
-    int requiredPropertyIndex) {
+    const int requiredPropertyIndex) {
+
+    vector<WeightedValue<string>> values;
+    Common::Value<vector<WeightedValue<string>>> result;
+    stringstream stream;
+    iterateWeightedValues(
+        requiredPropertyIndex,
+        [this, &result](const fiftyoneDegreesResultsNoValueReason reason, const char * const reasonStr) {
+            result.setNoValueReason(reason, reasonStr);
+        },
+        [&values](const uint32_t count) {
+            values.reserve(count);
+        },
+        [&values, &stream](
+            const StoredBinaryValue * const binaryValue,
+            const PropertyValueType storedValueType,
+            const uint16_t rawWeighting,
+            Exception * const exception) {
+            WeightedValue<string> weightedString;
+            // Clear stream before the construction
+            stream.str("");
+            writeStoredBinaryValueToStringStream(
+                binaryValue,
+                storedValueType,
+                stream,
+                DefaultWktDecimalPlaces,
+                exception);
+            EXCEPTION_THROW;
+            weightedString.setValue(stream.str());
+            weightedString.setRawWeight(rawWeighting);
+            values.push_back(weightedString);
+        },
+        [&result, &values] {
+            result.setValue(values);
+        });
+    return result;
+}
+
+void IpIntelligence::ResultsIpi::iterateWeightedValues(
+    int requiredPropertyIndex,
+    const std::function<void(
+        fiftyoneDegreesResultsNoValueReason reason,
+        const char *reasonStr)>& onNoValue,
+    const std::function<void(uint32_t count)>& onValuesCount,
+    const std::function<void(
+        const StoredBinaryValue *binaryValue,
+        PropertyValueType storedValueType,
+        uint16_t rawWeighting,
+        Exception *exception)>& onEachValue,
+    const std::function<void()>& onAfterValues) {
+
     EXCEPTION_CREATE;
     uint32_t i;
-    const ProfilePercentage *valuesItems;
-    Common::Value<vector<WeightedValue<string>>> result;
-    vector<WeightedValue<string>> values;
     if (!(hasValuesInternal(requiredPropertyIndex)))
     {
         fiftyoneDegreesResultsNoValueReason reason =
 			getNoValueReasonInternal(requiredPropertyIndex);
-		result.setNoValueReason(
-			reason,
-			getNoValueMessageInternal(reason));
+		onNoValue(reason, getNoValueMessageInternal(reason));
     }
     else {
-        DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
+        const DataSetIpi * const dataSet = static_cast<DataSetIpi *>(results->b.dataSet);
         const uint32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
             dataSet->b.b.available,
             requiredPropertyIndex);
@@ -403,37 +448,31 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
             exception);
         EXCEPTION_THROW;
         // Get a pointer to the first value item for the property.
-        valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
+        const ProfilePercentage * const valuesItems = ResultsIpiGetValues(
+            results,
+            requiredPropertyIndex,
+            exception);
         EXCEPTION_THROW;
 
-        if (valuesItems == NULL) {
+        if (valuesItems == nullptr) {
             // No pointer to values was returned.
             throw NoValuesAvailableException();
         }
 
         // Set enough space in the vector for all the strings that will be
         // inserted.
-        values.reserve(results->values.count);
+        onValuesCount(results->values.count);
 
-        stringstream stream;
         // Add the values in their original form to the result.
         for (i = 0; i < results->values.count; i++) {
-            WeightedValue<string> weightedString;
-            // Clear stream before the construction
-            stream.str("");
-            writeStoredBinaryValueToStringStream(
-                (StoredBinaryValue*)valuesItems[i].item.data.ptr,
+            onEachValue(
+                reinterpret_cast<const StoredBinaryValue *>(valuesItems[i].item.data.ptr),
                 storedValueType,
-                stream,
-                DefaultWktDecimalPlaces,
+                valuesItems[i].rawWeighting,
                 exception);
-            weightedString.setValue(stream.str());
-            weightedString.setRawWeight(valuesItems[i].rawWeighting);
-            values.push_back(weightedString);
         }
-        result.setValue(values);
+        onAfterValues();
     }
-    return result;
 }
 
 Common::Value<vector<WeightedValue<string>>>
@@ -441,6 +480,71 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
     const char *propertyName) {
     return getValuesAsWeightedStringList(
         ResultsBase::getRequiredPropertyIndex(propertyName));
+}
+
+Common::Value<vector<WeightedValue<std::vector<uint8_t>>>>
+IpIntelligence::ResultsIpi::getValuesAsWeightedUTF8StringList(const string &propertyName) {
+    return getValuesAsWeightedUTF8StringList(
+        ResultsBase::getRequiredPropertyIndex(propertyName.c_str()));
+}
+
+Common::Value<vector<WeightedValue<std::vector<uint8_t>>>>
+IpIntelligence::ResultsIpi::getValuesAsWeightedUTF8StringList(
+    const char *propertyName) {
+    return getValuesAsWeightedUTF8StringList(
+        ResultsBase::getRequiredPropertyIndex(propertyName));
+}
+
+Common::Value<vector<WeightedValue<std::vector<uint8_t>>>>
+IpIntelligence::ResultsIpi::getValuesAsWeightedUTF8StringList(
+    int requiredPropertyIndex) {
+
+    vector<WeightedValue<std::vector<uint8_t>>> values;
+    Common::Value<vector<WeightedValue<std::vector<uint8_t>>>> result;
+    stringstream stream;
+    std::vector<uint8_t> byteVector;
+    iterateWeightedValues(
+        requiredPropertyIndex,
+        [this, &result](const fiftyoneDegreesResultsNoValueReason reason, const char * const reasonStr) {
+            result.setNoValueReason(reason, reasonStr);
+        },
+        [&values](const uint32_t count) {
+            values.reserve(count);
+        },
+        [&values, &stream, &byteVector](
+            const StoredBinaryValue * const binaryValue,
+            const PropertyValueType storedValueType,
+            const uint16_t rawWeighting,
+            Exception * const exception) {
+            WeightedValue<std::vector<uint8_t>> weightedByteVector;
+            if (storedValueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING) {
+                const String * const rawString = reinterpret_cast<const String *>(binaryValue);
+                byteVector.reserve(rawString->size);
+                const uint8_t * const firstByte = reinterpret_cast<const uint8_t *>(&rawString->value);
+                byteVector.assign(firstByte, firstByte + rawString->size);
+            } else {
+                // Clear stream before the construction
+                stream.str("");
+                writeStoredBinaryValueToStringStream(
+                    binaryValue,
+                    storedValueType,
+                    stream,
+                    DefaultWktDecimalPlaces,
+                    exception);
+                EXCEPTION_THROW;
+                const std::string valueAsString = stream.str();
+                byteVector.reserve(valueAsString.size());
+                const uint8_t * const firstByte = reinterpret_cast<const uint8_t *>(valueAsString.c_str());
+                byteVector.assign(firstByte, firstByte + valueAsString.size());
+            }
+            weightedByteVector.setValue(byteVector);
+            weightedByteVector.setRawWeight(rawWeighting);
+            values.push_back(weightedByteVector);
+        },
+        [&result, &values] {
+            result.setValue(values);
+        });
+    return result;
 }
 
 Common::Value<vector<WeightedValue<string>>>

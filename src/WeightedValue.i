@@ -35,7 +35,10 @@ public:
     void setRawWeight(uint16_t w);
 };
 
+%template(UTF8StringSwig) std::vector<uint8_t>;
+
 %template(WeightedValueStringSwig) WeightedValue<std::string>;
+%template(WeightedValueUTF8StringSwig) WeightedValue<std::vector<uint8_t>>;
 %template(WeightedValueBoolSwig) WeightedValue<bool>;
 %template(WeightedValueIntSwig) WeightedValue<int>;
 %template(WeightedValueDoubleSwig) WeightedValue<double>;

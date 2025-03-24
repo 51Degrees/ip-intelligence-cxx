@@ -29,6 +29,7 @@
 #include "WeightedValue.hpp"
 #include "common-cxx/IpAddress.hpp"
 #include "ipi.h"
+#include <functional>
 
 
 class EngineIpIntelligenceTests;
@@ -149,6 +150,38 @@ namespace FiftyoneDegrees {
 			 */
 			Common::Value<vector<WeightedValue<string>>>
 				getValuesAsWeightedStringList(const char *propertyName);
+
+			/**
+			 * Get a vector with all weighted string representations of the
+			 * values associated with the required property index. If the index
+			 * is not valid an empty vector is returned.
+			 * @param requiredPropertyIndex in the required properties
+			 * @return a vector of weighted string values for the property
+			 */
+			Common::Value<vector<WeightedValue<std::vector<uint8_t>>>>
+				getValuesAsWeightedUTF8StringList(int requiredPropertyIndex);
+
+			/**
+			 * Get a vector with all weighted byte vector representations of the
+			 * values associated with the required property name. If the name
+			 * is not valid an empty vector is returned.
+			 * @param propertyName pointer to a string containing the property
+			 * name
+			 * @return a vector of weighted byte vector values for the property
+			 */
+			Common::Value<vector<WeightedValue<std::vector<uint8_t>>>>
+				getValuesAsWeightedUTF8StringList(const char *propertyName);
+
+			/**
+			 * Get a vector with all weighted byte vector representations of the
+			 * values associated with the required property name. If the name
+			* is not valid an empty vector is returned.
+			 * @param propertyName pointer to a string containing the property
+			 * name
+			 * @return a vector of weighted byte vector values for the property
+			 */
+			Common::Value<vector<WeightedValue<std::vector<uint8_t>>>>
+				getValuesAsWeightedUTF8StringList(const string &propertyName);
 
 			/**
 			 * Get a vector with all weighted string representations of the 
@@ -408,6 +441,28 @@ namespace FiftyoneDegrees {
 			fiftyoneDegreesPropertyValueType getPropertyValueType(
 				int requiredPropertyIndex,
 				fiftyoneDegreesException *exception);
+
+			/**
+			 * Iterates over available values for the caller to populate results.
+			 * @param requiredPropertyIndex index in the required
+			 * properties list
+			 * @param onNoValue called if no values are available for property
+			 * @param onValuesCount called when values count is known and positive
+			 * @param onEachValue called for each value available
+			 * @param onAfterValues called after all values have been iterated successfully
+			 */
+			void iterateWeightedValues(
+				int requiredPropertyIndex,
+				const std::function<void(
+					fiftyoneDegreesResultsNoValueReason reason,
+					const char *reasonStr)>& onNoValue,
+				const std::function<void(uint32_t count)>& onValuesCount,
+				const std::function<void(
+					const fiftyoneDegreesStoredBinaryValue *binaryValue,
+					fiftyoneDegreesPropertyValueType storedValueType,
+					uint16_t rawWeighting,
+					fiftyoneDegreesException *exception)>& onEachValue,
+				const std::function<void()>& onAfterValues);
 
 			fiftyoneDegreesResultsIpi *results;
 		};

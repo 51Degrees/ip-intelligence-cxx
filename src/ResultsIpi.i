@@ -29,11 +29,13 @@
 %include "common-cxx/IpAddress.i"
 
 %template(WeightedStringListSwig) std::vector<WeightedValue<std::string>>;
+%template(WeightedUTF8StringListSwig) std::vector<WeightedValue<std::vector<uint8_t>>>;
 %template(WeightedBoolListSwig) std::vector<WeightedValue<bool>>;
 %template(WeightedIntListSwig) std::vector<WeightedValue<int>>;
 %template(WeightedDoubleListSwig) std::vector<WeightedValue<double>>;
 
 %template(WeightedStringListValueSwig) Value<std::vector<WeightedValue<std::string>>>;
+%template(WeightedUTF8StringListValueSwig) Value<std::vector<WeightedValue<std::vector<uint8_t>>>>;
 %template(WeightedBoolListValueSwig) Value<std::vector<WeightedValue<bool>>>;
 %template(WeightedIntListValueSwig) Value<std::vector<WeightedValue<int>>>;
 %template(WeightedDoubleListValueSwig) Value<std::vector<WeightedValue<double>>>;
@@ -50,6 +52,11 @@ public:
     Value<std::vector<WeightedValue<std::string>>> getValuesAsWeightedStringList(
         const std::string &propertyName);
     Value<std::vector<WeightedValue<std::string>>> getValuesAsWeightedStringList(
+        int requiredPropertyIndex);
+
+    Value<std::vector<WeightedValue<std::vector<uint8_t>>>> getValuesAsWeightedUTF8StringList(
+        const std::string &propertyName);
+    Value<std::vector<WeightedValue<std::vector<uint8_t>>>> getValuesAsWeightedUTF8StringList(
         int requiredPropertyIndex);
 
     Value<std::vector<WeightedValue<std::string>>> getValuesAsWeightedWKTStringList(
