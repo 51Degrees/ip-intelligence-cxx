@@ -1529,7 +1529,6 @@ void fiftyoneDegreesResultsIpiFree(fiftyoneDegreesResultsIpi* results) {
 static bool addResultsFromIpAddressNoChecks(
 	ResultsIpi* results,
 	const unsigned char* ipAddress,
-	size_t ipAddressLength,
 	fiftyoneDegreesIpType type,
 	fiftyoneDegreesException* exception) {
 	const DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
@@ -1601,7 +1600,6 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 	addResultsFromIpAddressNoChecks(
 		results,
 		ipAddress,
-		ipAddressLength,
 		type,
 		exception);
 }
@@ -1655,7 +1653,6 @@ static bool setResultsFromEvidence(
 	// We should not look further if a 
 	// result has already been found
 	if (results->count == 0) {
-		ResultIpi* result;
 		DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 		uint32_t curHeaderIndex = indexState->headerIndex;
 		int headerIndex = HeaderGetIndex(
@@ -1680,16 +1677,10 @@ static bool setResultsFromEvidence(
 				return false;
 			}
 
-			// Obtain the correct IP address
-			int ipLength = 
-				ipAddress.type == IP_TYPE_IPV4 ?
-				FIFTYONE_DEGREES_IPV4_LENGTH : 
-				FIFTYONE_DEGREES_IPV6_LENGTH;
 			// Configure the next result in the array of results.
 			addResultsFromIpAddressNoChecks(
 				results,
 				ipAddress.value,
-				IPV6_LENGTH,
 				ipAddress.type,
 				exception);
 		}
