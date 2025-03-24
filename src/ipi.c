@@ -235,7 +235,6 @@ FIFTYONE_DEGREES_CONFIG_USE_TEMP_FILE_DEFAULT
 
 static void resultIpiReset(ResultIpi* result) {
 	memset(result->targetIpAddress.value, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
-	result->targetIpAddress.length = 0;
 	result->targetIpAddress.type = IP_TYPE_INVALID;
 }
 
@@ -244,89 +243,75 @@ static int compareIpAddresses(
 	const byte* address2,
 	int length) {
 	for (int i = 0; i < length; i++) {
-		int difference = (int)address1[i] - (int)address2[i];
+		const int difference = (int)address1[i] - (int)address2[i];
 		if (difference != 0) return difference;
 	}
 	return 0;
 }
 
 static int compareToIpv4Range(
-	void* state,
-	Item* item,
+	const void * const state,
+	const Item* item,
 	long curIndex,
 	Exception* exception) {
 	int result = 0;
-	fiftyoneDegreesIpAddress target = *((fiftyoneDegreesIpAddress*)state);
-	if (target.length != FIFTYONE_DEGREES_IPV4_LENGTH)
-	{
-		// Length mismatched
-		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
-	}
-	else {
-		// We will terminate if IP address is within the range between the current item and the next item
-		int tempResult = compareIpAddresses(((Ipv4Range*)item->data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV4_LENGTH);
-		if (tempResult < 0) {
-			Item nextItem;
-			DataReset(&nextItem.data);
-			if ((uint32_t)curIndex + 1 < item->collection->count &&
-				item->collection->get(
-					item->collection,
-					++curIndex,
-					&nextItem,
-					exception) != NULL && EXCEPTION_OKAY) {
-				if (compareIpAddresses(((Ipv4Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV4_LENGTH) <= 0) {
-					result = -1;
-				}
-				COLLECTION_RELEASE(item->collection, &nextItem);
+	const fiftyoneDegreesIpAddress target = *((const fiftyoneDegreesIpAddress *)state);
+	// We will terminate if IP address is within the range between the current item and the next item
+	const int tempResult = compareIpAddresses(((Ipv4Range*)item->data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV4_LENGTH);
+	if (tempResult < 0) {
+		Item nextItem;
+		DataReset(&nextItem.data);
+		if ((uint32_t)curIndex + 1 < item->collection->count &&
+			item->collection->get(
+				item->collection,
+				++curIndex,
+				&nextItem,
+				exception) != NULL && EXCEPTION_OKAY) {
+			if (compareIpAddresses(((Ipv4Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV4_LENGTH) <= 0) {
+				result = -1;
 			}
-		}
-		else if (tempResult > 0 && curIndex > 0) {
-			// The IP address is out of range
-			// NOTE: If the current index is 0
-			// There is no more item lower so return the current
-			result = 1;
-		}
+			COLLECTION_RELEASE(item->collection, &nextItem);
+				}
+	}
+	else if (tempResult > 0 && curIndex > 0) {
+		// The IP address is out of range
+		// NOTE: If the current index is 0
+		// There is no more item lower so return the current
+		result = 1;
 	}
 	return result;
 }
 
 static int compareToIpv6Range(
-	void* state,
-	Item* item,
+	const void * const state,
+	const Item * const item,
 	long curIndex,
 	Exception* exception) {
 	int result = 0;
-	fiftyoneDegreesIpAddress target = *((fiftyoneDegreesIpAddress*)state);
-	if (target.length != FIFTYONE_DEGREES_IPV6_LENGTH)
-	{
-		// Length mismatched
-		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
-	}
-	else {
-		// We will terminate if IP address is within the range between the current item and the next item
-		int tempResult = compareIpAddresses(((Ipv6Range*)item->data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV6_LENGTH);
-		if (tempResult < 0) {
-			Item nextItem;
-			DataReset(&nextItem.data);
-			if ((uint32_t)curIndex + 1 < item->collection->count &&
-				item->collection->get(
-					item->collection,
-					++curIndex,
-					&nextItem,
-					exception) != NULL && EXCEPTION_OKAY) {
-				if (compareIpAddresses(((Ipv6Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV6_LENGTH) <= 0) {
-					// The IP address is not within the range
-					result = -1;
-				}
-				COLLECTION_RELEASE(item->collection, &nextItem);
+	const fiftyoneDegreesIpAddress target = *((fiftyoneDegreesIpAddress*)state);
+	// We will terminate if IP address is within the range between the current item and the next item
+	const int tempResult = compareIpAddresses(((Ipv6Range*)item->data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV6_LENGTH);
+	if (tempResult < 0) {
+		Item nextItem;
+		DataReset(&nextItem.data);
+		if ((uint32_t)curIndex + 1 < item->collection->count &&
+			item->collection->get(
+				item->collection,
+				++curIndex,
+				&nextItem,
+				exception) != NULL && EXCEPTION_OKAY) {
+			if (compareIpAddresses(((Ipv6Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV6_LENGTH) <= 0) {
+				// The IP address is not within the range
+				result = -1;
 			}
-		}
-		else if (tempResult > 0 && curIndex > 0) {
-			// The IP address is out of range
-			// NOTE: There is no more item lower
-			// so return the current
-			result = 1;
-		}
+			COLLECTION_RELEASE(item->collection, &nextItem);
+				}
+	}
+	else if (tempResult > 0 && curIndex > 0) {
+		// The IP address is out of range
+		// NOTE: There is no more item lower
+		// so return the current
+		result = 1;
 	}
 	return result;
 }
@@ -398,7 +383,7 @@ static long initGetHttpHeaderString(
 	void *state,
 	uint32_t index,
 	Item *nameItem) {
-	DataSetIpi *dataSet =
+	const DataSetIpi *dataSet =
 		(DataSetIpi*)((stateWithException*)state)->state;
 	Exception *exception = ((stateWithException*)state)->exception;
 	uint32_t i = 0, c = 0;
@@ -434,9 +419,9 @@ static String* initGetPropertyString(
 	String* name = NULL;
 	Item propertyItem;
 	Property* property;
-	DataSetIpi* dataSet = (DataSetIpi*)((stateWithException*)state)->state;
+	const DataSetIpi* dataSet = (DataSetIpi*)((stateWithException*)state)->state;
 	Exception* exception = ((stateWithException*)state)->exception;
-	uint32_t propertiesCount = CollectionGetCount(dataSet->properties);
+	const uint32_t propertiesCount = CollectionGetCount(dataSet->properties);
 	DataReset(&item->data);
 	if (index < propertiesCount) {
 		DataReset(&propertyItem.data);
@@ -506,7 +491,7 @@ static int findPropertyIndexByName(
 	Property *property;
 	String *propertyName;
 	Item propertyItem, nameItem;
-	int count = CollectionGetCount(properties);
+	const int count = CollectionGetCount(properties);
 	DataReset(&propertyItem.data);
 	DataReset(&nameItem.data);
 	for (index = 0; index < count && found == false; index++) {
@@ -543,12 +528,12 @@ static void initGetEvidencePropertyRelated(
 	Exception* exception) {
 	Property* property;
 	String* name;
-	String* availableName = (String*)availableProperty->name.data.ptr;
-	int requiredLength = ((int)strlen(suffix)) + availableName->size - 1;
+	const String* availableName = (String*)availableProperty->name.data.ptr;
+	const int requiredLength = ((int)strlen(suffix)) + availableName->size - 1;
 	Item propertyItem, nameItem;
 	DataReset(&propertyItem.data);
 	DataReset(&nameItem.data);
-	int propertiesCount = CollectionGetCount(dataSet->properties);
+	const int propertiesCount = CollectionGetCount(dataSet->properties);
 	for (int propertyIndex = 0; 
 		propertyIndex < propertiesCount && EXCEPTION_OKAY; 
 		propertyIndex++) {
@@ -841,13 +826,13 @@ static StatusCode initWithMemory(
 	}
 
 	// Create each of the collections.
-	uint32_t stringsCount = dataSet->header.strings.count;
+	const uint32_t stringsCount = dataSet->header.strings.count;
 	*(uint32_t*)(&dataSet->header.strings.count) = 0;
 	COLLECTION_CREATE_MEMORY(strings)
 	*(uint32_t*)(&dataSet->header.strings.count) = stringsCount;
 
 	// Override the header count so that the variable collection can work.
-	uint32_t componentCount = dataSet->header.components.count;
+	const uint32_t componentCount = dataSet->header.components.count;
 	*(uint32_t*)(&dataSet->header.components.count) = 0;
 	COLLECTION_CREATE_MEMORY(components)
 	*(uint32_t*)(&dataSet->header.components.count) = componentCount;
@@ -856,7 +841,7 @@ static StatusCode initWithMemory(
 	COLLECTION_CREATE_MEMORY(properties)
 	COLLECTION_CREATE_MEMORY(values)
 
-	uint32_t profileCount = dataSet->header.profiles.count;
+	const uint32_t profileCount = dataSet->header.profiles.count;
 	*(uint32_t*)(&dataSet->header.profiles.count) = 0;
 	COLLECTION_CREATE_MEMORY(profiles)
 	*(uint32_t*)(&dataSet->header.profiles.count) = profileCount;
@@ -959,13 +944,13 @@ static StatusCode readDataSetFromFile(
 	}
 
 	// Create the strings collection.
-	uint32_t stringsCount = dataSet->header.strings.count;
+	const uint32_t stringsCount = dataSet->header.strings.count;
 	*(uint32_t*)(&dataSet->header.strings.count) = 0;
 	COLLECTION_CREATE_FILE(strings, fiftyoneDegreesStoredBinaryValueRead);
 	*(uint32_t*)(&dataSet->header.strings.count) = stringsCount;
 
 	// Override the header count so that the variable collection can work.
-	uint32_t componentCount = dataSet->header.components.count;
+	const uint32_t componentCount = dataSet->header.components.count;
 	*(uint32_t*)(&dataSet->header.components.count) = 0;
 	COLLECTION_CREATE_FILE(components, fiftyoneDegreesComponentReadFromFile);
 	*(uint32_t*)(&dataSet->header.components.count) = componentCount;
@@ -974,7 +959,7 @@ static StatusCode readDataSetFromFile(
 	COLLECTION_CREATE_FILE(properties, CollectionReadFileFixed);
 	COLLECTION_CREATE_FILE(values, CollectionReadFileFixed);
 
-	uint32_t profileCount = dataSet->header.profiles.count;
+	const uint32_t profileCount = dataSet->header.profiles.count;
 	*(uint32_t*)(&dataSet->header.profiles.count) = 0;
 	COLLECTION_CREATE_FILE(profiles, fiftyoneDegreesProfileReadFromFile);
 	*(uint32_t*)(&dataSet->header.profiles.count) = profileCount;
@@ -1466,7 +1451,7 @@ static void addIpiListItem(
 	// Check if the list has reached its load factor
 	if ((float)(list->count / list->capacity) > list->loadFactor) {
 		// Get new capacity
-		uint32_t newCapacity =
+		const uint32_t newCapacity =
 			(uint32_t)ceilf(list->capacity * IPI_LIST_RESIZE_FACTOR);
 
 		extendIpiList(list, newCapacity);
@@ -1555,14 +1540,10 @@ static bool addResultsFromIpAddressNoChecks(
 			// We only get the exact length of ipv4
 			memset(nextResult->targetIpAddress.value, 0, IPV6_LENGTH);
 			memcpy(nextResult->targetIpAddress.value, ipAddress, IPV4_LENGTH);
-			// Make sure we only operate on the valid range
-			nextResult->targetIpAddress.length = IPV4_LENGTH;
 		}
 		else {
 			// We only get the exact length of ipv6
 			memcpy(nextResult->targetIpAddress.value, ipAddress, IPV6_LENGTH);
-			// Make sure we only operate on the valid range
-			nextResult->targetIpAddress.length = IPV6_LENGTH;
 		}
 
 		setResultFromIpAddress(
@@ -1646,16 +1627,16 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 static bool setResultsFromEvidence(
 	void* state,
 	EvidenceKeyValuePair* pair) {
-	stateWithUniqueHeaderIndex* indexState = (stateWithUniqueHeaderIndex*)state;
-	stateWithException* exceptionState = (stateWithException*)indexState->subState;
+	const stateWithUniqueHeaderIndex* indexState = (stateWithUniqueHeaderIndex*)state;
+	const stateWithException* exceptionState = (stateWithException*)indexState->subState;
 	ResultsIpi* results = (ResultsIpi*)exceptionState->state;
 	Exception* exception = exceptionState->exception;
 	// We should not look further if a 
 	// result has already been found
 	if (results->count == 0) {
-		DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
-		uint32_t curHeaderIndex = indexState->headerIndex;
-		int headerIndex = HeaderGetIndex(
+		const DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
+		const uint32_t curHeaderIndex = indexState->headerIndex;
+		const int headerIndex = HeaderGetIndex(
 			dataSet->b.b.uniqueHeaders,
 			pair->item.key,
 			pair->item.keyLength);
@@ -1759,12 +1740,12 @@ static bool addValueWithPercentage(void* state, Item* item) {
 	 * The percentage cannot be passed along with Item as this is the profile
 	 * standard in common-cxx. Thus the percentage is passed along with the state
 	 */
-	stateWithPercentage* percentageState = (stateWithPercentage*)((stateWithException*)state)->state;
+	const stateWithPercentage* percentageState = (stateWithPercentage*)((stateWithException*)state)->state;
 	ResultsIpi* results =
 		(ResultsIpi*)percentageState->subState;
 	Exception* exception = ((stateWithException*)state)->exception;
-	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
-	Value* value = (Value*)item->data.ptr;
+	const DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
+	const Value* value = (Value*)item->data.ptr;
 	if (value != NULL && results->values.count < results->values.capacity) {
 		PropertyValueType const storedValueType = PropertyGetStoredTypeByIndex(
 			dataSet->propertyTypes,
@@ -1866,9 +1847,9 @@ static uint32_t addValuesFromProfileGroup(
 	uint32_t profileGroupOffset,
 	Exception* exception) {
 	uint32_t count = 0;
-	offsetPercentage *weightedProfileOffset = NULL;
+	const offsetPercentage *weightedProfileOffset = NULL;
 	Item profileGroupItem;
-	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
+	const DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 
 	if (profileGroupOffset != NULL_PROFILE_OFFSET) {
 		DataReset(&profileGroupItem.data);
@@ -1975,7 +1956,7 @@ const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	fiftyoneDegreesException* const exception) {
 	Property* property;
 	DataSetIpi* dataSet;
-	ProfilePercentage* firstValue = NULL;
+	const ProfilePercentage* firstValue = NULL;
 
 	// Ensure any previous uses of the results to get values are released.
 	resultsIpiRelease(results);
@@ -1983,7 +1964,7 @@ const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	dataSet = (DataSetIpi*)results->b.dataSet;
 
 	// Work out the property index from the required property index.
-	uint32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
+	const uint32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
 		dataSet->b.b.available,
 		requiredPropertyIndex);
 
@@ -2111,7 +2092,7 @@ static bool resultGetHasValidPropertyValueOffset(
 							exception);
 					}
 				} else {
-					offsetPercentage *weightedProfileOffset =
+					const offsetPercentage *weightedProfileOffset =
 						(offsetPercentage*)dataSet->profileGroups->get(
 							dataSet->profileGroups,
 							result->graphResult.offset,
@@ -2142,7 +2123,7 @@ bool fiftyoneDegreesResultsIpiGetHasValues(
 	fiftyoneDegreesResultsIpi* results,
 	int requiredPropertyIndex,
 	fiftyoneDegreesException* exception) {
-	DataSetIpi *dataSet = (DataSetIpi*)results->b.dataSet;
+	const DataSetIpi *dataSet = (DataSetIpi*)results->b.dataSet;
 	// Ensure any previous uses of the results to get values are released.
 	resultsIpiRelease(results);
 
@@ -2178,7 +2159,7 @@ fiftyoneDegreesResultsNoValueReason fiftyoneDegreesResultsIpiGetNoValueReason(
 	fiftyoneDegreesResultsIpi* results,
 	int requiredPropertyIndex,
 	fiftyoneDegreesException* exception) {
-	DataSetIpi *dataSet = (DataSetIpi*)results->b.dataSet;
+	const DataSetIpi *dataSet = (DataSetIpi*)results->b.dataSet;
 	// Ensure any previous uses of the results to get values are released.
 	resultsIpiRelease(results);
 
@@ -2280,7 +2261,7 @@ static void fiftyoneDegreesResultsIpiGetValuesStringInternal(
 	const ProfilePercentage *profilePercentage;
 	Item propertyItem;
 	Property *property;
-	DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
+	const DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
 
 	const int propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
 		dataSet->b.b.available,

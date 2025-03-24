@@ -158,23 +158,51 @@ namespace FiftyoneDegrees {
 							= ipv4Address;
 					results = engine->process(evidence);
 					Common::Value<vector<WeightedValue<string>>> ipv4Value
-						= results->getValuesAsWeightedStringList("RegisteredCountry");
-					for (WeightedValue<string> w : ipv4Value.getValue()) {
+						= results->getValuesAsWeightedStringList("RegisteredName");
+					for (const WeightedValue<string>& w : ipv4Value.getValue()) {
+						cout << "   RegisteredName: " <<
+							w.getValue() <<
+							", Percentage: " <<
+							w.getWeight() * 100 << "%\n";
+					}
+					ipv4Value = results->getValuesAsWeightedStringList("RegisteredCountry");
+					for (const WeightedValue<string>& w : ipv4Value.getValue()) {
 						cout << "   Country Code: " <<
 							w.getValue() <<
 							", Percentage: " <<
 							w.getWeight() * 100 << "%\n";
 					}
 					ipv4Value = results->getValuesAsWeightedStringList("IpRangeStart");
-					for (WeightedValue<string> w : ipv4Value.getValue()) {
+					for (const WeightedValue<string>& w : ipv4Value.getValue()) {
 						cout << "   IpRangeStart: " <<
 							w.getValue() <<
 							", Percentage: " <<
 							w.getWeight() * 100 << "%\n";
 					}
 					ipv4Value = results->getValuesAsWeightedStringList("IpRangeEnd");
-					for (WeightedValue<string> w : ipv4Value.getValue()) {
+					for (const WeightedValue<string>& w : ipv4Value.getValue()) {
 						cout << "   IpRangeEnd: " <<
+							w.getValue() <<
+							", Percentage: " <<
+							w.getWeight() * 100 << "%\n";
+					}
+					ipv4Value = results->getValuesAsWeightedStringList("Latitude");
+					for (const WeightedValue<string>& w : ipv4Value.getValue()) {
+						cout << "   Latitude: " <<
+							w.getValue() <<
+							", Percentage: " <<
+							w.getWeight() * 100 << "%\n";
+					}
+					ipv4Value = results->getValuesAsWeightedStringList("Longitude");
+					for (const WeightedValue<string>& w : ipv4Value.getValue()) {
+						cout << "   Longitude: " <<
+							w.getValue() <<
+							", Percentage: " <<
+							w.getWeight() * 100 << "%\n";
+					}
+					ipv4Value = results->getValuesAsWeightedStringList("Areas");
+					for (const WeightedValue<string>& w : ipv4Value.getValue()) {
+						cout << "   Areas: " <<
 							w.getValue() <<
 							", Percentage: " <<
 							w.getWeight() * 100 << "%\n";
@@ -187,37 +215,44 @@ namespace FiftyoneDegrees {
 							= ipv6Address;
 					results = engine->process(evidence);
 					Common::Value<vector<WeightedValue<string>>> ipv6Value
-						= results->getValuesAsWeightedStringList("AccuracyRadius");
-					for (WeightedValue<string> w : ipv6Value.getValue()) {
-						cout << "   AccuracyRadius: " <<
+						= results->getValuesAsWeightedStringList("RegisteredName");
+					for (const WeightedValue<string>& w : ipv6Value.getValue()) {
+						cout << "   RegisteredName: " <<
 							w.getValue() <<
 							", Percentage: " <<
 							w.getWeight() * 100 << "%\n";
 					}
-					ipv6Value = results->getValuesAsWeightedStringList("Longitude");
-					for (WeightedValue<string> w : ipv6Value.getValue()) {
-						cout << "   Longitude: " <<
-							w.getValue() <<
-							", Percentage: " <<
-							w.getWeight() * 100 << "%\n";
-					}
-					ipv6Value = results->getValuesAsWeightedStringList("Latitude");
-					for (WeightedValue<string> w : ipv6Value.getValue()) {
-						cout << "   Latitude: " <<
+					ipv6Value = results->getValuesAsWeightedStringList("RegisteredCountry");
+					for (const WeightedValue<string>& w : ipv6Value.getValue()) {
+						cout << "   Country Code: " <<
 							w.getValue() <<
 							", Percentage: " <<
 							w.getWeight() * 100 << "%\n";
 					}
 					ipv6Value = results->getValuesAsWeightedStringList("IpRangeStart");
-					for (WeightedValue<string> w : ipv6Value.getValue()) {
+					for (const WeightedValue<string>& w : ipv6Value.getValue()) {
 						cout << "   IpRangeStart: " <<
 							w.getValue() <<
 							", Percentage: " <<
 							w.getWeight() * 100 << "%\n";
 					}
 					ipv6Value = results->getValuesAsWeightedStringList("IpRangeEnd");
-					for (WeightedValue<string> w : ipv6Value.getValue()) {
+					for (const WeightedValue<string>& w : ipv6Value.getValue()) {
 						cout << "   IpRangeEnd: " <<
+							w.getValue() <<
+							", Percentage: " <<
+							w.getWeight() * 100 << "%\n";
+					}
+					ipv6Value = results->getValuesAsWeightedStringList("Latitude");
+					for (const WeightedValue<string>& w : ipv6Value.getValue()) {
+						cout << "   Latitude: " <<
+							w.getValue() <<
+							", Percentage: " <<
+							w.getWeight() * 100 << "%\n";
+					}
+					ipv6Value = results->getValuesAsWeightedStringList("Longitude");
+					for (const WeightedValue<string>& w : ipv6Value.getValue()) {
+						cout << "   Longitude: " <<
 							w.getValue() <<
 							", Percentage: " <<
 							w.getWeight() * 100 << "%\n";

@@ -27,14 +27,14 @@ using namespace std;
 using namespace FiftyoneDegrees::IpIntelligence;
 
 ConfigIpi::ConfigIpi() : ConfigBase(&this->config.b) {
-	config = fiftyoneDegreesIpiDefaultConfig;
+	config = fiftyoneDegreesIpiInMemoryConfig;
 	initCollectionConfig();
 }
 
 ConfigIpi::ConfigIpi(fiftyoneDegreesConfigIpi *config) :
 	ConfigBase(&config->b) {
 	this->config = config != nullptr ?
-		*config : fiftyoneDegreesIpiBalancedConfig;
+		*config : fiftyoneDegreesIpiInMemoryConfig;
 	initCollectionConfig();
 }
 

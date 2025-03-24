@@ -27,9 +27,9 @@ using std::cout;
 using namespace FiftyoneDegrees;
 using namespace FiftyoneDegrees::Examples::IpIntelligence;
 
-const char *ExampleBase::ipv4Address = "185.28.167.77";
+const char *ExampleBase::ipv4Address = "116.154.188.222";
 
-const char *ExampleBase::ipv6Address = "64:ff9b::";
+const char *ExampleBase::ipv6Address = "2001:db8::";
 
 ExampleBase::ExampleBase(::byte *data, long length, FiftyoneDegrees::IpIntelligence::ConfigIpi *config) {
 	this->config = config;
@@ -46,7 +46,7 @@ ExampleBase::ExampleBase(string dataFilePath, FiftyoneDegrees::IpIntelligence::C
 	this->config = config;
 	
 	// Set the properties to be returned for each Ip Address.
-	string propertiesString = "IpRangeStart,IpRangeEnd,CountryCode,AccuracyRadius,RegisteredCountry,Longitude,Latitude";
+	string propertiesString = "IpRangeStart,IpRangeEnd,CountryCode,AccuracyRadius,RegisteredCountry,RegisteredName,Longitude,Latitude,Areas";
 	properties = new RequiredPropertiesConfig(propertiesString);
 
 	// Initialise the engine for ip intelligence.
