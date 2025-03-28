@@ -25,7 +25,7 @@
 #include "common-cxx/Exceptions.hpp"
 #include "constantsIpi.h"
 #include "fiftyone.h"
-#include "common-cxx/string.hpp"
+#include "common-cxx/string_pp.hpp"
 
 using namespace std;
 using namespace FiftyoneDegrees::Common;
