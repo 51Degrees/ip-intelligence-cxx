@@ -91,9 +91,10 @@ ValueMetaData* ValueMetaDataCollectionForPropertyIpi::getByKey(
 }
 
 uint32_t ValueMetaDataCollectionForPropertyIpi::getSize() const {
-	return (int)getProperty()->firstValueIndex == -1 ?
+	const Property* const property = getProperty();
+	return (int)property->firstValueIndex == -1 ?
 		0 :
-		getProperty()->lastValueIndex - getProperty()->firstValueIndex + 1;
+		property->lastValueIndex - property->firstValueIndex + 1;
 }
 
 fiftyoneDegreesProperty* ValueMetaDataCollectionForPropertyIpi::getProperty()
