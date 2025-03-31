@@ -1847,18 +1847,19 @@ static uint32_t addValuesFromProfileGroup(
 	uint32_t profileGroupOffset,
 	Exception* exception) {
 	uint32_t count = 0;
-	const offsetPercentage *weightedProfileOffset = NULL;
 	Item profileGroupItem;
 	const DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 
 	if (profileGroupOffset != NULL_PROFILE_OFFSET) {
 		DataReset(&profileGroupItem.data);
-		weightedProfileOffset = (offsetPercentage*)dataSet->profileGroups->get(
+		const offsetPercentage* const firstWeightedProfileOffset = (offsetPercentage*)dataSet->profileGroups->get(
 			dataSet->profileGroups,
 			profileGroupOffset,
 			&profileGroupItem,
 			exception);
-		if (weightedProfileOffset != NULL && EXCEPTION_OKAY) {
+		if (firstWeightedProfileOffset != NULL && EXCEPTION_OKAY) {
+			// FIXME: Do not rely on pointer arithmetic -- collection could be 'File'
+			const offsetPercentage *weightedProfileOffset = firstWeightedProfileOffset;
 			for (uint32_t totalWeight = 0;
 				totalWeight < FULL_RAW_WEIGHTING;
 				++weightedProfileOffset) {
