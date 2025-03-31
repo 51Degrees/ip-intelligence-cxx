@@ -520,8 +520,15 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedUTF8StringList(
             if (storedValueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING) {
                 const String * const rawString = reinterpret_cast<const String *>(binaryValue);
                 byteVector.reserve(rawString->size);
-                const uint8_t * const firstByte = reinterpret_cast<const uint8_t *>(&rawString->value);
-                byteVector.assign(firstByte, firstByte + rawString->size);
+                if (rawString->size) {
+                    const uint8_t * const firstByte = reinterpret_cast<const uint8_t *>(&rawString->value);
+                    const uint8_t * pastLastByte = firstByte + rawString->size;
+                    // strip NUL-terminator
+                    if (!*(pastLastByte - 1)) {
+                        --pastLastByte;
+                    }
+                    byteVector.assign(firstByte, pastLastByte);
+                }
             } else {
                 // Clear stream before the construction
                 stream.str("");
