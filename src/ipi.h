@@ -571,7 +571,7 @@ EXTERNAL size_t fiftyoneDegreesIpiSizeManagerFromMemory(
 	fiftyoneDegreesConfigIpi* config,
 	fiftyoneDegreesPropertiesRequired* properties,
 	void* memory,
-	long size,
+	fiftyoneDegreesFileOffset size,
 	fiftyoneDegreesException* exception);
 
 /**

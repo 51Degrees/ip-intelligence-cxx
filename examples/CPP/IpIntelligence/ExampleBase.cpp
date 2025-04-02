@@ -31,7 +31,7 @@ const char *ExampleBase::ipv4Address = "116.154.188.222";
 
 const char *ExampleBase::ipv6Address = "2001:db8::";
 
-ExampleBase::ExampleBase(::byte *data, long length, FiftyoneDegrees::IpIntelligence::ConfigIpi *config) {
+ExampleBase::ExampleBase(::byte *data, FileOffset length, FiftyoneDegrees::IpIntelligence::ConfigIpi *config) {
 	this->config = config;
 	
 	// Set the properties to be returned for each Ip Address.

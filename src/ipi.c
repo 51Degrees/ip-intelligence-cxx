@@ -1303,7 +1303,7 @@ size_t fiftyoneDegreesIpiSizeManagerFromMemory(
 	fiftyoneDegreesConfigIpi* config,
 	fiftyoneDegreesPropertiesRequired* properties,
 	void* memory,
-	long size,
+	FileOffset size,
 	fiftyoneDegreesException* exception) {
 	size_t allocated;
 	ResourceManager manager;

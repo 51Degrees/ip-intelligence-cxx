@@ -25,6 +25,7 @@
 #include <thread>
 #include "../../../src/EngineIpi.hpp"
 #include "ExampleBase.hpp"
+#include "../../../src/common-cxx/fiftyone.h"
 
 using namespace std;
 using namespace FiftyoneDegrees::Common;
@@ -116,7 +117,7 @@ namespace FiftyoneDegrees {
 				 */
 				ReloadFromMemory(
 					::byte* data,
-					long length,
+					FileOffset length,
 					string ipAddressFilePath,
 					ConfigIpi *config)
 					: ExampleBase(data, length, config) {
