@@ -175,7 +175,7 @@ namespace FiftyoneDegrees {
 			private:
 				string ipAddressFilePath;
 				::byte *data;
-				long length;
+				FileOffset length;
 			};
 		}
 	}
