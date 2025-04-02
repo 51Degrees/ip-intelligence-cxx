@@ -663,7 +663,7 @@ EXTERNAL fiftyoneDegreesStatusCode fiftyoneDegreesIpiReloadManagerFromFile(
 EXTERNAL fiftyoneDegreesStatusCode fiftyoneDegreesIpiReloadManagerFromMemory(
 	fiftyoneDegreesResourceManager* manager,
 	void* source,
-	long length,
+	fiftyoneDegreesFileOffset length,
 	fiftyoneDegreesException* exception);
 
 /**

@@ -210,9 +210,9 @@ namespace FiftyoneDegrees {
 
 			void refreshData(const char *fileName) const override;
 
-			void refreshData(void *data, long length) const override;
+			void refreshData(void *data, fiftyoneDegreesFileOffset length) const override;
 
-			void refreshData(unsigned char data[], long length) const override;
+			void refreshData(unsigned char data[], fiftyoneDegreesFileOffset length) const override;
 
 			ResultsBase* processBase(EvidenceBase *evidence) const override;
 

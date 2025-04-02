@@ -1225,7 +1225,7 @@ static StatusCode initDataSetFromMemory(
 	const void* configBase,
 	PropertiesRequired* properties,
 	void* memory,
-	long size,
+	FileOffset size,
 	Exception* exception) {
 	StatusCode status = SUCCESS;
 	MemoryReader reader;

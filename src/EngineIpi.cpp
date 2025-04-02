@@ -193,7 +193,7 @@ void EngineIpi::refreshData(const char *fileName) const {
 	EXCEPTION_THROW;
 }
 
-void EngineIpi::refreshData(void *data, long length) const {
+void EngineIpi::refreshData(void *data, fiftyoneDegreesFileOffset length) const {
 	EXCEPTION_CREATE;
 	void *dataCopy = copyData(data, length);
 	StatusCode status = IpiReloadManagerFromMemory(
@@ -209,7 +209,7 @@ void EngineIpi::refreshData(void *data, long length) const {
 
 void EngineIpi::refreshData(
 	unsigned char data[], 
-	long length) const {
+	FileOffset length) const {
 	refreshData((void*)data, length);
 }
 
