@@ -597,7 +597,7 @@ EXTERNAL fiftyoneDegreesStatusCode fiftyoneDegreesIpiInitManagerFromMemory(
 	fiftyoneDegreesConfigIpi* config,
 	fiftyoneDegreesPropertiesRequired* properties,
 	void* memory,
-	long size,
+	fiftyoneDegreesFileOffset size,
 	fiftyoneDegreesException* exception);
 
 /**

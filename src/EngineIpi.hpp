@@ -245,7 +245,7 @@ namespace FiftyoneDegrees {
 
 			void init();
 
-			void* copyData(void *data, size_t length) const;
+			void* copyData(void *data, fiftyoneDegreesFileOffset length) const;
 		};
 	}
 }

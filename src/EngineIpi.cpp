@@ -96,7 +96,7 @@ void EngineIpi::init() {
 	DataSetIpiRelease(dataSet);
 }
 
-void* EngineIpi::copyData(void *data, size_t length) const {
+void* EngineIpi::copyData(void *data, FileOffset length) const {
 	void *dataCopy = (void*)Malloc(length);
 	if (dataCopy == nullptr) {
 		throw StatusCodeException(INSUFFICIENT_MEMORY);

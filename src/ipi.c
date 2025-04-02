@@ -1272,7 +1272,7 @@ fiftyoneDegreesStatusCode fiftyoneDegreesIpiInitManagerFromMemory(
 	fiftyoneDegreesConfigIpi* config,
 	fiftyoneDegreesPropertiesRequired* properties,
 	void* memory,
-	long size,
+	FileOffset size,
 	fiftyoneDegreesException* exception) {
 	DataSetIpi* dataSet = (DataSetIpi*)Malloc(sizeof(DataSetIpi));
 	if (dataSet == NULL) {
