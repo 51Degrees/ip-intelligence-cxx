@@ -141,7 +141,7 @@ namespace FiftyoneDegrees {
 			 */
 			EngineIpi(
 				void *data,
-				long length,
+				fiftyoneDegreesFileOffset length,
 				ConfigIpi *config,
 				RequiredPropertiesConfig *properties);
 
@@ -154,7 +154,7 @@ namespace FiftyoneDegrees {
 			 */
 			EngineIpi(
 				unsigned char data[],
-				long length,
+				fiftyoneDegreesFileOffset length,
 				ConfigIpi *config,
 				RequiredPropertiesConfig *properties);
 

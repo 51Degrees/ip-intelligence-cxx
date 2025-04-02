@@ -57,7 +57,7 @@ EngineIpi::EngineIpi(
 
 EngineIpi::EngineIpi(
 	void *data,
-	long length,
+	FileOffset length,
 	IpIntelligence::ConfigIpi *config,
 	Common::RequiredPropertiesConfig *properties) 
 	: EngineBase(config, properties) {
@@ -83,7 +83,7 @@ EngineIpi::EngineIpi(
 
 EngineIpi::EngineIpi(
 	unsigned char data[],
-	long length,
+	FileOffset length,
 	IpIntelligence::ConfigIpi *config,
 	Common::RequiredPropertiesConfig *properties)
 	: EngineIpi((void*)data, length, config, properties) {
@@ -96,7 +96,7 @@ void EngineIpi::init() {
 	DataSetIpiRelease(dataSet);
 }
 
-void* EngineIpi::copyData(void *data, FileOffset length) const {
+void* EngineIpi::copyData(void * const data, const FileOffset length) const {
 	if (length < 0) {
 		throw StatusCodeException(INVALID_INPUT);
 	} else if ((uint64_t)length > (uint64_t)SIZE_MAX) {
