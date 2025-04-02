@@ -97,11 +97,17 @@ void EngineIpi::init() {
 }
 
 void* EngineIpi::copyData(void *data, FileOffset length) const {
-	void *dataCopy = (void*)Malloc(length);
+	if (length < 0) {
+		throw StatusCodeException(INVALID_INPUT);
+	} else if ((uint64_t)length > (uint64_t)SIZE_MAX) {
+		throw StatusCodeException(FILE_TOO_LARGE);
+	}
+	const size_t lengthAsSize = (size_t)length;
+	void *dataCopy = (void*)Malloc(lengthAsSize);
 	if (dataCopy == nullptr) {
 		throw StatusCodeException(INSUFFICIENT_MEMORY);
 	}
-	memcpy(dataCopy, data, length);
+	memcpy(dataCopy, data, lengthAsSize);
 	return dataCopy;
 }
 
