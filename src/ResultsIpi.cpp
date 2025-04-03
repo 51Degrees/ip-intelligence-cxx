@@ -65,11 +65,10 @@ IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<
     EXCEPTION_CREATE;
 	uint32_t i;
 	const ProfilePercentage *valuesItems;
-	fiftyoneDegreesPropertyValueType valueType;
 
     // We should not have any undefined data type in the data file
     // If there is, the data file is not good to use so terminates.
-    valueType = getPropertyValueType(requiredPropertyIndex, exception);
+    getPropertyValueType(requiredPropertyIndex, exception);
     EXCEPTION_THROW;
 
 	// Get a pointer to the first value item for the property.
@@ -166,8 +165,7 @@ IpIntelligence::ResultsIpi::getValueAsIpAddress(int requiredPropertyIndex) {
 			getNoValueMessageInternal(reason));
     }
     else {
-        fiftyoneDegreesPropertyValueType valueType = 
-            getPropertyValueType(requiredPropertyIndex, exception);
+        getPropertyValueType(requiredPropertyIndex, exception);
         if (EXCEPTION_OKAY) {
             const DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
             const int propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
@@ -313,8 +311,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedBoolList(
 			getNoValueMessageInternal(reason));
     }
     else {
-        fiftyoneDegreesPropertyValueType valueType = 
-            getPropertyValueType(requiredPropertyIndex, exception);
+        getPropertyValueType(requiredPropertyIndex, exception);
         if (EXCEPTION_OKAY) {
             // Get a pointer to the first value item for the property.
             valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
@@ -586,8 +583,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList(
 			getNoValueMessageInternal(reason));
     }
     else {
-        fiftyoneDegreesPropertyValueType valueType =
-            getPropertyValueType(requiredPropertyIndex, exception);
+        getPropertyValueType(requiredPropertyIndex, exception);
         if (EXCEPTION_OKAY) {
             // Get a pointer to the first value item for the property.
             valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
@@ -670,8 +666,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedIntegerList(
 			getNoValueMessageInternal(reason));
     }
     else {
-        fiftyoneDegreesPropertyValueType valueType = 
-            getPropertyValueType(requiredPropertyIndex, exception);
+        getPropertyValueType(requiredPropertyIndex, exception);
         if (EXCEPTION_OKAY) {
             // Get a pointer to the first value item for the property.
             valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
@@ -750,8 +745,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedDoubleList(
 			getNoValueMessageInternal(reason));
     }
     else {
-        fiftyoneDegreesPropertyValueType valueType = 
-            getPropertyValueType(requiredPropertyIndex, exception);
+        getPropertyValueType(requiredPropertyIndex, exception);
         if (EXCEPTION_OKAY) {
             // Get a pointer to the first value item for the property.
             valuesItems = ResultsIpiGetValues(results, requiredPropertyIndex, exception);
