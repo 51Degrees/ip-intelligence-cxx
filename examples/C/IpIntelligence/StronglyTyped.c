@@ -247,7 +247,7 @@ void fiftyoneDegreesIpiStronglyTyped(
 
 int main(int argc, char* argv[]) {
 	StatusCode status = SUCCESS;
-	ConfigIpi config = IpiDefaultConfig;
+	ConfigIpi config = IpiInMemoryConfig;
 	char dataFilePath[FILE_MAX_PATH];
 	if (argc > 1) {
 		strcpy(dataFilePath, argv[1]);

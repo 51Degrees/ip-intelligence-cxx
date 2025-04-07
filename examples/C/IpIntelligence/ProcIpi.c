@@ -130,7 +130,7 @@ int fiftyoneDegreesProcIpiRun(
 int main(int argc, char* argv[]) {
 	char dataFilePath[FILE_MAX_PATH];
 	StatusCode status = SUCCESS;
-	ConfigIpi config = fiftyoneDegreesIpiDefaultConfig;
+	ConfigIpi config = fiftyoneDegreesIpiInMemoryConfig;
 	if (argc > 1) {
 		strcpy(dataFilePath, argv[1]);
 	}

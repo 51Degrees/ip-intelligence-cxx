@@ -108,7 +108,7 @@ typedef struct performanceConfig_t {
  */
 performanceConfig performanceConfigs[] = {
 	{ &IpiInMemoryConfig, false },
-	{ &IpiInMemoryConfig, true },
+	// { &IpiInMemoryConfig, true },
 };
 
 /**
@@ -734,11 +734,6 @@ void fiftyoneDegreesIpiPerformance(
 		// evaluation for core device detection.
 		performanceConfig config = performanceConfigs[i];
 		//config.config->b.processSpecialEvidence = false;
-		{
-			// IGNORE FILE READING ERROR (allocated size mismatch)
-			// TODO: Remove this section
-			config.config->b.allInMemory = false;
-		}
 
 		if (CollectionGetIsMemoryOnly() == false ||
 			config.config->b.allInMemory == true) {

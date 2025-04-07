@@ -126,9 +126,9 @@ static const char* ipAddressFileName = "evidence.yml";
  * MACROS.
  */
 
-// #define CONFIG fiftyoneDegreesIpiInMemoryConfig
+#define CONFIG fiftyoneDegreesIpiInMemoryConfig
 // #define CONFIG fiftyoneDegreesIpiHighPerformanceConfig
-#define CONFIG fiftyoneDegreesIpiLowMemoryConfig
+// #define CONFIG fiftyoneDegreesIpiLowMemoryConfig
 // #define CONFIG fiftyoneDegreesIpiBalancedConfig
 // #define CONFIG fiftyoneDegreesIpiBalancedTempConfig
 

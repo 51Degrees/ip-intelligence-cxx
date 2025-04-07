@@ -57,10 +57,10 @@ static char valueBuffer[1024] = "";
  * MACROS.
  */
 
-// #define CONFIG fiftyoneDegreesIpiInMemoryConfig
+#define CONFIG fiftyoneDegreesIpiInMemoryConfig
 // #define CONFIG fiftyoneDegreesIpiHighPerformanceConfig
 // #define CONFIG fiftyoneDegreesIpiLowMemoryConfig
-#define CONFIG fiftyoneDegreesIpiBalancedConfig
+// #define CONFIG fiftyoneDegreesIpiBalancedConfig
 // #define CONFIG fiftyoneDegreesIpiBalancedTempConfig
 
 /**

@@ -139,9 +139,9 @@ static const char *ipAddressFileName = "evidence.yml";
  * MACROS.
  */
 
-// #define CONFIG fiftyoneDegreesIpiInMemoryConfig
+#define CONFIG fiftyoneDegreesIpiInMemoryConfig
 // #define CONFIG fiftyoneDegreesIpiHighPerformanceConfig
-#define CONFIG fiftyoneDegreesIpiLowMemoryConfig
+// #define CONFIG fiftyoneDegreesIpiLowMemoryConfig
 // #define CONFIG fiftyoneDegreesIpiBalancedConfig
 // #define CONFIG fiftyoneDegreesIpiBalancedTempConfig
 
@@ -459,7 +459,7 @@ int main(int argc, char* argv[]) {
 	fiftyoneDegreesIpiReloadFromMemoryRun(
 		dataFilePath,
 		ipAddressFilePath,
-		argc > 3 ? argv[3] : "name",
+		argc > 3 ? argv[3] : "RegisteredName",
 		CONFIG);
 
 #ifdef _DEBUG
