@@ -148,7 +148,7 @@ namespace FiftyoneDegrees {
 #ifdef _MSC_VER
 							Sleep(2000); // milliseconds
 #else
-							usleep(20000000); // microseconds
+							usleep(2000000); // microseconds
 #endif
 						}
 						state.joinThreads();
