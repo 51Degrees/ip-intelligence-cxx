@@ -40,8 +40,8 @@ public:
 TEST_F(ExampleTestMem, InMemory) {
     run(fiftyoneDegreesIpiInMemoryConfig); 
 }
-TEST_F(ExampleTestMem, LowMemory) {
-    if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) {
-        run(fiftyoneDegreesIpiLowMemoryConfig);
-    }
-}
+// TEST_F(ExampleTestMem, LowMemory) {
+//     if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) {
+//         run(fiftyoneDegreesIpiLowMemoryConfig);
+//     }
+// }

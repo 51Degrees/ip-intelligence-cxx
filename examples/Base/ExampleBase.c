@@ -256,3 +256,41 @@ void fiftyoneDegreesEvidenceFileIterate(
 		&callbackState,
 		yamlCallback);
 }
+
+void fiftyoneDegreesEvidenceFileIterateWithLimit(
+	const char * const fileName,
+	char * const buffer,
+	const int length,
+	int limit,
+	void * const state,
+	void(* const callback)(const char*, void *)) {
+
+	// Allocate working memory for iterating over the YAML evidence source.
+	char evidenceBuffer[MAX_EVIDENCE * (SIZE_OF_KEY + SIZE_OF_VALUE)];
+	KeyValuePair pair[MAX_EVIDENCE];
+	char key[MAX_EVIDENCE][SIZE_OF_KEY];
+	char value[MAX_EVIDENCE][SIZE_OF_VALUE];
+	for (int i = 0; i < MAX_EVIDENCE; i++) {
+		pair[i].key = key[i];
+		pair[i].keyLength = SIZE_OF_KEY;
+		pair[i].value = value[i];
+		pair[i].valueLength = SIZE_OF_VALUE;
+	}
+
+	YamlCallbackState callbackState = {
+		buffer,
+		length,
+		state,
+		callback,
+	};
+
+	YamlFileIterateWithLimit(
+		fileName,
+		evidenceBuffer,
+		sizeof(evidenceBuffer),
+		pair,
+		MAX_EVIDENCE,
+		limit,
+		&callbackState,
+		yamlCallback);
+}

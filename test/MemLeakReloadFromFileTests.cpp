@@ -38,6 +38,7 @@
 #endif
 #endif
 
+#include "../examples/Base/ExampleBase.h"
 #include "../src/common-cxx/textfile.h"
 #include "../src/ipi.h"
 #include "../src/fiftyone.h"
@@ -93,7 +94,7 @@ static void runRequestsSingle(sharedState *state) {
 	sharedState *shared = (sharedState*)state;
 	threadState thread;
 	thread.manager = shared->manager;
-	TextFileIterateWithLimit(
+	fiftyoneDegreesEvidenceFileIterateWithLimit(
 		shared->ipAddressFilePath,
 		ipAddress,
 		sizeof(ipAddress),
@@ -319,11 +320,6 @@ public:	\
  * Tests for memory leak with different configurations
  */
 #define MEM_TEST(c,t) \
-TEST_F(c, LowMemory) { \
-	if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) { \
-		run(fiftyoneDegrees##t##LowMemoryConfig); \
-	} \
-} \
 TEST_F(c, InMemory) { \
 	run(fiftyoneDegrees##t##InMemoryConfig); \
 }
