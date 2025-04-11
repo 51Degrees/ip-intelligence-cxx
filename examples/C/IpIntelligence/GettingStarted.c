@@ -138,7 +138,7 @@ static const char* dataDir = "ip-intelligence-data";
 
 static const char* dataFileName = "51Degrees-LiteV41.ipi";
 
-static char valueBuffer[1024] = "";
+static char valueBuffer[4096] = "";
 
 static const char* getPropertyValueAsString(
 	ResultsIpi* results,
