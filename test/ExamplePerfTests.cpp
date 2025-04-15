@@ -31,7 +31,7 @@ public:
 
         fiftyoneDegreesPerfIpiRun(
             dataFilePath.c_str(),
-            ipAddressFilePath.c_str(),
+            evidenceFilePath.c_str(),
             config);
 
         // Don't print the stdout

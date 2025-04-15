@@ -94,7 +94,7 @@ static void runRequestsSingle(sharedState *state) {
 	sharedState *shared = (sharedState*)state;
 	threadState thread;
 	thread.manager = shared->manager;
-	fiftyoneDegreesEvidenceFileIterateWithLimit(
+	TextFileIterateWithLimit(
 		shared->ipAddressFilePath,
 		ipAddress,
 		sizeof(ipAddress),

@@ -36,7 +36,7 @@ EngineIpi::EngineIpi(
 	EXCEPTION_CREATE;
 	StatusCode status = IpiInitManagerFromFile(
 		manager.get(),
-		config->getConfig(),
+		&config->getConfig(),
 		properties ? properties->getConfig() : nullptr,
 		fileName,
 		exception);
@@ -64,12 +64,12 @@ EngineIpi::EngineIpi(
 	EXCEPTION_CREATE;
 
 	// Copy the data and hand the responsibility for cleaning up to the C layer
-	config->getConfig()->b.freeData = true;
+	config->getConfig().b.freeData = true;
 	void *dataCopy = copyData(data, length);
 
 	StatusCode status = IpiInitManagerFromMemory(
 		manager.get(),
-		config->getConfig(),
+		&config->getConfig(),
 		properties->getConfig(),
 		dataCopy,
 		(size_t)length,

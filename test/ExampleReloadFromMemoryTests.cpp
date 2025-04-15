@@ -31,7 +31,7 @@ public:
 
         fiftyoneDegreesIpiReloadFromMemoryRun(
             dataFilePath.c_str(),
-            ipAddressFilePath.c_str(),
+            evidenceFilePath.c_str(),
             requiredProperties, config);
 
         // Check the results.

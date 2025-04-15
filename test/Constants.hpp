@@ -9,7 +9,9 @@ const static int _IpiFileNamesLength = 1;
 
 const static char _IpiProduct[] = "IPIV41";
 
-const static char _ipAddressesFileName[] = "evidence.yml";
+const static char _ipAddressesFileName[] = "evidence.csv";
+
+const static char _evidenceFileName[] = "evidence.yml";
 
 const static char* _fileTypes[] = {"Lite"};
 

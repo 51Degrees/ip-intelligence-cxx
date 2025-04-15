@@ -143,49 +143,66 @@ namespace FiftyoneDegrees {
 			 * Get the configuration for the strings collection.
 			 * @return strings collection configuration
 			 */
-			CollectionConfig getStrings();
+			const CollectionConfig &getStrings() const;
 
+			/**
+			 * Get the configuration for the components collection.
+			 * @return components collection configuration
+			 */
+			const CollectionConfig &getComponents() const;
+
+			/**
+			 * Get the configuration for the maps collection.
+			 * @return maps collection configuration
+			 */
+			const CollectionConfig &getMaps() const;
 			/**
 			 * Get the configuration for the properties collection.
 			 * @return properties collection configuration
 			 */
-			CollectionConfig getProperties();
+			const CollectionConfig &getProperties() const;
 
 			/**
 			 * Get the configuration for the values collection.
 			 * @return values collection configuration
 			 */
-			CollectionConfig getValues();
+			const CollectionConfig &getValues() const;
 
 			/**
 			 * Get the configuration for the profiles collection.
 			 * @return profiles collection configuration
 			 */
-			CollectionConfig getProfiles();
+			const CollectionConfig &getProfiles() const;
 
 			/**
-			 * Get the configuration for the ipv4Graph collection.
-			 * @return ipv4 ranges collection configuration
+			 * Get the configuration for the graphs collection.
+			 * @return graphs collection configuration
 			 */
-			CollectionConfig getIpv4Ranges();
+			const CollectionConfig &getGraphs() const;
 
 			/**
-			 * Get the configuration for the ipv6Graph collection.
-			 * @return ipv6 ranges collection configuration
+			 * Get the configuration for the profile groups collection.
+			 * @return profile groups collection configuration
 			 */
-			CollectionConfig getIpv6Ranges();
-
-			/**
-			 * Get the configuration for the profilesCombinations collection.
-			 * @return profiles combinations collection configuration
-			 */
-			CollectionConfig getProfileCombinations();
+			const CollectionConfig &getProfileGroups() const;
 
 			/**
 			 * Get the configuration for the profile offsets collection.
 			 * @return profile offsets collection configuration
 			 */
-			CollectionConfig getProfileOffsets();
+			const CollectionConfig &getProfileOffsets() const;
+
+			/**
+			 * Get the configuration for the property types collection.
+			 * @return property types collection configuration
+			 */
+			const CollectionConfig &getPropertyTypes() const;
+
+			/**
+			 * Get the configuration for the graph collection.
+			 * @return graph collection configuration
+			 */
+			const CollectionConfig &getGraph() const;
 
 			/**
 			 * Get the lowest concurrency value in the list of possible
@@ -200,7 +217,7 @@ namespace FiftyoneDegrees {
 			  * @return pointer to the underlying configuration data
 			  * structure.
 			  */
-			fiftyoneDegreesConfigIpi* getConfig();
+			fiftyoneDegreesConfigIpi &getConfig();
 
 			/** 
 			 * @}
@@ -212,6 +229,12 @@ namespace FiftyoneDegrees {
 			/** The underlying strings configuration structure */
 			CollectionConfig strings;
 
+			/** The underlying components configuration structure */
+			CollectionConfig components;
+
+			/** The underlying data set maps configuration structure */
+			CollectionConfig maps;
+
 			/** The underlying properties configuration structure */
 			CollectionConfig properties;
 
@@ -221,23 +244,20 @@ namespace FiftyoneDegrees {
 			/** The underlying profiles configuration structure */
 			CollectionConfig profiles;
 
-			/** The records that form an individual graph */
-			CollectionConfig graph;
-
 			/** The information about each of the available graphs */
 			CollectionConfig graphs;
 
-			/** The underlying profile combinations configuration structure */
-			CollectionConfig profileCombinations;
+			/** The underlying profile groups configuration structure */
+			CollectionConfig profileGroups;
 
 			/** The underlying profile offsets configuration structure */
 			CollectionConfig profileOffsets;
 
-			/** The underlying data set maps configuration structure */
-			CollectionConfig maps;
+			/** The underlying property types configuration structure */
+			CollectionConfig propertyTypes;
 
-			/** The underlying components configuration structure */
-			CollectionConfig components;
+			/** The records that form an individual graph */
+			CollectionConfig graph;
 
 			/**
 			 * Initialise the collection configurations by creating
@@ -251,7 +271,7 @@ namespace FiftyoneDegrees {
 			 * performance profile from
 			 */
 			void setPerformanceFromExistingConfig(
-				fiftyoneDegreesConfigIpi *existing);
+				const fiftyoneDegreesConfigIpi &existing);
 		};
 	}
 }

@@ -55,7 +55,7 @@ public:
 	void size() {
 		FIFTYONE_DEGREES_EXCEPTION_CREATE;
 		EXPECT_GT(fiftyoneDegreesIpiSizeManagerFromFile(
-			config->getConfig(), 
+			&config->getConfig(),
 			requiredProperties->getConfig(), 
 			fullName,
 			exception),

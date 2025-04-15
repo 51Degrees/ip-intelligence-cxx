@@ -28,8 +28,8 @@ private:
     string getOutputFilePath() {
         stringstream output;
         uint32_t i = 0;
-        while (ipAddressFilePath[i] != '.' && ipAddressFilePath[i] != '\0') {
-            output << ipAddressFilePath[i++];
+        while (evidenceFilePath[i] != '.' && evidenceFilePath[i] != '\0') {
+            output << evidenceFilePath[i++];
         }
         output << ".processed.csv";
         return output.str();
@@ -41,7 +41,7 @@ public:
         testing::internal::CaptureStdout();
 
         fiftyoneDegreesOfflineProcessingRun(
-            dataFilePath.c_str(), ipAddressFilePath.c_str(),
+            dataFilePath.c_str(), evidenceFilePath.c_str(),
             getOutputFilePath().c_str(), "IpRangeStart,IpRangeEnd,AverageLocation", config);
         fiftyoneDegreesFileDelete(getOutputFilePath().c_str());
 

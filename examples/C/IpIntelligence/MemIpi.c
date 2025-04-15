@@ -70,7 +70,7 @@ static char valueBuffer[1024] = "";
 typedef struct t_memory_state {
 	int ipAddressesCount; // Total number of IP Addresses
 	int progress; // Number of IP Addresses to process for each = marker
-	const char* ipAddressFilePath; // Filename for the IP Address file
+	const char* evidenceFilePath; // Filename for the IP Address file
 	int numberOfThreads; // Number of parallel threads
 	fiftyoneDegreesResourceManager* manager; // Manager resource for detection
 	volatile long runningThreads; // Number of active running threads
@@ -165,7 +165,11 @@ void reportProgress(memoryThreadState* state) {
  * @param state instance of performanceThreadState
  */
 static void executeTest(const char* ipAddress, void* state) {
-	memoryThreadState* threadState = (memoryThreadState*)state;
+	if (!ipAddress || !strlen(ipAddress)) {
+		return;
+	}
+
+	memoryThreadState * const threadState = (memoryThreadState*)state;
 	EXCEPTION_CREATE;
 
 	// If not calibrating the test environment perform IP range search.
@@ -215,7 +219,7 @@ static void runMemoryThread(void* mainState) {
 
 	// Execute the IP intelligence test.
 	fiftyoneDegreesEvidenceFileIterate(
-		threadState.main->ipAddressFilePath,
+		threadState.main->evidenceFilePath,
 		ipAddress,
 		sizeof(ipAddress),
 		&threadState,
@@ -302,7 +306,7 @@ void run(
 	memoryState state;
 
 	// Set the file name and manager and number of threads.
-	state.ipAddressFilePath = ipAddressFilePath;
+	state.evidenceFilePath = ipAddressFilePath;
 	state.manager = manager;
 	state.numberOfThreads = THREAD_COUNT;
 

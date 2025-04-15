@@ -39,89 +39,97 @@ ConfigIpi::ConfigIpi(fiftyoneDegreesConfigIpi *config) :
 }
 
 void ConfigIpi::setPerformanceFromExistingConfig(
-	fiftyoneDegreesConfigIpi *existing) {
-	config.strings = existing->strings;
-	config.properties = existing->properties;
-	config.values = existing->values;
-	config.profiles = existing->profiles;
-	config.graphs = existing->graphs;
-	config.graph = existing->graph;
-	config.profileOffsets = existing->profileOffsets;
-	config.maps = existing->maps;
-	config.components = existing->components;
-	config.b.allInMemory = existing->b.allInMemory;
+	const fiftyoneDegreesConfigIpi &existing) {
+	const fiftyoneDegreesConfigBase b = config.b;
+	config = existing;
+	config.b = b;
+	config.b.allInMemory = existing.b.allInMemory;
 }
 
 void ConfigIpi::setHighPerformance() {
-	setPerformanceFromExistingConfig(&fiftyoneDegreesIpiHighPerformanceConfig);
+	setPerformanceFromExistingConfig(fiftyoneDegreesIpiHighPerformanceConfig);
 }
 
 void ConfigIpi::setBalanced() {
-	setPerformanceFromExistingConfig(&fiftyoneDegreesIpiBalancedConfig);
+	setPerformanceFromExistingConfig(fiftyoneDegreesIpiBalancedConfig);
 }
 
 void ConfigIpi::setBalancedTemp() {
-	setPerformanceFromExistingConfig(&fiftyoneDegreesIpiBalancedTempConfig);
+	setPerformanceFromExistingConfig(fiftyoneDegreesIpiBalancedTempConfig);
 }
 
 void ConfigIpi::setLowMemory() {
-	setPerformanceFromExistingConfig(&fiftyoneDegreesIpiLowMemoryConfig);
+	setPerformanceFromExistingConfig(fiftyoneDegreesIpiLowMemoryConfig);
 }
 
 void ConfigIpi::setMaxPerformance() {
-	setPerformanceFromExistingConfig(&fiftyoneDegreesIpiInMemoryConfig);
+	setPerformanceFromExistingConfig(fiftyoneDegreesIpiInMemoryConfig);
 }
 
-CollectionConfig ConfigIpi::getStrings() {
+const CollectionConfig & ConfigIpi::getStrings() const {
 	return strings;
 }
 
-CollectionConfig ConfigIpi::getProperties() {
+const CollectionConfig & ConfigIpi::getComponents() const {
+	return components;
+}
+
+const CollectionConfig & ConfigIpi::getMaps() const {
+	return maps;
+}
+
+const CollectionConfig & ConfigIpi::getProperties() const {
 	return properties;
 }
 
-CollectionConfig ConfigIpi::getValues() {
+const CollectionConfig & ConfigIpi::getValues() const {
 	return values;
 }
 
-CollectionConfig ConfigIpi::getProfiles() {
+const CollectionConfig & ConfigIpi::getProfiles() const {
 	return profiles;
 }
 
-CollectionConfig ConfigIpi::getIpv4Ranges() {
-	return graph;
-}
-
-CollectionConfig ConfigIpi::getIpv6Ranges() { 
+const CollectionConfig & ConfigIpi::getGraphs() const {
 	return graphs;
 }
 
-CollectionConfig ConfigIpi::getProfileCombinations() {
-	return profileCombinations;
+const CollectionConfig & ConfigIpi::getProfileGroups() const {
+	return profileGroups;
 }
 
-CollectionConfig ConfigIpi::getProfileOffsets() {
+const CollectionConfig & ConfigIpi::getProfileOffsets() const {
 	return profileOffsets;
+}
+
+const CollectionConfig & ConfigIpi::getPropertyTypes() const {
+	return propertyTypes;
+}
+
+const CollectionConfig & ConfigIpi::getGraph() const {
+	return graph;
 }
 
 void ConfigIpi::initCollectionConfig() {
 	strings = CollectionConfig(&config.strings);
+	components = CollectionConfig(&config.components);
+	maps = CollectionConfig(&config.maps);
 	properties = CollectionConfig(&config.properties);
 	values = CollectionConfig(&config.values);
 	profiles = CollectionConfig(&config.profiles);
 	graphs = CollectionConfig(&config.graphs);
-	graph = CollectionConfig(&config.graph);
+	profileGroups = CollectionConfig(&config.profileGroups);
 	profileOffsets = CollectionConfig(&config.profileOffsets);
-	maps = CollectionConfig(&config.maps);
-	components = CollectionConfig(&config.components);
+	propertyTypes = CollectionConfig(&config.propertyTypes);
+	graph = CollectionConfig(&config.graph);
 }
 
 /**
  * Gets the configuration data structure for use in C code. Used internally.
  * @return the underlying configuration data structure.
  */
-fiftyoneDegreesConfigIpi* ConfigIpi::getConfig() {
-	return &config;
+fiftyoneDegreesConfigIpi &ConfigIpi::getConfig() {
+	return config;
 }
 
 /**
@@ -131,29 +139,31 @@ fiftyoneDegreesConfigIpi* ConfigIpi::getConfig() {
 uint16_t ConfigIpi::getConcurrency() const {
 	uint16_t concurrencies[] = {
 		strings.getConcurrency(),
+		components.getConcurrency(),
+		maps.getConcurrency(),
 		properties.getConcurrency(),
 		values.getConcurrency(),
 		profiles.getConcurrency(),
-		graph.getConcurrency(),
 		graphs.getConcurrency(),
-        profileCombinations.getConcurrency(),
+		profileGroups.getConcurrency(),
 		profileOffsets.getConcurrency(),
-		maps.getConcurrency(),
-		components.getConcurrency()};
+		propertyTypes.getConcurrency(),
+		graph.getConcurrency(),
+	};
 	return *min_element(concurrencies, 
 		concurrencies + (sizeof(concurrencies) / sizeof(uint16_t)));
 }
 
 void ConfigIpi::setConcurrency(uint16_t concurrency) {
 	strings.setConcurrency(concurrency);
+	components.setConcurrency(concurrency);
+	maps.setConcurrency(concurrency);
 	properties.setConcurrency(concurrency);
 	values.setConcurrency(concurrency);
 	profiles.setConcurrency(concurrency);
-	graph.setConcurrency(concurrency);
-	// TODO: Restore
-    // ipNodes.setConcurrency(concurrency);
-    // profileCombinations.setConcurrency(concurrency);
+	graphs.setConcurrency(concurrency);
+	profileGroups.setConcurrency(concurrency);
 	profileOffsets.setConcurrency(concurrency);
-	maps.setConcurrency(concurrency);
-	components.setConcurrency(concurrency);
+	propertyTypes.setConcurrency(concurrency);
+	graph.setConcurrency(concurrency);
 }

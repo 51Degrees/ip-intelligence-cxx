@@ -29,7 +29,7 @@ public:
         // Capture stdout for the test.
         testing::internal::CaptureStdout();
 
-        fiftyoneDegreesMemIpiRun(dataFilePath.c_str(), ipAddressFilePath.c_str(),
+        fiftyoneDegreesMemIpiRun(dataFilePath.c_str(), evidenceFilePath.c_str(),
                                   config);
 
         // Don't print the stdout
