@@ -139,9 +139,11 @@ void EngineIpIntelligenceTests::verifyValueMetaDataIpAddress() {
 	value2 = values->getByKey(ValueMetaDataKey("IpRangeStart", value1->getName()));
 	EXPECT_TRUE(value2 != nullptr) << "Value meta data is not found "
 		"where it should be at IP address: " << value1->getName();
-	EXPECT_EQ(0, value1->getName().compare(value2->getName()))
-		<< "Value meta data is not correct where it should be at IP address: "
-		<< value1->getName();
+	if (value2) {
+		EXPECT_EQ(0, value1->getName().compare(value2->getName()))
+			<< "Value meta data is not correct where it should be at IP address: "
+			<< value1->getName();
+	}
 	delete value2;
 	delete value1;
 	delete rangeStartValues;
