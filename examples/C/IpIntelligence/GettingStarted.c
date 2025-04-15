@@ -223,6 +223,9 @@ void fiftyoneDegreesIpiGettingStarted(
 	const int64_t dx    = 0x01020304LL;
 	const int64_t maxIp = 0xFFFFFFFFLL;
 	for (int64_t i = 0; i < maxIp; i += dx) {
+#		ifdef _MSC_VER
+		UNREFERENCED_PARAMETER(ipv4Address);
+#		endif
 		int64_t tk = i;
 		StringBuilder s = { nextIpV4, sizeof(nextIpV4) };
 		StringBuilderInit(&s);
