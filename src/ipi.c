@@ -1595,7 +1595,7 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 		IpAddressParse(ipAddress, ipAddress + ipLength, &ip);
 	// Check if the IP address was successfully created
 	if (!parsed) {
-		EXCEPTION_SET(INSUFFICIENT_MEMORY);
+		EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 		return;
 	}
 	
