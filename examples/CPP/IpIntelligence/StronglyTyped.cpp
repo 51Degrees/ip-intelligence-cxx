@@ -140,43 +140,56 @@ namespace FiftyoneDegrees {
 					: ExampleBase(dataFilePath)
 				{};
 
+				static void printResults(const std::unique_ptr<ResultsIpi> &results) {
+					const std::vector doubleProps = { "Longitude", "Latitude" };
+					for (auto const &nextProperty : doubleProps) {
+						Value<vector<WeightedValue<double>>> propValue
+							= results->getValuesAsWeightedDoubleList(nextProperty);
+						if (propValue.hasValue()) {
+							cout << "   " << nextProperty << " (" << propValue.getValue().size() << "):\n";
+							for (auto const &nextValue : propValue.getValue()) {
+								cout << "    - " << nextValue.getValue() << " x" << nextValue.getWeight() << "\n";
+							}
+						} else {
+							cout << "   " << nextProperty << " -- " << propValue.getNoValueMessage() << "\n";
+						}
+					}
+					{
+						Value<vector<WeightedValue<string>>> areasValue
+							= results->getValuesAsWeightedStringList("Areas");
+						if (areasValue.hasValue()) {
+							cout << "   Areas (" << areasValue.getValue().size() << "):\n";
+							for (auto const &nextValue : areasValue.getValue()) {
+								cout << "    - '" << nextValue.getValue() << "' x" << nextValue.getWeight() << "\n";
+							}
+						} else {
+							cout << "   Areas -- " << areasValue.getNoValueMessage() << "\n";
+						}
+					}
+				}
+
 				/**
 				 * @copydoc ExampleBase::run
 				 */
-				void run() {
-					ResultsIpi *results;
+				void run() override {
+					std::unique_ptr<ResultsIpi> results;
 
 					// Create an evidence instance to store and process Ip Addresses.
-					EvidenceIpi *evidence = new EvidenceIpi();
+					auto const evidence = std::make_unique<EvidenceIpi>();
 
 					cout << "Starting Strongly Typed Example.\n";
 
 					// Carries out a match for a ipv4 address.
 					cout << "\nIpv4 Address: " << ipv4Address << "\n";
-					evidence->operator[]("query.client-ip-51d")
-							= ipv4Address;
-					results = engine->process(evidence);
-					Common::Value<vector<WeightedValue<string>>> ipv4Value = results->getValuesAsWeightedStringList("Areas");
-					cout << "   Areas (" << ipv4Value.getValue().size() << "):\n";
-					for (auto const &nextValue : ipv4Value.getValue()) {
-						cout << "    - '" << nextValue.getValue() << " x" << nextValue.getWeight() << "'\n";
-					}
-					delete results;
+					(*evidence)["query.client-ip-51d"] = ipv4Address;
+					results = std::unique_ptr<ResultsIpi>(engine->process(evidence.get()));
+					printResults(results);
 
 					// Carries out a match for a ipv6 address.
 					cout << "\nIpv6 Address: " << ipv6Address << "\n";
-					evidence->operator[]("query.client-ip-51d")
-							= ipv6Address;
-					results = engine->process(evidence);
-					Common::Value<vector<WeightedValue<string>>> ipv6Value = results->getValuesAsWeightedStringList("Areas");
-					cout << "   Areas (" << ipv6Value.getValue().size() << "):\n";
-					for (auto const &nextValue : ipv6Value.getValue()) {
-						cout << "    - '" << nextValue.getValue() << " x" << nextValue.getWeight() << "'\n";
-					}
-					delete results;
-
-					// Free the evidence.
-					delete evidence;
+					(*evidence)["query.client-ip-51d"] = ipv6Address;
+					results = std::unique_ptr<ResultsIpi>(engine->process(evidence.get()));
+					printResults(results);
 				}
 			};
 		}

@@ -140,127 +140,58 @@ namespace FiftyoneDegrees {
 				};
 
 				/**
+				 * Check that the value is populated before using the result.
+				 */
+				static void printResults(const std::unique_ptr<ResultsIpi> &results) {
+					const std::vector props {
+						"RegisteredName",
+						"RegisteredCountry",
+						"IpRangeStart",
+						"IpRangeEnd",
+						"Latitude",
+						"Longitude",
+						"Areas",
+					};
+					for (auto const &nextProp : props) {
+						Value<vector<WeightedValue<string>>> value
+							= results->getValuesAsWeightedStringList(nextProp);
+						if (value.hasValue()) {
+							for (const WeightedValue<string>& w : value.getValue()) {
+								cout << "   " << nextProp << ": " <<
+									w.getValue() <<
+									", Percentage: " <<
+									w.getWeight() * 100 << "%\n";
+							}
+						} else {
+							cout << "   " << nextProp << ": " <<
+								value.getNoValueMessage() << "\n";
+						}
+					}
+				}
+
+				/**
 				 * @copydoc ExampleBase::run
 				 */
-				void run() {
-					ResultsIpi *results;
+				void run() override {
+					std::unique_ptr<ResultsIpi> results;
 
 					// Create an evidence instance to store and process
 					// IP Address.
-					EvidenceIpi *evidence =
-						new EvidenceIpi();
+					const auto evidence = make_unique<EvidenceIpi>();
 
 					cout << "Starting Getting Started Example.\n";
 
 					// Carries out a match for a ipv4 address.
 					cout << "\nIpv4 Address: " << ipv4Address << "\n";
-					evidence->operator[]("query.client-ip")
-							= ipv4Address;
-					results = engine->process(evidence);
-					Common::Value<vector<WeightedValue<string>>> ipv4Value
-						= results->getValuesAsWeightedStringList("RegisteredName");
-					for (const WeightedValue<string>& w : ipv4Value.getValue()) {
-						cout << "   RegisteredName: " <<
-							w.getValue() <<
-							", Percentage: " <<
-							w.getWeight() * 100 << "%\n";
-					}
-					ipv4Value = results->getValuesAsWeightedStringList("RegisteredCountry");
-					for (const WeightedValue<string>& w : ipv4Value.getValue()) {
-						cout << "   Country Code: " <<
-							w.getValue() <<
-							", Percentage: " <<
-							w.getWeight() * 100 << "%\n";
-					}
-					ipv4Value = results->getValuesAsWeightedStringList("IpRangeStart");
-					for (const WeightedValue<string>& w : ipv4Value.getValue()) {
-						cout << "   IpRangeStart: " <<
-							w.getValue() <<
-							", Percentage: " <<
-							w.getWeight() * 100 << "%\n";
-					}
-					ipv4Value = results->getValuesAsWeightedStringList("IpRangeEnd");
-					for (const WeightedValue<string>& w : ipv4Value.getValue()) {
-						cout << "   IpRangeEnd: " <<
-							w.getValue() <<
-							", Percentage: " <<
-							w.getWeight() * 100 << "%\n";
-					}
-					ipv4Value = results->getValuesAsWeightedStringList("Latitude");
-					for (const WeightedValue<string>& w : ipv4Value.getValue()) {
-						cout << "   Latitude: " <<
-							w.getValue() <<
-							", Percentage: " <<
-							w.getWeight() * 100 << "%\n";
-					}
-					ipv4Value = results->getValuesAsWeightedStringList("Longitude");
-					for (const WeightedValue<string>& w : ipv4Value.getValue()) {
-						cout << "   Longitude: " <<
-							w.getValue() <<
-							", Percentage: " <<
-							w.getWeight() * 100 << "%\n";
-					}
-					ipv4Value = results->getValuesAsWeightedStringList("Areas");
-					for (const WeightedValue<string>& w : ipv4Value.getValue()) {
-						cout << "   Areas: " <<
-							w.getValue() <<
-							", Percentage: " <<
-							w.getWeight() * 100 << "%\n";
-					}
-					delete results;
+					(*evidence)["query.client-ip"] = ipv4Address;
+					results = std::unique_ptr<ResultsIpi>(engine->process(evidence.get()));
+					printResults(results);
 
 					// Carries out a match for a ipv4 address.
 					cout << "\nIpv6 Address: " << ipv6Address << "\n";
-					evidence->operator[]("query.client-ip")
-							= ipv6Address;
-					results = engine->process(evidence);
-					Common::Value<vector<WeightedValue<string>>> ipv6Value
-						= results->getValuesAsWeightedStringList("RegisteredName");
-					for (const WeightedValue<string>& w : ipv6Value.getValue()) {
-						cout << "   RegisteredName: " <<
-							w.getValue() <<
-							", Percentage: " <<
-							w.getWeight() * 100 << "%\n";
-					}
-					ipv6Value = results->getValuesAsWeightedStringList("RegisteredCountry");
-					for (const WeightedValue<string>& w : ipv6Value.getValue()) {
-						cout << "   Country Code: " <<
-							w.getValue() <<
-							", Percentage: " <<
-							w.getWeight() * 100 << "%\n";
-					}
-					ipv6Value = results->getValuesAsWeightedStringList("IpRangeStart");
-					for (const WeightedValue<string>& w : ipv6Value.getValue()) {
-						cout << "   IpRangeStart: " <<
-							w.getValue() <<
-							", Percentage: " <<
-							w.getWeight() * 100 << "%\n";
-					}
-					ipv6Value = results->getValuesAsWeightedStringList("IpRangeEnd");
-					for (const WeightedValue<string>& w : ipv6Value.getValue()) {
-						cout << "   IpRangeEnd: " <<
-							w.getValue() <<
-							", Percentage: " <<
-							w.getWeight() * 100 << "%\n";
-					}
-					ipv6Value = results->getValuesAsWeightedStringList("Latitude");
-					for (const WeightedValue<string>& w : ipv6Value.getValue()) {
-						cout << "   Latitude: " <<
-							w.getValue() <<
-							", Percentage: " <<
-							w.getWeight() * 100 << "%\n";
-					}
-					ipv6Value = results->getValuesAsWeightedStringList("Longitude");
-					for (const WeightedValue<string>& w : ipv6Value.getValue()) {
-						cout << "   Longitude: " <<
-							w.getValue() <<
-							", Percentage: " <<
-							w.getWeight() * 100 << "%\n";
-					}
-					delete results;
-
-					// Free the evidence.
-					delete evidence;
+					(*evidence)["query.client-ip"] = ipv6Address;
+					results = std::unique_ptr<ResultsIpi>(engine->process(evidence.get()));
+					printResults(results);
 				}
 			};
 		}
