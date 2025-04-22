@@ -116,7 +116,7 @@ namespace FiftyoneDegrees {
 				ReloadFromFile(
 					string dataFilePath,
 					string ipAddressFilePath,
-					ConfigIpi *config)
+					const std::shared_ptr<ConfigIpi> &config)
 					: ExampleBase(dataFilePath, config) {
 					this->ipAddressFilePath = ipAddressFilePath;
 				};
@@ -127,7 +127,7 @@ namespace FiftyoneDegrees {
 				void run() {
 					int numberOfReloads = 0;
 					int numberOfReloadFails = 0;
-					ExampleBase::SharedState state(engine, ipAddressFilePath);
+					ExampleBase::SharedState state(engine.get(), ipAddressFilePath);
 					
 					if (fiftyoneDegreesThreadingGetIsThreadSafe()) {
 						printf("** Multi Threaded Reload Example **\r\n");
@@ -222,14 +222,13 @@ int main(int argc, char* argv[]) {
 	dmalloc_debug_setup("log-stats,log-non-free,check-fence,log=dmalloc.log");
 #endif
 #endif
-	ConfigIpi *config = new ConfigIpi();
+	auto const config = std::make_shared<ConfigIpi>();
 	config->setConcurrency(THREAD_COUNT);
-	ReloadFromFile *reloadFromFile = new ReloadFromFile(
+	auto const reloadFromFile = std::make_unique<ReloadFromFile>(
 		dataFilePath,
 		ipAddressFilePath,
 		config);
 	reloadFromFile->run();
-	delete reloadFromFile;
 
 #ifdef _DEBUG
 #ifdef _MSC_VER

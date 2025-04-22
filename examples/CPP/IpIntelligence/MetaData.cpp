@@ -140,29 +140,21 @@ namespace FiftyoneDegrees {
 				 * @copydoc ExampleBase::run
 				 */
 				void run() {
-					PropertyMetaData *property;
-					Collection<string, PropertyMetaData> *properties;
 					cout << "Starting MetaData Example.\n";
-					properties = engine->getMetaData()->getProperties();
+					auto const properties = std::unique_ptr<Collection<string, PropertyMetaData>>(engine->getMetaData()->getProperties());
 					for (uint32_t i = 0; i < properties->getSize(); i++){
-						property = properties->getByIndex(i);
+						auto const property = std::unique_ptr<PropertyMetaData>(properties->getByIndex(i));
 						cout << property->getName() << " - " << property->getDescription() << "\n";
-                        delete property;
 					}
-					delete properties;
 
 
-					ValueMetaData *value;
-					Collection<ValueMetaDataKey, ValueMetaData> *values;
 					cout << "\n\nGet specific property value\n";
-					values = engine->getMetaData()->getValues();
-					value = values->getByKey(ValueMetaDataKey("IpRangeStart", "0.0.0.0"));
+					auto const values = std::unique_ptr<Collection<ValueMetaDataKey, ValueMetaData>>(engine->getMetaData()->getValues());
+					auto const value = std::unique_ptr<ValueMetaData>(values->getByKey(ValueMetaDataKey("IpRangeStart", "0.0.0.0")));
 					if (value != nullptr) {
 						cout << value->getKey().getPropertyName() << " - " << value->getName() 
 							<< " - " << value->getDescription() << "\n";
-						delete value;
 					}
-					delete values;
 				}
 			};
 		}
@@ -197,9 +189,8 @@ int main(int argc, char* argv[]) {
 #endif
 #endif
 
-	MetaDataExample *metaData = new MetaDataExample(dataFilePath);
+	auto const metaData = std::make_unique<MetaDataExample>(dataFilePath);
 	metaData->run();
-	delete metaData;
 
 #ifdef _DEBUG
 #ifdef _MSC_VER

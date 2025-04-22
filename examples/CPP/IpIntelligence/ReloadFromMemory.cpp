@@ -118,8 +118,8 @@ namespace FiftyoneDegrees {
 				ReloadFromMemory(
 					::byte* data,
 					FileOffset length,
-					string ipAddressFilePath,
-					ConfigIpi *config)
+					const string &ipAddressFilePath,
+					const std::shared_ptr<ConfigIpi> &config)
 					: ExampleBase(data, length, config) {
 					this->data = data;
 					this->length = length;
@@ -132,7 +132,7 @@ namespace FiftyoneDegrees {
 				void run() {
 					int numberOfReloads = 0;
 					int numberOfReloadFails = 0;
-					ExampleBase::SharedState state(engine, ipAddressFilePath);
+					ExampleBase::SharedState state(engine.get(), ipAddressFilePath);
 
 					if (fiftyoneDegreesThreadingGetIsThreadSafe()) {
 						printf("** Multi Threaded Reload Example **\r\n");
@@ -229,7 +229,7 @@ int main(int argc, char* argv[]) {
 	dmalloc_debug_setup("log-stats,log-non-free,check-fence,log=dmalloc.log");
 #endif
 #endif
-	ConfigIpi *config = new ConfigIpi();
+	auto const config = std::make_shared<ConfigIpi>();
 	config->setConcurrency(THREAD_COUNT);
 	// Read the data file into memory for the initialise and reload operations.
 	fiftyoneDegreesMemoryReader reader;
@@ -239,13 +239,12 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	ReloadFromMemory *reloadFromMemory = new ReloadFromMemory(
+	auto const reloadFromMemory = std::make_unique<ReloadFromMemory>(
 		reader.startByte,
 		reader.length,
 		ipAddressFilePath,
 		config);
 	reloadFromMemory->run();
-	delete reloadFromMemory;
 	// Free the memory for the test.
 	fiftyoneDegreesFree(reader.startByte);
 

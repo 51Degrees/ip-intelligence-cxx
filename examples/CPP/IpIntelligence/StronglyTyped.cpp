@@ -224,9 +224,8 @@ int main(int argc, char* argv[]) {
 #endif
 #endif
 
-	StronglyTyped *stronglyTyped = new StronglyTyped(dataFilePath);
+	auto const stronglyTyped = std::make_unique<StronglyTyped>(dataFilePath);
 	stronglyTyped->run();
-	delete stronglyTyped;
 
 #ifdef _DEBUG
 #ifdef _MSC_VER

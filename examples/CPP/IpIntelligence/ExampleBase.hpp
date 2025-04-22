@@ -35,14 +35,17 @@ namespace FiftyoneDegrees {
 				 * @param length of the data in bytes
 				 * @param config to configure the engine with
 				 */
-				ExampleBase(::byte *data, fiftyoneDegreesFileOffset length, ConfigIpi *config);
+				ExampleBase(
+					::byte *data,
+					fiftyoneDegreesFileOffset length,
+					const std::shared_ptr<ConfigIpi> &config);
 				
 				/**
 				 * Construct a new instance of the example to be run using the
 				 * data file provided.
 				 * @param dataFilePath path to the data file to use
 				 */
-				ExampleBase(string dataFilePath);
+				ExampleBase(const string& dataFilePath);
 				
 				/**
 				 * Construct a new instance of the example to be run using the
@@ -50,7 +53,9 @@ namespace FiftyoneDegrees {
 				 * @param dataFilePath path to the data file to use
 				 * @param config to configure the engine with
 				 */
-				ExampleBase(string dataFilePath, ConfigIpi *config);
+				ExampleBase(
+					const string& dataFilePath,
+					const std::shared_ptr<ConfigIpi> &config);
 				
 				/**
 				 * Dispose of anything created with the example.
@@ -89,7 +94,7 @@ namespace FiftyoneDegrees {
 					 * use
 					 * @param ipAddressFilePath path to the IP Addresses CSV
 					 */
-					SharedState(EngineIpi *engine, string ipAddressFilePath);
+					SharedState(EngineIpi *engine, const string &ipAddressFilePath);
 				
 					/**
 					 * Starts threads that run the #processIpAddressesMulti
@@ -162,11 +167,11 @@ namespace FiftyoneDegrees {
 				static void processIpAddress(const char *ipAddress, void *state);
 				
 				/** Configuration for the Engine */
-				ConfigIpi *config;
+				std::shared_ptr<ConfigIpi> config;
 				/** Properties to initialise the Engine with */
-				RequiredPropertiesConfig *properties;
+				std::unique_ptr<RequiredPropertiesConfig> properties;
 				/** IP Intelligence Engine used for the example */
-				EngineIpi *engine;
+				std::unique_ptr<EngineIpi> engine;
 			
 			private:
 				/**

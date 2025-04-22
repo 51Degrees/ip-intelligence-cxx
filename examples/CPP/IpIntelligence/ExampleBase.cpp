@@ -31,36 +31,32 @@ const char *ExampleBase::ipv4Address = "116.154.188.222";
 
 const char *ExampleBase::ipv6Address = "2001:db8::";
 
-ExampleBase::ExampleBase(::byte *data, FileOffset length, FiftyoneDegrees::IpIntelligence::ConfigIpi *config) {
+ExampleBase::ExampleBase(::byte *data, FileOffset length, const std::shared_ptr<FiftyoneDegrees::IpIntelligence::ConfigIpi> &config) {
 	this->config = config;
 	
 	// Set the properties to be returned for each Ip Address.
 	string propertiesString = "IpRangeStart,IpRangeEnd,CountryCode,CityName,AccuracyRadius,Longitude,Latitude";
-	properties = new RequiredPropertiesConfig(propertiesString);
+	properties = std::make_unique<RequiredPropertiesConfig>(propertiesString);
 	
 	// Initialise the engine for IP intelligence.
-	engine = new EngineIpi(data, length, config, properties);
+	engine = std::make_unique<EngineIpi>(data, length, config.get(), properties.get());
 }
 
-ExampleBase::ExampleBase(string dataFilePath, FiftyoneDegrees::IpIntelligence::ConfigIpi *config) {
+ExampleBase::ExampleBase(const string& dataFilePath, const std::shared_ptr<FiftyoneDegrees::IpIntelligence::ConfigIpi> &config) {
 	this->config = config;
 	
 	// Set the properties to be returned for each Ip Address.
 	string propertiesString = "IpRangeStart,IpRangeEnd,CountryCode,AccuracyRadius,RegisteredCountry,RegisteredName,Longitude,Latitude,Areas";
-	properties = new RequiredPropertiesConfig(propertiesString);
+	properties = std::make_unique<RequiredPropertiesConfig>(propertiesString);
 
 	// Initialise the engine for ip intelligence.
-	engine = new EngineIpi(dataFilePath, config, properties);
+	engine = std::make_unique<EngineIpi>(dataFilePath, config.get(), properties.get());
 }
 
-ExampleBase::ExampleBase(string dataFilePath)
-    : ExampleBase(dataFilePath, new FiftyoneDegrees::IpIntelligence::ConfigIpi()) {}
+ExampleBase::ExampleBase(const string& dataFilePath)
+    : ExampleBase(dataFilePath, std::make_unique<FiftyoneDegrees::IpIntelligence::ConfigIpi>()) {}
 
-ExampleBase::~ExampleBase() {
-	delete engine;
-	delete config;
-	delete properties;
-}
+ExampleBase::~ExampleBase() = default;
 
 void ExampleBase::reportStatus(fiftyoneDegreesStatusCode status,
                                const char *fileName) {
@@ -96,11 +92,9 @@ unsigned long ExampleBase::getHashCode(FiftyoneDegrees::IpIntelligence::ResultsI
 void ExampleBase::processIpAddress(const char *ipAddress, void *state) {
 	ThreadState *thread = (ThreadState *)state;
 	
-	FiftyoneDegrees::IpIntelligence::ResultsIpi *results = thread->engine->process(ipAddress);
+	auto const results = std::unique_ptr<FiftyoneDegrees::IpIntelligence::ResultsIpi>(thread->engine->process(ipAddress));
 	
-	thread->hashCode ^= getHashCode(results);
-	
-	delete results;
+	thread->hashCode ^= getHashCode(results.get());
 }
 
 void ExampleBase::SharedState::processIpAddressesSingle() {
@@ -131,15 +125,15 @@ void ExampleBase::SharedState::joinThreads() {
 	}
 }
 
-ExampleBase::SharedState::SharedState(FiftyoneDegrees::IpIntelligence::EngineIpi *engine,
-                                      string ipAddressFilePath) {
+ExampleBase::SharedState::SharedState(EngineIpi * const engine,
+                                      const string &ipAddressFilePath) {
 	this->engine = engine;
 	this->threadsFinished = 0;
 	this->ipAddressFilePath = ipAddressFilePath;
 }
 
 ExampleBase::ThreadState::ThreadState(
-    FiftyoneDegrees::IpIntelligence::EngineIpi *engine) {
+    EngineIpi * const engine) {
 	this->engine = engine;
 	this->hashCode = 0;
 }

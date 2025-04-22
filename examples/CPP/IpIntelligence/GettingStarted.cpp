@@ -226,9 +226,8 @@ int main(int argc, char *argv[]) {
 #endif
 #endif
 
-	GettingStarted *gettingStarted = new GettingStarted(dataFilePath);
+	auto const gettingStarted = std::make_unique<GettingStarted>(dataFilePath);
 	gettingStarted->run();
-	delete gettingStarted;
 
 #ifdef _DEBUG
 	#ifdef _MSC_VER
