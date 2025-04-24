@@ -94,10 +94,15 @@ bool ValueMetaDataCollectionForProfileIpi::valueFilter(
 		exception);
 	EXCEPTION_THROW;
 	if (valueContent != nullptr) {
+		const size_t cmpSize = result->valueName.size() + 3;
+		char buffer[cmpSize];
+		StringBuilder builder { buffer, cmpSize };
+		StringBuilderInit(&builder);
 		if ((StoredBinaryValueCompareWithString(
 			valueContent,
 			storedValueType,
 			result->valueName.c_str(),
+			&builder,
 			exception) == 0) && EXCEPTION_OKAY) {
 			memcpy(&result->value, value, sizeof(Value));
 			result->found = true;

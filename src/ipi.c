@@ -2406,13 +2406,14 @@ uint32_t fiftyoneDegreesIpiIterateProfilesForPropertyAndValue(
 	fiftyoneDegreesException* exception) {
 	uint32_t count = 0;
 	DataSetIpi* dataSet = DataSetIpiGet(manager);
-	count = fiftyoneDegreesProfileIterateProfilesForPropertyWithTypeAndValue(
+	count = ProfileIterateProfilesForPropertyWithTypeAndValueAndOffsetExtractor(
 		dataSet->strings,
 		dataSet->properties,
 		dataSet->propertyTypes,
 		dataSet->values,
 		dataSet->profiles,
 		dataSet->profileOffsets,
+		ProfileOffsetAsPureOffset,
 		propertyName,
 		valueName,
 		state,

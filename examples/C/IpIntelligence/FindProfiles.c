@@ -45,7 +45,7 @@ initialised with.
 const char* fileName = argv[1];
 fiftyoneDegreesPropertiesRequired properties =
 	fiftyoneDegreesPropertiesDefault;
-properties.string = "CountryCode";
+properties.string = "RegisteredCountry";
 ```
 
 2. Instantiate the 51Degrees data set within a resource manager from the
@@ -66,7 +66,7 @@ property value pair.
 ```
 fiftyoneDegreesIpiIterateProfilesForPropertyAndValue(
 	manager,
-	"CountryCode",
+	"RegisteredCountry",
 	"ITA",
 	&isItaly,
 	count,
@@ -137,21 +137,23 @@ void run(ResourceManager* manager) {
 
 	IpiIterateProfilesForPropertyAndValue(
 		manager,
-		"CountryCode",
+		"RegisteredCountry",
 		"it",
 		&isItaly,
 		count,
 		exception);
-	printf("There are '%d' countries in the data set with code 'it'.\n", isItaly);
+	EXCEPTION_THROW;
+	printf("There are '%d' entries in the data set with code 'it'.\n", isItaly);
 
 	IpiIterateProfilesForPropertyAndValue(
 		manager,
-		"CountryCode",
+		"RegisteredCountry",
 		"gb",
 		&isGreatBritian,
 		count,
 		exception);
-	printf("There are '%d' countries in the data set with code 'gb'.\n",
+	EXCEPTION_THROW;
+	printf("There are '%d' entries in the data set with code 'gb'.\n",
 		isGreatBritian);
 }
 
@@ -174,7 +176,7 @@ void fiftyoneDegreesIpiFindProfiles(
 
 	// Set the properties to be returned for each IP Address.
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "CountryCode";
+	properties.string = "RegisteredCountry";
 
 	// Initialise the manager for IP intelligence.
 	StatusCode status = IpiInitManagerFromFile(
