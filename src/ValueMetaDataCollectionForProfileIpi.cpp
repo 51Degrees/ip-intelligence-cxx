@@ -95,17 +95,20 @@ bool ValueMetaDataCollectionForProfileIpi::valueFilter(
 	EXCEPTION_THROW;
 	if (valueContent != nullptr) {
 		const size_t cmpSize = result->valueName.size() + 3;
-		char buffer[cmpSize];
-		StringBuilder builder { buffer, cmpSize };
-		StringBuilderInit(&builder);
-		if ((StoredBinaryValueCompareWithString(
-			valueContent,
-			storedValueType,
-			result->valueName.c_str(),
-			&builder,
-			exception) == 0) && EXCEPTION_OKAY) {
-			memcpy(&result->value, value, sizeof(Value));
-			result->found = true;
+		char * const buffer = (char *)Malloc(cmpSize);
+		if (buffer) {
+			StringBuilder builder{ buffer, cmpSize };
+			StringBuilderInit(&builder);
+			if ((StoredBinaryValueCompareWithString(
+				valueContent,
+				storedValueType,
+				result->valueName.c_str(),
+				&builder,
+				exception) == 0) && EXCEPTION_OKAY) {
+				memcpy(&result->value, value, sizeof(Value));
+				result->found = true;
+			}
+			Free(buffer);
 		}
 		COLLECTION_RELEASE(result->dataSet->strings, &nameItem);
 	}
