@@ -1649,11 +1649,7 @@ static bool setResultsFromEvidence(
 			const bool parsed =
 				fiftyoneDegreesIpAddressParse(ipAddressString, ipAddressString + strlen(ipAddressString), &ipAddress);
 			// Check if the IP address was successfully created
-			if (!parsed) {
-				EXCEPTION_SET(INSUFFICIENT_MEMORY);
-				return false;
-			}
-			else if(ipAddress.type == IP_TYPE_INVALID) {
+			if (!parsed || (ipAddress.type == IP_TYPE_INVALID)) {
 				EXCEPTION_SET(INCORRECT_IP_ADDRESS_FORMAT);
 				return false;
 			}
