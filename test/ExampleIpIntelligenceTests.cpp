@@ -36,7 +36,7 @@ ExampleIpIntelligenceTest::ExampleIpIntelligenceTest(
 
     ipAddressFilePath = GetFilePath(_dataFolderName, ipAddressFileName);
     evidenceFilePath = GetFilePath(_dataFolderName, evidenceFileName);
-    requiredProperties = "name,areas";
+    requiredProperties = "RegisteredName,Areas";
 };
 
 ExampleIpIntelligenceTest::ExampleIpIntelligenceTest()

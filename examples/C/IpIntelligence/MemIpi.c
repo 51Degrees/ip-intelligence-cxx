@@ -368,7 +368,7 @@ void fiftyoneDegreesMemIpiRun(
 
 	// Configure to return the IP range properties.
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "IpRangeStart,IpRangeEnd,CountryCode";
+	properties.string = "IpRangeStart,IpRangeEnd,RegisteredCountry";
 
 	ResourceManager manager;
 	EXCEPTION_CREATE;

@@ -189,7 +189,7 @@ void fiftyoneDegreesIpiStronglyTyped(
 
 	// Set the properties to be returned for each IP Address.
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "IpRangeStart,IpRangeEnd,CountryCode,AverageLocation";
+	properties.string = "IpRangeStart,IpRangeEnd,RegisteredCountry,AverageLocation";
 
 	// Initialise the manager for IP intelligence.
 	StatusCode status = IpiInitManagerFromFile(

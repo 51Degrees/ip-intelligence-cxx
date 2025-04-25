@@ -169,7 +169,6 @@ static void printPropertyValueFromResults(ResultsIpi *results) {
 	if (results != NULL && results->count > 0) {
 		printf("IpRangeStart: %s\n", getPropertyValueAsString(results, "IpRangeStart"));
 		printf("IpRangeEnd: %s\n", getPropertyValueAsString(results, "IpRangeEnd"));
-		printf("CountryCode: %s\n", getPropertyValueAsString(results, "CountryCode"));
 		printf("AccuracyRadius: %s\n", getPropertyValueAsString(results, "AccuracyRadius"));
 		printf("RegisteredCountry: %s\n", getPropertyValueAsString(results, "RegisteredCountry"));
 		printf("RegisteredName: %s\n", getPropertyValueAsString(results, "RegisteredName"));
@@ -191,7 +190,7 @@ void fiftyoneDegreesIpiGettingStarted(
 
 	// Set the properties to be returned for each ip
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "IpRangeStart,IpRangeEnd,CountryCode,AccuracyRadius,RegisteredCountry,RegisteredName,Longitude,Latitude,Areas";
+	properties.string = "IpRangeStart,IpRangeEnd,AccuracyRadius,RegisteredCountry,RegisteredName,Longitude,Latitude,Areas";
 
 	StatusCode status = IpiInitManagerFromFile(
 		&manager,

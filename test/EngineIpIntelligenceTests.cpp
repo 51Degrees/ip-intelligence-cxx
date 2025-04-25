@@ -136,7 +136,9 @@ void EngineIpIntelligenceTests::verifyValueMetaDataIpAddress() {
 	
 	// See if a valid IP address value string can be correctly parsed
 	// and searched from the values collection.
-	value2 = values->getByKey(ValueMetaDataKey("IpRangeStart", value1->getName()));
+	auto const valueName = value1->getName();
+	auto const key = ValueMetaDataKey("IpRangeStart", valueName);
+	value2 = values->getByKey(key);
 	EXPECT_TRUE(value2 != nullptr) << "Value meta data is not found "
 		"where it should be at IP address: " << value1->getName();
 	if (value2) {

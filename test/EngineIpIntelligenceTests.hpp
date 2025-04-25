@@ -45,17 +45,17 @@ static const vector<string> n = { v1, v2, v3 }; \
 static const vector<string> *n##Pointer = &n;
 
 // Common IP intelligence properties in arrays and strings.
-ENGINE_PROPERTIES_STRING(OnePropertyString, "CountryCode")
-ENGINE_PROPERTIES_STRING(TwoPropertyStrings, "CountryCode,CityName")
-ENGINE_PROPERTIES_STRING(DuplicatePropertyStrings, "CountryCode,CountryCode")
+ENGINE_PROPERTIES_STRING(OnePropertyString, "RegisteredCountry")
+ENGINE_PROPERTIES_STRING(TwoPropertyStrings, "RegisteredCountry,RegisteredOwner")
+ENGINE_PROPERTIES_STRING(DuplicatePropertyStrings, "RegisteredCountry,RegisteredCountry")
 ENGINE_PROPERTIES_STRING(InvalidPropertyStrings, "INVALID,PROPERTIES PROVIDED")
-ENGINE_PROPERTIES_STRING(MixedPropertyStrings, "INVALID,CountryCode")
+ENGINE_PROPERTIES_STRING(MixedPropertyStrings, "INVALID,RegisteredCountry")
 ENGINE_PROPERTIES_STRING(AllEdgePropertyStrings, "IpRangeStart,IpRangeEnd,AccuracyRadius")
-ENGINE_PROPERTIES_ARRAY_ONE(OnePropertyArray, "CountryCode")
-ENGINE_PROPERTIES_ARRAY_TWO(TwoPropertyArray, "CountryCode", "CityName")
-ENGINE_PROPERTIES_ARRAY_TWO(DuplicatePropertyArray, "CountryCode", "CountryCode")
+ENGINE_PROPERTIES_ARRAY_ONE(OnePropertyArray, "RegisteredCountry")
+ENGINE_PROPERTIES_ARRAY_TWO(TwoPropertyArray, "RegisteredCountry", "RegisteredOwner")
+ENGINE_PROPERTIES_ARRAY_TWO(DuplicatePropertyArray, "RegisteredCountry", "RegisteredCountry")
 ENGINE_PROPERTIES_ARRAY_TWO(InvalidPropertyArray, "INVALID1", "INVALID2")
-ENGINE_PROPERTIES_ARRAY_TWO(MixedPropertyArray, "CountryCode", "Invalid")
+ENGINE_PROPERTIES_ARRAY_TWO(MixedPropertyArray, "RegisteredCountry", "Invalid")
 ENGINE_PROPERTIES_ARRAY_THREE(AllEdgePropertyArray, "IpRangeStart", "IpRangeEnd", "AccuracyRadius")
 static const string *NullPointer = nullptr;
 
