@@ -112,33 +112,39 @@ void EngineIpIntelligenceTests::verifyComponentMetaDataDefaultProfile(
  * is in byte format.
  */
 void EngineIpIntelligenceTests::verifyValueMetaDataIpAddress() {
-	EngineIpi *engineIpi = (EngineIpi *)getEngine();
-	ValueMetaData *value1, *value2;
-	Collection<ValueMetaDataKey, ValueMetaData> *values = 
-		engineIpi->getMetaData()->getValues();
+	auto const engineIpi = (EngineIpi *)getEngine();
+	auto const values = std::unique_ptr<Collection<ValueMetaDataKey, ValueMetaData>>(
+		engineIpi->getMetaData()->getValues());
 	EXPECT_TRUE(values->getSize() > 0) << "There is no values "
 		"meta data.";
 
-	Collection<string, PropertyMetaData> *properties = 
-		engineIpi->getMetaData()->getProperties();
+	auto const properties = std::unique_ptr<Collection<string, PropertyMetaData>>(
+		engineIpi->getMetaData()->getProperties());
 	EXPECT_TRUE(properties->getSize() > 0) << "There is no properties "
 		"meta data.";
 
-	PropertyMetaData *property = properties->getByKey("IpRangeStart");
-	Collection<ValueMetaDataKey, ValueMetaData> *rangeStartValues = 
-		engineIpi->getMetaData()->getValuesForProperty(property);
+	auto const property = std::unique_ptr<PropertyMetaData>(
+		properties->getByKey("IpRangeStart"));
+	if (!property) {
+		return;
+	}
+	auto const rangeStartValues = std::unique_ptr<Collection<ValueMetaDataKey, ValueMetaData>>(
+		engineIpi->getMetaData()->getValuesForProperty(property.get()));
 	EXPECT_TRUE(rangeStartValues->getSize() > 0) << "There is no values "
 		"meta data for property " << property->getName();
 
+
 	// Pick the first value to be used for testing.
-	value1 = rangeStartValues->getByIndex(1);
+	auto const value1 = std::unique_ptr<ValueMetaData>(
+		rangeStartValues->getByIndex(1));
 	EXPECT_TRUE(value1 != nullptr) << "There is no value at index 0.";
 	
 	// See if a valid IP address value string can be correctly parsed
 	// and searched from the values collection.
 	auto const valueName = value1->getName();
 	auto const key = ValueMetaDataKey("IpRangeStart", valueName);
-	value2 = values->getByKey(key);
+	auto const value2 = std::unique_ptr<ValueMetaData>(
+		values->getByKey(key));
 	EXPECT_TRUE(value2 != nullptr) << "Value meta data is not found "
 		"where it should be at IP address: " << value1->getName();
 	if (value2) {
@@ -146,12 +152,6 @@ void EngineIpIntelligenceTests::verifyValueMetaDataIpAddress() {
 			<< "Value meta data is not correct where it should be at IP address: "
 			<< value1->getName();
 	}
-	delete value2;
-	delete value1;
-	delete rangeStartValues;
-	delete property;
-	delete properties;
-	delete values;
 }
 
 void EngineIpIntelligenceTests::metaData() {
@@ -316,7 +316,11 @@ void EngineIpIntelligenceTests::verifyMixedPrefixesEvidence() {
 	// To make sure query.client-ip-51d is pick up first
 	mixedEvidence["query.client-ip-51d"] = lowerBoundIpv4Address;
 	mixedEvidence["server.true-client-ip-51d"] = upperBoundIpv4Address;
-	ResultsIpi *results = ((EngineIpi*)getEngine())->process(&mixedEvidence);
+	auto results = std::unique_ptr<ResultsIpi>(
+		((EngineIpi*)getEngine())->process(&mixedEvidence));
+	if (!results) {
+		return;
+	}
 	Common::Value<IpIntelligence::IpAddress> rangeStart = results->getValueAsIpAddress("IpRangeStart");
 	unsigned char lowerBoundIpAddress[FIFTYONE_DEGREES_IPV4_LENGTH];
 	memset(lowerBoundIpAddress, 0, FIFTYONE_DEGREES_IPV4_LENGTH);
@@ -325,19 +329,18 @@ void EngineIpIntelligenceTests::verifyMixedPrefixesEvidence() {
 			lowerBoundIpAddress,
 			FIFTYONE_DEGREES_IPV4_LENGTH)) << "The IpRangeStart IP address is not "
 		"at the lower bound where it should be.";
-	delete results;
 
 	// Check if true-client-ip-51d is taking priority
 	mixedEvidence["query.client-ip-51d"] = "";
 	mixedEvidence["query.true-client-ip-51d"] = lowerBoundIpv4Address;
-	results = ((EngineIpi*)getEngine())->process(&mixedEvidence);
+	results = std::unique_ptr<ResultsIpi>(
+		((EngineIpi*)getEngine())->process(&mixedEvidence));
 	rangeStart = results->getValueAsIpAddress("IpRangeStart");
 	EXPECT_EQ(0,
 		memcmp(rangeStart.getValue().getIpAddress(),
 			lowerBoundIpAddress,
 			FIFTYONE_DEGREES_IPV4_LENGTH)) << "The IpRangeStart IP address is not "
 		"at the lower bound where it should be.";
-	delete results;
 }
 
 void EngineIpIntelligenceTests::verifyWithEvidence() {

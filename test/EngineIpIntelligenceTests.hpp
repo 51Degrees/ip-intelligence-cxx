@@ -50,13 +50,13 @@ ENGINE_PROPERTIES_STRING(TwoPropertyStrings, "RegisteredCountry,RegisteredOwner"
 ENGINE_PROPERTIES_STRING(DuplicatePropertyStrings, "RegisteredCountry,RegisteredCountry")
 ENGINE_PROPERTIES_STRING(InvalidPropertyStrings, "INVALID,PROPERTIES PROVIDED")
 ENGINE_PROPERTIES_STRING(MixedPropertyStrings, "INVALID,RegisteredCountry")
-ENGINE_PROPERTIES_STRING(AllEdgePropertyStrings, "IpRangeStart,IpRangeEnd,AccuracyRadius")
+ENGINE_PROPERTIES_STRING(AllEdgePropertyStrings, "RegisteredName,RegisteredOwner,AccuracyRadius")
 ENGINE_PROPERTIES_ARRAY_ONE(OnePropertyArray, "RegisteredCountry")
 ENGINE_PROPERTIES_ARRAY_TWO(TwoPropertyArray, "RegisteredCountry", "RegisteredOwner")
 ENGINE_PROPERTIES_ARRAY_TWO(DuplicatePropertyArray, "RegisteredCountry", "RegisteredCountry")
 ENGINE_PROPERTIES_ARRAY_TWO(InvalidPropertyArray, "INVALID1", "INVALID2")
 ENGINE_PROPERTIES_ARRAY_TWO(MixedPropertyArray, "RegisteredCountry", "Invalid")
-ENGINE_PROPERTIES_ARRAY_THREE(AllEdgePropertyArray, "IpRangeStart", "IpRangeEnd", "AccuracyRadius")
+ENGINE_PROPERTIES_ARRAY_THREE(AllEdgePropertyArray, "RegisteredName", "RegisteredOwner", "AccuracyRadius")
 static const string *NullPointer = nullptr;
 
 // An ipv4 address string.
