@@ -2,16 +2,20 @@ name: Nightly Documentation Update
 
 on:
   workflow_dispatch:
+    inputs:
+      dryrun:
+        default: false
+        type: boolean
+        description: Dry Run
   schedule:
-    # * is a special character in YAML so quote this string
-    - cron:  '0 3 * * *'
+    - cron: '0 3 * * *'
 
 jobs:
-  # Run the common workflow on each pull request
   Nightly_Documentation_Update:
     uses: 51Degrees/common-ci/.github/workflows/nightly-documentation-update.yml@main
     with:
       repo-name: ${{ github.event.repository.name }}
       org-name: ${{ github.event.repository.owner.login }}
+      dryrun: ${{ inputs.dryrun || false }}
     secrets:
       token: ${{ secrets.ACCESS_TOKEN }}
