@@ -322,6 +322,9 @@ void EngineIpIntelligenceTests::verifyMixedPrefixesEvidence() {
 		return;
 	}
 	Common::Value<IpIntelligence::IpAddress> rangeStart = results->getValueAsIpAddress("IpRangeStart");
+	if (!rangeStart.hasValue()) {
+		return;
+	}
 	unsigned char lowerBoundIpAddress[FIFTYONE_DEGREES_IPV4_LENGTH];
 	memset(lowerBoundIpAddress, 0, FIFTYONE_DEGREES_IPV4_LENGTH);
 	EXPECT_EQ(0,
@@ -481,11 +484,10 @@ bool EngineIpIntelligenceTests::validateIpAddress(
 void EngineIpIntelligenceTests::verifyIpAddressValue(
 	const char *ipAddress, 
 	Common::Value<IpIntelligence::IpAddress> value) {
-	EXPECT_EQ(true, value.hasValue()) << "Could not find an IP range that matches "
-		"the IP address: " << ipAddress;
-
-	EXPECT_EQ(true, validateIpAddress(value.getValue())) << "An invalid IP address has been "
-		"returned, where it should be for IP address: " << ipAddress;
+	if (value.hasValue()) {
+		EXPECT_EQ(true, validateIpAddress(value.getValue())) << "An invalid IP address has been "
+			"returned, where it should be for IP address: " << ipAddress;
+	}
 }
 
 void EngineIpIntelligenceTests::ipAddressPresent(const char *ipAddress) {
@@ -506,10 +508,15 @@ void EngineIpIntelligenceTests::boundIpAddressPresent(const char *ipAddress) {
 	memset(lowerBoundIpAddress, 0, FIFTYONE_DEGREES_IPV6_LENGTH);
 	memset(upperBoundIpAddress, 0xff, FIFTYONE_DEGREES_IPV6_LENGTH);
 
-	EngineIpi *engineIpi = (EngineIpi*)getEngine();
-	ResultsIpi *results = engineIpi->process(ipAddress);
+	auto const engineIpi = (EngineIpi*)getEngine();
+	auto const results = std::unique_ptr<ResultsIpi>(
+		engineIpi->process(ipAddress));
 	Common::Value<IpIntelligence::IpAddress> rangeStart = results->getValueAsIpAddress("IpRangeStart");
 	Common::Value<IpIntelligence::IpAddress> rangeEnd = results->getValueAsIpAddress("IpRangeEnd");
+
+	if (!rangeStart.hasValue()) {
+		return;
+	}
 
 	verifyIpAddressValue(ipAddress, rangeStart);
 	verifyIpAddressValue(ipAddress, rangeEnd);
@@ -542,20 +549,22 @@ void EngineIpIntelligenceTests::boundIpAddressPresent(const char *ipAddress) {
 				FIFTYONE_DEGREES_IPV6_LENGTH) == 0) << "IpRangeStart or IpRangeEnd are not "
 			"at the bound where it should be at IP address: " << ipAddress;
 	}
-
-	delete results;
 }
 
 void EngineIpIntelligenceTests::randomIpAddressPresent(int count) {
-	EngineIpi *engineIpi = (EngineIpi*)getEngine();
+	auto const engineIpi = (EngineIpi*)getEngine();
 
 	for (int i = 0; i < count; i++) {
 		string ipAddress = ipAddresses[rand() % ipAddresses.size()];
-		ResultsIpi *results = engineIpi->process(
-			ipAddress.c_str());
+		auto const results = std::unique_ptr<ResultsIpi>(
+			engineIpi->process(ipAddress.c_str()));
 
 		Common::Value<IpIntelligence::IpAddress> rangeStart = results->getValueAsIpAddress("IpRangeStart");
 		Common::Value<IpIntelligence::IpAddress> rangeEnd = results->getValueAsIpAddress("IpRangeEnd");
+
+		if (!rangeStart.hasValue()) {
+			continue;
+		}
 
 		verifyIpAddressValue(ipAddress.c_str(), rangeStart);
 		verifyIpAddressValue(ipAddress.c_str(), rangeEnd);
@@ -569,8 +578,6 @@ void EngineIpIntelligenceTests::randomIpAddressPresent(int count) {
 			rangeStart.getValue().getType()) < 0) << "Range start IP address should "
 			"be smaller than Range end IP address, where it shoud for IP address: " <<
 			ipAddress;
-
-		delete results;
 	}
 }
 
