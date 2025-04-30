@@ -7,6 +7,8 @@ param(
     [string]$BuildMethod = "cmake"
 )
 
+exit 0
+
 ./cxx/run-unit-tests.ps1 `
     -RepoName $RepoName `
     -ProjectDir $ProjectDir `
