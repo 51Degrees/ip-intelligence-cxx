@@ -73,6 +73,9 @@ static int run(fiftyoneDegreesResourceManager *manager) {
 	StringBuilderInit(&builder);
 	ResultsIpi *results = ResultsIpiCreate(manager);
 	while (fgets(ipAddress, sizeof(ipAddress), stdin) != 0) {
+		if (!strlen(ipAddress)) {
+			break;
+		}
 		// Set the results from the IP address provided from standard in.
 		ResultsIpiFromIpAddressString(
 			results,

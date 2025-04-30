@@ -44,7 +44,9 @@ public:
 
         // Loop through the output lines.
         while (getline(output, line)) {
-            lines++;
+            if (!line.empty()) {
+                lines++;
+            }
         }
 
         // Check lines in and out are the same.
