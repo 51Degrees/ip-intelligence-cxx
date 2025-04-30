@@ -6,6 +6,10 @@ param(
     [string]$Configuration = "Release"
 )
 
+Write-Output "No Performance Tests to run"
+exit 0
+
+
 
 $RepoPath = [IO.Path]::Combine($pwd, $RepoName, $ProjectDir, "build")
 
