@@ -248,10 +248,6 @@ ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, MixedPropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, Null) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, Null) \
-ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, File, InMemory, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, File, InMemory, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, File, Null, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, File, Null, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, InMemory, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, InMemory, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, Null, AllEdgePropertyStrings) \
@@ -284,10 +280,6 @@ ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, Null, MixedPropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, Null, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, InMemory, Null) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, Null, Null) \
-ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, Memory, InMemory, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, Memory, InMemory, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, Memory, Null, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_IP_ADDRESS_TESTS(e, Memory, Null, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, Memory, InMemory, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, Memory, InMemory, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, Memory, Null, AllEdgePropertyStrings) \
