@@ -48,8 +48,10 @@ static void buildString(
 		StringBuilderAddChar(builder, '=');
 		StringBuilderAddChar(builder, '[');
 		ResultsIpiAddValuesString(results, property, builder, ",", exception);
+		EXCEPTION_THROW;
 		StringBuilderAddChar(builder, ']');
 	}
+	StringBuilderComplete(builder);
 }
 
 /**
@@ -69,13 +71,14 @@ static int run(fiftyoneDegreesResourceManager *manager) {
 	EXCEPTION_CREATE;
 	char ipAddress[50], output[50000];
 	int count = 0;
-	StringBuilder builder = { output, sizeof(output) };
-	StringBuilderInit(&builder);
 	ResultsIpi *results = ResultsIpiCreate(manager);
 	while (fgets(ipAddress, sizeof(ipAddress), stdin) != 0) {
 		if (!strlen(ipAddress)) {
 			break;
 		}
+		StringBuilder builder = { output, sizeof(output) };
+		StringBuilderInit(&builder);
+
 		// Set the results from the IP address provided from standard in.
 		ResultsIpiFromIpAddressString(
 			results,
