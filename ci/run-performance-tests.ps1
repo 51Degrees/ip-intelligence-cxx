@@ -1,3 +1,4 @@
+[CmdletBinding()]
 param(
     [string]$RepoName,
     [string]$ProjectDir = ".",
@@ -6,10 +7,6 @@ param(
     [string]$Configuration = "Release"
 )
 
-Write-Output "No Performance Tests to run"
-exit 0
-
-
 
 $RepoPath = [IO.Path]::Combine($pwd, $RepoName, $ProjectDir, "build")
 
@@ -17,6 +14,11 @@ Write-Output "Entering '$RepoPath'"
 Push-Location $RepoPath
 
 try {
+    Write-Warning "Full list"
+    Get-ChildItem
+    Write-Warning "Filtered list"
+    Get-ChildItem -Include "*Performance*" -Exclude "*HighPerformance*"
+    exit 0
 
     Write-Output "Testing $($Options.Name)"
 
