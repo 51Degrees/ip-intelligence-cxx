@@ -29,7 +29,7 @@ public:
         // Capture stdout for the test.
         testing::internal::CaptureStdout();
 
-        fiftyoneDegreesIpiPerformance(
+        fiftyoneDegreesPerfIpiRun(
             dataFilePath.c_str(),
             evidenceFilePath.c_str(),
             config);
