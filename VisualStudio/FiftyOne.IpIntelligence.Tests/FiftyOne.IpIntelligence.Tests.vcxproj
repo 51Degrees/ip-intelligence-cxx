@@ -17,6 +17,7 @@
     <ClCompile Include="..\..\test\ExampleIpIntelligenceTests.cpp" />
     <ClCompile Include="..\..\test\ExampleMemTests.cpp" />
     <ClCompile Include="..\..\test\ExampleOfflineProcessingTests.cpp" />
+    <ClCompile Include="..\..\test\ExamplePerformanceLegacyTests.cpp" />
     <ClCompile Include="..\..\test\ExamplePerformanceTests.cpp" />
     <ClCompile Include="..\..\test\ExampleProcTests.cpp" />
     <ClCompile Include="..\..\test\ExampleReloadFromFileTests.cpp" />

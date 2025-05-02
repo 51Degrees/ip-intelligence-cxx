@@ -21,9 +21,9 @@
  * ********************************************************************* */
 
 #include "ExampleIpIntelligenceTests.hpp"
-#include "../examples/C/IpIntelligence/Performance.c"
+#include "../examples/C/IpIntelligence/PerfIpi.c"
 
-class ExampleTestPerformance : public ExampleIpIntelligenceTest {
+class ExampleTestPerformanceLegacy : public ExampleIpIntelligenceTest {
 public:
     void run(fiftyoneDegreesConfigIpi config) {
         // Capture stdout for the test.
@@ -32,17 +32,14 @@ public:
         fiftyoneDegreesIpiPerformance(
             dataFilePath.c_str(),
             evidenceFilePath.c_str(),
-            4,
-            10000,
-            stdout,
-            nullptr);
+            config);
 
         // Don't print the stdout
         std::string output = testing::internal::GetCapturedStdout();
     }
 };
 
-TEST_F(ExampleTestPerformance, InMemory) {
+TEST_F(ExampleTestPerformanceLegacy, InMemory) {
     run(fiftyoneDegreesIpiInMemoryConfig); 
 }
 // TEST_F(ExampleTestPerformance, LowMemory) {

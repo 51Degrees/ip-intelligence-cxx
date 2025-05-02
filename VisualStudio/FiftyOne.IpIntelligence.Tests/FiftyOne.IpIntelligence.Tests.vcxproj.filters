@@ -66,6 +66,9 @@
     <ClCompile Include="..\..\test\MemLeakReloadFromFileTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\test\ExamplePerformanceLegacyTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\common-cxx\tests\Base.hpp">
