@@ -23,7 +23,7 @@
 #include "ExampleIpIntelligenceTests.hpp"
 #include "../examples/C/IpIntelligence/PerfIpi.c"
 
-class ExampleTestPerf : public ExampleIpIntelligenceTest {
+class ExampleTestPerformance : public ExampleIpIntelligenceTest {
 public:
     void run(fiftyoneDegreesConfigIpi config) {
         // Capture stdout for the test.
@@ -39,10 +39,10 @@ public:
     }
 };
 
-TEST_F(ExampleTestPerf, InMemory) {
+TEST_F(ExampleTestPerformance, InMemory) {
     run(fiftyoneDegreesIpiInMemoryConfig); 
 }
-// TEST_F(ExampleTestPerf, LowMemory) {
+// TEST_F(ExampleTestPerformance, LowMemory) {
 //     if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) {
 //         run(fiftyoneDegreesIpiLowMemoryConfig);
 //     }

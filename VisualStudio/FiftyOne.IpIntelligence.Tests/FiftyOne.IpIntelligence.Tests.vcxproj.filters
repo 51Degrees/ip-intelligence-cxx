@@ -36,7 +36,7 @@
     <ClCompile Include="..\..\test\ExampleReloadFromFileTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\test\ExamplePerfTests.cpp">
+    <ClCompile Include="..\..\test\ExamplePerformanceTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\test\ExampleOfflineProcessingTests.cpp">
