@@ -12,6 +12,7 @@
     "Configuration": "Release",
     "Arch": "x64",
     "BuildMethod": "cmake",
+    "PackageRequirement": true,
     "RunPerformance": true
   },
   {
