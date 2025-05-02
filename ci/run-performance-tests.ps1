@@ -60,7 +60,7 @@ try {
     }
     
     # Run the performance test
-    . $PerfPath --json-output $OutputFile --data-file $DataFile --ip-addresses-file $EvidenceFile
+    & $PerfPath --json-output $OutputFile --data-file $DataFile --ip-addresses-file $EvidenceFile
     if ($LASTEXITCODE -ne 0) {
         Write-Warning "LASTEXITCODE = $LASTEXITCODE"
     }
