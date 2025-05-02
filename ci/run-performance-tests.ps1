@@ -14,17 +14,6 @@ Write-Output "Entering '$RepoPath'"
 Push-Location $RepoPath
 
 try {
-    Write-Warning "Full list"
-    Get-ChildItem
-    Write-Warning "Filtered list"
-    Get-ChildItem -Recurse -Include "*Performance*" -Exclude "*HighPerformance*"
-    Write-Warning "Full test list"
-    ctest --show-only=json-v1
-    Write-Warning "Filtered test list"
-    ctest --show-only=json-v1 --tests-regex ".*Performance.*" --exclude-regex ".*HighPerformance.*"
-    Write-Warning "Exiting"
-    exit 0
-
     Write-Output "Testing $($Options.Name)"
 
     # Instead of calling the common CTest script, we want to exclude tests which have HighPerformance in the name.
