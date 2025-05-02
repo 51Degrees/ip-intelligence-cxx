@@ -12,7 +12,7 @@ on:
 jobs:
   SubmoduleUpdate:
     name: Nightly Submodule Update
-    uses: postindustria-tech/common-ci/.github/workflows/nightly-submodule-update.yml@main
+    uses: 51degrees/common-ci/.github/workflows/nightly-submodule-update.yml@main
     with:
       repo-name: ${{ github.event.repository.name }}
       org-name: ${{ github.event.repository.owner.login }}
@@ -24,7 +24,7 @@ jobs:
     if: ${{ !cancelled() }}
     needs: SubmoduleUpdate
     name: Nightly Pull Requests
-    uses: postindustria-tech/common-ci/.github/workflows/nightly-pull-requests.yml@main
+    uses: 51degrees/common-ci/.github/workflows/nightly-pull-requests.yml@main
     with:
       repo-name: ${{ github.event.repository.name }}
       org-name: ${{ github.event.repository.owner.login }}
@@ -39,7 +39,7 @@ jobs:
     if: ${{ !cancelled() }}
     needs: PullRequests
     name: Nightly Publish
-    uses: postindustria-tech/common-ci/.github/workflows/nightly-publish.yml@main
+    uses: 51degrees/common-ci/.github/workflows/nightly-publish.yml@main
     with:
       repo-name: ${{ github.event.repository.name }}
       org-name: ${{ github.event.repository.owner.login }}
