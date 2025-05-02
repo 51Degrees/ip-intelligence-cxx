@@ -42,16 +42,31 @@ try {
 
     $OutputFile = [IO.Path]::Combine($RepoPath, "summary.json")
     $DataFile = [IO.Path]::Combine($RepoPath, "ip-intelligence-data", "51Degrees-LiteV4.1.ipi")
-    $EvidenceFile = [IO.Path]::Combine($RepoPath, "ip-intelligence-data", "evidence2.yml")
+    if (!(Test-Path -Path $DataFile -PathType Leaf)) {
+        Write-Error "DataFile not found at '$DataFile'"
+    }
+    $EvidenceFile = [IO.Path]::Combine($RepoPath, "ip-intelligence-data", "evidence.yml")
+    if (!(Test-Path -Path $EvidenceFile -PathType Leaf)) {
+        Write-Error "EvidenceFile not found at '$EvidenceFile'"
+    }
     if ($IsWindows) {
         $PerfPath = [IO.Path]::Combine($RepoPath, "build", "bin", $Configuration, "PerformanceC.exe")
     }
     else {
         $PerfPath = [IO.Path]::Combine($RepoPath, "build", "bin", "PerformanceC")
     }
+    if (!(Test-Path -Path $PerfPath -PathType Leaf)) {
+        Write-Error "PerfPath not found at '$PerfPath'"
+    }
     
     # Run the performance test
     . $PerfPath --json-output $OutputFile --data-file $DataFile --ip-addresses-file $EvidenceFile
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "LASTEXITCODE = $LASTEXITCODE"
+    }
+    if (!(Test-Path -Path $OutputFile -PathType Leaf)) {
+        Write-Error "OutputFile not found at '$OutputFile'"
+    }
 
     # Output the results for comparison
     $Results = Get-Content $OutputFile | ConvertFrom-Json -AsHashtable
