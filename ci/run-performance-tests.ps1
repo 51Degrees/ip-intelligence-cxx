@@ -21,15 +21,18 @@ try {
     ctest -C $Configuration -T test --no-compress-output --output-junit "../test-results/performance/$Name.xml" --tests-regex ".*Performance.*" --exclude-regex ".*HighPerformance.*"
 }
 finally {
-
     Write-Output "Leaving '$RepoPath'"
     Pop-Location
+}
 
+if ($LASTEXITCODE -ne 0) {
+    Write-Warning "LASTEXITCODE = $LASTEXITCODE"
 }
 
 $RepoPath = [IO.Path]::Combine($pwd, $RepoName)
 $PerfResultsFile = [IO.Path]::Combine($RepoPath, "test-results", "performance-summary", "results_$Name.json")
 
+Write-Output "Entering '$RepoPath'"
 Push-Location $RepoPath
 try {
     if ($(Test-Path -Path "test-results") -eq  $False) {
@@ -60,6 +63,7 @@ try {
     }
     
     # Run the performance test
+    Write-Output "Starting executable..."
     & $PerfPath --json-output $OutputFile --data-file $DataFile --ip-addresses-file $EvidenceFile
     if ($LASTEXITCODE -ne 0) {
         Write-Warning "LASTEXITCODE = $LASTEXITCODE"
@@ -79,6 +83,7 @@ try {
     }" > $PerfResultsFile
 }
 finally {
+    Write-Output "Leaving '$RepoPath'"
     Pop-Location
 }
 
