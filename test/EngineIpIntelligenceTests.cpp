@@ -583,6 +583,9 @@ void EngineIpIntelligenceTests::randomIpAddressPresent(int count) {
 }
 
 void EngineIpIntelligenceTests::randomWithIpAddress(int count) {
+#	ifdef _MSC_VER
+	UNREFERENCED_PARAMETER(count);
+#	endif
 	// FIXME: Unstable on CI
 	// EngineIpi *engineIpi = (EngineIpi*)getEngine();
 	// for (int i = 0; i < count; i++) {
@@ -595,6 +598,9 @@ void EngineIpIntelligenceTests::randomWithIpAddress(int count) {
 }
 
 void EngineIpIntelligenceTests::randomWithEvidence(int count) {
+#	ifdef _MSC_VER
+	UNREFERENCED_PARAMETER(count);
+#	endif
 	// FIXME: Unstable on CI
 	// string ipKey = "query.client-ip-51d";
 	// EngineIpi *engineIpi = (EngineIpi*)getEngine();
