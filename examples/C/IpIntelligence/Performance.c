@@ -528,7 +528,7 @@ void executeBenchmark(
 
 	PropertiesRequired properties = PropertiesDefault;
 	if (config.allProperties == false) {
-		properties.string = "name,areas";
+		properties.string = "RegisteredName,Areas";
 	}
 
 	// // Multi graph operation is being deprecated. There is only one graph.
