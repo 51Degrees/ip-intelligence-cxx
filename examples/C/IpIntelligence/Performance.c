@@ -385,7 +385,7 @@ void runPerformanceThread(void* state) {
 		// ResultsHashFromEvidence(results, evidence, exception);
 		ResultsIpiFromIpAddressString(
 			results,
-			evidence->items[0].parsedValue,
+			(const char *)evidence->items[0].parsedValue,
 			evidence->items[0].parsedLength,
 			exception);
 		EXCEPTION_THROW;

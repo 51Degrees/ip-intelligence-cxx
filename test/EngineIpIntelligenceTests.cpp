@@ -173,7 +173,7 @@ string EngineIpIntelligenceTests::getExpectedFileType() {
 			return _fileTypes[i];
 		}
 	}
-	return nullptr;
+	return "";
 }
 
 void EngineIpIntelligenceTests::ipAddressRead(

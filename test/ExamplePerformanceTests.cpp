@@ -25,7 +25,7 @@
 
 class ExampleTestPerformance : public ExampleIpIntelligenceTest {
 public:
-    void run(fiftyoneDegreesConfigIpi config) {
+    void run() {
         // Capture stdout for the test.
         testing::internal::CaptureStdout();
 
@@ -42,11 +42,6 @@ public:
     }
 };
 
-TEST_F(ExampleTestPerformance, InMemory) {
-    run(fiftyoneDegreesIpiInMemoryConfig); 
+TEST_F(ExampleTestPerformance, All) {
+    run();
 }
-// TEST_F(ExampleTestPerformance, LowMemory) {
-//     if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) {
-//         run(fiftyoneDegreesIpiLowMemoryConfig);
-//     }
-// }
