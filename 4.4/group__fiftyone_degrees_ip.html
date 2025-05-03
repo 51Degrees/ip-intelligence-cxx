@@ -68,7 +68,7 @@ $(document).ready(function(){initNavTree('group__fiftyone_degrees_ip.html','');}
 <a name="details" id="details"></a><h2 class="g-docs__section-heading">Detailed Description</h2>
 <p>Types and methods to parse IP address strings. </p>
 <h2>Introduction</h2>
-<p>IP v4 and v6 addresses can be parsed using the <a class="el" href="group__fiftyone_degrees_ip.html#ga1e5d04d924771a651fd5f8abf1107929" title="Parse a single IP address string.">fiftyoneDegreesIpParseAddress</a> and <a class="el" href="group__fiftyone_degrees_ip.html#ga801ba3e566a0f3fef1202729f6e110e3" title="Parse a list of IP addresses and return as a linked list.">fiftyoneDegreesIpParseAddresses</a> methods. </p>
+<p>IP v4 and v6 addresses can be parsed using the <a class="el" href="group__fiftyone_degrees_ip.html#ga1fc6a7ff4d3eba96d3d48269ef87fc4d" title="Parse a single IP address string.">fiftyoneDegreesIpAddressParse</a> and #fiftyoneDegreesIpAddressesParse methods. </p>
 <h2 class="g-docs__section-heading">
 Collaboration diagram for IP:</h2>
 <div class="dyncontent">
@@ -90,9 +90,9 @@ Structs</h2>
 <!-- member dec start -->
 <!-- startMemberItem() -->
 <tr class="c-table__row memitem:"><td class="c-table__cell">struct <!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_evidence_ip_address.html">fiftyoneDegreesEvidenceIpAddress</a>
+&#160;</td><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ip_address.html">fiftyoneDegreesIpAddress</a>
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:">IP address structure containing the bytes of a v4 or v6 IP address.  <a href="structfiftyone_degrees_evidence_ip_address.html#details">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:">The structure to hold a IP Address in byte array format.  <a href="structfiftyone_degrees_ip_address.html#details">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- endMemberList -->
 <!-- end member list -->
@@ -143,13 +143,13 @@ Enumerations</h2>
 <tbody class="c-table__body">
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ga21c4651b14463cc956358d0f44702db8"><td class="c-table__cell">enum <!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="group__fiftyone_degrees_ip.html#ga21c4651b14463cc956358d0f44702db8">fiftyoneDegreesEvidenceIpType</a> { <a class="el" href="group__fiftyone_degrees_ip.html#gga21c4651b14463cc956358d0f44702db8a2f0b44f6d99f39de4b25c3dd2f3e6eee">FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4</a> = 0, 
-<a class="el" href="group__fiftyone_degrees_ip.html#gga21c4651b14463cc956358d0f44702db8a793ecdabe04607aa2a30c0e50d4bef4d">FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6</a> = 1, 
-<a class="el" href="group__fiftyone_degrees_ip.html#gga21c4651b14463cc956358d0f44702db8a2b82269f1ad6faceb491964702c0d96c">FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID</a> = 2
+<tr class="c-table__row memitem:ga442c961cca3e822fd98ed0e7546eafd5"><td class="c-table__cell">enum <!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group__fiftyone_degrees_ip.html#ga442c961cca3e822fd98ed0e7546eafd5">fiftyoneDegreesIpType</a> { <a class="el" href="group__fiftyone_degrees_ip.html#gga442c961cca3e822fd98ed0e7546eafd5a61ff526354c963df1d8298466e056d45">FIFTYONE_DEGREES_IP_TYPE_INVALID</a> = 0, 
+<a class="el" href="group__fiftyone_degrees_ip.html#gga442c961cca3e822fd98ed0e7546eafd5ab463a13bba23f835e052c786495bb527">FIFTYONE_DEGREES_IP_TYPE_IPV4</a> = 4, 
+<a class="el" href="group__fiftyone_degrees_ip.html#gga442c961cca3e822fd98ed0e7546eafd5ac7ed519cf6817b80ddbb5a7eeda4455b">FIFTYONE_DEGREES_IP_TYPE_IPV6</a> = 6
  }
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ga21c4651b14463cc956358d0f44702db8">Enum indicating the type of IP address.  <a href="group__fiftyone_degrees_ip.html#ga21c4651b14463cc956358d0f44702db8">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:ga442c961cca3e822fd98ed0e7546eafd5">Enum indicating the type of IP address.  <a href="group__fiftyone_degrees_ip.html#ga442c961cca3e822fd98ed0e7546eafd5">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- endMemberList -->
 <!-- end member list -->
@@ -170,31 +170,17 @@ Functions</h2>
 <tbody class="c-table__body">
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:gaac1fbf328a91c75a9cae87c911ca3092"><td class="c-table__cell">void<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="group__fiftyone_degrees_ip.html#gaac1fbf328a91c75a9cae87c911ca3092">fiftyoneDegreesIpFreeAddresses</a> (void(*free)(void *), <a class="el" href="structfiftyone_degrees_evidence_ip_address.html">fiftyoneDegreesEvidenceIpAddress</a> *addresses)
+<tr class="c-table__row memitem:ga1fc6a7ff4d3eba96d3d48269ef87fc4d"><td class="c-table__cell">bool<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group__fiftyone_degrees_ip.html#ga1fc6a7ff4d3eba96d3d48269ef87fc4d">fiftyoneDegreesIpAddressParse</a> (const char *start, const char *end, <a class="el" href="structfiftyone_degrees_ip_address.html">fiftyoneDegreesIpAddress</a> *address)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:gaac1fbf328a91c75a9cae87c911ca3092">Free a linked list of IP addresses.  <a href="#gaac1fbf328a91c75a9cae87c911ca3092">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:ga1fc6a7ff4d3eba96d3d48269ef87fc4d">Parse a single IP address string.  <a href="#ga1fc6a7ff4d3eba96d3d48269ef87fc4d">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ga1e5d04d924771a651fd5f8abf1107929"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_evidence_ip_address.html">fiftyoneDegreesEvidenceIpAddress</a>&#160;*<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="group__fiftyone_degrees_ip.html#ga1e5d04d924771a651fd5f8abf1107929">fiftyoneDegreesIpParseAddress</a> (void *(*malloc)(size_t), const char *start, const char *end)
+<tr class="c-table__row memitem:gaea636f4d7a88bfc55622f5a8fb98f9fb"><td class="c-table__cell">int<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group__fiftyone_degrees_ip.html#gaea636f4d7a88bfc55622f5a8fb98f9fb">fiftyoneDegreesIpAddressesCompare</a> (const unsigned char *ipAddress1, const unsigned char *ipAddress2, <a class="el" href="group__fiftyone_degrees_ip.html#ga442c961cca3e822fd98ed0e7546eafd5">fiftyoneDegreesIpType</a> type)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ga1e5d04d924771a651fd5f8abf1107929">Parse a single IP address string.  <a href="#ga1e5d04d924771a651fd5f8abf1107929">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:ga801ba3e566a0f3fef1202729f6e110e3"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_evidence_ip_address.html">fiftyoneDegreesEvidenceIpAddress</a>&#160;*<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="group__fiftyone_degrees_ip.html#ga801ba3e566a0f3fef1202729f6e110e3">fiftyoneDegreesIpParseAddresses</a> (void *(*malloc)(size_t), const char *start)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ga801ba3e566a0f3fef1202729f6e110e3">Parse a list of IP addresses and return as a linked list.  <a href="#ga801ba3e566a0f3fef1202729f6e110e3">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:ga4fd6c335e5ccf00a9599be38fdb46825"><td class="c-table__cell">int<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="group__fiftyone_degrees_ip.html#ga4fd6c335e5ccf00a9599be38fdb46825">fiftyoneDegreesCompareIpAddresses</a> (const unsigned char *ipAddress1, const unsigned char *ipAddress2, <a class="el" href="group__fiftyone_degrees_ip.html#ga21c4651b14463cc956358d0f44702db8">fiftyoneDegreesEvidenceIpType</a> type)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ga4fd6c335e5ccf00a9599be38fdb46825">Compare two IP addresses in its binary form.  <a href="#ga4fd6c335e5ccf00a9599be38fdb46825">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:gaea636f4d7a88bfc55622f5a8fb98f9fb">Compare two IP addresses in its binary form.  <a href="#gaea636f4d7a88bfc55622f5a8fb98f9fb">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- endMemberList -->
 <!-- end member list -->
@@ -220,9 +206,9 @@ Functions</h2>
 <h2 class="g-docs__section-heading">Enumeration Type Documentation</h2>
 <!-- startMemberDocList -->
 <article class="c-member">
-<a id="ga21c4651b14463cc956358d0f44702db8"></a><!-- startMemberDoc -->
+<a id="ga442c961cca3e822fd98ed0e7546eafd5"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga21c4651b14463cc956358d0f44702db8">&#9670;&nbsp;</a></span>fiftyoneDegreesEvidenceIpType</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga442c961cca3e822fd98ed0e7546eafd5">&#9670;&nbsp;</a></span>fiftyoneDegreesIpType</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -231,7 +217,7 @@ Functions</h2>
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">enum <a class="el" href="group__fiftyone_degrees_ip.html#ga21c4651b14463cc956358d0f44702db8">fiftyoneDegreesEvidenceIpType</a><!-- endMemberDocName -->
+              <td class="c-table__cell">enum <a class="el" href="group__fiftyone_degrees_ip.html#ga442c961cca3e822fd98ed0e7546eafd5">fiftyoneDegreesIpType</a><!-- endMemberDocName -->
 </td>
 <!-- endMemberDoc -->
             </tr>
@@ -245,11 +231,11 @@ Functions</h2>
 <div class="g-table g-table--overflow">
 <table class="c-table c-table--invert">
 <thead class="c-table__head">
-<tr class="c-table__row"><td class="c-table__cell" colspan="2"><h3 class="c-table__heading">Enumerator</h3></td></tr></thead><tbody class="c-table__body"><tr class="c-table__row"><td class="c-table__cell"><a id="gga21c4651b14463cc956358d0f44702db8a2f0b44f6d99f39de4b25c3dd2f3e6eee"></a>FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4&#160;</td><td class="c-table__cell"><p>An IPv4 address. </p>
+<tr class="c-table__row"><td class="c-table__cell" colspan="2"><h3 class="c-table__heading">Enumerator</h3></td></tr></thead><tbody class="c-table__body"><tr class="c-table__row"><td class="c-table__cell"><a id="gga442c961cca3e822fd98ed0e7546eafd5a61ff526354c963df1d8298466e056d45"></a>FIFTYONE_DEGREES_IP_TYPE_INVALID&#160;</td><td class="c-table__cell"><p>Invalid IP address. </p>
 </td></tr>
-<tr class="c-table__row"><td class="c-table__cell"><a id="gga21c4651b14463cc956358d0f44702db8a793ecdabe04607aa2a30c0e50d4bef4d"></a>FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6&#160;</td><td class="c-table__cell"><p>An IPv6 address. </p>
+<tr class="c-table__row"><td class="c-table__cell"><a id="gga442c961cca3e822fd98ed0e7546eafd5ab463a13bba23f835e052c786495bb527"></a>FIFTYONE_DEGREES_IP_TYPE_IPV4&#160;</td><td class="c-table__cell"><p>An IPv4 address. </p>
 </td></tr>
-<tr class="c-table__row"><td class="c-table__cell"><a id="gga21c4651b14463cc956358d0f44702db8a2b82269f1ad6faceb491964702c0d96c"></a>FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID&#160;</td><td class="c-table__cell"><p>Invalid IP address. </p>
+<tr class="c-table__row"><td class="c-table__cell"><a id="gga442c961cca3e822fd98ed0e7546eafd5ac7ed519cf6817b80ddbb5a7eeda4455b"></a>FIFTYONE_DEGREES_IP_TYPE_IPV6&#160;</td><td class="c-table__cell"><p>An IPv6 address. </p>
 </td></tr>
 </tbody>
 </table>
@@ -263,9 +249,9 @@ Functions</h2>
 <h2 class="g-docs__section-heading">Function Documentation</h2>
 <!-- startMemberDocList -->
 <article class="c-member">
-<a id="ga4fd6c335e5ccf00a9599be38fdb46825"></a><!-- startMemberDoc -->
+<a id="gaea636f4d7a88bfc55622f5a8fb98f9fb"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga4fd6c335e5ccf00a9599be38fdb46825">&#9670;&nbsp;</a></span>fiftyoneDegreesCompareIpAddresses()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gaea636f4d7a88bfc55622f5a8fb98f9fb">&#9670;&nbsp;</a></span>fiftyoneDegreesIpAddressesCompare()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -274,7 +260,7 @@ Functions</h2>
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">int fiftyoneDegreesCompareIpAddresses <!-- endMemberDocName -->
+              <td class="c-table__cell">int fiftyoneDegreesIpAddressesCompare <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -299,7 +285,7 @@ Functions</h2>
         <tr>
           <td class="c-table__cell"></td>
           <td></td>
-          <td class="c-table__cell"><a class="el" href="group__fiftyone_degrees_ip.html#ga21c4651b14463cc956358d0f44702db8">fiftyoneDegreesEvidenceIpType</a><!-- endParameterType -->
+          <td class="c-table__cell"><a class="el" href="group__fiftyone_degrees_ip.html#ga442c961cca3e822fd98ed0e7546eafd5">fiftyoneDegreesIpType</a><!-- endParameterType -->
 &#160;</td>
 <!-- startParameterName -->
           <td class="c-table__cell"><em>type</em><!-- endParameterName -->
@@ -335,66 +321,9 @@ Functions</h2>
 </div>
 </article>
 <article class="c-member">
-<a id="gaac1fbf328a91c75a9cae87c911ca3092"></a><!-- startMemberDoc -->
+<a id="ga1fc6a7ff4d3eba96d3d48269ef87fc4d"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gaac1fbf328a91c75a9cae87c911ca3092">&#9670;&nbsp;</a></span>fiftyoneDegreesIpFreeAddresses()</h2>
-
-<div class="c-member__main">
-<div class="c-member__head">
-<!-- startMemberDocName -->
-      <div class="c-member__split">
-        <div class="g-table g-table--overflow">
-          <table class="c-table c-table--article">
-            <tr class="c-table__row">
-              <td class="c-table__cell">void fiftyoneDegreesIpFreeAddresses <!-- endMemberDocName -->
-</td>
-<!-- startParameterList -->
-          <td>(</td>
-<!-- startFirstParameterType -->
-          <td class="c-table__cell">void(*)(void *)<!-- endParameterType -->
-&#160;</td>
-<!-- startParameterName -->
-          <td class="c-table__cell"><em>free</em>, <!-- endParameterName -->
-</td>
-        </tr>
-<!-- startParameterType -->
-        <tr>
-          <td class="c-table__cell"></td>
-          <td></td>
-          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_evidence_ip_address.html">fiftyoneDegreesEvidenceIpAddress</a> *<!-- endParameterType -->
-&#160;</td>
-<!-- startParameterName -->
-          <td class="c-table__cell"><em>addresses</em><!-- endParameterName -->
-&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td><!-- endParameterList -->
-</td>
-        </tr>
-<!-- endMemberDoc -->
-          </table>
-        </div>
-      </div>
-</div><!-- startIndent -->
-<div class="c-member__body">
-
-<p>Free a linked list of IP addresses. </p>
-<p>This can also be a single IP address as this is equivalent to a linked list with a size of 1. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
-    <tr><dd class="c-list-definition__desc"><span class="b-text--red">free</span> - method to free the IP addresses </dd>
-    <tr><dd class="c-list-definition__desc"><span class="b-text--red">addresses</span> - head of the linked list </dd>
-  </dd>
-</dl>
-<!-- endIndent -->
-
-</div>
-</div>
-</article>
-<article class="c-member">
-<a id="ga1e5d04d924771a651fd5f8abf1107929"></a><!-- startMemberDoc -->
-
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga1e5d04d924771a651fd5f8abf1107929">&#9670;&nbsp;</a></span>fiftyoneDegreesIpParseAddress()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga1fc6a7ff4d3eba96d3d48269ef87fc4d">&#9670;&nbsp;</a></span>fiftyoneDegreesIpAddressParse()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -403,21 +332,11 @@ Functions</h2>
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_evidence_ip_address.html">fiftyoneDegreesEvidenceIpAddress</a>* fiftyoneDegreesIpParseAddress <!-- endMemberDocName -->
+              <td class="c-table__cell">bool fiftyoneDegreesIpAddressParse <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
 <!-- startFirstParameterType -->
-          <td class="c-table__cell">void *(*)(size_t)<!-- endParameterType -->
-&#160;</td>
-<!-- startParameterName -->
-          <td class="c-table__cell"><em>malloc</em>, <!-- endParameterName -->
-</td>
-        </tr>
-<!-- startParameterType -->
-        <tr>
-          <td class="c-table__cell"></td>
-          <td></td>
           <td class="c-table__cell">const char *<!-- endParameterType -->
 &#160;</td>
 <!-- startParameterName -->
@@ -431,7 +350,17 @@ Functions</h2>
           <td class="c-table__cell">const char *<!-- endParameterType -->
 &#160;</td>
 <!-- startParameterName -->
-          <td class="c-table__cell"><em>end</em><!-- endParameterName -->
+          <td class="c-table__cell"><em>end</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ip_address.html">fiftyoneDegreesIpAddress</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>address</em><!-- endParameterName -->
 &#160;</td>
         </tr>
         <tr>
@@ -448,71 +377,13 @@ Functions</h2>
 <div class="c-member__body">
 
 <p>Parse a single IP address string. </p>
-<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
-    <tr><dd class="c-list-definition__desc"><span class="b-text--red">malloc</span> - method to allocate the IP address </dd>
+<p>Does not modify the last 12 (out of 16) bytes when parsing IPv4. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">start</span> - of the string containing the IP address to parse </dd>
-    <tr><dd class="c-list-definition__desc"><span class="b-text--red">end</span> - of the string containing the IP address to parse </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">end</span> - the last character of the string (with IP address) to be considered for parsing </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">address</span> - memory to write parsed IP address into. </dd>
   </dd>
 </dl>
-<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">pointer to the parsed IP address </dd></dl>
-<!-- endIndent -->
-
-</div>
-</div>
-</article>
-<article class="c-member">
-<a id="ga801ba3e566a0f3fef1202729f6e110e3"></a><!-- startMemberDoc -->
-
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga801ba3e566a0f3fef1202729f6e110e3">&#9670;&nbsp;</a></span>fiftyoneDegreesIpParseAddresses()</h2>
-
-<div class="c-member__main">
-<div class="c-member__head">
-<!-- startMemberDocName -->
-      <div class="c-member__split">
-        <div class="g-table g-table--overflow">
-          <table class="c-table c-table--article">
-            <tr class="c-table__row">
-              <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_evidence_ip_address.html">fiftyoneDegreesEvidenceIpAddress</a>* fiftyoneDegreesIpParseAddresses <!-- endMemberDocName -->
-</td>
-<!-- startParameterList -->
-          <td>(</td>
-<!-- startFirstParameterType -->
-          <td class="c-table__cell">void *(*)(size_t)<!-- endParameterType -->
-&#160;</td>
-<!-- startParameterName -->
-          <td class="c-table__cell"><em>malloc</em>, <!-- endParameterName -->
-</td>
-        </tr>
-<!-- startParameterType -->
-        <tr>
-          <td class="c-table__cell"></td>
-          <td></td>
-          <td class="c-table__cell">const char *<!-- endParameterType -->
-&#160;</td>
-<!-- startParameterName -->
-          <td class="c-table__cell"><em>start</em><!-- endParameterName -->
-&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td><!-- endParameterList -->
-</td>
-        </tr>
-<!-- endMemberDoc -->
-          </table>
-        </div>
-      </div>
-</div><!-- startIndent -->
-<div class="c-member__body">
-
-<p>Parse a list of IP addresses and return as a linked list. </p>
-<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
-    <tr><dd class="c-list-definition__desc"><span class="b-text--red">malloc</span> - method to allocate IP addresses </dd>
-    <tr><dd class="c-list-definition__desc"><span class="b-text--red">start</span> - of the string containing the IP addresses to parse </dd>
-  </dd>
-</dl>
-<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">pointer to the head of the linked list </dd></dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc"><code>true</code> if address was parsed correctly, <code>false</code> otherwise </dd></dl>
 <!-- endIndent -->
 
 </div>

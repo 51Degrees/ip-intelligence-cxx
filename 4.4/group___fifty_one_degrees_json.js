@@ -4,6 +4,7 @@ var group___fifty_one_degrees_json =
       [ "builder", "structfiftyone_degrees_json.html#a5b1cffdc19ca079a21a6e8c084131bcc", null ],
       [ "exception", "structfiftyone_degrees_json.html#aa1fd5ac247e314f089e60d694f4e94ea", null ],
       [ "property", "structfiftyone_degrees_json.html#aae71b761b2b4ae15f19f1879025361f8", null ],
+      [ "storedPropertyType", "structfiftyone_degrees_json.html#aa00a3c237ff5330189516659b52aa4bb", null ],
       [ "strings", "structfiftyone_degrees_json.html#a8f2004ae7a62437cdebd20d39f1bdcaf", null ],
       [ "values", "structfiftyone_degrees_json.html#a6f70b0a339b76fb456299b878da09d37", null ]
     ] ],

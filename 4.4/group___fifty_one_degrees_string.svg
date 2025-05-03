@@ -20,7 +20,7 @@
 <!-- Node0 -->
 <g id="node2" class="node">
 <title>Node0</title>
-<g id="a_node2"><a xlink:title="String structures containing the string and length.">
+<g id="a_node2"><a xlink:title="Byte array structures containing raw data bytes.">
 <polygon fill="#bfbfbf" stroke="black" points="142,-19 97,-19 97,0 142,0 142,-19"/>
 <text text-anchor="middle" x="119.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">String</text>
 </a>

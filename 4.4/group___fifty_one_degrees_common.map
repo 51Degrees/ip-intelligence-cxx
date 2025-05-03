@@ -1,5 +1,5 @@
 <map id="Common" name="Common">
-<area shape="rect" id="node1" title="Common 51Degrees methods, types and macros." alt="" coords="5,771,87,796"/>
+<area shape="rect" id="node1" title="Common 51Degrees methods, types and macros." alt="" coords="5,745,87,771"/>
 <area shape="rect" id="node2" href="$group___fifty_one_degrees_collection.html" title="Group of related items such as strings." alt="" coords="163,5,249,31"/>
 <area shape="rect" id="node3" href="$group___fifty_one_degrees_list.html" title="A more manageable way to store arrays." alt="" coords="183,55,229,80"/>
 <area shape="rect" id="node4" href="$group___fifty_one_degrees_results.html" title="Structure returned by an engine&#39;s process method(s), containing values." alt="" coords="171,104,241,129"/>
@@ -27,9 +27,8 @@
 <area shape="rect" id="node26" href="$group___fifty_one_degrees_data_set.html" title="A data file initialised in a structure." alt="" coords="167,1189,245,1215"/>
 <area shape="rect" id="node27" href="$group___fifty_one_degrees_json.html" title="JSON methods." alt="" coords="179,1239,233,1264"/>
 <area shape="rect" id="node28" href="$group___fifty_one_degrees_file.html" title="File handle pool and simple file operations e.g." alt="" coords="183,1288,229,1313"/>
-<area shape="rect" id="node29" href="$group___fifty_one_degrees_string.html" title="String structures containing the string and length." alt="" coords="176,1337,236,1363"/>
+<area shape="rect" id="node29" href="$group___fifty_one_degrees_string.html" title="Byte array structures containing raw data bytes." alt="" coords="176,1337,236,1363"/>
 <area shape="rect" id="node30" href="$group___fifty_one_degrees_profile.html" title="Profile containing a unique set of values for the properties of a single component." alt="" coords="175,1387,237,1412"/>
 <area shape="rect" id="node31" href="$group___fifty_one_degrees_tree.html" title="Implementation of the classic red black binary tree." alt="" coords="181,1436,231,1461"/>
-<area shape="rect" id="node32" href="$group___fifty_one_degrees_coordinate.html" title="A coordinate representation of a location." alt="" coords="162,1485,250,1511"/>
-<area shape="rect" id="node33" href="$group___fifty_one_degrees_headers.html" title="Common form of evidence in 51Degrees engines." alt="" coords="168,1535,244,1560"/>
+<area shape="rect" id="node32" href="$group___fifty_one_degrees_headers.html" title="Common form of evidence in 51Degrees engines." alt="" coords="168,1485,244,1511"/>
 </map>

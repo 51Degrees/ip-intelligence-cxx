@@ -76,7 +76,7 @@ $(document).ready(function(){initNavTree('class_fiftyone_degrees_1_1_ip_intellig
 <p>The key used to get the value for a property can be either the name of the property, or the index of the property in the required properties structure.</p>
 <p>Results instances should only be created by an Engine.</p>
 <h2>Usage Example</h2>
-<div class="c-code__block c-code__block--outline"><div class="c-code__line"><span class="c-code__keyword">using namespace </span><a class="code" href="namespace_fiftyone_degrees_1_1_ip_intelligence.html">FiftyoneDegrees::IpIntelligence</a>;</div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html">ResultsIpi</a> *results;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Get property value as a coordinate for property &quot;AverageLocation&quot;</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Value&lt;fiftyoneDegreesCoordinate&gt;</a> coordinate =</div><div class="c-code__line"> <a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a1bfc793c15c6fb5e9e7941019fe07ffa">getValueAsCoordinate</a>(<span class="c-code__stringliteral">&quot;AverageLocation&quot;</span>);</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Get the network id for the IP range</span></div><div class="c-code__line"><span class="c-code__keywordtype">string</span> networkId = results-&gt;<a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#af072e7d378c3035a0bbd64b5de3e4cb5">getNetworkId</a>();</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Delete the results</span></div><div class="c-code__line"><span class="c-code__keyword">delete</span> results;</div></div> </section></section>
+<div class="c-code__block c-code__block--outline"><div class="c-code__line"><span class="c-code__keyword">using namespace </span><a class="code" href="namespace_fiftyone_degrees_1_1_ip_intelligence.html">FiftyoneDegrees::IpIntelligence</a>;</div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html">ResultsIpi</a> *results;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Get property value as a coordinate for property &quot;AverageLocation&quot;</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Value&lt;fiftyoneDegreesCoordinate&gt;</a> coordinate =</div><div class="c-code__line"> getValueAsCoordinate(<span class="c-code__stringliteral">&quot;AverageLocation&quot;</span>);</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Get the network id for the IP range</span></div><div class="c-code__line"><span class="c-code__keywordtype">string</span> networkId = results-&gt;getNetworkId();</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Delete the results</span></div><div class="c-code__line"><span class="c-code__keyword">delete</span> results;</div></div> </section></section>
 <!-- start ClassInheritanceGraph -->
 <section class="g-docs__section">
 <h2 class="g-docs__section-heading">
@@ -129,216 +129,11 @@ Public Member Functions</h2>
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ae704c4aa3a2e2470e7474c59d4063e9b"><td class="c-table__cell"><a id="ae704c4aa3a2e2470e7474c59d4063e9b"></a>
-virtual<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#ae704c4aa3a2e2470e7474c59d4063e9b">~ResultsIpi</a> ()
+<tr class="c-table__row memitem:af960314cb5166318b9bdcb57dea285ec"><td class="c-table__cell"><a id="af960314cb5166318b9bdcb57dea285ec"></a>
+<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#af960314cb5166318b9bdcb57dea285ec">~ResultsIpi</a> () override
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ae704c4aa3a2e2470e7474c59d4063e9b">Release the reference to the underlying results and and associated data set. <!-- endMemberDescription -->
-</div></td></tr>
-<tr class="c-table__row"><td class="c-table__cell" colspan="2"><h3 class="c-table__heading">Value Getters</h3></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a04a9d34bc6b4c2a2767ae940da3c995c"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;bool&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a04a9d34bc6b4c2a2767ae940da3c995c">getValuesAsWeightedBoolList</a> (const char *propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a04a9d34bc6b4c2a2767ae940da3c995c">Get a vector with all weighted boolean representations of the values associated with the required property name.  <a href="#a04a9d34bc6b4c2a2767ae940da3c995c">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a087f6784a64261f22935c28740066177"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;bool&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a087f6784a64261f22935c28740066177">getValuesAsWeightedBoolList</a> (const string *propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a087f6784a64261f22935c28740066177">Get a vector with all weighted boolean representations of the values associated with the required property name.  <a href="#a087f6784a64261f22935c28740066177">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:af7b794bd48ae5759ed6493817b0b700b"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;bool&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#af7b794bd48ae5759ed6493817b0b700b">getValuesAsWeightedBoolList</a> (const string &amp;propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:af7b794bd48ae5759ed6493817b0b700b">Get a vector with all weighted boolean representations of the values associated with the required property name.  <a href="#af7b794bd48ae5759ed6493817b0b700b">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a290f9c49d09d09090d474a7743ebe063"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;bool&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a290f9c49d09d09090d474a7743ebe063">getValuesAsWeightedBoolList</a> (int requiredPropertyIndex)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a290f9c49d09d09090d474a7743ebe063">Get a vector with all weighted boolean representations of the values associated with the required property index.  <a href="#a290f9c49d09d09090d474a7743ebe063">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a0bf12db19cdef1b3f8519ceb76784b9b"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;string&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a0bf12db19cdef1b3f8519ceb76784b9b">getValuesAsWeightedStringList</a> (const char *propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a0bf12db19cdef1b3f8519ceb76784b9b">Get a vector with all weighted string representations of the values associated with the required property name.  <a href="#a0bf12db19cdef1b3f8519ceb76784b9b">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:aceb25dca33d53e73e894a7ba50a6dd2b"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;string&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#aceb25dca33d53e73e894a7ba50a6dd2b">getValuesAsWeightedStringList</a> (const string *propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:aceb25dca33d53e73e894a7ba50a6dd2b">Get a vector with all weighted string representations of the values associated with the required property name.  <a href="#aceb25dca33d53e73e894a7ba50a6dd2b">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a10f70a8dee81c53432fc5286ae974685"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;string&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a10f70a8dee81c53432fc5286ae974685">getValuesAsWeightedStringList</a> (const string &amp;propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a10f70a8dee81c53432fc5286ae974685">Get a vector with all weighted string representations of the values associated with the required property name.  <a href="#a10f70a8dee81c53432fc5286ae974685">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a1264c15bf5ea3418f19b9b79dc5aa46b"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;string&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a1264c15bf5ea3418f19b9b79dc5aa46b">getValuesAsWeightedStringList</a> (int requiredPropertyIndex)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a1264c15bf5ea3418f19b9b79dc5aa46b">Get a vector with all weighted string representations of the values associated with the required property index.  <a href="#a1264c15bf5ea3418f19b9b79dc5aa46b">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a9fb4d46a1d2dbf2ec8a83f67544e4959"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;int&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a9fb4d46a1d2dbf2ec8a83f67544e4959">getValuesAsWeightedIntegerList</a> (const char *propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a9fb4d46a1d2dbf2ec8a83f67544e4959">Get a vector with all weighted integer representations of the values associated with the required property name.  <a href="#a9fb4d46a1d2dbf2ec8a83f67544e4959">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:aa7c28e8b7c3605e5e93a4ba39309030e"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;int&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#aa7c28e8b7c3605e5e93a4ba39309030e">getValuesAsWeightedIntegerList</a> (const string *propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:aa7c28e8b7c3605e5e93a4ba39309030e">Get a vector with all weighted integer representations of the values associated with the required property name.  <a href="#aa7c28e8b7c3605e5e93a4ba39309030e">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a197796f64af2c4e02982302b187be3dc"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;int&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a197796f64af2c4e02982302b187be3dc">getValuesAsWeightedIntegerList</a> (const string &amp;propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a197796f64af2c4e02982302b187be3dc">Get a vector with all weighted integer representations of the values associated with the required property name.  <a href="#a197796f64af2c4e02982302b187be3dc">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a4f6183b9db5bb432561702817ed4ab57"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;int&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a4f6183b9db5bb432561702817ed4ab57">getValuesAsWeightedIntegerList</a> (int requiredPropertyIndex)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a4f6183b9db5bb432561702817ed4ab57">Get a vector with all weighted integer representations of the values associated with the required property index.  <a href="#a4f6183b9db5bb432561702817ed4ab57">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a8f24f110bfb6a701493fec05479097e9"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;double&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a8f24f110bfb6a701493fec05479097e9">getValuesAsWeightedDoubleList</a> (const char *propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a8f24f110bfb6a701493fec05479097e9">Get a vector with all weighted double representations of the values associated with the required property name.  <a href="#a8f24f110bfb6a701493fec05479097e9">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:ababf615a6b4bae32d26a02381faf48f3"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;double&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#ababf615a6b4bae32d26a02381faf48f3">getValuesAsWeightedDoubleList</a> (const string *propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ababf615a6b4bae32d26a02381faf48f3">Get a vector with all weighted double representations of the values associated with the required property name.  <a href="#ababf615a6b4bae32d26a02381faf48f3">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:ab3c30590decb52b56052cdbd38ac9b57"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;double&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#ab3c30590decb52b56052cdbd38ac9b57">getValuesAsWeightedDoubleList</a> (const string &amp;propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ab3c30590decb52b56052cdbd38ac9b57">Get a vector with all weighted double representations of the values associated with the required property name.  <a href="#ab3c30590decb52b56052cdbd38ac9b57">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a69b009c67938d1785de8669adcf12b4c"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;double&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a69b009c67938d1785de8669adcf12b4c">getValuesAsWeightedDoubleList</a> (int requiredPropertyIndex)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a69b009c67938d1785de8669adcf12b4c">Get a vector with all weighted double representations of the values associated with the required property index.  <a href="#a69b009c67938d1785de8669adcf12b4c">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a1bfc793c15c6fb5e9e7941019fe07ffa"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;<a class="el" href="structfiftyone_degrees_coordinate.html">fiftyoneDegreesCoordinate</a>&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a1bfc793c15c6fb5e9e7941019fe07ffa">getValueAsCoordinate</a> (const char *propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a1bfc793c15c6fb5e9e7941019fe07ffa">Get a float pair representation of the value associated with the required property name.  <a href="#a1bfc793c15c6fb5e9e7941019fe07ffa">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:aebd3d8850e6fdc25a65e4a119568f593"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;<a class="el" href="structfiftyone_degrees_coordinate.html">fiftyoneDegreesCoordinate</a>&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#aebd3d8850e6fdc25a65e4a119568f593">getValueAsCoordinate</a> (const string *propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:aebd3d8850e6fdc25a65e4a119568f593">Get a float pair representation of the value associated with the required property name.  <a href="#aebd3d8850e6fdc25a65e4a119568f593">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a7c595276db3fcb7e26f81b1276257000"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;<a class="el" href="structfiftyone_degrees_coordinate.html">fiftyoneDegreesCoordinate</a>&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a7c595276db3fcb7e26f81b1276257000">getValueAsCoordinate</a> (const string &amp;propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a7c595276db3fcb7e26f81b1276257000">Get a float pair representation of the value associated with the required property name.  <a href="#a7c595276db3fcb7e26f81b1276257000">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:aa1bf71fe6bf569739fa019afae100bc6"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;<a class="el" href="structfiftyone_degrees_coordinate.html">fiftyoneDegreesCoordinate</a>&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#aa1bf71fe6bf569739fa019afae100bc6">getValueAsCoordinate</a> (int requiredPropertyIndex)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:aa1bf71fe6bf569739fa019afae100bc6">Get a float pair representation of the value associated with the required property index.  <a href="#aa1bf71fe6bf569739fa019afae100bc6">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:aad9262d7af8a666898c77d0376160368"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html">IpAddress</a>&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#aad9262d7af8a666898c77d0376160368">getValueAsIpAddress</a> (const char *propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:aad9262d7af8a666898c77d0376160368">Get an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> instace representation of the value associated with the required property name.  <a href="#aad9262d7af8a666898c77d0376160368">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:ab131936223f4692f0d9fcfe9d0cb8bfe"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html">IpAddress</a>&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#ab131936223f4692f0d9fcfe9d0cb8bfe">getValueAsIpAddress</a> (const string &amp;propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ab131936223f4692f0d9fcfe9d0cb8bfe">Get an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> instace representation of the value associated with the required property name.  <a href="#ab131936223f4692f0d9fcfe9d0cb8bfe">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a71d0e90d05b39d55b6092d5f24866150"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html">IpAddress</a>&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a71d0e90d05b39d55b6092d5f24866150">getValueAsIpAddress</a> (const string *propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a71d0e90d05b39d55b6092d5f24866150">Get an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> instace representation of the value associated with the required property name.  <a href="#a71d0e90d05b39d55b6092d5f24866150">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:ad00503505c3fbfdd65f8189644a08277"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html">IpAddress</a>&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#ad00503505c3fbfdd65f8189644a08277">getValueAsIpAddress</a> (int requiredPropertyIndex)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ad00503505c3fbfdd65f8189644a08277">Get an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> instace representation of the value associated with the required property index.  <a href="#ad00503505c3fbfdd65f8189644a08277">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a4d6c4ff7c4f68320a98825ea0029902a"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;bool&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a4d6c4ff7c4f68320a98825ea0029902a">getValueAsBool</a> (int requiredPropertyIndex) override
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a4d6c4ff7c4f68320a98825ea0029902a">Override the get boolean representation of the value associated with the required property name.  <a href="#a4d6c4ff7c4f68320a98825ea0029902a">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a883a0f7df5fa0a79c8ec06287f2948af"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;int&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a883a0f7df5fa0a79c8ec06287f2948af">getValueAsInteger</a> (int requiredPropertyIndex) override
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a883a0f7df5fa0a79c8ec06287f2948af">Override the get integer representation of the value associated with the required property name.  <a href="#a883a0f7df5fa0a79c8ec06287f2948af">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:ac44d40b0586a1e35640ba250a3282d75"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;double&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#ac44d40b0586a1e35640ba250a3282d75">getValueAsDouble</a> (int requiredPropertyIndex) override
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ac44d40b0586a1e35640ba250a3282d75">Override the get double representation of the value associated with the required property name.  <a href="#ac44d40b0586a1e35640ba250a3282d75">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<tr class="c-table__row"><td class="c-table__cell" colspan="2"><h3 class="c-table__heading">Metric Getters</h3></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:af072e7d378c3035a0bbd64b5de3e4cb5"><td class="c-table__cell">string<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#af072e7d378c3035a0bbd64b5de3e4cb5">getNetworkId</a> (uint32_t resultIndex)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:af072e7d378c3035a0bbd64b5de3e4cb5">Returns the unique network id if the Id property was included in the required list of properties when the Provider was constructed.  <a href="#af072e7d378c3035a0bbd64b5de3e4cb5">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a661de80f116a48a862a2a835e4f28fbb"><td class="c-table__cell">string<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a661de80f116a48a862a2a835e4f28fbb">getNetworkId</a> ()
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a661de80f116a48a862a2a835e4f28fbb">Returns the unique network id if the Id property was included in the required list of properties when the Provider was constructed.  <a href="#a661de80f116a48a862a2a835e4f28fbb">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:af960314cb5166318b9bdcb57dea285ec">Release the reference to the underlying results and associated data set. <!-- endMemberDescription -->
 </div></td></tr>
 <!-- writeInheritedSectionTitle -->
 <tr class="c-table__row pub_methods_class_fiftyone_degrees_1_1_common_1_1_results_base"><td class="c-table__cell c-table__cell--parent" colspan="2" onclick="javascript:toggleInherit('pub_methods_class_fiftyone_degrees_1_1_common_1_1_results_base')"><span class="c-table__arrow c-table__arrow--is-open"></span><h3 class="c-table__heading">Public Member Functions inherited from <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_results_base.html">FiftyoneDegrees::Common::ResultsBase</a></h3></td></tr>
@@ -519,56 +314,6 @@ virtual<!-- insertMemberAlign -->
 <section class="g-docs__section">
 </section>
 <section class="g-docs__section">
-<!-- startMemberHeader -->
-<h2 class="g-docs__section-heading">
-<a name="pro-methods"></a>
-Protected Member Functions</h2>
-<!-- endMemberHeader -->
-<!-- startMemberList -->
-<!-- start member list -->
-<div class="g-table g-table--overflow">
-<table class="c-table c-table--members">
-<tbody class="c-table__body">
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:ab3a59b282cf1951c9b34a5cef8e2c721"><td class="c-table__cell">void<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#ab3a59b282cf1951c9b34a5cef8e2c721">getValuesInternal</a> (int requiredPropertyIndex, vector&lt; string &gt; &amp;values)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ab3a59b282cf1951c9b34a5cef8e2c721">Get the values for the index in required properties and add them to the values vector supplied.  <a href="#ab3a59b282cf1951c9b34a5cef8e2c721">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a98ed76e95e4006bfba161e766742aec9"><td class="c-table__cell">bool<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a98ed76e95e4006bfba161e766742aec9">hasValuesInternal</a> (int requiredPropertyIndex)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a98ed76e95e4006bfba161e766742aec9">Get whether or not there are valid values available for the property identified by its index in the required properties.  <a href="#a98ed76e95e4006bfba161e766742aec9">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:ac1d2314a9a2e78a15820a66f8e3b1d40"><td class="c-table__cell">const&#160;char&#160;*<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#ac1d2314a9a2e78a15820a66f8e3b1d40">getNoValueMessageInternal</a> (<a class="el" href="group___fifty_one_degrees_results.html#gaef347b638495391733e5962b576321e6">fiftyoneDegreesResultsNoValueReason</a> reason)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ac1d2314a9a2e78a15820a66f8e3b1d40">Get the message explaining the reason for missing values.  <a href="#ac1d2314a9a2e78a15820a66f8e3b1d40">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:a39ec509230584d44ad630a8e25f3d23a"><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_results.html#gaef347b638495391733e5962b576321e6">fiftyoneDegreesResultsNoValueReason</a><!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a39ec509230584d44ad630a8e25f3d23a">getNoValueReasonInternal</a> (int requiredPropertyIndex)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a39ec509230584d44ad630a8e25f3d23a">Get the reason for values not being available.  <a href="#a39ec509230584d44ad630a8e25f3d23a">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- writeInheritedSectionTitle -->
-<tr class="c-table__row pro_methods_class_fiftyone_degrees_1_1_common_1_1_results_base"><td class="c-table__cell c-table__cell--parent" colspan="2" onclick="javascript:toggleInherit('pro_methods_class_fiftyone_degrees_1_1_common_1_1_results_base')"><span class="c-table__arrow c-table__arrow--is-open"></span><h3 class="c-table__heading">Protected Member Functions inherited from <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_results_base.html">FiftyoneDegrees::Common::ResultsBase</a></h3></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:affd7db87f65fec3baa9d816cd919e889 inherit pro_methods_class_fiftyone_degrees_1_1_common_1_1_results_base"><td class="c-table__cell">int<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_results_base.html#affd7db87f65fec3baa9d816cd919e889">getRequiredPropertyIndex</a> (const char *propertyName)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:affd7db87f65fec3baa9d816cd919e889 inherit pro_methods_class_fiftyone_degrees_1_1_common_1_1_results_base">Get the index in the available properties for the property name provided.  <a href="class_fiftyone_degrees_1_1_common_1_1_results_base.html#affd7db87f65fec3baa9d816cd919e889">More...</a><!-- endMemberDescription -->
-</div></td></tr>
-<!-- endMemberList -->
-<!-- end member list -->
-</tbody></table></div>
 </section>
 <section class="g-docs__section">
 </section>
@@ -626,6 +371,244 @@ class<!-- insertMemberAlign -->
 <section class="g-docs__section">
 </section>
 <!-- start MemberGroups -->
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a04a9d34bc6b4c2a2767ae940da3c995c"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;bool&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a04a9d34bc6b4c2a2767ae940da3c995c">getValuesAsWeightedBoolList</a> (const char *propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a04a9d34bc6b4c2a2767ae940da3c995c">Get a vector with all weighted boolean representations of the values associated with the required property name.  <a href="#a04a9d34bc6b4c2a2767ae940da3c995c">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a087f6784a64261f22935c28740066177"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;bool&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a087f6784a64261f22935c28740066177">getValuesAsWeightedBoolList</a> (const string *propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a087f6784a64261f22935c28740066177">Get a vector with all weighted boolean representations of the values associated with the required property name.  <a href="#a087f6784a64261f22935c28740066177">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:af7b794bd48ae5759ed6493817b0b700b"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;bool&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#af7b794bd48ae5759ed6493817b0b700b">getValuesAsWeightedBoolList</a> (const string &amp;propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:af7b794bd48ae5759ed6493817b0b700b">Get a vector with all weighted boolean representations of the values associated with the required property name.  <a href="#af7b794bd48ae5759ed6493817b0b700b">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a290f9c49d09d09090d474a7743ebe063"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;bool&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a290f9c49d09d09090d474a7743ebe063">getValuesAsWeightedBoolList</a> (int requiredPropertyIndex)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a290f9c49d09d09090d474a7743ebe063">Get a vector with all weighted boolean representations of the values associated with the required property index.  <a href="#a290f9c49d09d09090d474a7743ebe063">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a0bf12db19cdef1b3f8519ceb76784b9b"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;string&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a0bf12db19cdef1b3f8519ceb76784b9b">getValuesAsWeightedStringList</a> (const char *propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a0bf12db19cdef1b3f8519ceb76784b9b">Get a vector with all weighted string representations of the values associated with the required property name.  <a href="#a0bf12db19cdef1b3f8519ceb76784b9b">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a0a71ff1f972be749b45a83eb98851718"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;std::vector&lt;&#160;uint8_t&#160;&gt;&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a0a71ff1f972be749b45a83eb98851718">getValuesAsWeightedUTF8StringList</a> (int requiredPropertyIndex)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a0a71ff1f972be749b45a83eb98851718">Get a vector with all weighted string representations of the values associated with the required property index.  <a href="#a0a71ff1f972be749b45a83eb98851718">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a1ba1aa2e94a9a4e89ae597655e012182"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;std::vector&lt;&#160;uint8_t&#160;&gt;&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a1ba1aa2e94a9a4e89ae597655e012182">getValuesAsWeightedUTF8StringList</a> (const char *propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a1ba1aa2e94a9a4e89ae597655e012182">Get a vector with all weighted byte vector representations of the values associated with the required property name.  <a href="#a1ba1aa2e94a9a4e89ae597655e012182">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:aefc102f995e1e1880403f188162ea93f"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;std::vector&lt;&#160;uint8_t&#160;&gt;&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#aefc102f995e1e1880403f188162ea93f">getValuesAsWeightedUTF8StringList</a> (const string &amp;propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:aefc102f995e1e1880403f188162ea93f">Get a vector with all weighted byte vector representations of the values associated with the required property name.  <a href="#aefc102f995e1e1880403f188162ea93f">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:aceb25dca33d53e73e894a7ba50a6dd2b"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;string&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#aceb25dca33d53e73e894a7ba50a6dd2b">getValuesAsWeightedStringList</a> (const string *propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:aceb25dca33d53e73e894a7ba50a6dd2b">Get a vector with all weighted string representations of the values associated with the required property name.  <a href="#aceb25dca33d53e73e894a7ba50a6dd2b">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a10f70a8dee81c53432fc5286ae974685"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;string&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a10f70a8dee81c53432fc5286ae974685">getValuesAsWeightedStringList</a> (const string &amp;propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a10f70a8dee81c53432fc5286ae974685">Get a vector with all weighted string representations of the values associated with the required property name.  <a href="#a10f70a8dee81c53432fc5286ae974685">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a1264c15bf5ea3418f19b9b79dc5aa46b"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;string&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a1264c15bf5ea3418f19b9b79dc5aa46b">getValuesAsWeightedStringList</a> (int requiredPropertyIndex)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a1264c15bf5ea3418f19b9b79dc5aa46b">Get a vector with all weighted string representations of the values associated with the required property index.  <a href="#a1264c15bf5ea3418f19b9b79dc5aa46b">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a0b7dd602c4e71519d4090ca9d219c301"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;string&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a0b7dd602c4e71519d4090ca9d219c301">getValuesAsWeightedWKTStringList</a> (const char *propertyName, ::<a class="el" href="group___fifty_one_degrees_data.html#ga0c8186d9b9b7880309c27230bbb5e69d">byte</a> decimalPlaces)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a0b7dd602c4e71519d4090ca9d219c301">Get a vector with all weighted string representations of the values associated with the required property name.  <a href="#a0b7dd602c4e71519d4090ca9d219c301">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a6d659e0d0c32f7351588fef8e1c844bb"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;string&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a6d659e0d0c32f7351588fef8e1c844bb">getValuesAsWeightedWKTStringList</a> (const string *propertyName, ::<a class="el" href="group___fifty_one_degrees_data.html#ga0c8186d9b9b7880309c27230bbb5e69d">byte</a> decimalPlaces)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a6d659e0d0c32f7351588fef8e1c844bb">Get a vector with all weighted string representations of the values associated with the required property name.  <a href="#a6d659e0d0c32f7351588fef8e1c844bb">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ab9f6a3e15c9792496f2acd8747116482"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;string&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#ab9f6a3e15c9792496f2acd8747116482">getValuesAsWeightedWKTStringList</a> (const string &amp;propertyName, ::<a class="el" href="group___fifty_one_degrees_data.html#ga0c8186d9b9b7880309c27230bbb5e69d">byte</a> decimalPlaces)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ab9f6a3e15c9792496f2acd8747116482">Get a vector with all weighted string representations of the values associated with the required property name.  <a href="#ab9f6a3e15c9792496f2acd8747116482">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a8eb12ec0c055408f4f238633ce485164"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;string&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a8eb12ec0c055408f4f238633ce485164">getValuesAsWeightedWKTStringList</a> (int requiredPropertyIndex, ::<a class="el" href="group___fifty_one_degrees_data.html#ga0c8186d9b9b7880309c27230bbb5e69d">byte</a> decimalPlaces)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a8eb12ec0c055408f4f238633ce485164">Get a vector with all weighted string representations of the values associated with the required property index.  <a href="#a8eb12ec0c055408f4f238633ce485164">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a9fb4d46a1d2dbf2ec8a83f67544e4959"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;int&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a9fb4d46a1d2dbf2ec8a83f67544e4959">getValuesAsWeightedIntegerList</a> (const char *propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a9fb4d46a1d2dbf2ec8a83f67544e4959">Get a vector with all weighted integer representations of the values associated with the required property name.  <a href="#a9fb4d46a1d2dbf2ec8a83f67544e4959">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:aa7c28e8b7c3605e5e93a4ba39309030e"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;int&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#aa7c28e8b7c3605e5e93a4ba39309030e">getValuesAsWeightedIntegerList</a> (const string *propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:aa7c28e8b7c3605e5e93a4ba39309030e">Get a vector with all weighted integer representations of the values associated with the required property name.  <a href="#aa7c28e8b7c3605e5e93a4ba39309030e">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a197796f64af2c4e02982302b187be3dc"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;int&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a197796f64af2c4e02982302b187be3dc">getValuesAsWeightedIntegerList</a> (const string &amp;propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a197796f64af2c4e02982302b187be3dc">Get a vector with all weighted integer representations of the values associated with the required property name.  <a href="#a197796f64af2c4e02982302b187be3dc">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a4f6183b9db5bb432561702817ed4ab57"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;int&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a4f6183b9db5bb432561702817ed4ab57">getValuesAsWeightedIntegerList</a> (int requiredPropertyIndex)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a4f6183b9db5bb432561702817ed4ab57">Get a vector with all weighted integer representations of the values associated with the required property index.  <a href="#a4f6183b9db5bb432561702817ed4ab57">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a8f24f110bfb6a701493fec05479097e9"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;double&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a8f24f110bfb6a701493fec05479097e9">getValuesAsWeightedDoubleList</a> (const char *propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a8f24f110bfb6a701493fec05479097e9">Get a vector with all weighted double representations of the values associated with the required property name.  <a href="#a8f24f110bfb6a701493fec05479097e9">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ababf615a6b4bae32d26a02381faf48f3"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;double&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#ababf615a6b4bae32d26a02381faf48f3">getValuesAsWeightedDoubleList</a> (const string *propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ababf615a6b4bae32d26a02381faf48f3">Get a vector with all weighted double representations of the values associated with the required property name.  <a href="#ababf615a6b4bae32d26a02381faf48f3">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ab3c30590decb52b56052cdbd38ac9b57"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;double&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#ab3c30590decb52b56052cdbd38ac9b57">getValuesAsWeightedDoubleList</a> (const string &amp;propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ab3c30590decb52b56052cdbd38ac9b57">Get a vector with all weighted double representations of the values associated with the required property name.  <a href="#ab3c30590decb52b56052cdbd38ac9b57">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a69b009c67938d1785de8669adcf12b4c"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;vector&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;&#160;double&#160;&gt;&#160;&gt;&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a69b009c67938d1785de8669adcf12b4c">getValuesAsWeightedDoubleList</a> (int requiredPropertyIndex)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a69b009c67938d1785de8669adcf12b4c">Get a vector with all weighted double representations of the values associated with the required property index.  <a href="#a69b009c67938d1785de8669adcf12b4c">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a0b8541d1de94c97c01fba6b213256fd2"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html">IpIntelligence::IpAddress</a>&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a0b8541d1de94c97c01fba6b213256fd2">getValueAsIpAddress</a> (const char *propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a0b8541d1de94c97c01fba6b213256fd2">Get an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> instance representation of the value associated with the required property name.  <a href="#a0b8541d1de94c97c01fba6b213256fd2">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a1bf7636051d9a18b6b1dbc5a00f4d808"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html">IpIntelligence::IpAddress</a>&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a1bf7636051d9a18b6b1dbc5a00f4d808">getValueAsIpAddress</a> (const string &amp;propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a1bf7636051d9a18b6b1dbc5a00f4d808">Get an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> instance representation of the value associated with the required property name.  <a href="#a1bf7636051d9a18b6b1dbc5a00f4d808">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a1605eed5a2cfe73df2e4cb652ec8d7b8"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html">IpIntelligence::IpAddress</a>&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a1605eed5a2cfe73df2e4cb652ec8d7b8">getValueAsIpAddress</a> (const string *propertyName)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a1605eed5a2cfe73df2e4cb652ec8d7b8">Get an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> instance representation of the value associated with the required property name.  <a href="#a1605eed5a2cfe73df2e4cb652ec8d7b8">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a9ffe0475f791415bbecdd5bf6676dc7b"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html">IpIntelligence::IpAddress</a>&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a9ffe0475f791415bbecdd5bf6676dc7b">getValueAsIpAddress</a> (int requiredPropertyIndex)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a9ffe0475f791415bbecdd5bf6676dc7b">Get an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> instance representation of the value associated with the required property index.  <a href="#a9ffe0475f791415bbecdd5bf6676dc7b">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a4d6c4ff7c4f68320a98825ea0029902a"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;bool&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a4d6c4ff7c4f68320a98825ea0029902a">getValueAsBool</a> (int requiredPropertyIndex) override
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a4d6c4ff7c4f68320a98825ea0029902a">Override the get boolean representation of the value associated with the required property name.  <a href="#a4d6c4ff7c4f68320a98825ea0029902a">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a883a0f7df5fa0a79c8ec06287f2948af"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;int&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a883a0f7df5fa0a79c8ec06287f2948af">getValueAsInteger</a> (int requiredPropertyIndex) override
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a883a0f7df5fa0a79c8ec06287f2948af">Override the get integer representation of the value associated with the required property name.  <a href="#a883a0f7df5fa0a79c8ec06287f2948af">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ac44d40b0586a1e35640ba250a3282d75"><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;&#160;double&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#ac44d40b0586a1e35640ba250a3282d75">getValueAsDouble</a> (int requiredPropertyIndex) override
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ac44d40b0586a1e35640ba250a3282d75">Override the get double representation of the value associated with the required property name.  <a href="#ac44d40b0586a1e35640ba250a3282d75">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a5ba985a31b367e71f35a51fc748e0cf6"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a5ba985a31b367e71f35a51fc748e0cf6">getValuesInternal</a> (int requiredPropertyIndex, vector&lt; string &gt; &amp;values) override
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a5ba985a31b367e71f35a51fc748e0cf6">Get the values for the index in required properties and add them to the values vector supplied.  <a href="#a5ba985a31b367e71f35a51fc748e0cf6">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a4a83a739ff057ff6906a93fde0cdea50"><td class="c-table__cell">bool<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a4a83a739ff057ff6906a93fde0cdea50">hasValuesInternal</a> (int requiredPropertyIndex) override
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a4a83a739ff057ff6906a93fde0cdea50">Get whether or not there are valid values available for the property identified by its index in the required properties.  <a href="#a4a83a739ff057ff6906a93fde0cdea50">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a3307d47d4567930c6b2d53d2c276b064"><td class="c-table__cell">const&#160;char&#160;*<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a3307d47d4567930c6b2d53d2c276b064">getNoValueMessageInternal</a> (<a class="el" href="group___fifty_one_degrees_results.html#gaef347b638495391733e5962b576321e6">fiftyoneDegreesResultsNoValueReason</a> reason) override
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a3307d47d4567930c6b2d53d2c276b064">Get the message explaining the reason for missing values.  <a href="#a3307d47d4567930c6b2d53d2c276b064">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:a127a3d25a3c89c8b0b44a38ad59ac5db"><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_results.html#gaef347b638495391733e5962b576321e6">fiftyoneDegreesResultsNoValueReason</a><!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a127a3d25a3c89c8b0b44a38ad59ac5db">getNoValueReasonInternal</a> (int requiredPropertyIndex) override
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:a127a3d25a3c89c8b0b44a38ad59ac5db">Get the reason for values not being available.  <a href="#a127a3d25a3c89c8b0b44a38ad59ac5db">More...</a><!-- endMemberDescription -->
+</div></td></tr>
 <!-- end MemberGroups -->
 <section class="g-docs__section">
 <h2 class="g-docs__section-heading">Constructor &amp; Destructor Documentation</h2>
@@ -691,89 +674,9 @@ class<!-- insertMemberAlign -->
 <h2 class="g-docs__section-heading">Member Function Documentation</h2>
 <!-- startMemberDocList -->
 <article class="c-member">
-<a id="af072e7d378c3035a0bbd64b5de3e4cb5"></a><!-- startMemberDoc -->
+<a id="a3307d47d4567930c6b2d53d2c276b064"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#af072e7d378c3035a0bbd64b5de3e4cb5">&#9670;&nbsp;</a></span>getNetworkId() <span class="c-member__count">[1/2]</span></h2>
-
-<div class="c-member__main">
-<div class="c-member__head">
-<!-- startMemberDocName -->
-      <div class="c-member__split">
-        <div class="g-table g-table--overflow">
-          <table class="c-table c-table--article">
-            <tr class="c-table__row">
-              <td class="c-table__cell">string FiftyoneDegrees::IpIntelligence::ResultsIpi::getNetworkId <!-- endMemberDocName -->
-</td>
-<!-- startParameterList -->
-          <td>(</td>
-<!-- startFirstParameterType -->
-          <td class="c-table__cell">uint32_t<!-- endParameterType -->
-&#160;</td>
-<!-- startParameterName -->
-          <td class="c-table__cell"><em>resultIndex</em><!-- endParameterName -->
-</td><td>)</td>
-          <td><!-- endParameterList -->
-</td>
-        </tr>
-<!-- endMemberDoc -->
-          </table>
-        </div>
-      </div>
-</div><!-- startIndent -->
-<div class="c-member__body">
-
-<p>Returns the unique network id if the Id property was included in the required list of properties when the Provider was constructed. </p>
-<p>For IP Intelligence there should be maximum of one result returned so the output of this function should be the same as <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html#a661de80f116a48a862a2a835e4f28fbb" title="Returns the unique network id if the Id property was included in the required list of properties when...">getNetworkId()</a>.</p>
-<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
-    <tr><dd class="c-list-definition__desc"><span class="b-text--red">resultIndex</span> - index of the individual entry in the results </dd>
-  </dd>
-</dl>
-<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">profile ids and their percentage with ':' and '|' e.g. 'ProfileId1:Percentage1|ProfileId2:Percentage2' </dd></dl>
-<!-- endIndent -->
-
-</div>
-</div>
-</article>
-<article class="c-member">
-<a id="a661de80f116a48a862a2a835e4f28fbb"></a><!-- startMemberDoc -->
-
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a661de80f116a48a862a2a835e4f28fbb">&#9670;&nbsp;</a></span>getNetworkId() <span class="c-member__count">[2/2]</span></h2>
-
-<div class="c-member__main">
-<div class="c-member__head">
-<!-- startMemberDocName -->
-      <div class="c-member__split">
-        <div class="g-table g-table--overflow">
-          <table class="c-table c-table--article">
-            <tr class="c-table__row">
-              <td class="c-table__cell">string FiftyoneDegrees::IpIntelligence::ResultsIpi::getNetworkId <!-- endMemberDocName -->
-</td>
-<!-- startParameterList -->
-          <td>(</td>
-<!-- startParameterName -->
-          <td class="c-table__cell"><!-- endParameterName -->
-</td><td>)</td>
-          <td><!-- endParameterList -->
-</td>
-        </tr>
-<!-- endMemberDoc -->
-          </table>
-        </div>
-      </div>
-</div><!-- startIndent -->
-<div class="c-member__body">
-
-<p>Returns the unique network id if the Id property was included in the required list of properties when the Provider was constructed. </p>
-<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">profile ids and their percentage with ':' and '|' e.g. 'ProfileId1:Percentage1|ProfileId2:Percentage2' </dd></dl>
-<!-- endIndent -->
-
-</div>
-</div>
-</article>
-<article class="c-member">
-<a id="ac1d2314a9a2e78a15820a66f8e3b1d40"></a><!-- startMemberDoc -->
-
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ac1d2314a9a2e78a15820a66f8e3b1d40">&#9670;&nbsp;</a></span>getNoValueMessageInternal()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a3307d47d4567930c6b2d53d2c276b064">&#9670;&nbsp;</a></span>getNoValueMessageInternal()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -801,7 +704,8 @@ class<!-- insertMemberAlign -->
       </div>
 <!-- startLabels -->
 <div class="c-member__labels">
-<!-- writeLabel(protected) -->
+<!-- writeLabel(override) -->
+<span class="c-label">override</span><!-- writeLabel(protected) -->
 <span class="c-label">protected</span><!-- writeLabel(virtual) -->
 <span class="c-label">virtual</span><!-- endLabels -->
 </div>
@@ -822,9 +726,9 @@ class<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a39ec509230584d44ad630a8e25f3d23a"></a><!-- startMemberDoc -->
+<a id="a127a3d25a3c89c8b0b44a38ad59ac5db"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a39ec509230584d44ad630a8e25f3d23a">&#9670;&nbsp;</a></span>getNoValueReasonInternal()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a127a3d25a3c89c8b0b44a38ad59ac5db">&#9670;&nbsp;</a></span>getNoValueReasonInternal()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -852,7 +756,8 @@ class<!-- insertMemberAlign -->
       </div>
 <!-- startLabels -->
 <div class="c-member__labels">
-<!-- writeLabel(protected) -->
+<!-- writeLabel(override) -->
+<span class="c-label">override</span><!-- writeLabel(protected) -->
 <span class="c-label">protected</span><!-- writeLabel(virtual) -->
 <span class="c-label">virtual</span><!-- endLabels -->
 </div>
@@ -914,178 +819,6 @@ class<!-- insertMemberAlign -->
 <p>This now always returns a no value. The reason is always too many results. </p>
 
 <p>Reimplemented from <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_results_base.html#aae39abca6afd0b7824d4c0224836f0b8">FiftyoneDegrees::Common::ResultsBase</a>.</p>
-<!-- endIndent -->
-
-</div>
-</div>
-</article>
-<article class="c-member">
-<a id="a1bfc793c15c6fb5e9e7941019fe07ffa"></a><!-- startMemberDoc -->
-
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a1bfc793c15c6fb5e9e7941019fe07ffa">&#9670;&nbsp;</a></span>getValueAsCoordinate() <span class="c-member__count">[1/4]</span></h2>
-
-<div class="c-member__main">
-<div class="c-member__head">
-<!-- startMemberDocName -->
-      <div class="c-member__split">
-        <div class="g-table g-table--overflow">
-          <table class="c-table c-table--article">
-            <tr class="c-table__row">
-              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;<a class="el" href="structfiftyone_degrees_coordinate.html">fiftyoneDegreesCoordinate</a>&gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValueAsCoordinate <!-- endMemberDocName -->
-</td>
-<!-- startParameterList -->
-          <td>(</td>
-<!-- startFirstParameterType -->
-          <td class="c-table__cell">const char *<!-- endParameterType -->
-&#160;</td>
-<!-- startParameterName -->
-          <td class="c-table__cell"><em>propertyName</em><!-- endParameterName -->
-</td><td>)</td>
-          <td><!-- endParameterList -->
-</td>
-        </tr>
-<!-- endMemberDoc -->
-          </table>
-        </div>
-      </div>
-</div><!-- startIndent -->
-<div class="c-member__body">
-
-<p>Get a float pair representation of the value associated with the required property name. </p>
-<p>If the property name is not valid then hasValue returns false with NoValueReason and its message. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
-    <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyName</span> - string containing the property name </dd>
-  </dd>
-</dl>
-<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a coordinate representation of the value for the property </dd></dl>
-<!-- endIndent -->
-
-</div>
-</div>
-</article>
-<article class="c-member">
-<a id="aebd3d8850e6fdc25a65e4a119568f593"></a><!-- startMemberDoc -->
-
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#aebd3d8850e6fdc25a65e4a119568f593">&#9670;&nbsp;</a></span>getValueAsCoordinate() <span class="c-member__count">[2/4]</span></h2>
-
-<div class="c-member__main">
-<div class="c-member__head">
-<!-- startMemberDocName -->
-      <div class="c-member__split">
-        <div class="g-table g-table--overflow">
-          <table class="c-table c-table--article">
-            <tr class="c-table__row">
-              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;<a class="el" href="structfiftyone_degrees_coordinate.html">fiftyoneDegreesCoordinate</a>&gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValueAsCoordinate <!-- endMemberDocName -->
-</td>
-<!-- startParameterList -->
-          <td>(</td>
-<!-- startFirstParameterType -->
-          <td class="c-table__cell">const string *<!-- endParameterType -->
-&#160;</td>
-<!-- startParameterName -->
-          <td class="c-table__cell"><em>propertyName</em><!-- endParameterName -->
-</td><td>)</td>
-          <td><!-- endParameterList -->
-</td>
-        </tr>
-<!-- endMemberDoc -->
-          </table>
-        </div>
-      </div>
-</div><!-- startIndent -->
-<div class="c-member__body">
-
-<p>Get a float pair representation of the value associated with the required property name. </p>
-<p>If the property name is not valid then hasValue returns false with NoValueReason and its message. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
-    <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyName</span> - string containing the property name </dd>
-  </dd>
-</dl>
-<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a coordinate representation of the value for the property </dd></dl>
-<!-- endIndent -->
-
-</div>
-</div>
-</article>
-<article class="c-member">
-<a id="a7c595276db3fcb7e26f81b1276257000"></a><!-- startMemberDoc -->
-
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a7c595276db3fcb7e26f81b1276257000">&#9670;&nbsp;</a></span>getValueAsCoordinate() <span class="c-member__count">[3/4]</span></h2>
-
-<div class="c-member__main">
-<div class="c-member__head">
-<!-- startMemberDocName -->
-      <div class="c-member__split">
-        <div class="g-table g-table--overflow">
-          <table class="c-table c-table--article">
-            <tr class="c-table__row">
-              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;<a class="el" href="structfiftyone_degrees_coordinate.html">fiftyoneDegreesCoordinate</a>&gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValueAsCoordinate <!-- endMemberDocName -->
-</td>
-<!-- startParameterList -->
-          <td>(</td>
-<!-- startFirstParameterType -->
-          <td class="c-table__cell">const string &amp;<!-- endParameterType -->
-&#160;</td>
-<!-- startParameterName -->
-          <td class="c-table__cell"><em>propertyName</em><!-- endParameterName -->
-</td><td>)</td>
-          <td><!-- endParameterList -->
-</td>
-        </tr>
-<!-- endMemberDoc -->
-          </table>
-        </div>
-      </div>
-</div><!-- startIndent -->
-<div class="c-member__body">
-
-<p>Get a float pair representation of the value associated with the required property name. </p>
-<p>If the property name is not valid then hasValue returns false with NoValueReason and its message. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
-    <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyName</span> - string containing the property name </dd>
-  </dd>
-</dl>
-<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a coordinate representation of the value for the property </dd></dl>
-<!-- endIndent -->
-
-</div>
-</div>
-</article>
-<article class="c-member">
-<a id="aa1bf71fe6bf569739fa019afae100bc6"></a><!-- startMemberDoc -->
-
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#aa1bf71fe6bf569739fa019afae100bc6">&#9670;&nbsp;</a></span>getValueAsCoordinate() <span class="c-member__count">[4/4]</span></h2>
-
-<div class="c-member__main">
-<div class="c-member__head">
-<!-- startMemberDocName -->
-      <div class="c-member__split">
-        <div class="g-table g-table--overflow">
-          <table class="c-table c-table--article">
-            <tr class="c-table__row">
-              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;<a class="el" href="structfiftyone_degrees_coordinate.html">fiftyoneDegreesCoordinate</a>&gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValueAsCoordinate <!-- endMemberDocName -->
-</td>
-<!-- startParameterList -->
-          <td>(</td>
-<!-- startFirstParameterType -->
-          <td class="c-table__cell">int<!-- endParameterType -->
-&#160;</td>
-<!-- startParameterName -->
-          <td class="c-table__cell"><em>requiredPropertyIndex</em><!-- endParameterName -->
-</td><td>)</td>
-          <td><!-- endParameterList -->
-</td>
-        </tr>
-<!-- endMemberDoc -->
-          </table>
-        </div>
-      </div>
-</div><!-- startIndent -->
-<div class="c-member__body">
-
-<p>Get a float pair representation of the value associated with the required property index. </p>
-<p>If the index is not valid then hasValue returns false with NoValueReason and its message. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
-    <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyName</span> - string containing the property name </dd>
-  </dd>
-</dl>
-<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a coordinate representation of the value for the property </dd></dl>
 <!-- endIndent -->
 
 </div>
@@ -1186,9 +919,9 @@ class<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="aad9262d7af8a666898c77d0376160368"></a><!-- startMemberDoc -->
+<a id="a0b8541d1de94c97c01fba6b213256fd2"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#aad9262d7af8a666898c77d0376160368">&#9670;&nbsp;</a></span>getValueAsIpAddress() <span class="c-member__count">[1/4]</span></h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a0b8541d1de94c97c01fba6b213256fd2">&#9670;&nbsp;</a></span>getValueAsIpAddress() <span class="c-member__count">[1/4]</span></h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -1197,7 +930,7 @@ class<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html">IpAddress</a>&gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValueAsIpAddress <!-- endMemberDocName -->
+              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html">IpIntelligence::IpAddress</a>&gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValueAsIpAddress <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -1217,7 +950,7 @@ class<!-- insertMemberAlign -->
 </div><!-- startIndent -->
 <div class="c-member__body">
 
-<p>Get an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> instace representation of the value associated with the required property name. </p>
+<p>Get an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> instance representation of the value associated with the required property name. </p>
 <p>If the property name is not valid then hasValue returns false with NoValueReason and its message. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyName</span> - string containing the property name </dd>
   </dd>
@@ -1229,9 +962,9 @@ class<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="ab131936223f4692f0d9fcfe9d0cb8bfe"></a><!-- startMemberDoc -->
+<a id="a1bf7636051d9a18b6b1dbc5a00f4d808"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ab131936223f4692f0d9fcfe9d0cb8bfe">&#9670;&nbsp;</a></span>getValueAsIpAddress() <span class="c-member__count">[2/4]</span></h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a1bf7636051d9a18b6b1dbc5a00f4d808">&#9670;&nbsp;</a></span>getValueAsIpAddress() <span class="c-member__count">[2/4]</span></h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -1240,7 +973,7 @@ class<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html">IpAddress</a>&gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValueAsIpAddress <!-- endMemberDocName -->
+              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html">IpIntelligence::IpAddress</a>&gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValueAsIpAddress <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -1260,7 +993,7 @@ class<!-- insertMemberAlign -->
 </div><!-- startIndent -->
 <div class="c-member__body">
 
-<p>Get an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> instace representation of the value associated with the required property name. </p>
+<p>Get an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> instance representation of the value associated with the required property name. </p>
 <p>If the property name is not valid then hasValue returns false with NoValueReason and its message. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyName</span> - string containing the property name </dd>
   </dd>
@@ -1272,9 +1005,9 @@ class<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a71d0e90d05b39d55b6092d5f24866150"></a><!-- startMemberDoc -->
+<a id="a1605eed5a2cfe73df2e4cb652ec8d7b8"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a71d0e90d05b39d55b6092d5f24866150">&#9670;&nbsp;</a></span>getValueAsIpAddress() <span class="c-member__count">[3/4]</span></h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a1605eed5a2cfe73df2e4cb652ec8d7b8">&#9670;&nbsp;</a></span>getValueAsIpAddress() <span class="c-member__count">[3/4]</span></h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -1283,7 +1016,7 @@ class<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html">IpAddress</a>&gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValueAsIpAddress <!-- endMemberDocName -->
+              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html">IpIntelligence::IpAddress</a>&gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValueAsIpAddress <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -1303,7 +1036,7 @@ class<!-- insertMemberAlign -->
 </div><!-- startIndent -->
 <div class="c-member__body">
 
-<p>Get an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> instace representation of the value associated with the required property name. </p>
+<p>Get an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> instance representation of the value associated with the required property name. </p>
 <p>If the property name is not valid then hasValue returns false with NoValueReason and its message. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyName</span> - string containing the property name </dd>
   </dd>
@@ -1315,9 +1048,9 @@ class<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="ad00503505c3fbfdd65f8189644a08277"></a><!-- startMemberDoc -->
+<a id="a9ffe0475f791415bbecdd5bf6676dc7b"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ad00503505c3fbfdd65f8189644a08277">&#9670;&nbsp;</a></span>getValueAsIpAddress() <span class="c-member__count">[4/4]</span></h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a9ffe0475f791415bbecdd5bf6676dc7b">&#9670;&nbsp;</a></span>getValueAsIpAddress() <span class="c-member__count">[4/4]</span></h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -1326,7 +1059,7 @@ class<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html">IpAddress</a>&gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValueAsIpAddress <!-- endMemberDocName -->
+              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html">IpIntelligence::IpAddress</a>&gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValueAsIpAddress <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -1346,9 +1079,9 @@ class<!-- insertMemberAlign -->
 </div><!-- startIndent -->
 <div class="c-member__body">
 
-<p>Get an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> instace representation of the value associated with the required property index. </p>
+<p>Get an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> instance representation of the value associated with the required property index. </p>
 <p>If the index is not valid then hasValue returns false with NoValueReason and its message. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
-    <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyName</span> - string containing the property name </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">requiredPropertyIndex</span> - index in the required properties list </dd>
   </dd>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">an <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_ip_address.html" title="A class which represents an IP address.">IpAddress</a> representation of the value for the property </dd></dl>
@@ -2046,9 +1779,370 @@ class<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="ab3a59b282cf1951c9b34a5cef8e2c721"></a><!-- startMemberDoc -->
+<a id="a0a71ff1f972be749b45a83eb98851718"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ab3a59b282cf1951c9b34a5cef8e2c721">&#9670;&nbsp;</a></span>getValuesInternal()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a0a71ff1f972be749b45a83eb98851718">&#9670;&nbsp;</a></span>getValuesAsWeightedUTF8StringList() <span class="c-member__count">[1/3]</span></h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;vector&lt;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;std::vector&lt;uint8_t&gt; &gt; &gt; &gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValuesAsWeightedUTF8StringList <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">int<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>requiredPropertyIndex</em><!-- endParameterName -->
+</td><td>)</td>
+          <td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Get a vector with all weighted string representations of the values associated with the required property index. </p>
+<p>If the index is not valid an empty vector is returned. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">requiredPropertyIndex</span> - in the required properties </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a vector of weighted string values for the property </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="a1ba1aa2e94a9a4e89ae597655e012182"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a1ba1aa2e94a9a4e89ae597655e012182">&#9670;&nbsp;</a></span>getValuesAsWeightedUTF8StringList() <span class="c-member__count">[2/3]</span></h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;vector&lt;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;std::vector&lt;uint8_t&gt; &gt; &gt; &gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValuesAsWeightedUTF8StringList <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">const char *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>propertyName</em><!-- endParameterName -->
+</td><td>)</td>
+          <td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Get a vector with all weighted byte vector representations of the values associated with the required property name. </p>
+<p>If the name is not valid an empty vector is returned. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyName</span> - pointer to a string containing the property name </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a vector of weighted byte vector values for the property </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="aefc102f995e1e1880403f188162ea93f"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#aefc102f995e1e1880403f188162ea93f">&#9670;&nbsp;</a></span>getValuesAsWeightedUTF8StringList() <span class="c-member__count">[3/3]</span></h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;vector&lt;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;std::vector&lt;uint8_t&gt; &gt; &gt; &gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValuesAsWeightedUTF8StringList <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">const string &amp;<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>propertyName</em><!-- endParameterName -->
+</td><td>)</td>
+          <td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Get a vector with all weighted byte vector representations of the values associated with the required property name. </p>
+<p>If the name is not valid an empty vector is returned. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyName</span> - pointer to a string containing the property name </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a vector of weighted byte vector values for the property </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="a0b7dd602c4e71519d4090ca9d219c301"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a0b7dd602c4e71519d4090ca9d219c301">&#9670;&nbsp;</a></span>getValuesAsWeightedWKTStringList() <span class="c-member__count">[1/4]</span></h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;vector&lt;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;string&gt; &gt; &gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">const char *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>propertyName</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">::<a class="el" href="group___fifty_one_degrees_data.html#ga0c8186d9b9b7880309c27230bbb5e69d">byte</a><!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>decimalPlaces</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Get a vector with all weighted string representations of the values associated with the required property name. </p>
+<p>If the name is not valid an empty vector is returned. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyName</span> - pointer to a string containing the property name </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">decimalPlaces</span> - precision (places after decimal dot) </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a vector of weighted string values for the property </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="a6d659e0d0c32f7351588fef8e1c844bb"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a6d659e0d0c32f7351588fef8e1c844bb">&#9670;&nbsp;</a></span>getValuesAsWeightedWKTStringList() <span class="c-member__count">[2/4]</span></h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;vector&lt;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;string&gt; &gt; &gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">const string *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>propertyName</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">::<a class="el" href="group___fifty_one_degrees_data.html#ga0c8186d9b9b7880309c27230bbb5e69d">byte</a><!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>decimalPlaces</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Get a vector with all weighted string representations of the values associated with the required property name. </p>
+<p>If the name is not valid an empty vector is returned. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyName</span> - pointer to a string containing the property name </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">decimalPlaces</span> - precision (places after decimal dot) </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a vector of weighted string values for the property </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ab9f6a3e15c9792496f2acd8747116482"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ab9f6a3e15c9792496f2acd8747116482">&#9670;&nbsp;</a></span>getValuesAsWeightedWKTStringList() <span class="c-member__count">[3/4]</span></h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;vector&lt;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;string&gt; &gt; &gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">const string &amp;<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>propertyName</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">::<a class="el" href="group___fifty_one_degrees_data.html#ga0c8186d9b9b7880309c27230bbb5e69d">byte</a><!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>decimalPlaces</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Get a vector with all weighted string representations of the values associated with the required property name. </p>
+<p>If the name is not valid an empty vector is returned. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyName</span> - pointer to a string containing the property name </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">decimalPlaces</span> - precision (places after decimal dot) </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a vector of weighted string values for the property </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="a8eb12ec0c055408f4f238633ce485164"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a8eb12ec0c055408f4f238633ce485164">&#9670;&nbsp;</a></span>getValuesAsWeightedWKTStringList() <span class="c-member__count">[4/4]</span></h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_value.html">Common::Value</a>&lt;vector&lt;<a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_weighted_value.html">WeightedValue</a>&lt;string&gt; &gt; &gt; FiftyoneDegrees::IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">int<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>requiredPropertyIndex</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">::<a class="el" href="group___fifty_one_degrees_data.html#ga0c8186d9b9b7880309c27230bbb5e69d">byte</a><!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>decimalPlaces</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Get a vector with all weighted string representations of the values associated with the required property index. </p>
+<p>If the index is not valid an empty vector is returned. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">requiredPropertyIndex</span> - in the required properties </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">decimalPlaces</span> - precision (places after decimal dot) </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a vector of weighted string values for the property </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="a5ba985a31b367e71f35a51fc748e0cf6"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a5ba985a31b367e71f35a51fc748e0cf6">&#9670;&nbsp;</a></span>getValuesInternal()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -2090,7 +2184,8 @@ class<!-- insertMemberAlign -->
       </div>
 <!-- startLabels -->
 <div class="c-member__labels">
-<!-- writeLabel(protected) -->
+<!-- writeLabel(override) -->
+<span class="c-label">override</span><!-- writeLabel(protected) -->
 <span class="c-label">protected</span><!-- writeLabel(virtual) -->
 <span class="c-label">virtual</span><!-- endLabels -->
 </div>
@@ -2111,9 +2206,9 @@ class<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a98ed76e95e4006bfba161e766742aec9"></a><!-- startMemberDoc -->
+<a id="a4a83a739ff057ff6906a93fde0cdea50"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a98ed76e95e4006bfba161e766742aec9">&#9670;&nbsp;</a></span>hasValuesInternal()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a4a83a739ff057ff6906a93fde0cdea50">&#9670;&nbsp;</a></span>hasValuesInternal()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -2141,7 +2236,8 @@ class<!-- insertMemberAlign -->
       </div>
 <!-- startLabels -->
 <div class="c-member__labels">
-<!-- writeLabel(protected) -->
+<!-- writeLabel(override) -->
+<span class="c-label">override</span><!-- writeLabel(protected) -->
 <span class="c-label">protected</span><!-- writeLabel(virtual) -->
 <span class="c-label">virtual</span><!-- endLabels -->
 </div>
@@ -2171,7 +2267,6 @@ class<!-- insertMemberAlign -->
     <div class="c-section-nav">
       <h5 class="c-section-nav__heading">On This Page</h5>
         <ul class="c-section-nav__list">
-<li class="c-section-nav__item"><a class="c-section-nav__link" href="#pro-methods">Protected Member Functions</a></li>
 <li class="c-section-nav__item"><a class="c-section-nav__link" href="#friends">Friends</a></li>    </div>
   </div>
 </div><!-- inner-->

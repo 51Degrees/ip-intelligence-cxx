@@ -72,7 +72,7 @@ $(document).ready(function(){initNavTree('group___fifty_one_degrees_profile.html
 <h2>Get</h2>
 <p>A Profile can be fetched from a profiles collection in one of two ways:</p>
 <p><b>By Index</b> : The <a class="el" href="group___fifty_one_degrees_profile.html#gae74dfe0de13a27417d62f84f0b4ca866" title="Gets a pointer to the profile at the index provided.">fiftyoneDegreesProfileGetByIndex</a> method return the profile at a specified index. This provides a way to access a profile at a known index, or iterate over all values.</p>
-<p><b>By Id</b> : If the index of a profile is not known, then the profile can be fetched using the <a class="el" href="group___fifty_one_degrees_profile.html#ga5a037b65062bc4c7b45afb38a4757b2c" title="Gets the profile associated with the profileId or NULL if there is no corresponding profile.">fiftyoneDegreesProfileGetByProfileId</a> method to find the profile in a profiles collection.</p>
+<p><b>By Id</b> : If the index of a profile is not known, then the profile can be fetched using the <a class="el" href="group___fifty_one_degrees_profile.html#gaeeb3316cd527b4c264c7f5a3d37248d9" title="Gets the profile associated with the profileId or NULL if there is no corresponding profile.">fiftyoneDegreesProfileGetByProfileId</a> method to find the profile in a profiles collection.</p>
 <h2>Iterate</h2>
 <p>A profiles collection can be iterated in two ways:</p>
 <p><b>Values</b> : The <a class="el" href="group___fifty_one_degrees_profile.html#gabb5a42154443fb32c819c6831ed6a702" title="Iterate over all values contained in the profile which relate to the specified property,...">fiftyoneDegreesProfileIterateValuesForProperty</a> method can be used to iterate over all the values which a profile contains for a specified property.</p>
@@ -127,6 +127,13 @@ Typedefs</h2>
 <tbody class="c-table__body">
 <!-- member dec start -->
 <!-- startMemberItem() -->
+<tr class="c-table__row memitem:gac40aefd8b4f84301690922192e5c28a5"><td class="c-table__cell">typedef&#160;uint32_t(*<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_profile.html#gac40aefd8b4f84301690922192e5c28a5">fiftyoneDegreesProfileOffsetValueExtractor</a>) (const void *rawProfileOffset)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:gac40aefd8b4f84301690922192e5c28a5">Function that extracts "pure" profile offset from a value inside <code>profileOffsets</code> collection.  <a href="#gac40aefd8b4f84301690922192e5c28a5">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
 <tr class="c-table__row memitem:ga3b3b294644686c4352c12e115aa4f962"><td class="c-table__cell">typedef&#160;bool(*<!-- insertMemberAlign -->
 &#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_profile.html#ga3b3b294644686c4352c12e115aa4f962">fiftyoneDegreesProfileIterateMethod</a>) (void *state, <a class="el" href="structfiftyone_degrees_collection_item.html">fiftyoneDegreesCollectionItem</a> *item)
 <!-- startMemberDescription -->
@@ -160,10 +167,24 @@ Functions</h2>
 <tbody class="c-table__body">
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ga5a037b65062bc4c7b45afb38a4757b2c"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_profile.html">fiftyoneDegreesProfile</a>&#160;*<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_profile.html#ga5a037b65062bc4c7b45afb38a4757b2c">fiftyoneDegreesProfileGetByProfileId</a> (<a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *profileOffsets, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *profiles, const uint32_t profileId, <a class="el" href="structfiftyone_degrees_collection_item.html">fiftyoneDegreesCollectionItem</a> *item, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<tr class="c-table__row memitem:ga8bba1a1fc21e5dca10902f58f66c682d"><td class="c-table__cell">uint32_t<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_profile.html#ga8bba1a1fc21e5dca10902f58f66c682d">fiftyoneDegreesProfileOffsetToPureOffset</a> (const void *rawProfileOffset)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ga5a037b65062bc4c7b45afb38a4757b2c">Gets the profile associated with the profileId or NULL if there is no corresponding profile.  <a href="#ga5a037b65062bc4c7b45afb38a4757b2c">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:ga8bba1a1fc21e5dca10902f58f66c682d">Function that extracts "pure" profile offset from a <a class="el" href="structfiftyone_degrees_profile_offset.html" title="Structure containing the unique id of the profile, and the offset needed to retrieve the actual profi...">fiftyoneDegreesProfileOffset</a>.  <a href="#ga8bba1a1fc21e5dca10902f58f66c682d">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga725fedf5ad19d78ca14e7fb05b645de1"><td class="c-table__cell">uint32_t<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_profile.html#ga725fedf5ad19d78ca14e7fb05b645de1">fiftyoneDegreesProfileOffsetAsPureOffset</a> (const void *rawProfileOffset)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga725fedf5ad19d78ca14e7fb05b645de1">Function that extracts "pure" profile offset from a value (that starts with a "pure" profile offset) inside <code>profileOffsets</code> collection.  <a href="#ga725fedf5ad19d78ca14e7fb05b645de1">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:gaeeb3316cd527b4c264c7f5a3d37248d9"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_profile.html">fiftyoneDegreesProfile</a>&#160;*<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_profile.html#gaeeb3316cd527b4c264c7f5a3d37248d9">fiftyoneDegreesProfileGetByProfileId</a> (<a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *profileOffsets, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *profiles, uint32_t profileId, <a class="el" href="structfiftyone_degrees_collection_item.html">fiftyoneDegreesCollectionItem</a> *item, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:gaeeb3316cd527b4c264c7f5a3d37248d9">Gets the profile associated with the profileId or NULL if there is no corresponding profile.  <a href="#gaeeb3316cd527b4c264c7f5a3d37248d9">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
@@ -195,6 +216,20 @@ Functions</h2>
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga24a7bd23358439e8e6668a43cb1af8f0"><td class="c-table__cell">uint32_t<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_profile.html#ga24a7bd23358439e8e6668a43cb1af8f0">fiftyoneDegreesProfileIterateProfilesForPropertyWithTypeAndValue</a> (<a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *strings, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *properties, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *propertyTypes, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *values, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *profiles, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *profileOffsets, const char *propertyName, const char *valueName, void *state, <a class="el" href="group___fifty_one_degrees_profile.html#ga3b3b294644686c4352c12e115aa4f962">fiftyoneDegreesProfileIterateMethod</a> callback, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga24a7bd23358439e8e6668a43cb1af8f0">Iterate all profiles which contain the specified value, calling the callback method for each.  <a href="#ga24a7bd23358439e8e6668a43cb1af8f0">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga62dcd39deaa41f757a33122dbfa1ce39"><td class="c-table__cell">uint32_t<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_profile.html#ga62dcd39deaa41f757a33122dbfa1ce39">fiftyoneDegreesProfileIterateProfilesForPropertyWithTypeAndValueAndOffsetExtractor</a> (<a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *strings, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *properties, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *propertyTypes, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *values, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *profiles, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *profileOffsets, <a class="el" href="group___fifty_one_degrees_profile.html#gac40aefd8b4f84301690922192e5c28a5">fiftyoneDegreesProfileOffsetValueExtractor</a> offsetValueExtractor, const char *propertyName, const char *valueName, void *state, <a class="el" href="group___fifty_one_degrees_profile.html#ga3b3b294644686c4352c12e115aa4f962">fiftyoneDegreesProfileIterateMethod</a> callback, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga62dcd39deaa41f757a33122dbfa1ce39">Iterate all profiles which contain the specified value, calling the callback method for each.  <a href="#ga62dcd39deaa41f757a33122dbfa1ce39">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
 <tr class="c-table__row memitem:ga8be4598c298ab52c64ecb925679eeb44"><td class="c-table__cell">uint32_t<!-- insertMemberAlign -->
 &#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_profile.html#ga8be4598c298ab52c64ecb925679eeb44">fiftyoneDegreesProfileIterateProfilesForPropertyAndValue</a> (<a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *strings, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *properties, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *values, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *profiles, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *profileOffsets, const char *propertyName, const char *valueName, void *state, <a class="el" href="group___fifty_one_degrees_profile.html#ga3b3b294644686c4352c12e115aa4f962">fiftyoneDegreesProfileIterateMethod</a> callback, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
 <!-- startMemberDescription -->
@@ -202,10 +237,17 @@ Functions</h2>
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:gaf989217898e98339ee533835245307ff"><td class="c-table__cell">uint32_t&#160;*<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_profile.html#gaf989217898e98339ee533835245307ff">fiftyoneDegreesProfileGetOffsetForProfileId</a> (<a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *profileOffsets, const uint32_t profileId, uint32_t *profileOffset, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<tr class="c-table__row memitem:ga011cb9bf3cdc811f1a24fe3eef2d60d7"><td class="c-table__cell">uint32_t&#160;*<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_profile.html#ga011cb9bf3cdc811f1a24fe3eef2d60d7">fiftyoneDegreesProfileGetOffsetForProfileId</a> (<a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *profileOffsets, uint32_t profileId, uint32_t *profileOffset, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:gaf989217898e98339ee533835245307ff">Gets the offset in the profiles collection for the profile with the profileId or NULL if there is no corresponding profile.  <a href="#gaf989217898e98339ee533835245307ff">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:ga011cb9bf3cdc811f1a24fe3eef2d60d7">Gets the offset in the profiles collection for the profile with the profileId or NULL if there is no corresponding profile.  <a href="#ga011cb9bf3cdc811f1a24fe3eef2d60d7">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga1bb61958ad311b30f4277ab85c2db82e"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_profile.html">fiftyoneDegreesProfile</a>&#160;*<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_profile.html#ga1bb61958ad311b30f4277ab85c2db82e">fiftyoneDegreesProfileGetByProfileIdIndirect</a> (<a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *profileOffsets, <a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *profiles, uint32_t profileId, <a class="el" href="structfiftyone_degrees_collection_item.html">fiftyoneDegreesCollectionItem</a> *outProfileItem, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga1bb61958ad311b30f4277ab85c2db82e">Gets the profile from the profiles collection with the profileId or NULL if there is no corresponding profile.  <a href="#ga1bb61958ad311b30f4277ab85c2db82e">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
@@ -300,6 +342,39 @@ Functions</h2>
   </dd>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">true if the iteration should continue, otherwise false to stop </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="gac40aefd8b4f84301690922192e5c28a5"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gac40aefd8b4f84301690922192e5c28a5">&#9670;&nbsp;</a></span>fiftyoneDegreesProfileOffsetValueExtractor</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">typedef uint32_t(* fiftyoneDegreesProfileOffsetValueExtractor) (const void *rawProfileOffset)<!-- endMemberDocName -->
+</td>
+<!-- endMemberDoc -->
+            </tr>
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Function that extracts "pure" profile offset from a value inside <code>profileOffsets</code> collection. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">rawProfileOffset</span> - a "raw" value retrieved from <code>profileOffsets</code> </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">Offset to the profile in the profiles structure </dd></dl>
 <!-- endIndent -->
 
 </div>
@@ -400,9 +475,9 @@ Functions</h2>
 </div>
 </article>
 <article class="c-member">
-<a id="ga5a037b65062bc4c7b45afb38a4757b2c"></a><!-- startMemberDoc -->
+<a id="gaeeb3316cd527b4c264c7f5a3d37248d9"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga5a037b65062bc4c7b45afb38a4757b2c">&#9670;&nbsp;</a></span>fiftyoneDegreesProfileGetByProfileId()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gaeeb3316cd527b4c264c7f5a3d37248d9">&#9670;&nbsp;</a></span>fiftyoneDegreesProfileGetByProfileId()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -436,7 +511,7 @@ Functions</h2>
         <tr>
           <td class="c-table__cell"></td>
           <td></td>
-          <td class="c-table__cell">const uint32_t<!-- endParameterType -->
+          <td class="c-table__cell">uint32_t<!-- endParameterType -->
 &#160;</td>
 <!-- startParameterName -->
           <td class="c-table__cell"><em>profileId</em>, <!-- endParameterName -->
@@ -477,7 +552,7 @@ Functions</h2>
 
 <p>Gets the profile associated with the profileId or NULL if there is no corresponding profile. </p>
 <dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
-    <tr><dd class="c-list-definition__desc"><span class="b-text--red">profileOffsets</span> - collection containing the profile offsets </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">profileOffsets</span> - collection containing the profile offsets (with profile ID) </dd>
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">profiles</span> - collection containing the profiles referenced by the profile offsets </dd>
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">profileId</span> - the unique id of the profile to fetch </dd>
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">item</span> - to set as the handle to the profile returned </dd>
@@ -491,9 +566,100 @@ Functions</h2>
 </div>
 </article>
 <article class="c-member">
-<a id="gaf989217898e98339ee533835245307ff"></a><!-- startMemberDoc -->
+<a id="ga1bb61958ad311b30f4277ab85c2db82e"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gaf989217898e98339ee533835245307ff">&#9670;&nbsp;</a></span>fiftyoneDegreesProfileGetOffsetForProfileId()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga1bb61958ad311b30f4277ab85c2db82e">&#9670;&nbsp;</a></span>fiftyoneDegreesProfileGetByProfileIdIndirect()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_profile.html">fiftyoneDegreesProfile</a>* fiftyoneDegreesProfileGetByProfileIdIndirect <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>profileOffsets</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>profiles</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">uint32_t<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>profileId</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection_item.html">fiftyoneDegreesCollectionItem</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>outProfileItem</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>exception</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Gets the profile from the profiles collection with the profileId or NULL if there is no corresponding profile. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">profileOffsets</span> - collection containing the profile offsets (without ID) </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">profiles</span> - collection containing the profiles referenced by the profile offsets </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">profileId</span> - the unique id of the profile to fetch </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">outProfileItem</span> - pointer to the item to store profile reference in </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">exception</span> - pointer to an exception data structure to be used if an exception occurs. See <a class="el" href="exceptions_8h_source.html">exceptions.h</a> </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">pointer to the profile or NULL </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ga011cb9bf3cdc811f1a24fe3eef2d60d7"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga011cb9bf3cdc811f1a24fe3eef2d60d7">&#9670;&nbsp;</a></span>fiftyoneDegreesProfileGetOffsetForProfileId()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -517,7 +683,7 @@ Functions</h2>
         <tr>
           <td class="c-table__cell"></td>
           <td></td>
-          <td class="c-table__cell">const uint32_t<!-- endParameterType -->
+          <td class="c-table__cell">uint32_t<!-- endParameterType -->
 &#160;</td>
 <!-- startParameterName -->
           <td class="c-table__cell"><em>profileId</em>, <!-- endParameterName -->
@@ -558,7 +724,7 @@ Functions</h2>
 
 <p>Gets the offset in the profiles collection for the profile with the profileId or NULL if there is no corresponding profile. </p>
 <dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
-    <tr><dd class="c-list-definition__desc"><span class="b-text--red">profileOffsets</span> - collection containing the profile offsets </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">profileOffsets</span> - collection containing the profile offsets (with ID) </dd>
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">profileId</span> - the unique id of the profile to fetch </dd>
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">profileOffset</span> - pointer to the integer to set the offset in </dd>
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">exception</span> - pointer to an exception data structure to be used if an exception occurs. See <a class="el" href="exceptions_8h_source.html">exceptions.h</a> </dd>
@@ -703,6 +869,331 @@ Functions</h2>
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">values</span> - collection containing all values </dd>
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">profiles</span> - collection containing the profiles referenced by the profile offsets </dd>
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">profileOffsets</span> - collection containing all profile offsets </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyName</span> - name of the property the value relates to </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">valueName</span> - name of the value to iterate the profiles for </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">state</span> - pointer to data needed by the callback method </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">callback</span> - method to be called for each matching profile </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">exception</span> - pointer to an exception data structure to be used if an exception occurs. See <a class="el" href="exceptions_8h_source.html">exceptions.h</a> </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">the number matching profiles which have been iterated </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ga24a7bd23358439e8e6668a43cb1af8f0"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga24a7bd23358439e8e6668a43cb1af8f0">&#9670;&nbsp;</a></span>fiftyoneDegreesProfileIterateProfilesForPropertyWithTypeAndValue()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">uint32_t fiftyoneDegreesProfileIterateProfilesForPropertyWithTypeAndValue <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>strings</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>properties</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>propertyTypes</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>values</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>profiles</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>profileOffsets</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">const char *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>propertyName</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">const char *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>valueName</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">void *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>state</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_profile.html#ga3b3b294644686c4352c12e115aa4f962">fiftyoneDegreesProfileIterateMethod</a><!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>callback</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>exception</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Iterate all profiles which contain the specified value, calling the callback method for each. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">strings</span> - collection containing the strings referenced properties and values </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">properties</span> - collection containing all properties </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyTypes</span> - collection containing types for all properties </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">values</span> - collection containing all values </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">profiles</span> - collection containing the profiles referenced by the profile offsets </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">profileOffsets</span> - collection containing all profile offsets (with IDs) </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyName</span> - name of the property the value relates to </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">valueName</span> - name of the value to iterate the profiles for </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">state</span> - pointer to data needed by the callback method </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">callback</span> - method to be called for each matching profile </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">exception</span> - pointer to an exception data structure to be used if an exception occurs. See <a class="el" href="exceptions_8h_source.html">exceptions.h</a> </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">the number matching profiles which have been iterated </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ga62dcd39deaa41f757a33122dbfa1ce39"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga62dcd39deaa41f757a33122dbfa1ce39">&#9670;&nbsp;</a></span>fiftyoneDegreesProfileIterateProfilesForPropertyWithTypeAndValueAndOffsetExtractor()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">uint32_t fiftyoneDegreesProfileIterateProfilesForPropertyWithTypeAndValueAndOffsetExtractor <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>strings</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>properties</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>propertyTypes</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>values</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>profiles</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>profileOffsets</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_profile.html#gac40aefd8b4f84301690922192e5c28a5">fiftyoneDegreesProfileOffsetValueExtractor</a><!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>offsetValueExtractor</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">const char *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>propertyName</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">const char *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>valueName</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">void *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>state</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_profile.html#ga3b3b294644686c4352c12e115aa4f962">fiftyoneDegreesProfileIterateMethod</a><!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>callback</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>exception</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Iterate all profiles which contain the specified value, calling the callback method for each. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">strings</span> - collection containing the strings referenced properties and values </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">properties</span> - collection containing all properties </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyTypes</span> - collection containing types for all properties </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">values</span> - collection containing all values </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">profiles</span> - collection containing the profiles referenced by the profile offsets </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">profileOffsets</span> - collection containing all profile offsets (any form) </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">offsetValueExtractor</span> - converts <code>profileOffsets</code> value to "pure" offset </dd>
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyName</span> - name of the property the value relates to </dd>
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">valueName</span> - name of the value to iterate the profiles for </dd>
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">state</span> - pointer to data needed by the callback method </dd>
@@ -1039,6 +1530,92 @@ Functions</h2>
   </dd>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">the number of matching values which have been iterated </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ga725fedf5ad19d78ca14e7fb05b645de1"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga725fedf5ad19d78ca14e7fb05b645de1">&#9670;&nbsp;</a></span>fiftyoneDegreesProfileOffsetAsPureOffset()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">uint32_t fiftyoneDegreesProfileOffsetAsPureOffset <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">const void *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>rawProfileOffset</em><!-- endParameterName -->
+</td><td>)</td>
+          <td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Function that extracts "pure" profile offset from a value (that starts with a "pure" profile offset) inside <code>profileOffsets</code> collection. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">rawProfileOffset</span> - a "raw" value retrieved from <code>profileOffsets</code> </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">Offset to the profile in the profiles structure </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ga8bba1a1fc21e5dca10902f58f66c682d"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga8bba1a1fc21e5dca10902f58f66c682d">&#9670;&nbsp;</a></span>fiftyoneDegreesProfileOffsetToPureOffset()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">uint32_t fiftyoneDegreesProfileOffsetToPureOffset <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">const void *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>rawProfileOffset</em><!-- endParameterName -->
+</td><td>)</td>
+          <td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Function that extracts "pure" profile offset from a <a class="el" href="structfiftyone_degrees_profile_offset.html" title="Structure containing the unique id of the profile, and the offset needed to retrieve the actual profi...">fiftyoneDegreesProfileOffset</a>. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">rawProfileOffset</span> - a "raw" ProfileOffset retrieved from <code>profileOffsets</code> </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">Offset to the profile in the profiles structure </dd></dl>
 <!-- endIndent -->
 
 </div>

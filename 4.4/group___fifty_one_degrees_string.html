@@ -66,11 +66,12 @@ $(document).ready(function(){initNavTree('group___fifty_one_degrees_string.html'
 <div class="g-docs__inner">
 <div class="g-docs__primary" id="primary">
 <a name="details" id="details"></a><h2 class="g-docs__section-heading">Detailed Description</h2>
-<p>String structures containing the string and length. </p>
+<p>Byte array structures containing raw data bytes. </p>
+<p>String structures containing the string and length.</p>
 <h2>Introduction</h2>
-<p>The String structure allows a string and its length to be stored in one structure. This avoids unnecessary calls to strlen. Both the string and its length are allocated in a single operation, so the size of the actual structure (when including the string terminator) is sizeof(<a class="el" href="structfiftyone_degrees_string.html" title="String structure containing its value and size which maps to the string byte format used in data file...">fiftyoneDegreesString</a>) + length. This means that the string itself starts at "value" and continues into the rest of the allocated memory.</p>
+<p>The String structure allows a string and its length to be stored in one structure. This avoids unnecessary calls to strlen. Both the string and its length are allocated in a single operation, so the size of the actual structure (when including the string terminator) is sizeof(<a class="el" href="structfiftyone_degrees_string.html">fiftyoneDegreesString</a>) + length. This means that the string itself starts at "value" and continues into the rest of the allocated memory.</p>
 <h2>Get</h2>
-<p>Getting a const char * from a <a class="el" href="structfiftyone_degrees_string.html" title="String structure containing its value and size which maps to the string byte format used in data file...">fiftyoneDegreesString</a> structure can be done by casting a reference to the "value" field: </p><div class="c-code__block c-code__block--outline"><div class="c-code__line">(<span class="c-code__keyword">const</span> <span class="c-code__keywordtype">char</span>*)&amp;string-&gt;<a class="code" href="structfiftyone_degrees_string.html#a9dc7d299b74ff61bdd3385d086cfc326">value</a></div></div><p> However, this can be simplified by using the <a class="el" href="group___fifty_one_degrees_string.html#ga4ea1078e4c9e3c7668251f9e03023e59" title="Macro used to check for NULL before returning the string as a const char *.">FIFTYONE_DEGREES_STRING</a> macro which also performs a NULL check on the structure to avoid a segmentation fault.</p>
+<p>Getting a const char * from a <a class="el" href="structfiftyone_degrees_string.html">fiftyoneDegreesString</a> structure can be done by casting a reference to the "value" field: </p><div class="c-code__block c-code__block--outline"><div class="c-code__line">(<span class="c-code__keyword">const</span> <span class="c-code__keywordtype">char</span>*)&amp;string-&gt;<a class="code" href="structfiftyone_degrees_string.html#a9dc7d299b74ff61bdd3385d086cfc326">value</a></div></div><p> However, this can be simplified by using the <a class="el" href="group___fifty_one_degrees_string.html#ga4ea1078e4c9e3c7668251f9e03023e59" title="Macro used to check for NULL before returning the string as a const char *.">FIFTYONE_DEGREES_STRING</a> macro which also performs a NULL check on the structure to avoid a segmentation fault.</p>
 <h2>Compare</h2>
 <p>This file contains two case insensitive string comparison methods as standards like <code>stricmp</code> vary across compilers.</p>
 <p><b>fiftyoneDegreesStringCompare</b> : compares two strings case insensitively</p>
@@ -96,9 +97,19 @@ Structs</h2>
 <!-- member dec start -->
 <!-- startMemberItem() -->
 <tr class="c-table__row memitem:"><td class="c-table__cell">struct <!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_string.html">fiftyoneDegreesString</a>
+&#160;</td><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_var_length_byte_array.html">fiftyoneDegreesVarLengthByteArray</a>
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:"><td class="c-table__cell">union <!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="unionfiftyone_degrees_stored_binary_value.html">fiftyoneDegreesStoredBinaryValue</a>
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:">String structure containing its value and size which maps to the string byte format used in data files.  <a href="structfiftyone_degrees_string.html#details">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:">"Packed" value that can be present inside "strings" of dataset.  <a href="unionfiftyone_degrees_stored_binary_value.html#details">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:"><td class="c-table__cell">struct <!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_string.html">fiftyoneDegreesString</a>
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
@@ -128,24 +139,15 @@ Macros</h2>
 <!-- startMemberDescription -->
 <div class="c-table__desc memdesc:ga4ea1078e4c9e3c7668251f9e03023e59">Macro used to check for NULL before returning the string as a const char *.  <a href="#ga4ea1078e4c9e3c7668251f9e03023e59">More...</a><!-- endMemberDescription -->
 </div></td></tr>
-<!-- member dec start -->
-<!-- startMemberItem() -->
-<tr class="c-table__row memitem:gac0202c50d6e28dc9dc8f56639ee4c2c8"><td class="c-table__cell">#define<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#gac0202c50d6e28dc9dc8f56639ee4c2c8">FIFTYONE_DEGREES_IP_ADDRESS</a>(s)
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:gac0202c50d6e28dc9dc8f56639ee4c2c8">Macro used to check for NULL before returning the IP address byte array as a const char *.  <a href="#gac0202c50d6e28dc9dc8f56639ee4c2c8">More...</a><!-- endMemberDescription -->
-</div></td></tr>
 <!-- endMemberList -->
 <!-- end member list -->
 </tbody></table></div>
 </section>
 <section class="g-docs__section">
-</section>
-<section class="g-docs__section">
 <!-- startMemberHeader -->
 <h2 class="g-docs__section-heading">
-<a name="enum-members"></a>
-Enumerations</h2>
+<a name="typedef-members"></a>
+Typedefs</h2>
 <!-- endMemberHeader -->
 <!-- startMemberList -->
 <!-- start member list -->
@@ -154,16 +156,21 @@ Enumerations</h2>
 <tbody class="c-table__body">
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:gad6faf78d8eb42c61cce7067719f0e05d"><td class="c-table__cell">enum <!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#gad6faf78d8eb42c61cce7067719f0e05d">fiftyoneDegreesStringFormat</a> { <a class="el" href="group___fifty_one_degrees_string.html#ggad6faf78d8eb42c61cce7067719f0e05dad0abdeb9080c3dad0f27c4cfffebc9a2">FIFTYONE_DEGREES_STRING_COORDINATE</a> = 1, 
-<a class="el" href="group___fifty_one_degrees_string.html#ggad6faf78d8eb42c61cce7067719f0e05da64d4dd90ed6fa97ef58c546c172905b8">FIFTYONE_DEGREES_STRING_IP_ADDRESS</a>
- }
-<!-- startMemberDescription -->
-<div class="c-table__desc memdesc:gad6faf78d8eb42c61cce7067719f0e05d">Enumeration to indicate what format is held in a string item These are the values that can be held at the first byte of the #fiftyoneDegreeString value.  <a href="group___fifty_one_degrees_string.html#gad6faf78d8eb42c61cce7067719f0e05d">More...</a><!-- endMemberDescription -->
+<tr class="c-table__row memitem:gafc05bf454636c3e3d2d82782dc23e7d2"><td class="c-table__cell"><a id="gafc05bf454636c3e3d2d82782dc23e7d2"></a>
+typedef&#160;union&#160;fiftyone_degrees_stored_binary_value_t<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><b>fiftyoneDegreesStoredBinaryValue</b>
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga266c7010daeb3f61888fcecbf2bda635"><td class="c-table__cell"><a id="ga266c7010daeb3f61888fcecbf2bda635"></a>
+typedef&#160;struct&#160;fiftyone_degrees_var_length_byte_array_t<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><b>fiftyoneDegreesVarLengthByteArray</b>
 </div></td></tr>
 <!-- endMemberList -->
 <!-- end member list -->
 </tbody></table></div>
+</section>
+<section class="g-docs__section">
 </section>
 <section class="g-docs__section">
 </section>
@@ -178,6 +185,48 @@ Functions</h2>
 <div class="g-table g-table--overflow">
 <table class="c-table c-table--members">
 <tbody class="c-table__body">
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga02cf40961090e7b9e2db735766444436"><td class="c-table__cell">void&#160;*<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#ga02cf40961090e7b9e2db735766444436">fiftyoneDegreesStoredBinaryValueRead</a> (const <a class="el" href="structfiftyone_degrees_collection_file.html">fiftyoneDegreesCollectionFile</a> *file, uint32_t offset, <a class="el" href="structfiftyone_degrees_data.html">fiftyoneDegreesData</a> *data, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga02cf40961090e7b9e2db735766444436">Reads a binary value from the source file at the offset within the string structure.  <a href="#ga02cf40961090e7b9e2db735766444436">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga97d60586de2a43bd8cf2aa21051fd72e"><td class="c-table__cell"><a class="el" href="unionfiftyone_degrees_stored_binary_value.html">fiftyoneDegreesStoredBinaryValue</a>&#160;*<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#ga97d60586de2a43bd8cf2aa21051fd72e">fiftyoneDegreesStoredBinaryValueGet</a> (<a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *strings, uint32_t offset, fiftyoneDegreesPropertyValueType storedValueType, <a class="el" href="structfiftyone_degrees_collection_item.html">fiftyoneDegreesCollectionItem</a> *item, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga97d60586de2a43bd8cf2aa21051fd72e">Gets the binary value at the required offset from the collection provided.  <a href="#ga97d60586de2a43bd8cf2aa21051fd72e">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga1b877b90dfaa9367ce5298ff04fc6e8a"><td class="c-table__cell">int<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#ga1b877b90dfaa9367ce5298ff04fc6e8a">fiftyoneDegreesStoredBinaryValueCompareWithString</a> (const <a class="el" href="unionfiftyone_degrees_stored_binary_value.html">fiftyoneDegreesStoredBinaryValue</a> *value, fiftyoneDegreesPropertyValueType storedValueType, const char *target, <a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a> *tempBuilder, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga1b877b90dfaa9367ce5298ff04fc6e8a">Function to compare the current binary value to the target string value using the text format.  <a href="#ga1b877b90dfaa9367ce5298ff04fc6e8a">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga86e6bd5f95831de2e957595618ff46ab"><td class="c-table__cell">int<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#ga86e6bd5f95831de2e957595618ff46ab">fiftyoneDegreesStoredBinaryValueToIntOrDefault</a> (const <a class="el" href="unionfiftyone_degrees_stored_binary_value.html">fiftyoneDegreesStoredBinaryValue</a> *value, fiftyoneDegreesPropertyValueType storedValueType, int defaultValue)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga86e6bd5f95831de2e957595618ff46ab">Function to convert the binary value to int when possible.  <a href="#ga86e6bd5f95831de2e957595618ff46ab">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga690781569a66c988ee884870e87d03f5"><td class="c-table__cell">double<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#ga690781569a66c988ee884870e87d03f5">fiftyoneDegreesStoredBinaryValueToDoubleOrDefault</a> (const <a class="el" href="unionfiftyone_degrees_stored_binary_value.html">fiftyoneDegreesStoredBinaryValue</a> *value, fiftyoneDegreesPropertyValueType storedValueType, double defaultValue)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga690781569a66c988ee884870e87d03f5">Function to convert the binary value to double when possible.  <a href="#ga690781569a66c988ee884870e87d03f5">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:gacea8faa7ae872ffb7650bea53dfcc26b"><td class="c-table__cell">bool<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#gacea8faa7ae872ffb7650bea53dfcc26b">fiftyoneDegreesStoredBinaryValueToBoolOrDefault</a> (const <a class="el" href="unionfiftyone_degrees_stored_binary_value.html">fiftyoneDegreesStoredBinaryValue</a> *value, fiftyoneDegreesPropertyValueType storedValueType, bool defaultValue)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:gacea8faa7ae872ffb7650bea53dfcc26b">Function to convert the binary value to bool when possible.  <a href="#gacea8faa7ae872ffb7650bea53dfcc26b">More...</a><!-- endMemberDescription -->
+</div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
 <tr class="c-table__row memitem:gaabadc8944fbbe89c87480635a630a672"><td class="c-table__cell">void&#160;*<!-- insertMemberAlign -->
@@ -208,10 +257,10 @@ Functions</h2>
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:gaeeeadd3a053dd858561819d0a3be4c31"><td class="c-table__cell">char&#160;*<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#gaeeeadd3a053dd858561819d0a3be4c31">fiftyoneDegreesStringSubString</a> (const char *a, const char *b)
+<tr class="c-table__row memitem:ga3a7fd30c1770a514a8e97c3aa25b6ab6"><td class="c-table__cell">const&#160;char&#160;*<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#ga3a7fd30c1770a514a8e97c3aa25b6ab6">fiftyoneDegreesStringSubString</a> (const char *a, const char *b)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:gaeeeadd3a053dd858561819d0a3be4c31">Case insensitively searching a first occurrence of a substring.  <a href="#gaeeeadd3a053dd858561819d0a3be4c31">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:ga3a7fd30c1770a514a8e97c3aa25b6ab6">Case insensitively searching a first occurrence of a substring.  <a href="#ga3a7fd30c1770a514a8e97c3aa25b6ab6">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
@@ -229,17 +278,38 @@ Functions</h2>
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:gaf259c0a50e228c7bac27688f62098656"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a>&#160;*<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#gaf259c0a50e228c7bac27688f62098656">fiftyoneDegreesStringBuilderAddInteger</a> (<a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a> *builder, int const value)
+<tr class="c-table__row memitem:gabb912ef46d798027fc2351aa57b00dfc"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a>&#160;*<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#gabb912ef46d798027fc2351aa57b00dfc">fiftyoneDegreesStringBuilderAddInteger</a> (<a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a> *builder, int64_t const value)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:gaf259c0a50e228c7bac27688f62098656">Adds the integer to the buffer.  <a href="#gaf259c0a50e228c7bac27688f62098656">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:gabb912ef46d798027fc2351aa57b00dfc">Adds the integer to the buffer.  <a href="#gabb912ef46d798027fc2351aa57b00dfc">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ga633f9e8949c01bd376d71f42c056c972"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a>&#160;*<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#ga633f9e8949c01bd376d71f42c056c972">fiftyoneDegreesStringBuilderAddChars</a> (<a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a> *builder, char *const value, size_t const length)
+<tr class="c-table__row memitem:ga08db434c77f2d7170aaaea3a1c335251"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a>&#160;*<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#ga08db434c77f2d7170aaaea3a1c335251">fiftyoneDegreesStringBuilderAddDouble</a> (<a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a> *builder, double value, uint8_t decimalPlaces)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ga633f9e8949c01bd376d71f42c056c972">Adds the string to the buffer.  <a href="#ga633f9e8949c01bd376d71f42c056c972">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:ga08db434c77f2d7170aaaea3a1c335251">Adds the double to the buffer.  <a href="#ga08db434c77f2d7170aaaea3a1c335251">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:gadb07451e78b436b05b5822259472fe02"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a>&#160;*<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#gadb07451e78b436b05b5822259472fe02">fiftyoneDegreesStringBuilderAddChars</a> (<a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a> *builder, const char *value, size_t length)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:gadb07451e78b436b05b5822259472fe02">Adds the string to the buffer.  <a href="#gadb07451e78b436b05b5822259472fe02">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga62f30b0184d82a3c2912bca7f6443686"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#ga62f30b0184d82a3c2912bca7f6443686">fiftyoneDegreesStringBuilderAddIpAddress</a> (<a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a> *builder, const <a class="el" href="structfiftyone_degrees_var_length_byte_array.html">fiftyoneDegreesVarLengthByteArray</a> *ipAddress, <a class="el" href="group__fiftyone_degrees_ip.html#ga442c961cca3e822fd98ed0e7546eafd5">fiftyoneDegreesIpType</a> type, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga62f30b0184d82a3c2912bca7f6443686">Adds an the IP (as string) from byte "string".  <a href="#ga62f30b0184d82a3c2912bca7f6443686">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:gabe07780c1174cde5458cd89e8ca33923"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a>&#160;*<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_string.html#gabe07780c1174cde5458cd89e8ca33923">fiftyoneDegreesStringBuilderAddStringValue</a> (<a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a> *builder, const <a class="el" href="unionfiftyone_degrees_stored_binary_value.html">fiftyoneDegreesStoredBinaryValue</a> *value, fiftyoneDegreesPropertyValueType valueType, uint8_t decimalPlaces, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:gabe07780c1174cde5458cd89e8ca33923">Adds a potentially packed value as a proper string to the buffer.  <a href="#gabe07780c1174cde5458cd89e8ca33923">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
@@ -271,51 +341,6 @@ Functions</h2>
 <section class="g-docs__section">
 <h2 class="g-docs__section-heading">Macro Definition Documentation</h2>
 <!-- startMemberDocList -->
-<article class="c-member">
-<a id="gac0202c50d6e28dc9dc8f56639ee4c2c8"></a><!-- startMemberDoc -->
-
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gac0202c50d6e28dc9dc8f56639ee4c2c8">&#9670;&nbsp;</a></span>FIFTYONE_DEGREES_IP_ADDRESS</h2>
-
-<div class="c-member__main">
-<div class="c-member__head">
-<!-- startMemberDocName -->
-      <div class="c-member__split">
-        <div class="g-table g-table--overflow">
-          <table class="c-table c-table--article">
-            <tr class="c-table__row">
-              <td class="c-table__cell">#define FIFTYONE_DEGREES_IP_ADDRESS<!-- endMemberDocName -->
-</td>
-<!-- startParameterList -->
-          <td>(</td>
-<!-- startFirstParameterType -->
-          <td class="c-table__cell"><!-- endParameterType -->
-&#160;</td>
-<!-- startParameterName -->
-          <td class="c-table__cell">s<!-- endParameterName -->
-</td><td>)</td>
-          <td><!-- endParameterList -->
-</td>
-        </tr>
-<!-- endMemberDoc -->
-          </table>
-        </div>
-      </div>
-</div><!-- startIndent -->
-<div class="c-member__body">
-<b>Value:</b><div class="c-code__block c-code__block--outline"><div class="c-code__line">(<span class="c-code__keyword">const</span> <span class="c-code__keywordtype">char</span>*)(s == NULL \</div><div class="c-code__line">        || ((<a class="code" href="structfiftyone_degrees_string.html">fiftyoneDegreesString</a>*)s)-&gt;value \</div><div class="c-code__line">            != <a class="code" href="group___fifty_one_degrees_string.html#ggad6faf78d8eb42c61cce7067719f0e05da64d4dd90ed6fa97ef58c546c172905b8">FIFTYONE_DEGREES_STRING_IP_ADDRESS</a> ? \</div><div class="c-code__line">        NULL : \</div><div class="c-code__line">        &amp;((<a class="code" href="structfiftyone_degrees_string.html">fiftyoneDegreesString</a>*)s)-&gt;trail.secondValue)</div><div class="ttc" id="structfiftyone_degrees_string_html"><div class="ttname"><a href="structfiftyone_degrees_string.html">fiftyoneDegreesString</a></div><div class="ttdoc">String structure containing its value and size which maps to the string byte format used in data file...</div><div class="ttdef"><b>Definition:</b> string.h:112</div></div>
-<div class="ttc" id="group___fifty_one_degrees_string_html_ggad6faf78d8eb42c61cce7067719f0e05da64d4dd90ed6fa97ef58c546c172905b8"><div class="ttname"><a href="group___fifty_one_degrees_string.html#ggad6faf78d8eb42c61cce7067719f0e05da64d4dd90ed6fa97ef58c546c172905b8">FIFTYONE_DEGREES_STRING_IP_ADDRESS</a></div><div class="ttdoc">Format is a byte array representation of an IP address.</div><div class="ttdef"><b>Definition:</b> string.h:81</div></div>
-</div>
-<p>Macro used to check for NULL before returning the IP address byte array as a const char *. </p>
-<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
-    <tr><dd class="c-list-definition__desc"><span class="b-text--red">s</span> - pointer to the <a class="el" href="structfiftyone_degrees_string.html" title="String structure containing its value and size which maps to the string byte format used in data file...">fiftyoneDegreesString</a> </dd>
-  </dd>
-</dl>
-<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">const char * string or NULL. NULL if the pointer is NULL or the type stored at the pointer is not an IP address </dd></dl>
-<!-- endIndent -->
-
-</div>
-</div>
-</article>
 <article class="c-member">
 <a id="ga4ea1078e4c9e3c7668251f9e03023e59"></a><!-- startMemberDoc -->
 
@@ -350,7 +375,7 @@ Functions</h2>
 
 <p>Macro used to check for NULL before returning the string as a const char *. </p>
 <dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
-    <tr><dd class="c-list-definition__desc"><span class="b-text--red">s</span> - pointer to the <a class="el" href="structfiftyone_degrees_string.html" title="String structure containing its value and size which maps to the string byte format used in data file...">fiftyoneDegreesString</a> </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">s</span> - pointer to the <a class="el" href="structfiftyone_degrees_string.html">fiftyoneDegreesString</a> </dd>
   </dd>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">const char * string or NULL </dd></dl>
@@ -360,12 +385,12 @@ Functions</h2>
 </div>
 </article>
 <!-- endMemberDocList -->
-<h2 class="g-docs__section-heading">Enumeration Type Documentation</h2>
+<h2 class="g-docs__section-heading">Function Documentation</h2>
 <!-- startMemberDocList -->
 <article class="c-member">
-<a id="gad6faf78d8eb42c61cce7067719f0e05d"></a><!-- startMemberDoc -->
+<a id="ga1b877b90dfaa9367ce5298ff04fc6e8a"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gad6faf78d8eb42c61cce7067719f0e05d">&#9670;&nbsp;</a></span>fiftyoneDegreesStringFormat</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga1b877b90dfaa9367ce5298ff04fc6e8a">&#9670;&nbsp;</a></span>fiftyoneDegreesStoredBinaryValueCompareWithString()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -374,35 +399,475 @@ Functions</h2>
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">enum <a class="el" href="group___fifty_one_degrees_string.html#gad6faf78d8eb42c61cce7067719f0e05d">fiftyoneDegreesStringFormat</a><!-- endMemberDocName -->
+              <td class="c-table__cell">int fiftyoneDegreesStoredBinaryValueCompareWithString <!-- endMemberDocName -->
 </td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">const <a class="el" href="unionfiftyone_degrees_stored_binary_value.html">fiftyoneDegreesStoredBinaryValue</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>value</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">fiftyoneDegreesPropertyValueType<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>storedValueType</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">const char *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>target</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>tempBuilder</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>exception</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
 <!-- endMemberDoc -->
-            </tr>
           </table>
         </div>
       </div>
 </div><!-- startIndent -->
 <div class="c-member__body">
 
-<p>Enumeration to indicate what format is held in a string item These are the values that can be held at the first byte of the #fiftyoneDegreeString value. </p>
-<div class="g-table g-table--overflow">
-<table class="c-table c-table--invert">
-<thead class="c-table__head">
-<tr class="c-table__row"><td class="c-table__cell" colspan="2"><h3 class="c-table__heading">Enumerator</h3></td></tr></thead><tbody class="c-table__body"><tr class="c-table__row"><td class="c-table__cell"><a id="ggad6faf78d8eb42c61cce7067719f0e05dad0abdeb9080c3dad0f27c4cfffebc9a2"></a>FIFTYONE_DEGREES_STRING_COORDINATE&#160;</td><td class="c-table__cell"><p>Format is a pair of floats for latitude and longitude values. </p>
-</td></tr>
-<tr class="c-table__row"><td class="c-table__cell"><a id="ggad6faf78d8eb42c61cce7067719f0e05da64d4dd90ed6fa97ef58c546c172905b8"></a>FIFTYONE_DEGREES_STRING_IP_ADDRESS&#160;</td><td class="c-table__cell"><p>Format is a byte array representation of an IP address. </p>
-</td></tr>
-</tbody>
-</table>
-</div>
+<p>Function to compare the current binary value to the target string value using the text format. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">value</span> - the current binary value item </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">storedValueType</span> - format of byte array representation </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">target</span> - the target search value. </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">tempBuilder</span> - temporary builder to stringify value into. </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">0 if they are equal, otherwise negative for smaller and positive for bigger </dd></dl>
+<dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd class="c-list-definition__desc"><a class="el" href="_2home_2runner_2work_2ip-intelligence-cxx_2ip-intelligence-cxx_2common_2ip-intelligence-cxx_2srca007c27fbd32290d4ff8aa19bafb79fc.html#a11">/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/common-cxx/storedBinaryValue.h</a>.</dd>
+</dl>
 <!-- endIndent -->
 
 </div>
 </div>
 </article>
-<!-- endMemberDocList -->
-<h2 class="g-docs__section-heading">Function Documentation</h2>
-<!-- startMemberDocList -->
+<article class="c-member">
+<a id="ga97d60586de2a43bd8cf2aa21051fd72e"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga97d60586de2a43bd8cf2aa21051fd72e">&#9670;&nbsp;</a></span>fiftyoneDegreesStoredBinaryValueGet()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="unionfiftyone_degrees_stored_binary_value.html">fiftyoneDegreesStoredBinaryValue</a>* fiftyoneDegreesStoredBinaryValueGet <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>strings</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">uint32_t<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>offset</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">fiftyoneDegreesPropertyValueType<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>storedValueType</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection_item.html">fiftyoneDegreesCollectionItem</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>item</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>exception</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Gets the binary value at the required offset from the collection provided. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">strings</span> - collection to get the string from </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">offset</span> - of the string in the collection </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">storedValueType</span> - format of byte array representation </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">item</span> - to store the string in </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">exception</span> - pointer to an exception data structure to be used if an exception occurs. See <a class="el" href="exceptions_8h_source.html">exceptions.h</a>. </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a pointer to binary value or NULL if the offset is not valid </dd></dl>
+<dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd class="c-list-definition__desc"><a class="el" href="_2home_2runner_2work_2ip-intelligence-cxx_2ip-intelligence-cxx_2common_2ip-intelligence-cxx_2srca007c27fbd32290d4ff8aa19bafb79fc.html#a8">/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/common-cxx/storedBinaryValue.h</a>.</dd>
+</dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ga02cf40961090e7b9e2db735766444436"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga02cf40961090e7b9e2db735766444436">&#9670;&nbsp;</a></span>fiftyoneDegreesStoredBinaryValueRead()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">void* fiftyoneDegreesStoredBinaryValueRead <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">const <a class="el" href="structfiftyone_degrees_collection_file.html">fiftyoneDegreesCollectionFile</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>file</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">uint32_t<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>offset</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_data.html">fiftyoneDegreesData</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>data</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>exception</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Reads a binary value from the source file at the offset within the string structure. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">file</span> - collection to read from </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">offset</span> - of the string in the collection </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">data</span> - to store the new string in </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">exception</span> - pointer to an exception data structure to be used if an exception occurs. See <a class="el" href="exceptions_8h_source.html">exceptions.h</a>. </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a pointer to the string collection item or NULL if can't be found </dd></dl>
+<dl class="c-list-definition note"><dt class="c-list-definition__title">Note</dt><dd class="c-list-definition__desc">expects <code>data</code> to contain <code>fiftyoneDegreesPropertyValueType</code> matching the stored value type of the property this value belongs to. </dd></dl>
+<dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd class="c-list-definition__desc"><a class="el" href="_2home_2runner_2work_2ip-intelligence-cxx_2ip-intelligence-cxx_2common_2ip-intelligence-cxx_2srca007c27fbd32290d4ff8aa19bafb79fc.html#a4">/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/common-cxx/storedBinaryValue.h</a>.</dd>
+</dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="gacea8faa7ae872ffb7650bea53dfcc26b"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gacea8faa7ae872ffb7650bea53dfcc26b">&#9670;&nbsp;</a></span>fiftyoneDegreesStoredBinaryValueToBoolOrDefault()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">bool fiftyoneDegreesStoredBinaryValueToBoolOrDefault <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">const <a class="el" href="unionfiftyone_degrees_stored_binary_value.html">fiftyoneDegreesStoredBinaryValue</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>value</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">fiftyoneDegreesPropertyValueType<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>storedValueType</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">bool<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>defaultValue</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Function to convert the binary value to bool when possible. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">value</span> - the current binary value item </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">storedValueType</span> - format of byte array representation </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">defaultValue</span> - fallback result. </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">converted value (when possible) or default one (when type is not convertible). </dd></dl>
+<dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd class="c-list-definition__desc"><a class="el" href="_2home_2runner_2work_2ip-intelligence-cxx_2ip-intelligence-cxx_2common_2ip-intelligence-cxx_2srca007c27fbd32290d4ff8aa19bafb79fc.html#a15">/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/common-cxx/storedBinaryValue.h</a>.</dd>
+</dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ga690781569a66c988ee884870e87d03f5"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga690781569a66c988ee884870e87d03f5">&#9670;&nbsp;</a></span>fiftyoneDegreesStoredBinaryValueToDoubleOrDefault()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">double fiftyoneDegreesStoredBinaryValueToDoubleOrDefault <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">const <a class="el" href="unionfiftyone_degrees_stored_binary_value.html">fiftyoneDegreesStoredBinaryValue</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>value</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">fiftyoneDegreesPropertyValueType<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>storedValueType</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">double<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>defaultValue</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Function to convert the binary value to double when possible. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">value</span> - the current binary value item </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">storedValueType</span> - format of byte array representation </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">defaultValue</span> - fallback result. </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">converted value (when possible) or default one (when type is not convertible). </dd></dl>
+<dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd class="c-list-definition__desc"><a class="el" href="_2home_2runner_2work_2ip-intelligence-cxx_2ip-intelligence-cxx_2common_2ip-intelligence-cxx_2srca007c27fbd32290d4ff8aa19bafb79fc.html#a14">/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/common-cxx/storedBinaryValue.h</a>.</dd>
+</dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ga86e6bd5f95831de2e957595618ff46ab"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga86e6bd5f95831de2e957595618ff46ab">&#9670;&nbsp;</a></span>fiftyoneDegreesStoredBinaryValueToIntOrDefault()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">int fiftyoneDegreesStoredBinaryValueToIntOrDefault <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">const <a class="el" href="unionfiftyone_degrees_stored_binary_value.html">fiftyoneDegreesStoredBinaryValue</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>value</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">fiftyoneDegreesPropertyValueType<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>storedValueType</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">int<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>defaultValue</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Function to convert the binary value to int when possible. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">value</span> - the current binary value item </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">storedValueType</span> - format of byte array representation </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">defaultValue</span> - fallback result. </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">converted value (when possible) or default one (when type is not convertible). </dd></dl>
+<dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd class="c-list-definition__desc"><a class="el" href="_2home_2runner_2work_2ip-intelligence-cxx_2ip-intelligence-cxx_2common_2ip-intelligence-cxx_2srca007c27fbd32290d4ff8aa19bafb79fc.html#a13">/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/common-cxx/storedBinaryValue.h</a>.</dd>
+</dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
 <article class="c-member">
 <a id="ga285b721531652fe4108b87f25f9554a6"></a><!-- startMemberDoc -->
 
@@ -462,9 +927,9 @@ Functions</h2>
 </div>
 </article>
 <article class="c-member">
-<a id="ga633f9e8949c01bd376d71f42c056c972"></a><!-- startMemberDoc -->
+<a id="gadb07451e78b436b05b5822259472fe02"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga633f9e8949c01bd376d71f42c056c972">&#9670;&nbsp;</a></span>fiftyoneDegreesStringBuilderAddChars()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gadb07451e78b436b05b5822259472fe02">&#9670;&nbsp;</a></span>fiftyoneDegreesStringBuilderAddChars()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -488,7 +953,7 @@ Functions</h2>
         <tr>
           <td class="c-table__cell"></td>
           <td></td>
-          <td class="c-table__cell">char *const<!-- endParameterType -->
+          <td class="c-table__cell">const char *<!-- endParameterType -->
 &#160;</td>
 <!-- startParameterName -->
           <td class="c-table__cell"><em>value</em>, <!-- endParameterName -->
@@ -498,7 +963,7 @@ Functions</h2>
         <tr>
           <td class="c-table__cell"></td>
           <td></td>
-          <td class="c-table__cell">size_t const<!-- endParameterType -->
+          <td class="c-table__cell">size_t<!-- endParameterType -->
 &#160;</td>
 <!-- startParameterName -->
           <td class="c-table__cell"><em>length</em><!-- endParameterName -->
@@ -531,9 +996,78 @@ Functions</h2>
 </div>
 </article>
 <article class="c-member">
-<a id="gaf259c0a50e228c7bac27688f62098656"></a><!-- startMemberDoc -->
+<a id="ga08db434c77f2d7170aaaea3a1c335251"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gaf259c0a50e228c7bac27688f62098656">&#9670;&nbsp;</a></span>fiftyoneDegreesStringBuilderAddInteger()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga08db434c77f2d7170aaaea3a1c335251">&#9670;&nbsp;</a></span>fiftyoneDegreesStringBuilderAddDouble()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a>* fiftyoneDegreesStringBuilderAddDouble <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>builder</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">double<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>value</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">uint8_t<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>decimalPlaces</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Adds the double to the buffer. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">builder</span> - to add the character to </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">value</span> - floating-point number to add </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">decimalPlaces</span> - precision (places after decimal dot) </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">pointer to the buffer passed </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="gabb912ef46d798027fc2351aa57b00dfc"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gabb912ef46d798027fc2351aa57b00dfc">&#9670;&nbsp;</a></span>fiftyoneDegreesStringBuilderAddInteger()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -557,7 +1091,7 @@ Functions</h2>
         <tr>
           <td class="c-table__cell"></td>
           <td></td>
-          <td class="c-table__cell">int const<!-- endParameterType -->
+          <td class="c-table__cell">int64_t const<!-- endParameterType -->
 &#160;</td>
 <!-- startParameterName -->
           <td class="c-table__cell"><em>value</em><!-- endParameterName -->
@@ -580,6 +1114,175 @@ Functions</h2>
 <dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">builder</span> - to add the character to </dd>
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">value</span> - integer to add </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">pointer to the buffer passed </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ga62f30b0184d82a3c2912bca7f6443686"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga62f30b0184d82a3c2912bca7f6443686">&#9670;&nbsp;</a></span>fiftyoneDegreesStringBuilderAddIpAddress()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">void fiftyoneDegreesStringBuilderAddIpAddress <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>builder</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">const <a class="el" href="structfiftyone_degrees_var_length_byte_array.html">fiftyoneDegreesVarLengthByteArray</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>ipAddress</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="group__fiftyone_degrees_ip.html#ga442c961cca3e822fd98ed0e7546eafd5">fiftyoneDegreesIpType</a><!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>type</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>exception</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Adds an the IP (as string) from byte "string". </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">builder</span> - to add the IP to </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">ipAddress</span> - binary (packed) "string" with IP to add </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">type</span> - type of IP inside </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">exception</span> - pointer to exception struct </dd>
+  </dd>
+</dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="gabe07780c1174cde5458cd89e8ca33923"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gabe07780c1174cde5458cd89e8ca33923">&#9670;&nbsp;</a></span>fiftyoneDegreesStringBuilderAddStringValue()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a>* fiftyoneDegreesStringBuilderAddStringValue <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_string_builder.html">fiftyoneDegreesStringBuilder</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>builder</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">const <a class="el" href="unionfiftyone_degrees_stored_binary_value.html">fiftyoneDegreesStoredBinaryValue</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>value</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">fiftyoneDegreesPropertyValueType<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>valueType</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">uint8_t<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>decimalPlaces</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>exception</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Adds a potentially packed value as a proper string to the buffer. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">builder</span> - to add the character to </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">value</span> - from data file to add </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">decimalPlaces</span> - precision for numbers (places after decimal dot) </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">exception</span> - pointer to exception struct </dd>
   </dd>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">pointer to the buffer passed </dd></dl>
@@ -727,6 +1430,8 @@ Functions</h2>
   </dd>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">0 if same </dd></dl>
+<dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd class="c-list-definition__desc"><a class="el" href="_2home_2runner_2work_2ip-intelligence-cxx_2ip-intelligence-cxx_2common_2ip-intelligence-cxx_2src_2common-cxx_2string_8h-example.html#a9">/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/common-cxx/string.h</a>.</dd>
+</dl>
 <!-- endIndent -->
 
 </div>
@@ -796,6 +1501,8 @@ Functions</h2>
   </dd>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">0 if same </dd></dl>
+<dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd class="c-list-definition__desc"><a class="el" href="_2home_2runner_2work_2ip-intelligence-cxx_2ip-intelligence-cxx_2common_2ip-intelligence-cxx_2src_2common-cxx_2string_8h-example.html#a8">/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/common-cxx/string.h</a>.</dd>
+</dl>
 <!-- endIndent -->
 
 </div>
@@ -876,6 +1583,8 @@ Functions</h2>
   </dd>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a pointer to string of NULL if the offset is not valid </dd></dl>
+<dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd class="c-list-definition__desc"><a class="el" href="_2home_2runner_2work_2ip-intelligence-cxx_2ip-intelligence-cxx_2common_2ip-intelligence-cxx_2src_2common-cxx_2string_8h-example.html#a5">/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/common-cxx/string.h</a>.</dd>
+</dl>
 <!-- endIndent -->
 
 </div>
@@ -956,15 +1665,17 @@ Functions</h2>
   </dd>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a pointer to the string collection item or NULL if can't be found </dd></dl>
+<dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd class="c-list-definition__desc"><a class="el" href="_2home_2runner_2work_2ip-intelligence-cxx_2ip-intelligence-cxx_2common_2ip-intelligence-cxx_2src_2common-cxx_2string_8h-example.html#a1">/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/common-cxx/string.h</a>.</dd>
+</dl>
 <!-- endIndent -->
 
 </div>
 </div>
 </article>
 <article class="c-member">
-<a id="gaeeeadd3a053dd858561819d0a3be4c31"></a><!-- startMemberDoc -->
+<a id="ga3a7fd30c1770a514a8e97c3aa25b6ab6"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gaeeeadd3a053dd858561819d0a3be4c31">&#9670;&nbsp;</a></span>fiftyoneDegreesStringSubString()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga3a7fd30c1770a514a8e97c3aa25b6ab6">&#9670;&nbsp;</a></span>fiftyoneDegreesStringSubString()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -973,7 +1684,7 @@ Functions</h2>
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">char* fiftyoneDegreesStringSubString <!-- endMemberDocName -->
+              <td class="c-table__cell">const char* fiftyoneDegreesStringSubString <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -1014,6 +1725,8 @@ Functions</h2>
   </dd>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">pointer to the first occurrence or NULL if not found </dd></dl>
+<dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd class="c-list-definition__desc"><a class="el" href="_2home_2runner_2work_2ip-intelligence-cxx_2ip-intelligence-cxx_2common_2ip-intelligence-cxx_2src_2common-cxx_2string_8h-example.html#a10">/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/common-cxx/string.h</a>.</dd>
+</dl>
 <!-- endIndent -->
 
 </div>
@@ -1029,7 +1742,7 @@ Functions</h2>
         <ul class="c-section-nav__list">
 <li class="c-section-nav__item"><a class="c-section-nav__link" href="#nested-classes">Structs</a></li>
 <li class="c-section-nav__item"><a class="c-section-nav__link" href="#define-members">Macros</a></li>
-<li class="c-section-nav__item"><a class="c-section-nav__link" href="#enum-members">Enumerations</a></li>
+<li class="c-section-nav__item"><a class="c-section-nav__link" href="#typedef-members">Typedefs</a></li>
 <li class="c-section-nav__item"><a class="c-section-nav__link" href="#func-members">Functions</a></li>      </ul>
     </div>
   </div>

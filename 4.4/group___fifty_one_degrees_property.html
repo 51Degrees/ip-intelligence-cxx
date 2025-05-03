@@ -98,47 +98,21 @@ Structs</h2>
 <!-- startMemberDescription -->
 <div class="c-table__desc memdesc:">Property structure containing all the meta data relating to a property.  <a href="structfiftyone_degrees_property.html#details">More...</a><!-- endMemberDescription -->
 </div></td></tr>
-<!-- endMemberList -->
-<!-- end member list -->
-</tbody></table></div>
-<section class="g-docs__section">
-</section>
-<section class="g-docs__section">
-</section>
-<section class="g-docs__section">
-<!-- startMemberHeader -->
-<h2 class="g-docs__section-heading">
-<a name="enum-members"></a>
-Enumerations</h2>
-<!-- endMemberHeader -->
-<!-- startMemberList -->
-<!-- start member list -->
-<div class="g-table g-table--overflow">
-<table class="c-table c-table--members">
-<tbody class="c-table__body">
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ga513b7e946379be5adda577dc78427632"><td class="c-table__cell">enum <!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_property.html#ga513b7e946379be5adda577dc78427632">fiftyoneDegreesPropertyValueType</a> { <br />
-&#160;&#160;<a class="el" href="group___fifty_one_degrees_property.html#gga513b7e946379be5adda577dc78427632a7ec96645a462b61293ecf9580c30f4a5">FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING</a> = 0, 
-<a class="el" href="group___fifty_one_degrees_property.html#gga513b7e946379be5adda577dc78427632a7c48a234f321bdc56a98ca5d0c0ac407">FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_INTEGER</a> = 1, 
-<a class="el" href="group___fifty_one_degrees_property.html#gga513b7e946379be5adda577dc78427632a4cdc80494fccc7598e9de71e6f7cc5df">FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_DOUBLE</a> = 2, 
-<a class="el" href="group___fifty_one_degrees_property.html#gga513b7e946379be5adda577dc78427632ad4e5df722405f17208d902546199fd03">FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_BOOLEAN</a> = 3, 
-<br />
-&#160;&#160;<a class="el" href="group___fifty_one_degrees_property.html#gga513b7e946379be5adda577dc78427632a0f41f6e696f5bf4a598930d8380577de">FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_JAVASCRIPT</a> = 4, 
-<a class="el" href="group___fifty_one_degrees_property.html#gga513b7e946379be5adda577dc78427632adcf592daa665fb8031166209f40481c6">FIFTYONE_DEGREES_PROPERTY_VALUE_SINGLE_PRECISION_FLOAT</a> = 5, 
-<a class="el" href="group___fifty_one_degrees_property.html#gga513b7e946379be5adda577dc78427632a618131df6fd74bf6fd824d1deb1cc95b">FIFTYONE_DEGREES_PROPERTY_VALUE_SINGLE_BYTE</a> = 6, 
-<a class="el" href="group___fifty_one_degrees_property.html#gga513b7e946379be5adda577dc78427632a008a3b60e58e026d37b1e5736c917156">FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE</a> = 7, 
-<br />
-&#160;&#160;<a class="el" href="group___fifty_one_degrees_property.html#gga513b7e946379be5adda577dc78427632a01e854b4ffd580f79b92d99e13dff491">FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS</a> = 8
-<br />
- }
+<tr class="c-table__row memitem:"><td class="c-table__cell">struct <!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_property_type_record.html">fiftyoneDegreesPropertyTypeRecord</a>
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ga513b7e946379be5adda577dc78427632">Enum of property types.  <a href="group___fifty_one_degrees_property.html#ga513b7e946379be5adda577dc78427632">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:">Property structure containing stored type of a property.  <a href="structfiftyone_degrees_property_type_record.html#details">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- endMemberList -->
 <!-- end member list -->
 </tbody></table></div>
+<section class="g-docs__section">
+</section>
+<section class="g-docs__section">
+</section>
+<section class="g-docs__section">
 </section>
 <section class="g-docs__section">
 </section>
@@ -159,6 +133,20 @@ Functions</h2>
 &#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_property.html#ga413e25f62d1c2ac22368dea7d7b7f5b2">fiftyoneDegreesPropertyGetName</a> (<a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *stringsCollection, <a class="el" href="structfiftyone_degrees_property.html">fiftyoneDegreesProperty</a> *property, <a class="el" href="structfiftyone_degrees_collection_item.html">fiftyoneDegreesCollectionItem</a> *item, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
 <!-- startMemberDescription -->
 <div class="c-table__desc memdesc:ga413e25f62d1c2ac22368dea7d7b7f5b2">Returns the string name of the property using the item provided.  <a href="#ga413e25f62d1c2ac22368dea7d7b7f5b2">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga2fec8371fe6345d421a0bc9176b88bca"><td class="c-table__cell">fiftyoneDegreesPropertyValueType<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_property.html#ga2fec8371fe6345d421a0bc9176b88bca">fiftyoneDegreesPropertyGetStoredType</a> (<a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *propertyTypesCollection, <a class="el" href="structfiftyone_degrees_property.html">fiftyoneDegreesProperty</a> *property, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga2fec8371fe6345d421a0bc9176b88bca">Returns the type the property is stored as.  <a href="#ga2fec8371fe6345d421a0bc9176b88bca">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga9098da80cdbddc14968c545b9368f3c1"><td class="c-table__cell">fiftyoneDegreesPropertyValueType<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_property.html#ga9098da80cdbddc14968c545b9368f3c1">fiftyoneDegreesPropertyGetStoredTypeByIndex</a> (<a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *propertyTypesCollection, uint32_t index, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga9098da80cdbddc14968c545b9368f3c1">Returns the type the property is stored as.  <a href="#ga9098da80cdbddc14968c545b9368f3c1">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
@@ -223,61 +211,6 @@ Functions</h2>
 <section class="g-docs__section">
 </section>
 <section class="g-docs__section">
-<h2 class="g-docs__section-heading">Enumeration Type Documentation</h2>
-<!-- startMemberDocList -->
-<article class="c-member">
-<a id="ga513b7e946379be5adda577dc78427632"></a><!-- startMemberDoc -->
-
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga513b7e946379be5adda577dc78427632">&#9670;&nbsp;</a></span>fiftyoneDegreesPropertyValueType</h2>
-
-<div class="c-member__main">
-<div class="c-member__head">
-<!-- startMemberDocName -->
-      <div class="c-member__split">
-        <div class="g-table g-table--overflow">
-          <table class="c-table c-table--article">
-            <tr class="c-table__row">
-              <td class="c-table__cell">enum <a class="el" href="group___fifty_one_degrees_property.html#ga513b7e946379be5adda577dc78427632">fiftyoneDegreesPropertyValueType</a><!-- endMemberDocName -->
-</td>
-<!-- endMemberDoc -->
-            </tr>
-          </table>
-        </div>
-      </div>
-</div><!-- startIndent -->
-<div class="c-member__body">
-
-<p>Enum of property types. </p>
-<div class="g-table g-table--overflow">
-<table class="c-table c-table--invert">
-<thead class="c-table__head">
-<tr class="c-table__row"><td class="c-table__cell" colspan="2"><h3 class="c-table__heading">Enumerator</h3></td></tr></thead><tbody class="c-table__body"><tr class="c-table__row"><td class="c-table__cell"><a id="gga513b7e946379be5adda577dc78427632a7ec96645a462b61293ecf9580c30f4a5"></a>FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING&#160;</td><td class="c-table__cell"><p>String. </p>
-</td></tr>
-<tr class="c-table__row"><td class="c-table__cell"><a id="gga513b7e946379be5adda577dc78427632a7c48a234f321bdc56a98ca5d0c0ac407"></a>FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_INTEGER&#160;</td><td class="c-table__cell"><p>Integer. </p>
-</td></tr>
-<tr class="c-table__row"><td class="c-table__cell"><a id="gga513b7e946379be5adda577dc78427632a4cdc80494fccc7598e9de71e6f7cc5df"></a>FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_DOUBLE&#160;</td><td class="c-table__cell"><p>Double. </p>
-</td></tr>
-<tr class="c-table__row"><td class="c-table__cell"><a id="gga513b7e946379be5adda577dc78427632ad4e5df722405f17208d902546199fd03"></a>FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_BOOLEAN&#160;</td><td class="c-table__cell"><p>Boolean. </p>
-</td></tr>
-<tr class="c-table__row"><td class="c-table__cell"><a id="gga513b7e946379be5adda577dc78427632a0f41f6e696f5bf4a598930d8380577de"></a>FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_JAVASCRIPT&#160;</td><td class="c-table__cell"><p>JavaScript string. </p>
-</td></tr>
-<tr class="c-table__row"><td class="c-table__cell"><a id="gga513b7e946379be5adda577dc78427632adcf592daa665fb8031166209f40481c6"></a>FIFTYONE_DEGREES_PROPERTY_VALUE_SINGLE_PRECISION_FLOAT&#160;</td><td class="c-table__cell"><p>Single precision floating point value. </p>
-</td></tr>
-<tr class="c-table__row"><td class="c-table__cell"><a id="gga513b7e946379be5adda577dc78427632a618131df6fd74bf6fd824d1deb1cc95b"></a>FIFTYONE_DEGREES_PROPERTY_VALUE_SINGLE_BYTE&#160;</td><td class="c-table__cell"><p>Single byte value. </p>
-</td></tr>
-<tr class="c-table__row"><td class="c-table__cell"><a id="gga513b7e946379be5adda577dc78427632a008a3b60e58e026d37b1e5736c917156"></a>FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_COORDINATE&#160;</td><td class="c-table__cell"><p>Coordinate. </p>
-</td></tr>
-<tr class="c-table__row"><td class="c-table__cell"><a id="gga513b7e946379be5adda577dc78427632a01e854b4ffd580f79b92d99e13dff491"></a>FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_IP_ADDRESS&#160;</td><td class="c-table__cell"><p>Ip Range. </p>
-</td></tr>
-</tbody>
-</table>
-</div>
-<!-- endIndent -->
-
-</div>
-</div>
-</article>
-<!-- endMemberDocList -->
 <h2 class="g-docs__section-heading">Function Documentation</h2>
 <!-- startMemberDocList -->
 <article class="c-member">
@@ -692,6 +625,144 @@ Functions</h2>
 </div>
 </article>
 <article class="c-member">
+<a id="ga2fec8371fe6345d421a0bc9176b88bca"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga2fec8371fe6345d421a0bc9176b88bca">&#9670;&nbsp;</a></span>fiftyoneDegreesPropertyGetStoredType()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">fiftyoneDegreesPropertyValueType fiftyoneDegreesPropertyGetStoredType <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>propertyTypesCollection</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_property.html">fiftyoneDegreesProperty</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>property</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>exception</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Returns the type the property is stored as. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyTypesCollection</span> - collection of property types retrieved by offsets. </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">property</span> - structure for the type required. </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">exception</span> - pointer to an exception data structure to be used if an exception occurs. See <a class="el" href="exceptions_8h_source.html">exceptions.h</a>. </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a type the property is stored as. </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ga9098da80cdbddc14968c545b9368f3c1"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga9098da80cdbddc14968c545b9368f3c1">&#9670;&nbsp;</a></span>fiftyoneDegreesPropertyGetStoredTypeByIndex()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">fiftyoneDegreesPropertyValueType fiftyoneDegreesPropertyGetStoredTypeByIndex <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>propertyTypesCollection</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">uint32_t<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>index</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>exception</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Returns the type the property is stored as. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">propertyTypesCollection</span> - collection of property types retrieved by offsets. </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">index</span> - of the property to get </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">exception</span> - pointer to an exception data structure to be used if an exception occurs. See <a class="el" href="exceptions_8h_source.html">exceptions.h</a>. </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a type the property is stored as. </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
 <a id="gad53bf0346a7ef94fed0694dbe241e20b"></a><!-- startMemberDoc -->
 
 <h2 class="c-member__title"><span class="c-member__anchor"><a href="#gad53bf0346a7ef94fed0694dbe241e20b">&#9670;&nbsp;</a></span>fiftyoneDegreesPropertyGetUrl()</h2>
@@ -849,7 +920,6 @@ Functions</h2>
       <h5 class="c-section-nav__heading">On This Page</h5>
         <ul class="c-section-nav__list">
 <li class="c-section-nav__item"><a class="c-section-nav__link" href="#nested-classes">Structs</a></li>
-<li class="c-section-nav__item"><a class="c-section-nav__link" href="#enum-members">Enumerations</a></li>
 <li class="c-section-nav__item"><a class="c-section-nav__link" href="#func-members">Functions</a></li>      </ul>
     </div>
   </div>

@@ -73,7 +73,7 @@ $(document).ready(function(){initNavTree('class_fiftyone_degrees_1_1_ip_intellig
 <a name="details" id="details"></a><h2 class="g-docs__section-heading">Detailed Description</h2>
 <section class="g-docs__section"><p>IP Intelligence specific evidence class containing evidence to be processed by an IP intelligence engine. </p>
 <p>This wraps a dynamically generated C evidence structure.</p>
-<p>The class extends the EvidenceBase class to implement the EvidenceBase::isRelevant method to return for IP intelligence specific evidence keys.</p>
+<p>The class extends the EvidenceBase class to implement the <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a8c7937e2ab8a7b0834a81c9372d28a33" title="Get whether or not the evidence key prefix is relevant or not.">EvidenceBase::isRelevant</a> method to return for IP intelligence specific evidence keys.</p>
 <h2>Usage Example</h2>
 <div class="c-code__block c-code__block--outline"><div class="c-code__line"><span class="c-code__keyword">using namespace </span><a class="code" href="namespace_fiftyone_degrees_1_1_ip_intelligence.html">FiftyoneDegrees::IpIntelligence</a>;</div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_engine_ipi.html">EngineIpi</a> *engine;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Construct a new evidence instance</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_evidence_ipi.html">EvidenceIpi</a> *evidence = <span class="c-code__keyword">new</span> <a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_evidence_ipi.html#a795a3934f9ec1b6e95f1ecd6aeb9c9e8">EvidenceIpi</a>();</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Add an item of evidence</span></div><div class="c-code__line">evidence-&gt;operator[](<span class="c-code__stringliteral">&quot;evidence key&quot;</span>) = <span class="c-code__stringliteral">&quot;evidence value&quot;</span>;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Give the evidence to an engine for processing</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html">ResultsIpi</a> *results = engine-&gt;<a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_engine_ipi.html#a599f72973b6fa751291d48f4e771e28f">process</a>(evidence);</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Do something with the results (and delete them once finished)</span></div><div class="c-code__line"><span class="c-code__comment">// ...</span></div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Delete the evidence</span></div><div class="c-code__line"><span class="c-code__keyword">delete</span> evidence;</div></div> </section></section>
 <!-- start ClassInheritanceGraph -->
@@ -200,10 +200,10 @@ Protected Member Functions</h2>
 <tbody class="c-table__body">
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a88a0f99cbf838798500a61300ccb2359"><td class="c-table__cell">bool<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_evidence_ipi.html#a88a0f99cbf838798500a61300ccb2359">isRelevant</a> (<a class="el" href="group___fifty_one_degrees_common.html#ga1ff9010650f2716970e86c12c5a97a76">fiftyoneDegreesEvidencePrefix</a> prefix)
+<tr class="c-table__row memitem:a9f1cd5fe27b2d47f59841dddb5ff1606"><td class="c-table__cell">bool<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_evidence_ipi.html#a9f1cd5fe27b2d47f59841dddb5ff1606">isRelevant</a> (<a class="el" href="group___fifty_one_degrees_common.html#ga1ff9010650f2716970e86c12c5a97a76">fiftyoneDegreesEvidencePrefix</a> prefix) override
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a88a0f99cbf838798500a61300ccb2359">Get whether or not the evidence key prefix is relevant or not.  <a href="#a88a0f99cbf838798500a61300ccb2359">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a9f1cd5fe27b2d47f59841dddb5ff1606">Get whether or not the evidence key prefix is relevant or not.  <a href="#a9f1cd5fe27b2d47f59841dddb5ff1606">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- endMemberList -->
 <!-- end member list -->
@@ -294,9 +294,9 @@ Protected Member Functions</h2>
 <h2 class="g-docs__section-heading">Member Function Documentation</h2>
 <!-- startMemberDocList -->
 <article class="c-member">
-<a id="a88a0f99cbf838798500a61300ccb2359"></a><!-- startMemberDoc -->
+<a id="a9f1cd5fe27b2d47f59841dddb5ff1606"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a88a0f99cbf838798500a61300ccb2359">&#9670;&nbsp;</a></span>isRelevant()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a9f1cd5fe27b2d47f59841dddb5ff1606">&#9670;&nbsp;</a></span>isRelevant()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -324,7 +324,8 @@ Protected Member Functions</h2>
       </div>
 <!-- startLabels -->
 <div class="c-member__labels">
-<!-- writeLabel(protected) -->
+<!-- writeLabel(override) -->
+<span class="c-label">override</span><!-- writeLabel(protected) -->
 <span class="c-label">protected</span><!-- writeLabel(virtual) -->
 <span class="c-label">virtual</span><!-- endLabels -->
 </div>

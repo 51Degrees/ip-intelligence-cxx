@@ -5,7 +5,6 @@ var group___fifty_one_degrees_common =
     [ "Collection", "group___fifty_one_degrees_collection.html", "group___fifty_one_degrees_collection" ],
     [ "Component", "group___fifty_one_degrees_component.html", "group___fifty_one_degrees_component" ],
     [ "Config", "group___fifty_one_degrees_config.html", "group___fifty_one_degrees_config" ],
-    [ "Coodinate", "group___fifty_one_degrees_coordinate.html", "group___fifty_one_degrees_coordinate" ],
     [ "Data", "group___fifty_one_degrees_data.html", "group___fifty_one_degrees_data" ],
     [ "Data Set", "group___fifty_one_degrees_data_set.html", "group___fifty_one_degrees_data_set" ],
     [ "Date", "group___fifty_one_degrees_date.html", "group___fifty_one_degrees_date" ],

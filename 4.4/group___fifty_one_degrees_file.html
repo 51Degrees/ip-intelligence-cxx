@@ -67,6 +67,7 @@ $(document).ready(function(){initNavTree('group___fifty_one_degrees_file.html','
 <div class="g-docs__primary" id="primary">
 <a name="details" id="details"></a><h2 class="g-docs__section-heading">Detailed Description</h2>
 <p>File handle pool and simple file operations e.g. </p>
+<p><code>FileOffset</code> offset types:</p>
 <p>copy and delete.</p>
 <h2>Introduction</h2>
 <p>Implements a pool of file handles for use within multi-threaded environments where the overhead of opening and closing a file handle for each thread would be too great. Primarily used to load collection items from file with file based collections or where a cache is used.</p>
@@ -82,16 +83,25 @@ $(document).ready(function(){initNavTree('group___fifty_one_degrees_file.html','
 <p><b>create directory</b> : <a class="el" href="group___fifty_one_degrees_file.html#ga0d7e95bd942ef7ef7726a9ce3f716c31" title="Creates a directory with the specified path, and returns the result of the operation.">fiftyoneDegreesFileCreateDirectory</a></p>
 <p><b>create temp file</b> : <a class="el" href="group___fifty_one_degrees_file.html#ga8748e04467e8a79536bd3319431ab825" title="[DEPRECATED - Use fiftyoneDegreesFileNewTempFile instead] Create a temporary file containing a copy o...">fiftyoneDegreesFileCreateTempFile</a></p>
 <p><b>delete</b> : <a class="el" href="group___fifty_one_degrees_file.html#gaa82eb55b44d6a631a5d18ef3895a1545" title="Delete a file from the file system.">fiftyoneDegreesFileDelete</a></p>
-<p><b>get existing temp file</b> : <a class="el" href="group___fifty_one_degrees_file.html#ga5b01ae73ef4d38d67e840f485f088062" title="Gets the path to a temporary file which is an exact copy of the master file if one exists.">fiftyoneDegreesFileGetExistingTempFile</a></p>
+<p><b>get existing temp file</b> : <a class="el" href="group___fifty_one_degrees_file.html#gaad3af5e56505005c318275f82d5eccb0" title="Gets the path to a temporary file which is an exact copy of the master file if one exists.">fiftyoneDegreesFileGetExistingTempFile</a></p>
 <p><b>get file name</b> : <a class="el" href="group___fifty_one_degrees_file.html#ga94244ed47339c759ad467eec000c50fc" title="Gets the last, file name, segment of the full file path.">fiftyoneDegreesFileGetFileName</a></p>
 <p><b>get path</b> : <a class="el" href="group___fifty_one_degrees_file.html#ga4e9ee974004d4bb4f961fc033a584e66" title="Iterates up the folders from the current working directory until a file in the sub folder dataFolderN...">fiftyoneDegreesFileGetPath</a></p>
-<p><b>get size</b> : <a class="el" href="group___fifty_one_degrees_file.html#ga8de57d9c60fefd5b29d309213fc4543d" title="Returns the size of a file in bytes, or -1 if the file does not exist or cannot be accessed.">fiftyoneDegreesFileGetSize</a></p>
+<p><b>get size</b> : <a class="el" href="group___fifty_one_degrees_file.html#ga406230d6d342978623f3ae42cff02dd2" title="Returns the size of a file in bytes, or -1 if the file does not exist or cannot be accessed.">fiftyoneDegreesFileGetSize</a></p>
 <p><b>open</b> : <a class="el" href="group___fifty_one_degrees_file.html#ga6bed2f06120d4afc5e41f0a768eebcd6" title="Opens the file path provided placing the file handle in the handle parameter.">fiftyoneDegreesFileOpen</a></p>
 <p><b>read to byte array</b> : <a class="el" href="group___fifty_one_degrees_file.html#ga255608eeb431d144b537d71d685461bd" title="Reads the contents of a file into memory.">fiftyoneDegreesFileReadToByteArray</a></p>
 <p><b>write</b> : <a class="el" href="group___fifty_one_degrees_file.html#ga4b2d96ba1a1300c7e63c076d47576751" title="Writes binary data to the file path provided, closing the file once finished.">fiftyoneDegreesFileWrite</a></p>
 <h2>Usage Example</h2>
 <div class="c-code__block c-code__block--outline"><div class="c-code__line"><a class="code" href="group___fifty_one_degrees_exceptions.html#gae78f9f100e8f25f01c57fd36e7a6aa18">FIFTYONE_DEGREES_EXCEPTION_CREATE</a>;</div><div class="c-code__line"><a class="code" href="structfiftyone_degrees_file_pool.html">fiftyoneDegreesFilePool</a> pool;</div><div class="c-code__line"><span class="c-code__keyword">const</span> <span class="c-code__keywordtype">char</span> *fileName;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Initialise a file pool</span></div><div class="c-code__line">fiftyoneDegreesStatus status = <a class="code" href="group___fifty_one_degrees_file.html#ga0b9b6e35e4dc0f6196a07645204ed458">fiftyoneDegreesFilePoolInit</a>(</div><div class="c-code__line">    &amp;filePool,</div><div class="c-code__line">    fileName,</div><div class="c-code__line">    1,</div><div class="c-code__line">    exception);</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Check that the pool was initialised successfully</span></div><div class="c-code__line"><span class="c-code__keywordflow">if</span> (status == <a class="code" href="group___fifty_one_degrees_status.html#gga887881c8b6ec9f0c8510913831ebd19ea7c080613fa211ed9bb9f3a58f4a433d4">FIFTYONE_DEGREES_STATUS_SUCCESS</a>) {</div><div class="c-code__line"></div><div class="c-code__line">    <span class="c-code__comment">// Get a file handle from the pool</span></div><div class="c-code__line">    <a class="code" href="unionfiftyone_degrees_file_handle.html">fiftyoneDegreesFileHandle</a> *handle = <a class="code" href="group___fifty_one_degrees_file.html#ga60d5040dbf5ce8537aef911860d3c4bd">fiftyoneDegreesFileHandleGet</a>(</div><div class="c-code__line">        &amp;pool,</div><div class="c-code__line">        exception);</div><div class="c-code__line"></div><div class="c-code__line">    <span class="c-code__comment">// Check that the handle was returned successfully</span></div><div class="c-code__line">    <span class="c-code__keywordflow">if</span> (<a class="code" href="group___fifty_one_degrees_exceptions.html#ga840c1eb91356648b93534dd99495c7dd">FIFTYONE_DEGREES_EXCEPTION_OKAY</a>) {</div><div class="c-code__line"></div><div class="c-code__line">        <span class="c-code__comment">// Do something with the file pointer in handle-&gt;file</span></div><div class="c-code__line">        <span class="c-code__comment">// ...</span></div><div class="c-code__line"></div><div class="c-code__line">        <span class="c-code__comment">// Release the file handle back to the pool</span></div><div class="c-code__line">        <a class="code" href="group___fifty_one_degrees_file.html#ga597c3f2a4d837ae3317906686947d18b">fiftyoneDegreesFileHandleRelease</a>(handle);</div><div class="c-code__line">    }</div><div class="c-code__line"></div><div class="c-code__line">    <span class="c-code__comment">// Release the file pool</span></div><div class="c-code__line">    <a class="code" href="group___fifty_one_degrees_file.html#gae1e78286866f6910b04fc1bc162ccc4b">fiftyoneDegreesFilePoolRelease</a>(&amp;pool);</div><div class="c-code__line">}</div></div><h2>Design</h2>
-<p>To improve performance in multi-threaded operation a non locking stack is used where a Compare and Swap (CAS) atomic operation is used to pop and push handles on and off the stack. The design was adapted from the following article (<a href="http://nullprogram.com/blog/2014/09/02/">http://nullprogram.com/blog/2014/09/02/</a>) which explains some of the challenges involved including the ABA problem (<a href="https://en.wikipedia.org/wiki/ABA_problem">https://en.wikipedia.org/wiki/ABA_problem</a>). It is for this reason the head structure is implemented as a union between the values and the exchange integer. Pointers are not used as the address space for the stack is continuous and always very small compared to the total addressable memory space. </p>
+<p>To improve performance in multi-threaded operation a non locking stack is used where a Compare and Swap (CAS) atomic operation is used to pop and push handles on and off the stack. The design was adapted from the following article (<a href="http://nullprogram.com/blog/2014/09/02/">http://nullprogram.com/blog/2014/09/02/</a>) which explains some of the challenges involved including the ABA problem (<a href="https://en.wikipedia.org/wiki/ABA_problem">https://en.wikipedia.org/wiki/ABA_problem</a>). It is for this reason the head structure is implemented as a union between the values and the exchange integer. Pointers are not used as the address space for the stack is continuous and always very small compared to the total addressable memory space.</p>
+<ul>
+<li>signed <code>FileOffset</code> &ndash; for interop with native API (fseek/ftell)</li>
+<li>unsigned <code>FileOffsetUnsigned</code> &ndash; as present in data file</li>
+</ul>
+<p>if FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT macro is defined, both types will be 64-bit.</p>
+<p>Motivation for this is that an offset in a large file beyond 4GB is not addressable by a <code>uint32_t</code> variable.</p>
+<p>For files smaller than 4GB <code>uint32_t</code> is fully sufficient to address an offset.</p>
+<p><code>fseek</code>/<code>ftell</code> functions MAY also fail on files larger than 2 GiB due to the limitations of <code>long int</code> type used, so enabling the option MIGHT be necessary in those cases as well.</p>
+<p>On POSIX systems <code>_FILE_OFFSET_BITS</code> should be defined as <code>64</code> at the same time for <code>off_t</code> (used by <code>fseeko</code>/<code>ftello</code> from <code>&lt;stdio.h&gt;</code>) to be 64-bit as well. </p>
 <h2 class="g-docs__section-heading">
 Collaboration diagram for File:</h2>
 <div class="dyncontent">
@@ -164,6 +174,33 @@ Macros</h2>
 </tbody></table></div>
 </section>
 <section class="g-docs__section">
+<!-- startMemberHeader -->
+<h2 class="g-docs__section-heading">
+<a name="typedef-members"></a>
+Typedefs</h2>
+<!-- endMemberHeader -->
+<!-- startMemberList -->
+<!-- start member list -->
+<div class="g-table g-table--overflow">
+<table class="c-table c-table--members">
+<tbody class="c-table__body">
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga061ddb489c78d954644ecb87f467a75f"><td class="c-table__cell">typedef&#160;uint32_t<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#ga061ddb489c78d954644ecb87f467a75f">fiftyoneDegreesFileOffsetUnsigned</a>
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga061ddb489c78d954644ecb87f467a75f">Type for collection start offset (in file).  <a href="#ga061ddb489c78d954644ecb87f467a75f">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga03afb3a21c9c17ffc67601df949c2017"><td class="c-table__cell">typedef&#160;long<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#ga03afb3a21c9c17ffc67601df949c2017">fiftyoneDegreesFileOffset</a>
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga03afb3a21c9c17ffc67601df949c2017">Type for file offset in API.  <a href="#ga03afb3a21c9c17ffc67601df949c2017">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- endMemberList -->
+<!-- end member list -->
+</tbody></table></div>
 </section>
 <section class="g-docs__section">
 </section>
@@ -180,6 +217,20 @@ Functions</h2>
 <div class="g-table g-table--overflow">
 <table class="c-table c-table--members">
 <tbody class="c-table__body">
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga88179847174bacacc7697e6d8ab04379"><td class="c-table__cell">int<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#ga88179847174bacacc7697e6d8ab04379">fiftyoneDegreesFileSeek</a> (FILE *stream, <a class="el" href="group___fifty_one_degrees_file.html#ga03afb3a21c9c17ffc67601df949c2017">fiftyoneDegreesFileOffset</a> offset, int origin)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga88179847174bacacc7697e6d8ab04379">Moves the file pointer to a specified location.  <a href="#ga88179847174bacacc7697e6d8ab04379">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga63ac77d63652050372cf4984fb8d92e2"><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#ga03afb3a21c9c17ffc67601df949c2017">fiftyoneDegreesFileOffset</a><!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#ga63ac77d63652050372cf4984fb8d92e2">fiftyoneDegreesFileTell</a> (FILE *stream)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga63ac77d63652050372cf4984fb8d92e2">Gets the current position of a file pointer.  <a href="#ga63ac77d63652050372cf4984fb8d92e2">More...</a><!-- endMemberDescription -->
+</div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
 <tr class="c-table__row memitem:gae1e78286866f6910b04fc1bc162ccc4b"><td class="c-table__cell">void<!-- insertMemberAlign -->
@@ -231,17 +282,17 @@ Functions</h2>
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ga5b01ae73ef4d38d67e840f485f088062"><td class="c-table__cell">bool<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#ga5b01ae73ef4d38d67e840f485f088062">fiftyoneDegreesFileGetExistingTempFile</a> (const char *masterFile, const char **paths, int count, long bytesToCompare, const char *destination)
+<tr class="c-table__row memitem:gaad3af5e56505005c318275f82d5eccb0"><td class="c-table__cell">bool<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#gaad3af5e56505005c318275f82d5eccb0">fiftyoneDegreesFileGetExistingTempFile</a> (const char *masterFile, const char **paths, int count, <a class="el" href="group___fifty_one_degrees_file.html#ga03afb3a21c9c17ffc67601df949c2017">fiftyoneDegreesFileOffset</a> bytesToCompare, const char *destination)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ga5b01ae73ef4d38d67e840f485f088062">Gets the path to a temporary file which is an exact copy of the master file if one exists.  <a href="#ga5b01ae73ef4d38d67e840f485f088062">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:gaad3af5e56505005c318275f82d5eccb0">Gets the path to a temporary file which is an exact copy of the master file if one exists.  <a href="#gaad3af5e56505005c318275f82d5eccb0">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ga28a2a675c1aa1536b78ab49c21721c08"><td class="c-table__cell">int<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#ga28a2a675c1aa1536b78ab49c21721c08">fiftyoneDegreesFileDeleteUnusedTempFiles</a> (const char *masterFileName, const char **paths, int count, long bytesToCompare)
+<tr class="c-table__row memitem:ga2a20eff775bd7dacd69a4938332796ef"><td class="c-table__cell">int<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#ga2a20eff775bd7dacd69a4938332796ef">fiftyoneDegreesFileDeleteUnusedTempFiles</a> (const char *masterFileName, const char **paths, int count, <a class="el" href="group___fifty_one_degrees_file.html#ga03afb3a21c9c17ffc67601df949c2017">fiftyoneDegreesFileOffset</a> bytesToCompare)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ga28a2a675c1aa1536b78ab49c21721c08">Finds all the temporary files which is an exact copy of the master file if any exist.  <a href="#ga28a2a675c1aa1536b78ab49c21721c08">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:ga2a20eff775bd7dacd69a4938332796ef">Finds all the temporary files which is an exact copy of the master file if any exist.  <a href="#ga2a20eff775bd7dacd69a4938332796ef">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
@@ -287,10 +338,10 @@ Functions</h2>
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ga8de57d9c60fefd5b29d309213fc4543d"><td class="c-table__cell">long<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#ga8de57d9c60fefd5b29d309213fc4543d">fiftyoneDegreesFileGetSize</a> (const char *fileName)
+<tr class="c-table__row memitem:ga406230d6d342978623f3ae42cff02dd2"><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#ga03afb3a21c9c17ffc67601df949c2017">fiftyoneDegreesFileOffset</a><!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#ga406230d6d342978623f3ae42cff02dd2">fiftyoneDegreesFileGetSize</a> (const char *fileName)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ga8de57d9c60fefd5b29d309213fc4543d">Returns the size of a file in bytes, or -1 if the file does not exist or cannot be accessed.  <a href="#ga8de57d9c60fefd5b29d309213fc4543d">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:ga406230d6d342978623f3ae42cff02dd2">Returns the size of a file in bytes, or -1 if the file does not exist or cannot be accessed.  <a href="#ga406230d6d342978623f3ae42cff02dd2">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
@@ -360,6 +411,67 @@ Functions</h2>
 
 <p>Define the max path length on the target system. </p>
 <p>For Windows this is <code>260</code> characters, and <code>4096</code> on most UNIX systems. The compiler defined values are not used here as although Windows MSVC always defined <code>_MAX_PATH</code>, UNIX systems do not consistently define the <code>PATH_MAX</code> macro resulting in undefined behavior. For this reason the length of <code>4096</code> is used as this is almost always the case. </p>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<!-- endMemberDocList -->
+<h2 class="g-docs__section-heading">Typedef Documentation</h2>
+<!-- startMemberDocList -->
+<article class="c-member">
+<a id="ga03afb3a21c9c17ffc67601df949c2017"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga03afb3a21c9c17ffc67601df949c2017">&#9670;&nbsp;</a></span>fiftyoneDegreesFileOffset</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">typedef long <a class="el" href="group___fifty_one_degrees_file.html#ga03afb3a21c9c17ffc67601df949c2017">fiftyoneDegreesFileOffset</a><!-- endMemberDocName -->
+</td>
+<!-- endMemberDoc -->
+            </tr>
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Type for file offset in API. </p>
+<p>[signed] </p>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ga061ddb489c78d954644ecb87f467a75f"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga061ddb489c78d954644ecb87f467a75f">&#9670;&nbsp;</a></span>fiftyoneDegreesFileOffsetUnsigned</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">typedef uint32_t <a class="el" href="group___fifty_one_degrees_file.html#ga061ddb489c78d954644ecb87f467a75f">fiftyoneDegreesFileOffsetUnsigned</a><!-- endMemberDocName -->
+</td>
+<!-- endMemberDoc -->
+            </tr>
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Type for collection start offset (in file). </p>
+<p>[unsigned] </p>
 <!-- endIndent -->
 
 </div>
@@ -673,9 +785,9 @@ Functions</h2>
 </div>
 </article>
 <article class="c-member">
-<a id="ga28a2a675c1aa1536b78ab49c21721c08"></a><!-- startMemberDoc -->
+<a id="ga2a20eff775bd7dacd69a4938332796ef"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga28a2a675c1aa1536b78ab49c21721c08">&#9670;&nbsp;</a></span>fiftyoneDegreesFileDeleteUnusedTempFiles()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga2a20eff775bd7dacd69a4938332796ef">&#9670;&nbsp;</a></span>fiftyoneDegreesFileDeleteUnusedTempFiles()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -719,7 +831,7 @@ Functions</h2>
         <tr>
           <td class="c-table__cell"></td>
           <td></td>
-          <td class="c-table__cell">long<!-- endParameterType -->
+          <td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#ga03afb3a21c9c17ffc67601df949c2017">fiftyoneDegreesFileOffset</a><!-- endParameterType -->
 &#160;</td>
 <!-- startParameterName -->
           <td class="c-table__cell"><em>bytesToCompare</em><!-- endParameterName -->
@@ -753,9 +865,9 @@ Functions</h2>
 </div>
 </article>
 <article class="c-member">
-<a id="ga5b01ae73ef4d38d67e840f485f088062"></a><!-- startMemberDoc -->
+<a id="gaad3af5e56505005c318275f82d5eccb0"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga5b01ae73ef4d38d67e840f485f088062">&#9670;&nbsp;</a></span>fiftyoneDegreesFileGetExistingTempFile()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gaad3af5e56505005c318275f82d5eccb0">&#9670;&nbsp;</a></span>fiftyoneDegreesFileGetExistingTempFile()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -799,7 +911,7 @@ Functions</h2>
         <tr>
           <td class="c-table__cell"></td>
           <td></td>
-          <td class="c-table__cell">long<!-- endParameterType -->
+          <td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#ga03afb3a21c9c17ffc67601df949c2017">fiftyoneDegreesFileOffset</a><!-- endParameterType -->
 &#160;</td>
 <!-- startParameterName -->
           <td class="c-table__cell"><em>bytesToCompare</em>, <!-- endParameterName -->
@@ -967,9 +1079,9 @@ Functions</h2>
 </div>
 </article>
 <article class="c-member">
-<a id="ga8de57d9c60fefd5b29d309213fc4543d"></a><!-- startMemberDoc -->
+<a id="ga406230d6d342978623f3ae42cff02dd2"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga8de57d9c60fefd5b29d309213fc4543d">&#9670;&nbsp;</a></span>fiftyoneDegreesFileGetSize()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga406230d6d342978623f3ae42cff02dd2">&#9670;&nbsp;</a></span>fiftyoneDegreesFileGetSize()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -978,7 +1090,7 @@ Functions</h2>
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">long fiftyoneDegreesFileGetSize <!-- endMemberDocName -->
+              <td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#ga03afb3a21c9c17ffc67601df949c2017">fiftyoneDegreesFileOffset</a> fiftyoneDegreesFileGetSize <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -1481,6 +1593,118 @@ Functions</h2>
 </div>
 </article>
 <article class="c-member">
+<a id="ga88179847174bacacc7697e6d8ab04379"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga88179847174bacacc7697e6d8ab04379">&#9670;&nbsp;</a></span>fiftyoneDegreesFileSeek()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">int fiftyoneDegreesFileSeek <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">FILE *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>stream</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#ga03afb3a21c9c17ffc67601df949c2017">fiftyoneDegreesFileOffset</a><!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>offset</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">int<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>origin</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Moves the file pointer to a specified location. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">stream</span> - Pointer to FILE structure. </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">offset</span> - Number of bytes from origin. </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">origin</span> - Initial position. </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc"></dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ga63ac77d63652050372cf4984fb8d92e2"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga63ac77d63652050372cf4984fb8d92e2">&#9670;&nbsp;</a></span>fiftyoneDegreesFileTell()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_file.html#ga03afb3a21c9c17ffc67601df949c2017">fiftyoneDegreesFileOffset</a> fiftyoneDegreesFileTell <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">FILE *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>stream</em><!-- endParameterName -->
+</td><td>)</td>
+          <td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Gets the current position of a file pointer. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">stream</span> - Target FILE structure. </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">The current file position. </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
 <a id="ga4b2d96ba1a1300c7e63c076d47576751"></a><!-- startMemberDoc -->
 
 <h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga4b2d96ba1a1300c7e63c076d47576751">&#9670;&nbsp;</a></span>fiftyoneDegreesFileWrite()</h2>
@@ -1559,6 +1783,7 @@ Functions</h2>
         <ul class="c-section-nav__list">
 <li class="c-section-nav__item"><a class="c-section-nav__link" href="#nested-classes">Structs</a></li>
 <li class="c-section-nav__item"><a class="c-section-nav__link" href="#define-members">Macros</a></li>
+<li class="c-section-nav__item"><a class="c-section-nav__link" href="#typedef-members">Typedefs</a></li>
 <li class="c-section-nav__item"><a class="c-section-nav__link" href="#func-members">Functions</a></li>      </ul>
     </div>
   </div>

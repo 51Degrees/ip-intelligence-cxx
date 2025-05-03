@@ -1,21 +1,16 @@
 var group__fiftyone_degrees_ip =
 [
-    [ "fiftyoneDegreesEvidenceIpAddress", "structfiftyone_degrees_evidence_ip_address.html", [
-      [ "address", "structfiftyone_degrees_evidence_ip_address.html#aa04256656c90f16135a898654c31139b", null ],
-      [ "bytesPresent", "structfiftyone_degrees_evidence_ip_address.html#a66c036d3dfa7751ae08fb1c2d1b078ea", null ],
-      [ "current", "structfiftyone_degrees_evidence_ip_address.html#a413af7a622892e72725dd62f1dd99f53", null ],
-      [ "next", "structfiftyone_degrees_evidence_ip_address.html#a48469056e8422cd9afd53d09af47b3f6", null ],
-      [ "type", "structfiftyone_degrees_evidence_ip_address.html#ac74ba235246058167d894126a9e47f8a", null ]
+    [ "fiftyoneDegreesIpAddress", "structfiftyone_degrees_ip_address.html", [
+      [ "type", "structfiftyone_degrees_ip_address.html#a83aecea249e8d25dec3c67e13d850dc8", null ],
+      [ "value", "structfiftyone_degrees_ip_address.html#a931da273c9d4750799bfaf62ea1f3444", null ]
     ] ],
     [ "FIFTYONE_DEGREES_IPV4_LENGTH", "group__fiftyone_degrees_ip.html#ga0ac9118923e9e114384f58a05c0742aa", null ],
     [ "FIFTYONE_DEGREES_IPV6_LENGTH", "group__fiftyone_degrees_ip.html#gaa8b31fe132582c6dbed4d7d3590eeb00", null ],
-    [ "fiftyoneDegreesEvidenceIpType", "group__fiftyone_degrees_ip.html#ga21c4651b14463cc956358d0f44702db8", [
-      [ "FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV4", "group__fiftyone_degrees_ip.html#gga21c4651b14463cc956358d0f44702db8a2f0b44f6d99f39de4b25c3dd2f3e6eee", null ],
-      [ "FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_IPV6", "group__fiftyone_degrees_ip.html#gga21c4651b14463cc956358d0f44702db8a793ecdabe04607aa2a30c0e50d4bef4d", null ],
-      [ "FIFTYONE_DEGREES_EVIDENCE_IP_TYPE_INVALID", "group__fiftyone_degrees_ip.html#gga21c4651b14463cc956358d0f44702db8a2b82269f1ad6faceb491964702c0d96c", null ]
+    [ "fiftyoneDegreesIpType", "group__fiftyone_degrees_ip.html#ga442c961cca3e822fd98ed0e7546eafd5", [
+      [ "FIFTYONE_DEGREES_IP_TYPE_INVALID", "group__fiftyone_degrees_ip.html#gga442c961cca3e822fd98ed0e7546eafd5a61ff526354c963df1d8298466e056d45", null ],
+      [ "FIFTYONE_DEGREES_IP_TYPE_IPV4", "group__fiftyone_degrees_ip.html#gga442c961cca3e822fd98ed0e7546eafd5ab463a13bba23f835e052c786495bb527", null ],
+      [ "FIFTYONE_DEGREES_IP_TYPE_IPV6", "group__fiftyone_degrees_ip.html#gga442c961cca3e822fd98ed0e7546eafd5ac7ed519cf6817b80ddbb5a7eeda4455b", null ]
     ] ],
-    [ "fiftyoneDegreesCompareIpAddresses", "group__fiftyone_degrees_ip.html#ga4fd6c335e5ccf00a9599be38fdb46825", null ],
-    [ "fiftyoneDegreesIpFreeAddresses", "group__fiftyone_degrees_ip.html#gaac1fbf328a91c75a9cae87c911ca3092", null ],
-    [ "fiftyoneDegreesIpParseAddress", "group__fiftyone_degrees_ip.html#ga1e5d04d924771a651fd5f8abf1107929", null ],
-    [ "fiftyoneDegreesIpParseAddresses", "group__fiftyone_degrees_ip.html#ga801ba3e566a0f3fef1202729f6e110e3", null ]
+    [ "fiftyoneDegreesIpAddressesCompare", "group__fiftyone_degrees_ip.html#gaea636f4d7a88bfc55622f5a8fb98f9fb", null ],
+    [ "fiftyoneDegreesIpAddressParse", "group__fiftyone_degrees_ip.html#ga1fc6a7ff4d3eba96d3d48269ef87fc4d", null ]
 ];

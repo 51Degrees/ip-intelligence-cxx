@@ -1,17 +1,17 @@
 <map id="fiftyoneDegreesDataSetIpi" name="fiftyoneDegreesDataSetIpi">
-<area shape="rect" id="node1" title="Data set structure containing all the components used for IP intelligence." alt="" coords="2785,572,2979,599"/>
+<area shape="rect" id="node1" title="Data set structure containing all the components used for IP intelligence." alt="" coords="2747,572,2940,599"/>
 <area shape="rect" id="node2" href="$structfiftyone_degrees_list.html" title="List structure which contains a list of collection items." alt="" coords="923,572,1071,599"/>
 <area shape="rect" id="node3" href="$structfiftyone_degrees_collection_item.html" title="Used to store a handle to the underlying item that could be used to release the item when it&#39;s finish..." alt="" coords="252,501,472,528"/>
 <area shape="rect" id="node4" href="$structfiftyone_degrees_collection.html" title="All the shared methods and fields required by file, memory and cached collections." alt="" coords="683,521,874,548"/>
 <area shape="rect" id="node24" href="$structfiftyone_degrees_property_available.html" title="Used to access the property item quickly without the need to search." alt="" coords="659,364,899,391"/>
 <area shape="rect" id="node5" href="$structfiftyone_degrees_data.html" title="Data structure used for reusing memory which may have been allocated in a previous operation." alt="" coords="5,501,161,528"/>
-<area shape="rect" id="node6" href="$structfiftyone_degrees_config_ipi.html" title="IP Intelligence specific configuration structure." alt="" coords="2484,623,2667,649"/>
+<area shape="rect" id="node6" href="$structfiftyone_degrees_config_ipi.html" title="IP Intelligence specific configuration structure." alt="" coords="2445,623,2628,649"/>
 <area shape="rect" id="node7" href="$structfiftyone_degrees_collection_config.html" title="Collection configuration structure which defines how the collection should be created by the create m..." alt="" coords="2066,807,2257,849"/>
 <area shape="rect" id="node8" href="$structfiftyone_degrees_config_base.html" title="Base configuration structure containing common configuration options, and options that apply to struc..." alt="" coords="2062,623,2261,649"/>
-<area shape="rect" id="node9" href="$structfiftyone_degrees_data_set_ipi_header.html" title="DATA STRUCTURES." alt="" coords="2479,999,2672,1041"/>
+<area shape="rect" id="node9" href="$structfiftyone_degrees_data_set_ipi_header.html" title="DATA STRUCTURES." alt="" coords="2440,999,2633,1041"/>
 <area shape="rect" id="node10" href="$structfiftyone_degrees_date.html" title="Used to store the date when the dataset was produced and next date 51Degrees expect to provide a new ..." alt="" coords="2083,1067,2239,1093"/>
 <area shape="rect" id="node11" href="$structfiftyone_degrees_collection_header.html" title="Collection header structure which defines the size and location of the collection data." alt="" coords="2066,999,2257,1041"/>
-<area shape="rect" id="node12" href="$structfiftyone_degrees_data_set_ipi_base.html" title="Data set structure which contains the base dataset structure." alt="" coords="2463,357,2688,384"/>
+<area shape="rect" id="node12" href="$structfiftyone_degrees_data_set_ipi_base.html" title="Data set structure which contains the base dataset structure." alt="" coords="2424,357,2649,384"/>
 <area shape="rect" id="node13" href="$structfiftyone_degrees_data_set_base.html" title="Base data set structure which contains the &#39;must have&#39;s for all data sets." alt="" coords="2057,243,2266,269"/>
 <area shape="rect" id="node14" href="$structfiftyone_degrees_header_array.html" title="Array of Headers which should always be ordered in ascending order of fullHeaderId." alt="" coords="1633,243,1840,269"/>
 <area shape="rect" id="node15" href="$structfiftyone_degrees_resource_handle.html" title="Handle for a shared resource." alt="" coords="1621,24,1852,51"/>

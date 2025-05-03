@@ -254,14 +254,212 @@ Data Structures</h2>
 <!-- endMemberList -->
 <!-- end member list -->
 </tbody></table></div>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:aae9dc926a9b1a85c4ac8feeb739ea3ba"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="namespace_fiftyone_degrees_1_1_common.html#aae9dc926a9b1a85c4ac8feeb739ea3ba">writeStoredBinaryValueToStringStream</a> (const <a class="el" href="unionfiftyone_degrees_stored_binary_value.html">fiftyoneDegreesStoredBinaryValue</a> *binaryValue, fiftyoneDegreesPropertyValueType valueType, std::stringstream &amp;stream, uint8_t decimalPlaces, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:aae9dc926a9b1a85c4ac8feeb739ea3ba">Converts stored binary value to text and pushes into a string stream.  <a href="#aae9dc926a9b1a85c4ac8feeb739ea3ba">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ad5cbee6553dca5ca0a086c40d2a5020f"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_wkbtot_result.html">fiftyoneDegreesWkbtotResult</a><!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="namespace_fiftyone_degrees_1_1_common.html#ad5cbee6553dca5ca0a086c40d2a5020f">writeWkbStringToStringStream</a> (const <a class="el" href="structfiftyone_degrees_var_length_byte_array.html">fiftyoneDegreesVarLengthByteArray</a> *wkbString, fiftyoneDegreesWkbtotReductionMode reductionMode, std::stringstream &amp;stream, uint8_t decimalPlaces, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ad5cbee6553dca5ca0a086c40d2a5020f">Converts WKB "string" to WKT string and pushes into a string stream.  <a href="#ad5cbee6553dca5ca0a086c40d2a5020f">More...</a><!-- endMemberDescription -->
+</div></td></tr>
 <!-- endMemberSections -->
 </table>
+<h2 class="g-docs__section-heading">Function Documentation</h2>
+<!-- startMemberDocList -->
+<article class="c-member">
+<a id="aae9dc926a9b1a85c4ac8feeb739ea3ba"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#aae9dc926a9b1a85c4ac8feeb739ea3ba">&#9670;&nbsp;</a></span>writeStoredBinaryValueToStringStream()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">void FiftyoneDegrees::Common::writeStoredBinaryValueToStringStream <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">const <a class="el" href="unionfiftyone_degrees_stored_binary_value.html">fiftyoneDegreesStoredBinaryValue</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>binaryValue</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">fiftyoneDegreesPropertyValueType<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>valueType</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">std::stringstream &amp;<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>stream</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">uint8_t<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>decimalPlaces</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>exception</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Converts stored binary value to text and pushes into a string stream. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">binaryValue</span> - stored binary value from data file </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">stream</span> - string stream to push WKT into. </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">decimalPlaces</span> - precision for numbers (places after the decimal dot). </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">exception</span> - pointer to the exception struct. </dd>
+  </dd>
+</dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ad5cbee6553dca5ca0a086c40d2a5020f"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ad5cbee6553dca5ca0a086c40d2a5020f">&#9670;&nbsp;</a></span>writeWkbStringToStringStream()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_wkbtot_result.html">fiftyoneDegreesWkbtotResult</a> FiftyoneDegrees::Common::writeWkbStringToStringStream <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">const <a class="el" href="structfiftyone_degrees_var_length_byte_array.html">fiftyoneDegreesVarLengthByteArray</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>wkbString</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">fiftyoneDegreesWkbtotReductionMode<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>reductionMode</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">std::stringstream &amp;<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>stream</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">uint8_t<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>decimalPlaces</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>exception</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Converts WKB "string" to WKT string and pushes into a string stream. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">wkbString</span> - "string" containing WKB geometry. </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">reductionMode</span> - type/value reduction applied to decrease WKB size. </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">stream</span> - string stream to push WKT into. </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">decimalPlaces</span> - precision for numbers (places after the decimal dot). </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">exception</span> - pointer to the exception struct. </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">How many bytes were written to the buffer and if it was too small. </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<!-- endMemberDocList -->
 </div><!-- primary -->
   <div class="g-docs__sidebar">
     <div class="c-section-nav">
       <h5 class="c-section-nav__heading">On This Page</h5>
         <ul class="c-section-nav__list">
-<li class="c-section-nav__item"><a class="c-section-nav__link" href="#nested-classes">Data Structures</a></li>    </div>
+<li class="c-section-nav__item"><a class="c-section-nav__link" href="#nested-classes">Data Structures</a></li>
+<li class="c-section-nav__item"><a class="c-section-nav__link" href="#func-members">Functions</a></li>    </div>
   </div>
 </div><!-- inner-->
 <!-- HTML footer for doxygen 1.8.15-->

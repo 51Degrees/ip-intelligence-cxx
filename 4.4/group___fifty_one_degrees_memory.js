@@ -3,7 +3,7 @@ var group___fifty_one_degrees_memory =
     [ "fiftyoneDegreesMemoryReader", "structfiftyone_degrees_memory_reader.html", [
       [ "current", "structfiftyone_degrees_memory_reader.html#ac2f4b727ba3406ca56d60b093f4b4344", null ],
       [ "lastByte", "structfiftyone_degrees_memory_reader.html#a25cb7f18c9d9b2dbe53714fb1af4b178", null ],
-      [ "length", "structfiftyone_degrees_memory_reader.html#a2707cf28e3ff116d1984ce75d88cac46", null ],
+      [ "length", "structfiftyone_degrees_memory_reader.html#afa3d7758e047880bc536b238b6fb732d", null ],
       [ "startByte", "structfiftyone_degrees_memory_reader.html#a553bed5df3458b5ed788ed4eb4fc1994", null ]
     ] ],
     [ "fiftyoneDegreesMemoryAdvance", "group___fifty_one_degrees_memory.html#ga68232c6e5ecabcadaa256c7518902561", null ],

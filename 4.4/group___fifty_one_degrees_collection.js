@@ -3,7 +3,7 @@ var group___fifty_one_degrees_collection =
     [ "fiftyoneDegreesCollectionHeader", "structfiftyone_degrees_collection_header.html", [
       [ "count", "structfiftyone_degrees_collection_header.html#a901188a8fb09c6b49dd268b3992718b7", null ],
       [ "length", "structfiftyone_degrees_collection_header.html#a58dba2b81e723461c4cfd0080debef95", null ],
-      [ "startPosition", "structfiftyone_degrees_collection_header.html#aee411bda160bd1fe777778b395f1c5ae", null ]
+      [ "startPosition", "structfiftyone_degrees_collection_header.html#a9fa62b68ce80b42d34b7ad826e585987", null ]
     ] ],
     [ "fiftyoneDegreesCollectionConfig", "structfiftyone_degrees_collection_config.html", [
       [ "capacity", "structfiftyone_degrees_collection_config.html#a578801a37ca9f3dd4e4f17684f758a4d", null ],
@@ -33,7 +33,7 @@ var group___fifty_one_degrees_collection =
     ] ],
     [ "fiftyoneDegreesCollectionFile", "structfiftyone_degrees_collection_file.html", [
       [ "collection", "structfiftyone_degrees_collection_file.html#acb4c6a5010e03c7dc4a3c407db894c0c", null ],
-      [ "offset", "structfiftyone_degrees_collection_file.html#aa989b3cec75c2da6424047549d36db27", null ],
+      [ "offset", "structfiftyone_degrees_collection_file.html#a07aac5009ca69b375e7d860456004fef", null ],
       [ "read", "structfiftyone_degrees_collection_file.html#ae0abd01060955851bafd8510f0afe3fd", null ],
       [ "reader", "structfiftyone_degrees_collection_file.html#adaec12cc34cece15ae64272efb707f13", null ]
     ] ],

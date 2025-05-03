@@ -12,8 +12,8 @@
 <g id="node1" class="node">
 <title>Node1</title>
 <g id="a_node1"><a xlink:title="The structure to hold a pair of result item and its percentage When getting values for a property fro...">
-<polygon fill="#bfbfbf" stroke="black" points="248,-7 248,-26 427,-26 427,-7 248,-7"/>
-<text text-anchor="middle" x="337.5" y="-14" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesProfilePercentage</text>
+<polygon fill="#bfbfbf" stroke="black" points="0,-7 0,-26 179,-26 179,-7 0,-7"/>
+<text text-anchor="middle" x="89.5" y="-14" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesProfilePercentage</text>
 </a>
 </g>
 </g>
@@ -21,81 +21,65 @@
 <g id="node2" class="node">
 <title>Node2</title>
 <g id="a_node2"><a xlink:href="structfiftyone_degrees_collection_item.html" target="_top" xlink:title="Used to store a handle to the underlying item that could be used to release the item when it&#39;s finish...">
-<polygon fill="none" stroke="black" points="52,-80.5 52,-99.5 217,-99.5 217,-80.5 52,-80.5"/>
-<text text-anchor="middle" x="134.5" y="-87.5" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesCollectionItem</text>
+<polygon fill="none" stroke="black" points="123,-80.5 123,-99.5 288,-99.5 288,-80.5 123,-80.5"/>
+<text text-anchor="middle" x="205.5" y="-87.5" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesCollectionItem</text>
 </a>
 </g>
 </g>
 <!-- Node2&#45;&gt;Node1 -->
 <g id="edge1" class="edge">
 <title>Node2&#45;&gt;Node1</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M168.54,-77.01C209.5,-62.59 277.23,-38.73 313.24,-26.04"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="167.26,-73.75 158.99,-80.38 169.58,-80.35 167.26,-73.75"/>
-<text text-anchor="middle" x="255.5" y="-54" font-family="Helvetica,sans-Serif" font-size="10.00"> item</text>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M182.62,-74.9C159.06,-60.37 123.1,-38.21 103.48,-26.12"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="180.93,-77.97 191.28,-80.23 184.6,-72.01 180.93,-77.97"/>
+<text text-anchor="middle" x="174.5" y="-54" font-family="Helvetica,sans-Serif" font-size="10.00"> item</text>
 </g>
 <!-- Node3 -->
 <g id="node3" class="node">
 <title>Node3</title>
 <g id="a_node3"><a xlink:href="structfiftyone_degrees_collection.html" target="_top" xlink:title="All the shared methods and fields required by file, memory and cached collections.">
-<polygon fill="none" stroke="black" points="0,-7 0,-26 143,-26 143,-7 0,-7"/>
-<text text-anchor="middle" x="71.5" y="-14" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesCollection</text>
+<polygon fill="none" stroke="black" points="197,-7 197,-26 340,-26 340,-7 197,-7"/>
+<text text-anchor="middle" x="268.5" y="-14" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesCollection</text>
 </a>
 </g>
 </g>
 <!-- Node2&#45;&gt;Node3 -->
 <g id="edge3" class="edge">
 <title>Node2&#45;&gt;Node3</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M83.59,-75.81C77.65,-72.25 72.35,-67.73 68.5,-62 61.34,-51.33 64.72,-35.79 67.99,-26.18"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="82.15,-79 92.66,-80.36 85.3,-72.74 82.15,-79"/>
-<text text-anchor="middle" x="88.5" y="-54" font-family="Helvetica,sans-Serif" font-size="10.00"> release</text>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M199.69,-70.38C198.73,-63.84 199,-56.71 202.5,-51 209.89,-38.95 223.12,-31.07 235.8,-26.01"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="196.38,-71.57 202.11,-80.47 203.18,-69.93 196.38,-71.57"/>
+<text text-anchor="middle" x="222.5" y="-54" font-family="Helvetica,sans-Serif" font-size="10.00"> release</text>
 </g>
 <!-- Node3&#45;&gt;Node2 -->
 <g id="edge2" class="edge">
 <title>Node3&#45;&gt;Node2</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M92.61,-32.35C99.43,-37.75 106.72,-44.21 112.5,-51 120.21,-60.06 126.69,-72.19 130.58,-80.28"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="94.45,-29.36 84.36,-26.13 90.24,-34.95 94.45,-29.36"/>
-<text text-anchor="middle" x="146" y="-54" font-family="Helvetica,sans-Serif" font-size="10.00"> collection</text>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M262.09,-35.71C258.44,-44.33 253.24,-54.38 246.5,-62 239.84,-69.54 230.61,-75.86 222.59,-80.49"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="265.44,-36.75 265.77,-26.16 258.9,-34.23 265.44,-36.75"/>
+<text text-anchor="middle" x="279" y="-54" font-family="Helvetica,sans-Serif" font-size="10.00"> collection</text>
 </g>
 <!-- Node3&#45;&gt;Node3 -->
 <g id="edge4" class="edge">
 <title>Node3&#45;&gt;Node3</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M153.11,-21.69C158.04,-20.46 161,-18.73 161,-16.5 161,-13.02 153.79,-10.76 143.13,-9.7"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="152.44,-18.26 143.13,-23.3 153.56,-25.17 152.44,-18.26"/>
-<text text-anchor="middle" x="195.5" y="-25" font-family="Helvetica,sans-Serif" font-size="10.00"> next</text>
-<text text-anchor="middle" x="195.5" y="-14" font-family="Helvetica,sans-Serif" font-size="10.00">freeCollection</text>
-<text text-anchor="middle" x="195.5" y="-3" font-family="Helvetica,sans-Serif" font-size="10.00">get</text>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M350.11,-21.69C355.04,-20.46 358,-18.73 358,-16.5 358,-13.02 350.79,-10.76 340.13,-9.7"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="349.44,-18.26 340.13,-23.3 350.56,-25.17 349.44,-18.26"/>
+<text text-anchor="middle" x="392.5" y="-25" font-family="Helvetica,sans-Serif" font-size="10.00"> next</text>
+<text text-anchor="middle" x="392.5" y="-14" font-family="Helvetica,sans-Serif" font-size="10.00">freeCollection</text>
+<text text-anchor="middle" x="392.5" y="-3" font-family="Helvetica,sans-Serif" font-size="10.00">get</text>
 </g>
 <!-- Node4 -->
 <g id="node4" class="node">
 <title>Node4</title>
 <g id="a_node4"><a xlink:href="structfiftyone_degrees_data.html" target="_top" xlink:title="Data structure used for reusing memory which may have been allocated in a previous operation.">
-<polygon fill="none" stroke="black" points="76,-147.5 76,-166.5 193,-166.5 193,-147.5 76,-147.5"/>
-<text text-anchor="middle" x="134.5" y="-154.5" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesData</text>
+<polygon fill="none" stroke="black" points="147,-147.5 147,-166.5 264,-166.5 264,-147.5 147,-147.5"/>
+<text text-anchor="middle" x="205.5" y="-154.5" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesData</text>
 </a>
 </g>
 </g>
 <!-- Node4&#45;&gt;Node2 -->
 <g id="edge5" class="edge">
 <title>Node4&#45;&gt;Node2</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M134.5,-137.04C134.5,-124.67 134.5,-109.12 134.5,-99.63"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="131,-137.23 134.5,-147.23 138,-137.23 131,-137.23"/>
-<text text-anchor="middle" x="147" y="-121" font-family="Helvetica,sans-Serif" font-size="10.00"> data</text>
-</g>
-<!-- Node5 -->
-<g id="node5" class="node">
-<title>Node5</title>
-<g id="a_node5"><a xlink:href="structfiftyone_degrees_float_internal.html" target="_top" xlink:title="Struture that represents 51Degrees implementation, which encapsulate an array of 4 bytes.">
-<polygon fill="none" stroke="black" points="259.5,-80.5 259.5,-99.5 415.5,-99.5 415.5,-80.5 259.5,-80.5"/>
-<text text-anchor="middle" x="337.5" y="-87.5" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesFloatInternal</text>
-</a>
-</g>
-</g>
-<!-- Node5&#45;&gt;Node1 -->
-<g id="edge6" class="edge">
-<title>Node5&#45;&gt;Node1</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M337.5,-70.09C337.5,-55.93 337.5,-37.2 337.5,-26.34"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="334,-70.23 337.5,-80.23 341,-70.23 334,-70.23"/>
-<text text-anchor="middle" x="366.5" y="-54" font-family="Helvetica,sans-Serif" font-size="10.00"> percentage</text>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M205.5,-137.04C205.5,-124.67 205.5,-109.12 205.5,-99.63"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="202,-137.23 205.5,-147.23 209,-137.23 202,-137.23"/>
+<text text-anchor="middle" x="218" y="-121" font-family="Helvetica,sans-Serif" font-size="10.00"> data</text>
 </g>
 </g>
 </svg>

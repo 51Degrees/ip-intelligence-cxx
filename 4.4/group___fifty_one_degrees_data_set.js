@@ -15,15 +15,15 @@ var group___fifty_one_degrees_data_set =
     ] ],
     [ "FIFTYONE_DEGREES_DATASET_RELOAD", "group___fifty_one_degrees_data_set.html#ga3c8054b6dca94f20c82d3b0e28c58931", null ],
     [ "fiftyoneDegreesDataSetInitFromFileMethod", "group___fifty_one_degrees_data_set.html#gac149d8ba462b32a339ee202e1c707597", null ],
-    [ "fiftyoneDegreesDataSetInitFromMemoryMethod", "group___fifty_one_degrees_data_set.html#ga1da67edc363a24e26a6529889f933ac9", null ],
+    [ "fiftyoneDegreesDataSetInitFromMemoryMethod", "group___fifty_one_degrees_data_set.html#gab05e861cf101b0093e0cfae12c3a4643", null ],
     [ "fiftyoneDegreesDataSetFree", "group___fifty_one_degrees_data_set.html#gaa123fd449857f5500fb5aaa6e20a498f", null ],
     [ "fiftyoneDegreesDataSetGet", "group___fifty_one_degrees_data_set.html#gac83949ac2e345bda332b109337fdbca8", null ],
-    [ "fiftyoneDegreesDataSetInitFromFile", "group___fifty_one_degrees_data_set.html#gae2ae614ad0b44326a5a56587772a5a16", null ],
+    [ "fiftyoneDegreesDataSetInitFromFile", "group___fifty_one_degrees_data_set.html#gac8df29b1425120c6b59b167ae49ef280", null ],
     [ "fiftyoneDegreesDataSetInitHeaders", "group___fifty_one_degrees_data_set.html#ga5f83fec71b3f6ccafc14579762b02ff6", null ],
     [ "fiftyoneDegreesDataSetInitInMemory", "group___fifty_one_degrees_data_set.html#ga28310eec4da771a930ac632b6ca9ec64", null ],
     [ "fiftyoneDegreesDataSetInitProperties", "group___fifty_one_degrees_data_set.html#ga64ffb3e6069264c377ef06208e1379de", null ],
     [ "fiftyoneDegreesDataSetRelease", "group___fifty_one_degrees_data_set.html#gae08c9b55b5ce27e20b916a6be8492d1a", null ],
     [ "fiftyoneDegreesDataSetReloadManagerFromFile", "group___fifty_one_degrees_data_set.html#ga0afe2d82f4d115a79ef62cb2bea8f0d9", null ],
-    [ "fiftyoneDegreesDataSetReloadManagerFromMemory", "group___fifty_one_degrees_data_set.html#ga758ecf6fc565a9ec49a48e41e58f4068", null ],
+    [ "fiftyoneDegreesDataSetReloadManagerFromMemory", "group___fifty_one_degrees_data_set.html#ga6876a826ea682fd90a29d3b6e10b4678", null ],
     [ "fiftyoneDegreesDataSetReset", "group___fifty_one_degrees_data_set.html#gaa1a859ec2cbcd8f9c2ce51747a380269", null ]
 ];

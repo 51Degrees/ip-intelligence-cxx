@@ -35,7 +35,11 @@ var group___fifty_one_degrees_status =
       [ "FIFTYONE_DEGREES_STATUS_INCORRECT_IP_ADDRESS_FORMAT", "group___fifty_one_degrees_status.html#gga887881c8b6ec9f0c8510913831ebd19ea662e1f39f36fd6e756296aad446ad4a0", null ],
       [ "FIFTYONE_DEGREES_STATUS_TEMP_FILE_ERROR", "group___fifty_one_degrees_status.html#gga887881c8b6ec9f0c8510913831ebd19ea43e6c8bab63e46c4c8642c2e0a02ce57", null ],
       [ "FIFTYONE_DEGREES_STATUS_INSUFFICIENT_CAPACITY", "group___fifty_one_degrees_status.html#gga887881c8b6ec9f0c8510913831ebd19ea183d8dfede419787e396b50992c6a025", null ],
-      [ "FIFTYONE_DEGREES_STATUS_INVALID_INPUT", "group___fifty_one_degrees_status.html#gga887881c8b6ec9f0c8510913831ebd19ead5ec72efaa6a331d0bcd58f2213bcc39", null ]
+      [ "FIFTYONE_DEGREES_STATUS_INVALID_INPUT", "group___fifty_one_degrees_status.html#gga887881c8b6ec9f0c8510913831ebd19ead5ec72efaa6a331d0bcd58f2213bcc39", null ],
+      [ "FIFTYONE_DEGREES_STATUS_UNSUPPORTED_STORED_VALUE_TYPE", "group___fifty_one_degrees_status.html#gga887881c8b6ec9f0c8510913831ebd19ea1c9ca6335c8a4409e7d03f876409743a", null ],
+      [ "FIFTYONE_DEGREES_STATUS_FILE_TOO_LARGE", "group___fifty_one_degrees_status.html#gga887881c8b6ec9f0c8510913831ebd19ea63b51dbc766358565362c58afe39b383", null ],
+      [ "FIFTYONE_DEGREES_STATUS_UNKNOWN_GEOMETRY", "group___fifty_one_degrees_status.html#gga887881c8b6ec9f0c8510913831ebd19eaa19c04b0e3cdc01f3b3f110f944206bf", null ],
+      [ "FIFTYONE_DEGREES_STATUS_RESERVED_GEOMETRY", "group___fifty_one_degrees_status.html#gga887881c8b6ec9f0c8510913831ebd19ea878889580ab7db0ee1fef9e04f1f2717", null ]
     ] ],
     [ "fiftyoneDegreesStatusGetMessage", "group___fifty_one_degrees_status.html#gafc6a5aa34a19cec0c82f1e80c48caf87", null ]
 ];
