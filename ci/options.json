@@ -12,7 +12,6 @@
     "Configuration": "Release",
     "Arch": "x64",
     "BuildMethod": "cmake",
-    "PackageRequirement": true,
     "RunPerformance": true
   },
   {
@@ -26,6 +25,7 @@
     "Name": "Ubuntu_x64_Release",
     "Configuration": "Release",
     "Arch": "x64",
+    "PackageRequirement": true,
     "RunPerformance": true
   },
   {
