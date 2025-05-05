@@ -1,13 +1,9 @@
 param (
-    [string]$RepoName
+    [Parameter(Mandatory)][string]$RepoName
 )
 
-$PackagePath = [IO.Path]::Combine($pwd, "package")
-$BuildPath = [IO.Path]::Combine($pwd, $RepoName, "build")
-$BinPath = [IO.Path]::Combine($BuildPath, "bin")
+Copy-Item -Recurse package/build $RepoName/
 
-mkdir $BuildPath
-
-# Copy the prebuilt binaries to the build directory
-Copy-Item -Recurse -Path $PackagePath -Destination $BinPath
-Copy-Item -Path $PackagePath -Destination $BinPath -Recurse
+if (!$IsWindows) {
+    chmod -R +x $RepoName/build/bin
+}
