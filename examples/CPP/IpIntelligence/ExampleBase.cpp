@@ -83,8 +83,11 @@ unsigned long ExampleBase::getHashCode(FiftyoneDegrees::IpIntelligence::ResultsI
 	for (requiredPropertyIndex = 0;
 		requiredPropertyIndex < (uint32_t)results->getAvailableProperties();
 		requiredPropertyIndex++) {
-		valueName = *results->getValueAsString(requiredPropertyIndex);
-		hashCode ^= generateHash((unsigned char *)(valueName.c_str()));
+		Common::Value<string> nextValue = results->getValueAsString(requiredPropertyIndex);
+		if (nextValue.hasValue()) {
+			valueName = nextValue.getValue();
+			hashCode ^= generateHash((unsigned char *)(valueName.c_str()));
+		}
 	}
 	return hashCode;
 }
