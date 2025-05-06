@@ -218,40 +218,17 @@ void fiftyoneDegreesIpiGettingStarted(
 
 	printf("Starting Getting Started Example.\n");
 
-	char nextIpV4[64] = { 0 };
-	const int64_t dx    = 0x01020304LL;
-	const int64_t maxIp = 0xFFFFFFFFLL;
-	for (int64_t i = 0; i < maxIp; i += dx) {
-#		ifdef _MSC_VER
-		UNREFERENCED_PARAMETER(ipv4Address);
-#		endif
-		int64_t tk = i;
-		StringBuilder s = { nextIpV4, sizeof(nextIpV4) };
-		StringBuilderInit(&s);
-		StringBuilderAddInteger(&s, tk & 0xFFLL);
-		StringBuilderAddChar(&s, '.');
-		tk /= 256;
-		StringBuilderAddInteger(&s, tk & 0xFFLL);
-		StringBuilderAddChar(&s, '.');
-		tk /= 256;
-		StringBuilderAddInteger(&s, tk & 0xFFLL);
-		StringBuilderAddChar(&s, '.');
-		tk /= 256;
-		StringBuilderAddInteger(&s, tk & 0xFFLL);
-		StringBuilderComplete(&s);
-
-		// Carries out a match for the ipv4 address
-		printf("\nIpv4 Address: %s\n", nextIpV4);
-		ResultsIpiFromIpAddressString(
-			results,
-			nextIpV4,
-			strlen(nextIpV4),
-			exception);
-		if (EXCEPTION_FAILED) {
-			printf("%s\n", ExceptionGetMessage(exception));
-		}
-		printPropertyValueFromResults(results);
+	// Carries out a match for the ipv4 address
+	printf("\nIpv4 Address: %s\n", ipv4Address);
+	ResultsIpiFromIpAddressString(
+		results,
+		ipv4Address,
+		strlen(ipv4Address),
+		exception);
+	if (EXCEPTION_FAILED) {
+		printf("%s\n", ExceptionGetMessage(exception));
 	}
+	printPropertyValueFromResults(results);
 
 	// Carries out a match for the ipv6 address
 	printf("\nIpv6 Address: %s\n", ipv6Address);
