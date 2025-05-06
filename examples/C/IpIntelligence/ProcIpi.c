@@ -160,7 +160,7 @@ int main(int argc, char* argv[]) {
 	fiftyoneDegreesProcIpiRun(
 		dataFilePath,
 		argc > 2 ? argv[2] : "IpRangeStart,IpRangeEnd,"
-			"RegisteredCountry,AverageLocation",
+			"RegisteredCountry,AccuracyRadius",
 		& config);
 
 		return 0;

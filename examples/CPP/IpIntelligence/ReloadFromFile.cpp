@@ -39,7 +39,7 @@ This example illustrates how to use a single reference to the engine to use
 51Degrees on-premise IP intelligence and invoke the reload functionality
 instead of maintaining a reference to the dataset directly.
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/CPP/ReloadFromFile.cpp).
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/tree/main/examples/C/IpIntelligencePP/ReloadFromFile.cpp).
 
 @include{doc} example-require-datafile-ipi.txt
 

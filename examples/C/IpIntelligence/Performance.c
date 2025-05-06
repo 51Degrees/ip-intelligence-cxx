@@ -28,11 +28,11 @@
 #include "../../Base/ExampleBase.h"
 
 /**
- * @example Hash/Performance.c
+ * @example IpIntelligence/Performance.c
  * The example illustrates a "clock-time" benchmark for assessing detection speed.
  *
- * Using a YAML formatted evidence file - "20000 Evidence Records.yml" - supplied with the
- * distribution or can be obtained from the [data repository on Github](https://github.com/51Degrees/device-detection-data/blob/main/20000%20Evidence%20Records.yml).
+ * Using a YAML formatted evidence file - "evidence.yml" - supplied with the
+ * distribution or can be obtained from the [data repository on Github](https://github.com/51Degrees/ip-intelligence-data/blob/main/evidence.yml).
  *
  * It's important to understand the trade-offs between performance, memory usage and accuracy, that
  * the 51Degrees pipeline configuration makes available, and this example shows a range of
@@ -42,11 +42,11 @@
  * reduces detection time compared with requesting properties from multiple components. If you
  * don't specify any properties to detect, then all properties are detected.
  *
- * Please review [performance options](https://51degrees.com/documentation/_device_detection__features__performance_options.html)
- * and [hash dataset options](https://51degrees.com/documentation/_device_detection__hash.html#DeviceDetection_Hash_DataSetProduction_Performance)
+ * Please review [performance options](https://51degrees.com/documentation/_ip_intelligence__features__performance_options.html)
+ * and [hash dataset options](https://51degrees.com/documentation/_ip_intelligence__hash.html#DeviceDetection_Hash_DataSetProduction_Performance)
  * for more information about adjusting performance.
  *
- * This example is available in full on [GitHub](https://github.com/51Degrees/device-detection-cxx/blob/master/examples/C/Hash/Performance.c).
+ * This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/tree/main/examples/C/IpIntelligence/Performance.c).
  *
  * @include{doc} example-require-datafile.txt
  */
@@ -61,11 +61,11 @@
 #define SIZE_OF_VALUE 1000
 #define MAX_EVIDENCE 20
 
-// The device detection data folder from the sub module with lite device data.
+// The ip intelligence data folder from the sub module with lite ip intel data.
 static const char* dataDir = "ip-intelligence-data";
 
 // In this example, by default, the 51degrees "Lite" file needs to be in the
-// device-detection-data,
+// ip-intelligence-data,
 // or you may specify another file as a command line parameter.
 //
 // Note that the Lite data file is only used for illustration, and has
@@ -74,9 +74,7 @@ static const char* dataDir = "ip-intelligence-data";
 // https://51degrees.com/pricing
 static const char* dataFileName = "51Degrees-LiteV41.ipi";
 
-// This file contains the 20,000 most commonly seen combinations of header 
-// values that are relevant to device detection. For example, User-Agent and 
-// UA-CH headers.
+// This file contains the 20,000 random IP formatted as header values.
 static const char* evidenceFileName = "evidence.yml";
 
 // The value of the evidence for User-Agent is not stored in the shared string
@@ -150,7 +148,7 @@ typedef struct threadState_t {
 	// Used to ensure compiler optimiser doesn't optimise out the very
 	// method that the benchmark is testing.
 	unsigned long long checkSum;
-	// Number of device detection iterations.
+	// Number of ip intelligence iterations.
 	unsigned long long iterations;
 } threadState;
 
@@ -179,7 +177,7 @@ typedef struct performanceState_t {
 	ResourceManager manager;
 	// Running threads
 	FIFTYONE_DEGREES_THREAD* threads;
-	// Time in millis to startup the device detection component.
+	// Time in millis to startup the ip intelligence component.
 	double startUpMillis;
 	// Number of property values retrieved for each iteration.
 	int availableProperties;
@@ -549,7 +547,7 @@ void executeBenchmark(
 	state->threads = (FIFTYONE_DEGREES_THREAD*)
 		Malloc(sizeof(FIFTYONE_DEGREES_THREAD) * state->numberOfThreads);
 
-	fprintf(state->output, "Initialize device detection\n");
+	fprintf(state->output, "Initialize ip intelligence\n");
 	
 	TIMER_CREATE;
 	TIMER_START;
@@ -630,7 +628,7 @@ void freeSharedStrings(performanceState* state) {
 /**
  * Runs benchmarks for various configurations.
  *
- * @param dataFilePath path to the 51Degrees device data file for testing
+ * @param dataFilePath path to the 51Degrees ip intel data file for testing
  * @param evidenceFilePath path to a text file of evidence
  * @param numberOfThreads number of concurrent threads
  * @param output file pointer to print output to
@@ -731,7 +729,7 @@ void fiftyoneDegreesIpiPerformance(
 		i++) {
 
 		// Set the special evidence processing to false to optimize 
-		// evaluation for core device detection.
+		// evaluation for core ip intelligence.
 		performanceConfig config = performanceConfigs[i];
 		//config.config->b.processSpecialEvidence = false;
 
@@ -885,8 +883,8 @@ int main(int argc, char* argv[]) {
 			dataFilePath,
 			sizeof(dataFilePath));
 		if (status != SUCCESS) {
-			printf(("Failed to find a device detection "
-				"data file. Make sure the device-detection-data "
+			printf(("Failed to find an ip intelligence "
+				"data file. Make sure the ip-intelligence-data "
 				"submodule has been updated by running "
 				"`git submodule update --recursive`\n"));
 #ifndef TEST
@@ -903,8 +901,8 @@ int main(int argc, char* argv[]) {
 			evidenceFilePath,
 			sizeof(evidenceFilePath));
 		if (status != SUCCESS) {
-			printf(("Failed to find a device detection "
-				"evidence file. Make sure the device-detection-data "
+			printf(("Failed to find an ip intelligence "
+				"evidence file. Make sure the ip-intelligence-data "
 				"submodule has been updated by running "
 				"`git submodule update --recursive`\n"));
 #ifndef TEST

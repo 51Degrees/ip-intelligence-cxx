@@ -37,7 +37,7 @@ Getting started example of using 51Degrees IP intelligence.
 The example shows how to user 51Degrees on-premise IP intelligence to
 determine the country of a given IP address.
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/CPP/GettingStarted.cpp).
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/tree/main/examples/C/IpIntelligencePP/GettingStarted.cpp).
 
 @include{doc} example-require-datafile-ipi.txt
 
@@ -52,7 +52,7 @@ using namespace FiftyoneDegrees;
 
 string fileName = "51Degrees-V4.1.ipi";
 string propertiesString = "IpRangeStart,IpRangeEnd,"
-	"CountryCode,CityName,AverageLocation";
+	"RegisteredCountry,CityName,AccuracyRadius";
 Common::RequiredPropertiesConfig *properties =
 	new Common::RequiredPropertiesConfig(&propertiesString);
 IpIntelligence::ConfigIpi *config =
@@ -91,7 +91,7 @@ IpIntelligence::ResultsIpi *results = engine->process(evidence);
 
 5. Extract the value of a property as a weighted string from the results.
 ```
-Value<vector<WeightedValue<string>>> value = results->getValuesAsWeightedStringList("CountryCode");
+Value<vector<WeightedValue<string>>> value = results->getValuesAsWeightedStringList("RegisteredCountry");
 for (WeightedValue<string> w : value.getValue()) {
 	cout << "   Country Code: " <<
 		w.getValue() <<
