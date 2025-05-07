@@ -37,7 +37,7 @@ Strongly typed example of using 51Degrees IP intelligence.
 The example shows how to extract the strongly typed value from the
 returned results of the 51Degrees on-premise IP intelligence.
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/CPP/StronglyTyped.cpp).
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/tree/main/examples/C/IpIntelligencePP/StronglyTyped.cpp).
 
 @include{doc} example-require-datafile-ipi.txt
 
@@ -52,7 +52,7 @@ using namespace FiftyoneDegrees;
 
 string fileName = "51Degrees-V4.1.ipi";
 string propertiesString = "IpRangeStart,IpRangeEnd,"
-	"CountryCode,CityName,AverageLocation";
+	"RegisteredCountry,CityName,AccuracyRadius";
 Common::RequiredPropertiesConfig *properties =
 	new Common::RequiredPropertiesConfig(&propertiesString);
 IpIntelligence::ConfigIpi *config =
@@ -92,9 +92,9 @@ IpIntelligence::ResultsIpi *results = engine->process(evidence);
 5. Extract the value of a property as a weighted pair of floats from the results.
 ```
 Value<vector<WeightedValue<pair<float, float>>>> value = 
-	results->getValuesAsWeightedCoordinateList("AverageLocation");
+	results->getValuesAsWeightedCoordinateList("AccuracyRadius");
 for (WeightedValue<pair<float, float>> w : value.getValue()) {
-	cout << "   AverageLocation: " <<
+	cout << "   AccuracyRadius: " <<
 		w.getValue().first <<
 		"," <<
 		w.getValue().second << "\n";
@@ -116,10 +116,10 @@ Expected output:
 ```
 ...
 Ipv4 Address: 185.28.167.77
-   AverageLocation: 53.5763,-2.32811
+   AccuracyRadius: 53.5763,-2.32811
 
 Ipv6 Address: 2001:4860:4860::8888
-   AverageLocation: 0,0
+   AccuracyRadius: 0,0
 ...
 ```
 

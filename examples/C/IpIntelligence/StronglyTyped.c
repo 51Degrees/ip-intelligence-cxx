@@ -27,7 +27,7 @@ Strongly Typed example of using 51Degrees IP intelligence.
 The example shows how to extract the strongly typed value from the
 returned results of the 51Degrees on-premise IP intelligence.
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/C/StronglyTyped.c).
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/tree/main/examples/C/IpIntelligence/StronglyTyped.c).
 
 @include{doc} example-require-datafile-ipi.txt
 
@@ -41,7 +41,7 @@ initialised with.
 const char* fileName = argv[1];
 fiftyoneDegreesPropertiesRequired properties =
 	fiftyoneDegreesPropertiesDefault;
-properties.string = "IpRangeStart,IpRangeEnd,CountryCode,AverageLocation";
+properties.string = "IpRangeStart,IpRangeEnd,RegisteredCountry,AccuracyRadius";
 ```
 
 2. Instantiate the 51Degrees data set within a resource manager from the
@@ -117,14 +117,14 @@ Expected output:
 ```
 ...
 Ipv4 Address: 185.28.167.77
-   AverageLocation: 53.576283,-2.328108
-   CountryCode: 0.000000,0.000000
+   AccuracyRadius: 53.576283,-2.328108
+   RegisteredCountry: 0.000000,0.000000
    IpRangeEnd: 0.000000,0.000000
    IpRangeStart: 0.000000,0.000000
 
 Ipv6 Address: 2001:4860:4860::8888
-   AverageLocation: 0.000000,0.000000
-   CountryCode: 0.000000,0.000000
+   AccuracyRadius: 0.000000,0.000000
+   RegisteredCountry: 0.000000,0.000000
    IpRangeEnd: 0.000000,0.000000
    IpRangeStart: 0.000000,0.000000
 ...
@@ -189,7 +189,7 @@ void fiftyoneDegreesIpiStronglyTyped(
 
 	// Set the properties to be returned for each IP Address.
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "IpRangeStart,IpRangeEnd,RegisteredCountry,AverageLocation";
+	properties.string = "IpRangeStart,IpRangeEnd,RegisteredCountry,AccuracyRadius";
 
 	// Initialise the manager for IP intelligence.
 	StatusCode status = IpiInitManagerFromFile(

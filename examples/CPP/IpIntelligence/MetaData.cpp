@@ -39,7 +39,7 @@ IP intelligence. This feature can be used to get information such as
 the category that a property belons to or the possible values a property
 can have.
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/CPP/MetaData.cpp).
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/tree/main/examples/C/IpIntelligencePP/MetaData.cpp).
 
 @include{doc} example-require-datafile-ipi.txt
 
@@ -54,7 +54,7 @@ using namespace FiftyoneDegrees;
 
 string fileName = "51Degrees-V4.1.ipi";
 string propertiesString = "IpRangeStart,IpRangeEnd,"
-	"CountryCode,CityName,AverageLocation";
+	"RegisteredCountry,CityName,AccuracyRadius";
 Common::RequiredPropertiesConfig *properties =
 	new Common::RequiredPropertiesConfig(&propertiesString);
 IpIntelligence::ConfigIpi *config =

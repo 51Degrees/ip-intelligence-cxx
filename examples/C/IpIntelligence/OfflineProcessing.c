@@ -28,7 +28,7 @@ This example demonstrates one possible use of the 51Degrees on-premise IP intell
 API and data for offline data processing. It also demonstrates that you can reuse the
 retrieved results for multiple uses and only then release it.
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/C/OfflineProcessing.c).
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/tree/main/examples/C/IpIntelligence/OfflineProcessing.c).
 
 @include{doc} example-require-datafile-ipi.txt
 
@@ -43,7 +43,7 @@ const char* fileName = argv[1];
 fiftyoneDegreesPropertiesRequired properties =
 	fiftyoneDegreesPropertiesDefault;
 properties.string = "IpRangeStart,IpRangeEnd,"
-		"CountryCode,AverageLocation";
+		"RegisteredCountry,AccuracyRadius";
 ```
 
 2. Instantiate the 51Degrees data set within a resource manager from the
@@ -106,7 +106,7 @@ Output Written to [Full Path]/ip-intelligence-data/20000 IP Addresses.processed.
 ```
 Expected content of output file:
 ```
-"IP Address"|"AverageLocation"|"CountryCode"|"IpRangeEnd"|"IpRangeStart"
+"IP Address"|"AccuracyRadius"|"RegisteredCountry"|"IpRangeEnd"|"IpRangeStart"
 "::f33e:25e3:c5bd:e182:e584"|"0.000000,0.000000":"1.000000"|"ZZ":"1.000000"|...
 "0fa0:3a4::2626"|"0.000000,0.000000":"1.000000"|"ZZ":"1.000000"|"2001:023f:...
 ...
@@ -388,7 +388,7 @@ int main(int argc, char* argv[]) {
 #endif
 
 	// Start the offline processing.
-	// TODO: Revert to "IpRangeStart,IpRangeEnd,CountryCode,AverageLocation"
+	// TODO: Revert to "IpRangeStart,IpRangeEnd,RegisteredCountry,AccuracyRadius"
 	fiftyoneDegreesOfflineProcessingRun(
 		dataFilePath,
 		ipAddressFilePath,

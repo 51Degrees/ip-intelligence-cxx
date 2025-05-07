@@ -27,7 +27,7 @@ Getting started example of using 51Degrees IP intelligence.
 The example shows how to run a performance test on 51Degrees on-premise
 IP intelligence APIs.
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/blob/master/examples/C/PerfIpi.c).
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/tree/main/examples/C/IpIntelligence/PerfIpi.c).
 
 @include{doc} example-require-datafile-ipi.txt
 
