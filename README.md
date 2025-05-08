@@ -6,45 +6,33 @@
 
 The 51Degrees IP intelligence API is built on the 51Degrees [common API](https://github.com/51Degrees/common-cxx).
 
-# Pre-requisites
+## Pre-requisites
 
-## Data File
+### Data file
 
-In order to perform IP intelligence, you will need to use a 51Degrees data file. 
-To obtain an IP intelligence data file see the [51Degrees website](https://51degrees.com/pricing). 
-By default, the data file will need to be placed in the 'ip-intelligence-data' sub-folder for the tests and the on-premise examples to work. If you want to use a different location, you will need to manually update the data file paths for these files.
+In order to perform IP intelligence, you will need to use a 51Degrees data file.
+To obtain an IP intelligence data file see the [51Degrees website](https://51degrees.com/pricing).
 
-For Linux:
-```
-sudo apt-get install git-lfs
-git lfs install
-```
+By default, the data file will need to be placed in the 'ip-intelligence-data' sub-folder for the tests and the on-premise examples to work.
 
-Then, navigate to the ip-intelligence-data directory and execute:
+See `ip-intelligence-data/README` ([local](./ip-intelligence-data/README) / [GitHub](https://github.com/51Degrees/ip-intelligence-data/)) on how to pull and/or generate necessary files.
 
-```
-git lfs pull
-```
-
-## Fetching sub-modules
+### Fetching sub-modules
 
 This repository has sub-modules that must be fetched.
 If cloning for the first time, use:
 
-```
+```sh
 git clone --recurse-submodules https://github.com/51Degrees/ip-intelligence-cxx.git
 ```
 
 If you have already cloned the repository and want to fetch the sub modules, use:
 
-```
+```sh
 git submodule update --init --recursive
 ```
 
-If you have downloaded this repository as a zip file then these sub modules need 
-to be downloaded separately as GitHub does not include them in the archive. 
-In particular, note that the zip download will contain links to LFS content,
-rather than the files themselves. As such, these need to be downloaded individually.
+If you have downloaded this repository as a zip file then these sub modules need to be downloaded separately as GitHub does not include them in the archive. In particular, note that the zip download will contain links to LFS content, rather than the files themselves. As such, these need to be downloaded individually.
 
 ## Build tools
 
@@ -53,88 +41,97 @@ rather than the files themselves. As such, these need to be downloaded individua
 You will need either Visual Studio 2017/2019 or the [C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) installed.
 If you have Visual Studio Code, you'll still need to install the build tools from the link above.
 
-### Linux 
+### Linux
 
 You will need [CMake 3.10](https://cmake.org/) or greater installed to build the project. In addition, you will need a C++ compiler which supports C++11. The compiler will and other build tools will be selected by CMake automatically based on your environment.
 
-# Installing
+## Installing
 
-## Using CMake
+### Using CMake
 
 To build the make files required to build, open a `bash` or `Visual Studio Developer Command Prompt` terminal and run
 
-```
+```sh
 mkdir build
 cd build
 cmake .. 
 ```
+
 Note: on an x64 Windows system, it is necessary to add `-A x64` as CMake will build a Win32 Solution by default.
 
 Then build the whole solution with
 
-```
+```sh
 cmake --build . --config Release
 ```
 
 Libraries are output to the `lib/` directory, and executables like examples and tests are output to the `bin/` directory.
 
-## Using Visual Studio
+### Using Visual Studio
 
-Calling `CMake` in an MSVC environment (as described in the [Using CMake](#Using-CMake) section) will produce a Visual Studio solution with projects for all libraries, examples, and tests. However, it is preferable to use the dedicated Visual Studio solution in the `VisualStudio/` directory. If the dedicated Visual Studio solution is used, re-targeting the solution might be required for VS2019 IDE.
+Calling `CMake` in an MSVC environment (as described in the [Using CMake](#using-cmake) section) will produce a Visual Studio solution with projects for all libraries, examples, and tests. However, it is preferable to use the dedicated Visual Studio solution in the `VisualStudio/` directory. If the dedicated Visual Studio solution is used, re-targeting the solution might be required for VS2019 IDE.
 
-## Build Options
+### Build Options
 
 For build options, see [Common API](https://github.com/51Degrees/common-cxx/blob/master/readme.md)
 
-# Tests
+## Tests
 
 All unit, integration, and performance tests are built using the [Google test framework](https://github.com/google/googletest).
 
-## CMake
+### Testing with CMake
 
 CMake automatically pulls in the latest Google Test from GitHub.
 
 Building the project builds multiple test executables to the `bin/` directory: `IpiTests` and any common testing included in the common-cxx library.
 
 These can be run by calling
-```
+
+```sh
 ctest
 ```
 
 If CMake has been used in an MSVC environment, then the tests will be set up and discoverable in the Visual Studio solution `51DegreesIpIntelligence` created by CMake.
 
-## Visual Studio
+### Testing with Visual Studio
 
 Tests in the Visual Studio solution automatically install the GTest dependency via a NuGet package. However, in order for the tests to show up in the Visual Studio test explorer, the [Test Adapter for Google Test](https://marketplace.visualstudio.com/items?itemName=VisualCPPTeam.TestAdapterforGoogleTest) extension must be installed.
 
-The VisualStudio solution includes `FiftyOne.IpIntelligence.Tests`, which can be run through the standard Visual Studio test runner. 
+The VisualStudio solution includes `FiftyOne.IpIntelligence.Tests`, which can be run through the standard Visual Studio test runner.
 
-# Referencing the API
+## Referencing the API
 
-## CMake
+### Adding references with CMake
 
 When building using CMake, static libraries are built in stages. These can be included in an executable just as they are in the examples. If these are included through a CMake file, the dependencies will be resolved automatically. However, if linking another way, all dependencies will need to be included from the `lib/` directory. For example, to use the IP Intelligence C API, the following static libraries would need to be included:
+
 - `fiftyone-common-c`
 - `fiftyone-ip-intelligence-c`
 
 and for the IP Intelligence C++ API, the following are needed in addition:
+
 - `fiftyone-common-cxx`
 - `fiftyone-ip-intelligence-cxx`
 
 The CMake project also builds a single shared library containing everything. This is named `fiftyone-ip-intelligence-complete` and can be referenced by any C or C++ project.
 
-## Visual Studio
+### Adding references with Visual Studio
 
 The Visual Studio solution contains static libraries which have all the dependencies set up correctly, so referencing these in a Visual Studio solution should be fairly self explanatory.
 
-# Examples
+## Examples
 
 There are several examples available, the source files can be found in the `examples/` folder. The examples are written in C or CPP.
 
-### Visual Studio
+### ⚠️ Required files
+
+See `ip-intelligence-data/README` ([local](./ip-intelligence-data/README) / [GitHub](https://github.com/51Degrees/ip-intelligence-data/)) on how to pull and/or generate necessary files.
+
+### Running examples in Visual Studio
+
 All the examples are available to run in the `VisualStudio/IpIntelligence.sln` solution.
 
-## IP Intelligence Examples
+### IP Intelligence Examples
 
 |Example|Description|Language|
 |-------|-----------|--------|
