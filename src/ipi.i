@@ -30,7 +30,14 @@ using namespace FiftyoneDegrees::IpIntelligence;
 %}
 
 %include "common-cxx/Types.i"
+
+#ifdef SWIGCSHARP
 %include "common-cxx/CsTypes.i"
+#endif
+#ifdef SWIGJAVA
+%include "common-cxx/JavaTypes.i"
+#endif
+
 %include "common-cxx/Exceptions.i"
 
 %include "EngineIpi.i"
