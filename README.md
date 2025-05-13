@@ -10,12 +10,9 @@ The 51Degrees IP intelligence API is built on the 51Degrees [common API](https:/
 
 ### Data file
 
-In order to perform IP intelligence, you will need to use a 51Degrees data file.
-To obtain an IP intelligence data file see the [51Degrees website](https://51degrees.com/pricing).
+In order to perform IP intelligence, you will need to obtain a 51Degrees data file.  Lite data file can be obtained for free as specified in the [`ip-intelligence-data/README`](https://github.com/51Degrees/ip-intelligence-data/). To obtain an Enterprise data file please [contact us](https://51degrees.com/contact-us).
 
-By default, the data file will need to be placed in the 'ip-intelligence-data' sub-folder for the tests and the on-premise examples to work.
-
-See `ip-intelligence-data/README` ([local](./ip-intelligence-data/README) / [GitHub](https://github.com/51Degrees/ip-intelligence-data/)) on how to pull and/or generate necessary files.
+By default, the downloaded data file has to be placed in the 'ip-intelligence-data' sub-folder of this repo for the tests and examples to work.
 
 ### Fetching sub-modules
 
@@ -32,7 +29,7 @@ If you have already cloned the repository and want to fetch the sub modules, use
 git submodule update --init --recursive
 ```
 
-If you have downloaded this repository as a zip file then these sub modules need to be downloaded separately as GitHub does not include them in the archive. In particular, note that the zip download will contain links to LFS content, rather than the files themselves. As such, these need to be downloaded individually.
+If you have downloaded this repository as a zip file then these sub modules need to be downloaded separately as GitHub does not include them in the archive.
 
 ## Build tools
 
