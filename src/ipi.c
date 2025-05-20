@@ -264,7 +264,7 @@ static int compareToIpv4Range(
 		if ((uint32_t)curIndex + 1 < item->collection->count &&
 			item->collection->get(
 				item->collection,
-				++curIndex,
+				(uint32_t)++curIndex,
 				&nextItem,
 				exception) != NULL && EXCEPTION_OKAY) {
 			if (compareIpAddresses(((Ipv4Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV4_LENGTH) <= 0) {
@@ -297,7 +297,7 @@ static int compareToIpv6Range(
 		if ((uint32_t)curIndex + 1 < item->collection->count &&
 			item->collection->get(
 				item->collection,
-				++curIndex,
+				(uint32_t)++curIndex,
 				&nextItem,
 				exception) != NULL && EXCEPTION_OKAY) {
 			if (compareIpAddresses(((Ipv6Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV6_LENGTH) <= 0) {
