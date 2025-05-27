@@ -66,6 +66,10 @@ void ConfigIpi::setMaxPerformance() {
 	setPerformanceFromExistingConfig(fiftyoneDegreesIpiInMemoryConfig);
 }
 
+void ConfigIpi::setShowHighRisk(bool show) {
+	this->config.showHighRisk = show;
+}
+
 const CollectionConfig & ConfigIpi::getStrings() const {
 	return strings;
 }
@@ -108,6 +112,10 @@ const CollectionConfig & ConfigIpi::getPropertyTypes() const {
 
 const CollectionConfig & ConfigIpi::getGraph() const {
 	return graph;
+}
+
+const bool ConfigIpi::getShowHighRisk() const {
+	return config.showHighRisk;
 }
 
 void ConfigIpi::initCollectionConfig() {
