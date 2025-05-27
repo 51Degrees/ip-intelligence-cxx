@@ -159,15 +159,30 @@ static const char* getPropertyValueAsString(
 	ResultsIpi* results,
 	const char* propertyName) {
 	EXCEPTION_CREATE;
-	ResultsIpiGetValuesString(
-		results,
-		propertyName,
-		valueBuffer,
-		sizeof(valueBuffer),
-		"|",
-		exception);
-	EXCEPTION_THROW;
-	return valueBuffer;
+	DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
+	int propertyIndex = PropertiesGetRequiredPropertyIndexFromName(
+		dataSet->b.b.available,
+		propertyName);
+	if (ResultsIpiGetHasValues(results, propertyIndex, exception)) {
+		ResultsIpiGetValuesString(
+			results,
+			propertyName,
+			valueBuffer,
+			sizeof(valueBuffer),
+			"|",
+			exception);
+		EXCEPTION_THROW;
+		return valueBuffer;
+	}
+	else {
+		fiftyoneDegreesResultsNoValueReason reason = ResultsIpiGetNoValueReason(
+			results,
+			propertyIndex,
+			exception);
+		const char* message = ResultsIpiGetNoValueReasonMessage(reason);
+		EXCEPTION_THROW;
+		return message;
+	}
 }
 
 /**
