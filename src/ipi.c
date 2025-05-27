@@ -147,7 +147,8 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiInMemoryConfig = {
 	{0,0,0}, // ProfileGroups
 	{0,0,0}, // PropertyTypes
 	{0,0,0}, // ProfileOffsets
-	{0,0,0}  // Graph
+	{0,0,0}, // Graph
+	false    // Allow high risk
 };
 #undef FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY
 #define FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY \
@@ -165,7 +166,8 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiHighPerformanceConfig = {
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // PropertyTypes
 	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileOffsets
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // Graph
+	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Graph
+	false                                               // Allow high risk
 };
 
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiLowMemoryConfig = {
@@ -180,7 +182,8 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiLowMemoryConfig = {
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // PropertyTypes
 	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileOffsets
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // Graph
+	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Graph
+	false                                         // Allow high risk
 };
 
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig = {
@@ -195,7 +198,8 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig = {
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // PropertyTypes
 	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileOffsets
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // Graph
+	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Graph
+	false                                         // Allow high risk
 };
 
 #define FIFTYONE_DEGREES_IPI_CONFIG_BALANCED \
@@ -210,7 +214,8 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig = {
 { FIFTYONE_DEGREES_PROFILE_GROUPS_LOADED, FIFTYONE_DEGREES_PROFILE_GROUPS_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* ProfileGroups */ \
 { FIFTYONE_DEGREES_PROPERTY_LOADED, FIFTYONE_DEGREES_PROPERTY_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Property Types */ \
 { FIFTYONE_DEGREES_PROFILE_LOADED, FIFTYONE_DEGREES_PROFILE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* ProfileOffsets */ \
-{ FIFTYONE_DEGREES_IP_GRAPH_LOADED, FIFTYONE_DEGREES_IP_GRAPH_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY } /* Graph */
+{ FIFTYONE_DEGREES_IP_GRAPH_LOADED, FIFTYONE_DEGREES_IP_GRAPH_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Graph */ \
+false /* Allow high risk */
 
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiBalancedConfig = {
 	FIFTYONE_DEGREES_IPI_CONFIG_BALANCED
@@ -349,6 +354,7 @@ static void resetDataSet(DataSetIpi* dataSet) {
 	dataSet->propertyTypes = NULL;
 	dataSet->strings = NULL;
 	dataSet->values = NULL;
+	dataSet->riskFactorIndex = -1;
 }
 
 static void freeDataSet(void* dataSetPtr) {
@@ -1061,6 +1067,27 @@ static StatusCode initWithFile(DataSetIpi* dataSet, Exception* exception) {
 
 #endif
 
+/**
+ * Initialize the available property index for the RiskFactor property.
+ * This is set in the dataset so that it can be quickly accessed.
+ * 
+ * @param dataSet to set the index in
+ * @param exception to set if the property is not available (unless
+ *                  showHighRisk is enabled in the config)
+ * @return status code indicating if the operation was successful
+ */
+static StatusCode initRiskFactor(DataSetIpi* dataSet, Exception* exception) {
+	dataSet->riskFactorIndex = PropertiesGetPropertyIndexFromName(
+		dataSet->b.b.available,
+		"RiskFactor");
+	if (dataSet->riskFactorIndex < 0 &&
+		dataSet->config.showHighRisk == false) {
+		EXCEPTION_SET(INVALID_CONFIG);
+		return INVALID_CONFIG;
+	}
+	return SUCCESS;
+}
+
 static StatusCode initDataSetFromFile(
 	void* dataSetBase,
 	const void* configBase,
@@ -1136,6 +1163,15 @@ static StatusCode initDataSetFromFile(
 		}
 		return status;
 	}
+
+	status = initRiskFactor(dataSet, exception);
+	if (status != SUCCESS || EXCEPTION_FAILED) {
+		if (config->b.useTempFile == true) {
+			FileDelete(dataSet->b.b.fileName);
+		}
+		return status;
+	}
+
 	return status;
 }
 
@@ -1263,6 +1299,14 @@ static StatusCode initDataSetFromMemory(
 	// Initialise the components available to flag which components have
 	// properties which are to be returned (i.e. available properties).
 	status = initComponentsAvailable(dataSet, exception);
+
+	status = initRiskFactor(dataSet, exception);
+	if (status != SUCCESS || EXCEPTION_FAILED) {
+		if (config->b.useTempFile == true) {
+			FileDelete(dataSet->b.b.fileName);
+		}
+		return status;
+	}
 
 	return status;
 }
@@ -2116,6 +2160,44 @@ static bool resultGetHasValidPropertyValueOffset(
 	return hasValidOffset;
 }
 
+/**
+ * Get whether or not the result is deemed high risk.
+ * This checks the value of the RiskFactor property. If the result does not
+ * have a value for it, then false is returned.
+ * @param results containing the single result
+ * @param result to check
+ * @param exception to set if required
+ * @return true if the result has a value for RiskFactor, and it is not low risk
+ */
+static bool resultIsHighRisk(
+	fiftyoneDegreesResultsIpi* const results,
+	fiftyoneDegreesResultIpi* const result,
+	fiftyoneDegreesException* const exception) {
+	const fiftyoneDegreesDataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
+
+	const bool hasValidOffset = resultGetHasValidPropertyValueOffset(
+		results,
+		result,
+		dataSet->riskFactorIndex,
+		exception);
+
+	// The property has been set already by the method above.
+	fiftyoneDegreesProperty* property = (fiftyoneDegreesProperty*)results->propertyItem.data.ptr;
+	if (hasValidOffset) {
+		ProfilePercentage* values = getValuesFromResult(results, result, property, exception);
+		for (uint32_t i = 0; i < results->values.count; i++) {
+			const StoredBinaryValue* const binaryValue =
+				(const StoredBinaryValue*)values[i].item.data.ptr;
+			if (binaryValue->byteValue > FIFTYONE_DEGREES_IPI_RISKFACTOR_LOW) {
+				// One of the values for RiskFactor is not low risk.
+				return true;
+			}
+		}
+		return false;
+	}
+	return false;
+}
+
 bool fiftyoneDegreesResultsIpiGetHasValues(
 	fiftyoneDegreesResultsIpi* results,
 	int requiredPropertyIndex,
@@ -2145,6 +2227,13 @@ bool fiftyoneDegreesResultsIpiGetHasValues(
 			return false;
 		}
 		if (hasValidOffset) {
+			if (dataSet->config.showHighRisk == false &&
+				resultIsHighRisk(
+					results,
+					&results->items[i],
+					exception)) {
+				return false;
+			}
 			return true;
 		}
 	}
@@ -2180,7 +2269,13 @@ fiftyoneDegreesResultsNoValueReason fiftyoneDegreesResultsIpiGetNoValueReason(
 			return false;
 		}
 		if (hasValidOffset) {
-			return FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_UNKNOWN;
+			if (resultIsHighRisk(results, &results->items[i], exception) &&
+				dataSet->config.showHighRisk == false) {
+				return FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_HIGH_RISK;
+			}
+			else {
+				return FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_UNKNOWN;
+			}
 		}
 	}
 	if (EXCEPTION_OKAY) {
@@ -2199,6 +2294,12 @@ const char* fiftyoneDegreesResultsIpiGetNoValueReasonMessage(
 	case FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_NULL_PROFILE:
 		return "The results contained a null profile for the component which "
 			"the required property belongs to.";
+	case FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_HIGH_RISK:
+		return "The results contained a non-zero risk factor for the component "
+			"which the required property belongs to.";
+	case FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_INVALID_PROPERTY:
+		return "The property is not available. Either it is not present in the "
+			"data file, or has not been selected in the config.";
 	case FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_UNKNOWN:
 	default:
 		return "The reason for missing values is unknown.";
