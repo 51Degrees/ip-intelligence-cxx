@@ -123,6 +123,13 @@ namespace FiftyoneDegrees {
 			void setMaxPerformance();
 
 			/**
+			 * Set the showHighRisk flag for result values. True to show 
+			 * values for IPs with a high risk of having inaccurate
+			 * results. False by default.
+			 */
+			void setShowHighRisk(bool show);
+
+			/**
 			 * Set the expected concurrent requests for all the data set's
 			 * collections. All collections in the data set which use
 			 * cached elements will have their caches constructued to allow
@@ -205,18 +212,23 @@ namespace FiftyoneDegrees {
 			const CollectionConfig &getGraph() const;
 
 			/**
+			 * Get the value for the showHighRisk flag.
+			 */
+			const bool getShowHighRisk() const;
+
+			/**
 			 * Get the lowest concurrency value in the list of possible
 			 * concurrencies.
 			 * @return a 16 bit integer with the minimum concurrency value.
 			 */
 			uint16_t getConcurrency() const override;
 
-			 /**
-			  * Gets the configuration data structure for use in C code.
-			  * Used internally.
-			  * @return pointer to the underlying configuration data
-			  * structure.
-			  */
+			/**
+			* Gets the configuration data structure for use in C code.
+			* Used internally.
+			* @return pointer to the underlying configuration data
+			* structure.
+			*/
 			fiftyoneDegreesConfigIpi &getConfig();
 
 			/** 
