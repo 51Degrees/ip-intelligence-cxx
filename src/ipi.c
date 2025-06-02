@@ -69,10 +69,18 @@ if (dataSet->t == NULL) { \
 	return INVALID_COLLECTION_CONFIG; \
 }
 
+/** 
+ * Get min/max values with header guards to prevent redefinition warnings
+ * when amalgamated with system headers (e.g., macOS sys/param.h)
+ */
 /** Get min value */
+#ifndef MIN
 #define MIN(a,b) a < b ? a : b
+#endif /* MIN */
 /** Get max value */
+#ifndef MAX
 #define MAX(a,b) a > b ? a : b
+#endif /* MAX */
 
 /**
  * PRIVATE DATA STRUCTURES
