@@ -137,8 +137,8 @@ typedef struct t_thread_performance_state {
  */
 static void printLoadBar(performanceThreadState* state) {
 	int i;
-	int full = state->count / state->main->progress;
-	int empty = (state->main->ipAddressesCount - state->count) /
+	long full = state->count / state->main->progress;
+	long empty = (state->main->ipAddressesCount - state->count) /
 		state->main->progress;
 	printf("\r\t[");
 	for (i = 0; i < full; i++) {
