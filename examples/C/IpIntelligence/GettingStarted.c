@@ -140,8 +140,6 @@ Areas: "POLYGON EMPTY":1
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
-#else
-#include "dmalloc.h"
 #endif
 #endif
 
@@ -290,11 +288,6 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-#ifdef _DEBUG
-#ifndef _MSC_VER
-	dmalloc_debug_setup("log-stats,log-non-free,check-fence,log=dmalloc.log");
-#endif
-#endif
 
 	fiftyoneDegreesIpiGettingStarted(
 		dataFilePath,
@@ -303,8 +296,6 @@ int main(int argc, char* argv[]) {
 #ifdef _DEBUG
 #ifdef _MSC_VER
 	_CrtDumpMemoryLeaks();
-#else
-	printf("Log file is %s\r\n", dmalloc_logpath);
 #endif
 #endif
 

@@ -93,8 +93,6 @@ There are '1' countries in the data set with code 'gb'.
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
-#else
-#include "dmalloc.h"
 #endif
 #endif
 

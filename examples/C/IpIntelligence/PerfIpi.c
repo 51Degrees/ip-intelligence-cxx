@@ -65,8 +65,6 @@ Average matching per second: ***
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
-#else
-#include "dmalloc.h"
 #endif
 #else
 #define PASSES 1

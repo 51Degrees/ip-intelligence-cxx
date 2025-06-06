@@ -102,8 +102,6 @@ Failed to reload '0' times.
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
-#else
-#include "dmalloc.h"
 #endif
 #endif
 
@@ -395,9 +393,7 @@ int main(int argc, char* argv[]) {
 
 	// Memory leak detection code.
 #ifdef _DEBUG
-#ifndef _MSC_VER
-	dmalloc_debug_setup("log-stats,log-non-free,check-fence,log=dmalloc.log");
-#else
+#ifdef _MSC_VER
 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
 	_CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
 #endif
@@ -447,8 +443,6 @@ int main(int argc, char* argv[]) {
 #ifdef _DEBUG
 #ifdef _MSC_VER
 	_CrtDumpMemoryLeaks();
-#else
-	printf("Log file is %s\r\n", dmalloc_logpath);
 #endif
 #endif
 

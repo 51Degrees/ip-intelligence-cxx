@@ -118,8 +118,6 @@ Expected content of output file:
 #ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
-#else
-#include "dmalloc.h"
 #endif
 #endif
 

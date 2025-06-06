@@ -137,8 +137,6 @@ Ipv6 Address: 2001:4860:4860::8888
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
-#else
-#include "dmalloc.h"
 #endif
 #endif
 
