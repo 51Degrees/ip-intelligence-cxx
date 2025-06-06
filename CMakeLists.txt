@@ -13,6 +13,15 @@ option(LargeDataFileSupport "LargeDataFileSupport" ON)
 
 include(${CMAKE_CURRENT_LIST_DIR}/src/common-cxx/CMakeLists.txt NO_POLICY_SCOPE)
 
+#Compute is test coverage enabled
+string(TOLOWER "${CMAKE_BUILD_TYPE}" lower_CMAKE_BUILD_TYPE)
+if (NOT MSVC AND "${lower_CMAKE_BUILD_TYPE}" STREQUAL "debug")
+	set(TESTCOVERAGE_ENABLED TRUE)
+else()
+	set(TESTCOVERAGE_ENABLED FALSE)
+endif()
+message("-- TESTCOVERAGE_ENABLED=${TESTCOVERAGE_ENABLED}")
+
 project(51DegreesIpIntelligence VERSION 4.0.1 LANGUAGES CXX C)
 
 set(IPI ${CMAKE_CURRENT_LIST_DIR}/src)
@@ -35,6 +44,27 @@ add_library(fiftyone-ip-intelligence-cxx ${IPICPP_SRC} ${IPICPP_H})
 target_link_libraries(fiftyone-ip-intelligence-cxx
 	fiftyone-ip-intelligence-c
 	fiftyone-common-cxx)
+
+if (TESTCOVERAGE_ENABLED)
+	message("-- fiftyone-ip-intelligence-c(xx)-cov adding targets with code coverage")
+	add_library(fiftyone-ip-intelligence-c-cov ${IPIC_SRC} ${IPIC_H})
+	if (MSVC)
+		target_link_libraries(fiftyone-ip-intelligence-c-cov fiftyone-common-c-cov)
+		target_compile_options(fiftyone-ip-intelligence-c-cov PRIVATE "/D_CRT_SECURE_NO_WARNINGS")
+	else()
+		target_link_libraries(fiftyone-ip-intelligence-c-cov fiftyone-common-c-cov m)
+	endif()
+	target_compile_options(fiftyone-ip-intelligence-c-cov PRIVATE "--coverage")
+	
+	add_library(fiftyone-ip-intelligence-cxx-cov ${IPICPP_SRC} ${IPICPP_H})
+	target_link_libraries(fiftyone-ip-intelligence-cxx-cov
+		fiftyone-ip-intelligence-c-cov
+		fiftyone-common-cxx-cov)
+	target_compile_options(fiftyone-ip-intelligence-cxx-cov PRIVATE "--coverage")
+	
+	set_target_properties(fiftyone-ip-intelligence-c-cov fiftyone-ip-intelligence-cxx-cov
+		PROPERTIES FOLDER "IP Intelligence")
+endif()
 
 set_target_properties(fiftyone-ip-intelligence-c fiftyone-ip-intelligence-cxx
 	PROPERTIES FOLDER "IP Intelligence")  
