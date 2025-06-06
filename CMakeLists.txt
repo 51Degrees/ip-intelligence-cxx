@@ -147,9 +147,6 @@ if(BUILD_TESTING)
 		target_link_libraries(IpiTests fiftyone-ip-intelligence-cxx gtest_main)
 	endif()
 	
-	# Add dummy dmalloc for testing to avoid system header conflicts
-	target_include_directories(IpiTests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
-	
 	gtest_discover_tests(IpiTests DISCOVERY_MODE PRE_TEST)
 
 	set_target_properties(IpiTests PROPERTIES FOLDER "Tests")
