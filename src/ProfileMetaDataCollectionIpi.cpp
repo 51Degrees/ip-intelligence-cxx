@@ -23,6 +23,7 @@
 #include "ProfileMetaDataCollectionIpi.hpp"
 #include "common-cxx/Exceptions.hpp"
 #include "fiftyone.h"
+#include "common-cxx/collectionKeyTypes.h"
 
 using namespace std;
 using namespace FiftyoneDegrees::IpIntelligence;
@@ -53,7 +54,8 @@ ProfileMetaData* ProfileMetaDataCollectionIpi::getByIndex(
 		profileOffsets, index, exception);
 	EXCEPTION_THROW
 	const CollectionKey profileKey = {
-		(uint32_t)profileOffsetValue
+		(uint32_t)profileOffsetValue,
+		CollectionKeyType_Profile,
 	};
 	profile = (const Profile *)profiles->get(
 		profiles,

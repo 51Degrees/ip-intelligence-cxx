@@ -23,6 +23,7 @@
 #include "ComponentMetaDataBuilderIpi.hpp"
 
 #include "fiftyone.h"
+#include "common-cxx/collectionKeyTypes.h"
 #include "common-cxx/Exceptions.hpp"
 
 using namespace FiftyoneDegrees::Common;
@@ -52,7 +53,8 @@ ComponentMetaData* ComponentMetaDataBuilderIpi::build(
 	}
 	else {
 		const CollectionKey profileKey = {
-			(uint32_t)component->defaultProfileOffset
+			(uint32_t)component->defaultProfileOffset,
+			CollectionKeyType_Profile,
 		};
 		profile = (Profile*)dataSet->profiles->get(
 			dataSet->profiles, 
