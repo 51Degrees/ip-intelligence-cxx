@@ -51,9 +51,12 @@ ComponentMetaData* ComponentMetaDataBuilderIpi::build(
 			0);
 	}
 	else {
+		const CollectionKey profileKey = {
+			(uint32_t)component->defaultProfileOffset
+		};
 		profile = (Profile*)dataSet->profiles->get(
 			dataSet->profiles, 
-			component->defaultProfileOffset,
+			profileKey,
 			&item,
 			exception);
 		EXCEPTION_THROW;

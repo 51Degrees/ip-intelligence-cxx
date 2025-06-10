@@ -47,14 +47,17 @@ ProfileMetaData* ProfileMetaDataCollectionIpi::getByIndex(
 	EXCEPTION_CREATE;
 	Item item;
 	ProfileMetaData *result = nullptr;
-	Profile *profile;
+	const Profile *profile;
 	DataReset(&item.data);
 	auto const profileOffsetValue = CollectionGetInteger32(
 		profileOffsets, index, exception);
 	EXCEPTION_THROW
-	profile = (Profile *)profiles->get(
+	const CollectionKey profileKey = {
+		(uint32_t)profileOffsetValue
+	};
+	profile = (const Profile *)profiles->get(
 		profiles,
-		profileOffsetValue,
+		profileKey,
 		&item,
 		exception);
 	EXCEPTION_THROW

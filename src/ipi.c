@@ -269,17 +269,19 @@ static int compareToIpv4Range(
 	if (tempResult < 0) {
 		Item nextItem;
 		DataReset(&nextItem.data);
-		if ((uint32_t)curIndex + 1 < item->collection->count &&
-			item->collection->get(
+		if ((uint32_t)curIndex + 1 < item->collection->count) {
+			const CollectionKey curKey = { (uint32_t)++curIndex };
+			if (item->collection->get(
 				item->collection,
-				(uint32_t)++curIndex,
+				curKey,
 				&nextItem,
 				exception) != NULL && EXCEPTION_OKAY) {
-			if (compareIpAddresses(((Ipv4Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV4_LENGTH) <= 0) {
-				result = -1;
-			}
-			COLLECTION_RELEASE(item->collection, &nextItem);
+				if (compareIpAddresses(((Ipv4Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV4_LENGTH) <= 0) {
+					result = -1;
 				}
+				COLLECTION_RELEASE(item->collection, &nextItem);
+			}
+		}
 	}
 	else if (tempResult > 0 && curIndex > 0) {
 		// The IP address is out of range
@@ -302,18 +304,21 @@ static int compareToIpv6Range(
 	if (tempResult < 0) {
 		Item nextItem;
 		DataReset(&nextItem.data);
-		if ((uint32_t)curIndex + 1 < item->collection->count &&
-			item->collection->get(
+		if ((uint32_t)curIndex + 1 < item->collection->count) {
+			const CollectionKey curKey = { (uint32_t)++curIndex };
+			if (item->collection->get(
 				item->collection,
-				(uint32_t)++curIndex,
+				curKey,
 				&nextItem,
 				exception) != NULL && EXCEPTION_OKAY) {
-			if (compareIpAddresses(((Ipv6Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV6_LENGTH) <= 0) {
-				// The IP address is not within the range
-				result = -1;
-			}
-			COLLECTION_RELEASE(item->collection, &nextItem);
+
+				if (compareIpAddresses(((Ipv6Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV6_LENGTH) <= 0) {
+					// The IP address is not within the range
+					result = -1;
 				}
+				COLLECTION_RELEASE(item->collection, &nextItem);
+			}
+		}
 	}
 	else if (tempResult > 0 && curIndex > 0) {
 		// The IP address is out of range
@@ -420,11 +425,11 @@ static long initGetHttpHeaderString(
 	return -1;
 }
 
-static String* initGetPropertyString(
+static const String* initGetPropertyString(
 	void* state,
 	uint32_t index,
 	Item* item) {
-	String* name = NULL;
+	const String* name = NULL;
 	Item propertyItem;
 	Property* property;
 	const DataSetIpi* dataSet = (DataSetIpi*)((stateWithException*)state)->state;
@@ -435,9 +440,10 @@ static String* initGetPropertyString(
 		DataReset(&propertyItem.data);
 		item->collection = NULL;
 		item->handle = NULL;
+		const CollectionKey indexKey = { index };
 		property = (Property*)dataSet->properties->get(
 			dataSet->properties,
-			index,
+			indexKey,
 			&propertyItem,
 			exception);
 		if (property != NULL && EXCEPTION_OKAY) {
@@ -497,7 +503,7 @@ static int findPropertyIndexByName(
 	int index;
 	bool found = false;
 	Property *property;
-	String *propertyName;
+	const String *propertyName;
 	Item propertyItem, nameItem;
 	const int count = CollectionGetCount(properties);
 	DataReset(&propertyItem.data);
@@ -528,14 +534,14 @@ static int findPropertyIndexByName(
 }
 
 static void initGetEvidencePropertyRelated(
-	DataSetIpi* dataSet,
-	PropertyAvailable* availableProperty,
-	EvidenceProperties* evidenceProperties,
-	int* count,
-	char* suffix,
-	Exception* exception) {
-	Property* property;
-	String* name;
+	DataSetIpi* const dataSet,
+	PropertyAvailable* const availableProperty,
+	EvidenceProperties* const evidenceProperties,
+	int* const count,
+	char* const suffix,
+	Exception* const exception) {
+	const Property* property;
+	const String* name;
 	const String* availableName = (String*)availableProperty->name.data.ptr;
 	const int requiredLength = ((int)strlen(suffix)) + availableName->size - 1;
 	Item propertyItem, nameItem;
@@ -672,18 +678,20 @@ static void dumpProperties(
 	const uint32_t valuesCount = CollectionGetCount(dataSet->values);
 	for (uint32_t i = 0; (i < valuesCount) && EXCEPTION_OKAY; i++) {
 		DataReset(&valueItem.data);
+		const CollectionKey valueKey = { i };
 		const Value * const nextValue = (Value*)dataSet->values->get(
 			dataSet->values,
-			i,
+			valueKey,
 			&valueItem,
 			exception);
 		if (!(nextValue && EXCEPTION_OKAY)) {
 			return;
 		}
 		DataReset(&propTypeItem.data);
+		const CollectionKey typeRecordKey = { nextValue->propertyIndex };
 		const PropertyTypeRecord * const nextPropType = (PropertyTypeRecord*)dataSet->propertyTypes->get(
 			dataSet->propertyTypes,
-			nextValue->propertyIndex,
+			typeRecordKey,
 			&propTypeItem,
 			exception);
 		if (!(nextPropType && EXCEPTION_OKAY)) {
@@ -1825,9 +1833,10 @@ static uint32_t addValuesFromSingleProfile(
 	Profile *profile = NULL;
 	if (profileOffset != NULL_PROFILE_OFFSET) {
 		DataReset(&profileItem.data);
+		const CollectionKey profileKey = { profileOffset };
 		profile = (Profile*)dataSet->profiles->get(
 			dataSet->profiles,
-			profileOffset,
+			profileKey,
 			&profileItem,
 			exception);
 		// If profile is found
@@ -1856,9 +1865,10 @@ static uint32_t addValuesFromProfileGroup(
 
 	if (profileGroupOffset != NULL_PROFILE_OFFSET) {
 		DataReset(&profileGroupItem.data);
+		const CollectionKey profileGroupKey = { profileGroupOffset };
 		const offsetPercentage* const firstWeightedProfileOffset = (offsetPercentage*)dataSet->profileGroups->get(
 			dataSet->profileGroups,
-			profileGroupOffset,
+			profileGroupKey,
 			&profileGroupItem,
 			exception);
 		if (firstWeightedProfileOffset != NULL && EXCEPTION_OKAY) {
@@ -1893,9 +1903,10 @@ static uint32_t getProfileOffset(
 
 	Item item;
 	DataReset(&item.data);
+	const CollectionKey resultKey = { offsetIndex };
 	const uint32_t * const resultRef = (uint32_t*)profileOffsets->get(
 		profileOffsets,
-		offsetIndex,
+		resultKey,
 		&item,
 		exception);
 	if (!(resultRef && EXCEPTION_OKAY)) {
@@ -2031,9 +2042,10 @@ static bool profileHasValidPropertyValue(
 
 	if (profileOffset != NULL_PROFILE_OFFSET) {
 		DataReset(&profileItem.data);
+		const CollectionKey profileKey = { profileOffset };
 		profile = (Profile*)dataSet->profiles->get(
 			dataSet->profiles,
-			profileOffset,
+			profileKey,
 			&profileItem,
 			exception);
 		// If profile is found
@@ -2097,10 +2109,13 @@ static bool resultGetHasValidPropertyValueOffset(
 							exception);
 					}
 				} else {
+					const CollectionKey profileOffsetKey = {
+						result->graphResult.offset
+					};
 					const offsetPercentage *weightedProfileOffset =
 						(offsetPercentage*)dataSet->profileGroups->get(
 							dataSet->profileGroups,
-							result->graphResult.offset,
+							profileOffsetKey,
 							&item,
 							exception);
 					if (weightedProfileOffset && EXCEPTION_OKAY) {
@@ -2283,9 +2298,10 @@ static void fiftyoneDegreesResultsIpiGetValuesStringInternal(
 			return;
 		}
 		DataReset(&propertyItem.data);
+		const CollectionKey propertyKey = { propertyIndex };
 		property = (Property*)dataSet->properties->get(
 				dataSet->properties,
-				propertyIndex,
+				propertyKey,
 				&propertyItem,
 				exception);
 		if (property != NULL && EXCEPTION_OKAY) {
