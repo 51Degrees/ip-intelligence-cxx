@@ -32,8 +32,8 @@ jobs:
       cache-assets: true
     secrets:
       token: ${{ secrets.ACCESS_TOKEN }}
-      IpIntelligence: ${{ secrets.DEVICE_DETECTION_KEY }}
-      IpIntelligenceUrl: ${{ secrets.IPI_DATA_FILE_URL }}
+      DeviceDetection: ${{ secrets.DEVICE_DETECTION_KEY }}
+      DeviceDetectionUrl: ${{ secrets.IPI_DATA_FILE_URL }}
 
   Publish:
     if: ${{ !cancelled() }}
@@ -48,5 +48,5 @@ jobs:
       cache-assets: true
     secrets:
       token: ${{ secrets.ACCESS_TOKEN }}
-      IpIntelligence: ${{ secrets.DEVICE_DETECTION_KEY }}
-      IpIntelligenceUrl: ${{ secrets.IPI_DATA_FILE_URL }}
+      DeviceDetection: ${{ secrets.DEVICE_DETECTION_KEY }}
+      DeviceDetectionUrl: ${{ secrets.IPI_DATA_FILE_URL }}
