@@ -2207,6 +2207,8 @@ const char* fiftyoneDegreesResultsIpiGetNoValueReasonMessage(
 	case FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_NULL_PROFILE:
 		return "The results contained a null profile for the component which "
 			"the required property belongs to.";
+	case FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_INVALID_PROPERTY:
+		return "The requested property does not exist, or is not a required property";
 	case FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_UNKNOWN:
 	default:
 		return "The reason for missing values is unknown.";
