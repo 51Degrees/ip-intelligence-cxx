@@ -213,8 +213,7 @@ ENGINE_CONFIG(e, HighPerformance) \
 ENGINE_CONFIG(e, LowMemory) \
 ENGINE_CONFIG(e, Balanced) \
 ENGINE_CONFIG(e, BalancedTemp) \
-ENGINE_CONFIG(e, InMemory) \
-ENGINE_CONFIG(e, SingleLoaded)
+ENGINE_CONFIG(e, InMemory)
 
 #define ENGINE_FILE_TESTS(e) \
 extern fiftyoneDegreesConfig##e *ENGINE_CLASS_NAME_CONFIG_POINTER(e, Null); \
@@ -223,67 +222,56 @@ EXTERN_ENGINE_CONFIG(e, LowMemory) \
 EXTERN_ENGINE_CONFIG(e, Balanced) \
 EXTERN_ENGINE_CONFIG(e, BalancedTemp) \
 EXTERN_ENGINE_CONFIG(e, InMemory) \
-EXTERN_ENGINE_CONFIG(e, SingleLoaded) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, OnePropertyString) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, OnePropertyString) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, OnePropertyString) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, OnePropertyString) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, OnePropertyString) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, SingleLoaded, OnePropertyString) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, TwoPropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, TwoPropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, TwoPropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, TwoPropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, TwoPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, SingleLoaded, TwoPropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, DuplicatePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, DuplicatePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, DuplicatePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, DuplicatePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, DuplicatePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, SingleLoaded, DuplicatePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, MixedPropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, MixedPropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, MixedPropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, MixedPropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, MixedPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, SingleLoaded, MixedPropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, SingleLoaded, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, OnePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, OnePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, OnePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, OnePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, OnePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, SingleLoaded, OnePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, TwoPropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, TwoPropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, TwoPropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, TwoPropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, TwoPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, SingleLoaded, TwoPropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, DuplicatePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, DuplicatePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, DuplicatePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, DuplicatePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, DuplicatePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, SingleLoaded, DuplicatePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, MixedPropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, MixedPropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, MixedPropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, MixedPropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, MixedPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, SingleLoaded, MixedPropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, SingleLoaded, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, OnePropertyString) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, TwoPropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, DuplicatePropertyStrings) \
@@ -299,12 +287,10 @@ ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, Null) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, Null) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, Null) \
 ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, InMemory, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, SingleLoaded, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, LowMemory, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, Balanced, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, BalancedTemp, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, InMemory, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, SingleLoaded, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, Null, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, Null, AllEdgePropertyArray)
 
@@ -316,7 +302,6 @@ EXTERN_ENGINE_CONFIG(e, LowMemory) \
 EXTERN_ENGINE_CONFIG(e, Balanced) \
 EXTERN_ENGINE_CONFIG(e, BalancedTemp) \
 EXTERN_ENGINE_CONFIG(e, InMemory) \
-EXTERN_ENGINE_CONFIG(e, SingleLoaded) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, InMemory, OnePropertyString) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, InMemory, TwoPropertyStrings) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, InMemory, DuplicatePropertyStrings) \

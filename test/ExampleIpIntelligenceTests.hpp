@@ -69,7 +69,6 @@ protected:
     TEST_F(c, HighPerformance) {                                     \
         run(fiftyoneDegreesIpiHighPerformanceConfig);                \
     }                                                                \
-    TEST_F(c, InMemory) { run(fiftyoneDegreesIpiInMemoryConfig); } \
-    TEST_F(c, SingleLoaded) { run(fiftyoneDegreesIpiSingleLoadedConfig); }
+    TEST_F(c, InMemory) { run(fiftyoneDegreesIpiInMemoryConfig); }
 
 #endif
