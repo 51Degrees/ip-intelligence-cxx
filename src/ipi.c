@@ -1894,47 +1894,48 @@ static const CollectionKeyType CollectionKeyType_OffsetPercentage = {
 };
 
 static uint32_t addValuesFromProfileGroup(
-	ResultsIpi* results,
-	Property *property,
-	uint32_t profileGroupOffset,
-	Exception* exception) {
+	ResultsIpi * const results,
+	Property * const property,
+	const uint32_t profileGroupOffset,
+	Exception * const exception) {
 	uint32_t count = 0;
-	Item profileGroupItem;
-	const DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
+	const DataSetIpi * const dataSet = (const DataSetIpi*)results->b.dataSet;
 
-	if (profileGroupOffset != NULL_PROFILE_OFFSET) {
-		DataReset(&profileGroupItem.data);
+	if (profileGroupOffset == NULL_PROFILE_OFFSET) {
+		return 0;
+	}
+	Item profileGroupItem;
+	DataReset(&profileGroupItem.data);
+
+	const Collection * const profileGroups = dataSet->profileGroups;
+	for (uint32_t totalWeight = 0, nextOffset = profileGroupOffset;
+		(totalWeight < FULL_RAW_WEIGHTING) && EXCEPTION_OKAY;
+		++nextOffset) {
 		const CollectionKey profileGroupKey = {
-			profileGroupOffset,
+			nextOffset,
 			CollectionKeyType_OffsetPercentage,
 		};
-		const offsetPercentage* const firstWeightedProfileOffset = (offsetPercentage*)dataSet->profileGroups->get(
-			dataSet->profileGroups,
+		const offsetPercentage* const nextWeightedProfileOffset = (const offsetPercentage*)profileGroups->get(
+			profileGroups,
 			profileGroupKey,
 			&profileGroupItem,
 			exception);
-		if (firstWeightedProfileOffset != NULL && EXCEPTION_OKAY) {
-			// FIXME: Do not rely on pointer arithmetic -- collection could be 'File'
-			const offsetPercentage *weightedProfileOffset = firstWeightedProfileOffset;
-			for (uint32_t totalWeight = 0;
-				totalWeight < FULL_RAW_WEIGHTING;
-				++weightedProfileOffset) {
-				totalWeight += weightedProfileOffset->rawWeighting;
-				if (totalWeight > FULL_RAW_WEIGHTING) {
-					EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
-					break;
-				}
-				count += addValuesFromSingleProfile(
-					results,
-					property,
-					weightedProfileOffset->offset,
-					weightedProfileOffset->rawWeighting,
-					exception);
-			}
-			COLLECTION_RELEASE(dataSet->profiles, &profileGroupItem);
+		if (!(nextWeightedProfileOffset && EXCEPTION_OKAY)) {
+			break;
 		}
+		totalWeight += nextWeightedProfileOffset->rawWeighting;
+		if (totalWeight <= FULL_RAW_WEIGHTING) {
+			count += addValuesFromSingleProfile(
+				results,
+				property,
+				nextWeightedProfileOffset->offset,
+				nextWeightedProfileOffset->rawWeighting,
+				exception);
+		} else {
+			EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
+		}
+		COLLECTION_RELEASE(dataSet->profiles, &profileGroupItem);
 	}
-
 	return count;
 }
 
@@ -2157,28 +2158,30 @@ static bool resultGetHasValidPropertyValueOffset(
 							exception);
 					}
 				} else {
-					const CollectionKey profileOffsetKey = {
-						result->graphResult.offset,
-						CollectionKeyType_OffsetPercentage,
-					};
-					const offsetPercentage *weightedProfileOffset =
-						(offsetPercentage*)dataSet->profileGroups->get(
-							dataSet->profileGroups,
-							profileOffsetKey,
+					const Collection * const profileGroups = dataSet->profileGroups;
+					for (uint32_t totalWeight = 0,
+						nextOffset = result->graphResult.offset;
+						(!hasValidOffset) && (totalWeight < FULL_RAW_WEIGHTING) && EXCEPTION_OKAY;
+						++nextOffset) {
+						const CollectionKey profileGroupKey = {
+							nextOffset,
+							CollectionKeyType_OffsetPercentage,
+						};
+						const offsetPercentage* const nextWeightedProfileOffset = (const offsetPercentage*)profileGroups->get(
+							profileGroups,
+							profileGroupKey,
 							&item,
 							exception);
-					if (weightedProfileOffset && EXCEPTION_OKAY) {
-						for (uint32_t totalWeight = 0;
-							!hasValidOffset && totalWeight < FULL_RAW_WEIGHTING;
-							++weightedProfileOffset) {
-							totalWeight += weightedProfileOffset->rawWeighting;
-							if (totalWeight > FULL_RAW_WEIGHTING) {
-								EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
-								break;
-							}
+						if (!(nextWeightedProfileOffset && EXCEPTION_OKAY)) {
+							break;
+						}
+						totalWeight += nextWeightedProfileOffset->rawWeighting;
+						if (totalWeight <= FULL_RAW_WEIGHTING) {
 							hasValidOffset = profileHasValidPropertyValue(
-								dataSet, weightedProfileOffset->offset, property, exception);
-							}
+								dataSet, nextWeightedProfileOffset->offset, property, exception);
+						} else {
+							EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
+						}
 						COLLECTION_RELEASE(dataSet->profiles, &item);
 					}
 				}
