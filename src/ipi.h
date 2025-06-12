@@ -183,7 +183,30 @@
  * DATA STRUCTURES
  */
 
-/** Dataset header containing information about the dataset. */
+/**
+ * Enum containing the possible values of the RiskFactor property value
+ * type.
+ */
+typedef enum e_fiftyoneDegreesIpiRiskFactor {
+	FIFTYONE_DEGREES_IPI_RISKFACTOR_LOW = 0, /**< The IP is part of a standard 
+											 wired or cellular IP with over 99% 
+											 country accuracy and better than 60% 
+											 combined accuracy within a 25 km 
+											 radius globally.*/
+	FIFTYONE_DEGREES_IPI_RISKFACTOR_MODERATE, /**< The IP is part of a hosting 
+											  environment where we are confident 
+											  the location represents over 60% 
+											  accuracy at the country level, so 
+											  higher precision values are too 
+											  inaccurate. */
+	FIFTYONE_DEGREES_IPI_RISKFACTOR_HIGH /**< The IP is part of a hosting network 
+										 where the location we have is likely 
+										 valid for less than 50% of the traffic. */
+} fiftyoneDegreesIpiRiskFactor;
+
+/**
+ * Dataset header containing information about the dataset.
+ */
 #pragma pack(push, 1)
 typedef struct fiftyone_degrees_ipi_dataset_header_t {
 	const int32_t versionMajor; /**< Major version of the data file loaded */
@@ -258,6 +281,8 @@ typedef struct fiftyone_degrees_config_ipi_t {
 	fiftyoneDegreesCollectionConfig propertyTypes; /**< Property types collection
 												   config */
 	fiftyoneDegreesCollectionConfig graph; /**< Config for each graph */
+	bool showHighRisk; /**< True to show values for IPs with a high risk of having
+					   inaccurate results. False by default. */
 } fiftyoneDegreesConfigIpi;
 
 /**
@@ -309,6 +334,10 @@ typedef struct fiftyone_degrees_dataset_ipi_t {
 											   collection */
 	fiftyoneDegreesIpiCgArray* graphsArray; /**< Array of graphs from 
 											collection */
+	int32_t riskFactorIndex; /**< The index in the available properties collection
+							 of the RiskFactor property, if available. Otherwise
+							 -1. This is used to quickly get the value when
+							 retrieving values from results. */
 } fiftyoneDegreesDataSetIpi;
 
 
