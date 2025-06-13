@@ -269,7 +269,7 @@ static int compareToIpv4Range(
 		if ((uint32_t)curIndex + 1 < item->collection->count) {
 			const CollectionKey curKey = {
 				(uint32_t)++curIndex,
-				CollectionKeyType_Ipv4Range,
+				&CollectionKeyType_Ipv4Range,
 			};
 			if (item->collection->get(
 				item->collection,
@@ -310,7 +310,7 @@ static int compareToIpv6Range(
 		if ((uint32_t)curIndex + 1 < item->collection->count) {
 			const CollectionKey curKey = {
 				(uint32_t)++curIndex,
-				CollectionKeyType_Ipv6Range,
+				&CollectionKeyType_Ipv6Range,
 			};
 			if (item->collection->get(
 				item->collection,
@@ -1898,7 +1898,7 @@ static uint32_t addValuesFromProfileGroup(
 		++nextOffset) {
 		const CollectionKey profileGroupKey = {
 			nextOffset,
-			CollectionKeyType_OffsetPercentage,
+			&CollectionKeyType_OffsetPercentage,
 		};
 		const offsetPercentage* const nextWeightedProfileOffset = (const offsetPercentage*)profileGroups->get(
 			profileGroups,
@@ -2150,7 +2150,7 @@ static bool resultGetHasValidPropertyValueOffset(
 						++nextOffset) {
 						const CollectionKey profileGroupKey = {
 							nextOffset,
-							CollectionKeyType_OffsetPercentage,
+							&CollectionKeyType_OffsetPercentage,
 						};
 						const offsetPercentage* const nextWeightedProfileOffset = (const offsetPercentage*)profileGroups->get(
 							profileGroups,
