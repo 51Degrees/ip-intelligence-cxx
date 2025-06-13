@@ -273,7 +273,7 @@ static int compareToIpv4Range(
 			};
 			if (item->collection->get(
 				item->collection,
-				curKey,
+				&curKey,
 				&nextItem,
 				exception) != NULL && EXCEPTION_OKAY) {
 				if (compareIpAddresses(
@@ -314,7 +314,7 @@ static int compareToIpv6Range(
 			};
 			if (item->collection->get(
 				item->collection,
-				curKey,
+				&curKey,
 				&nextItem,
 				exception) != NULL && EXCEPTION_OKAY) {
 
@@ -452,7 +452,7 @@ static const String* initGetPropertyString(
 		};
 		property = (Property*)dataSet->properties->get(
 			dataSet->properties,
-			indexKey,
+			&indexKey,
 			&propertyItem,
 			exception);
 		if (property != NULL && EXCEPTION_OKAY) {
@@ -693,7 +693,7 @@ static void dumpProperties(
 		};
 		const Value * const nextValue = (Value*)dataSet->values->get(
 			dataSet->values,
-			valueKey,
+			&valueKey,
 			&valueItem,
 			exception);
 		if (!(nextValue && EXCEPTION_OKAY)) {
@@ -706,7 +706,7 @@ static void dumpProperties(
 		};
 		const PropertyTypeRecord * const nextPropType = (PropertyTypeRecord*)dataSet->propertyTypes->get(
 			dataSet->propertyTypes,
-			typeRecordKey,
+			&typeRecordKey,
 			&propTypeItem,
 			exception);
 		if (!(nextPropType && EXCEPTION_OKAY)) {
@@ -1854,7 +1854,7 @@ static uint32_t addValuesFromSingleProfile(
 		};
 		profile = (Profile*)dataSet->profiles->get(
 			dataSet->profiles,
-			profileKey,
+			&profileKey,
 			&profileItem,
 			exception);
 		// If profile is found
@@ -1902,7 +1902,7 @@ static uint32_t addValuesFromProfileGroup(
 		};
 		const offsetPercentage* const nextWeightedProfileOffset = (const offsetPercentage*)profileGroups->get(
 			profileGroups,
-			profileGroupKey,
+			&profileGroupKey,
 			&profileGroupItem,
 			exception);
 		if (!(nextWeightedProfileOffset && EXCEPTION_OKAY)) {
@@ -1937,7 +1937,7 @@ static uint32_t getProfileOffset(
 	};
 	const uint32_t * const resultRef = (uint32_t*)profileOffsets->get(
 		profileOffsets,
-		resultKey,
+		&resultKey,
 		&item,
 		exception);
 	if (!(resultRef && EXCEPTION_OKAY)) {
@@ -2079,7 +2079,7 @@ static bool profileHasValidPropertyValue(
 		};
 		profile = (Profile*)dataSet->profiles->get(
 			dataSet->profiles,
-			profileKey,
+			&profileKey,
 			&profileItem,
 			exception);
 		// If profile is found
@@ -2154,7 +2154,7 @@ static bool resultGetHasValidPropertyValueOffset(
 						};
 						const offsetPercentage* const nextWeightedProfileOffset = (const offsetPercentage*)profileGroups->get(
 							profileGroups,
-							profileGroupKey,
+							&profileGroupKey,
 							&item,
 							exception);
 						if (!(nextWeightedProfileOffset && EXCEPTION_OKAY)) {
@@ -2341,7 +2341,7 @@ static void fiftyoneDegreesResultsIpiGetValuesStringInternal(
 		};
 		property = (Property*)dataSet->properties->get(
 				dataSet->properties,
-				propertyKey,
+				&propertyKey,
 				&propertyItem,
 				exception);
 		if (property != NULL && EXCEPTION_OKAY) {
