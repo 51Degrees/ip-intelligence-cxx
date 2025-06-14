@@ -1,5 +1,6 @@
 var NAVTREEINDEX3 =
 {
+"group___fifty_one_degrees_threading.html#gab55914121bc181a55ca78756c65822cb":[3,1,28,29],
 "group___fifty_one_degrees_threading.html#gabcbdd27890ca8aed46518b516cf15a3b":[3,1,28,28],
 "group___fifty_one_degrees_threading.html#gac58f1666975cb42a4410e473ff1251e7":[3,1,28,2],
 "group___fifty_one_degrees_threading.html#gaca767cd559fb283c8393ec806bc7e6e4":[3,1,28,20],
@@ -248,6 +249,5 @@ var NAVTREEINDEX3 =
 "structfiftyone_degrees_float_internal.html#aa42d2f81653924e749532879fc4a408a":[3,1,11,0,0],
 "structfiftyone_degrees_header_array.html":[3,1,12,2],
 "structfiftyone_degrees_header_array.html#a5d6d73fef9550b5252bd4988ae8e5dcb":[3,1,12,2,0],
-"structfiftyone_degrees_header_array.html#a803bbdb9383ba1dcdce3bb961c419a6c":[3,1,12,2,2],
-"structfiftyone_degrees_header_array.html#acaf9090c3857441df95006a8ddea1280":[3,1,12,2,3]
+"structfiftyone_degrees_header_array.html#a803bbdb9383ba1dcdce3bb961c419a6c":[3,1,12,2,2]
 };
