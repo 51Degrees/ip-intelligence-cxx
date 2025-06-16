@@ -59,7 +59,7 @@ ProfileMetaData* ProfileMetaDataCollectionIpi::getByIndex(
 	};
 	profile = (const Profile *)profiles->get(
 		profiles,
-		profileKey,
+		&profileKey,
 		&item,
 		exception);
 	EXCEPTION_THROW

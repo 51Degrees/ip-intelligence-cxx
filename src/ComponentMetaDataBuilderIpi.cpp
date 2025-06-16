@@ -58,7 +58,7 @@ ComponentMetaData* ComponentMetaDataBuilderIpi::build(
 		};
 		profile = (Profile*)dataSet->profiles->get(
 			dataSet->profiles, 
-			profileKey,
+			&profileKey,
 			&item,
 			exception);
 		EXCEPTION_THROW;
