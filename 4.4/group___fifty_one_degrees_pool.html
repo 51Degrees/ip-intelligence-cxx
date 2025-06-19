@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>51Degrees Device Detection C/C++: Pool</title>
+<title>51Degrees IP Intelligence C/C++: Pool</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,12 +28,12 @@
 <div id="titlearea" class="g-header g-header--docs">
   <h1 class="c-brand">
   <a id="projectlogo" href="../../documentation/4.4/index.html" class="c-brand__link"><img class="c-brand__image" alt="Logo" src="logo-51Degrees-Docs.png" style="width:172px;"/></a>
-  <span class="c-tagline">51Degrees Device Detection C/C++
+  <span class="c-tagline">51Degrees IP Intelligence C/C++
    &#160;<span id="projectnumber">4.4</span>
   </span>
   </h1>
   <div id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectbrief">A device detection library that is used natively or by 51Degrees products</div>
+   <div id="projectbrief">IP intelligence services for 51Degrees Pipeline</div>
   </div>
   <div id="main-nav"></div>
   <section class="g-search">
@@ -66,9 +66,9 @@ $(document).ready(function(){initNavTree('group___fifty_one_degrees_pool.html','
 <div class="g-docs__inner">
 <div class="g-docs__primary" id="primary">
 <a name="details" id="details"></a><h2 class="g-docs__section-heading">Detailed Description</h2>
-<p>Pool of handles to allow safe access to multiple threads. </p>
+<p><a class="el" href="class_pool.html" title="File test class used to test the functionality of file.c.">Pool</a> of handles to allow safe access to multiple threads. </p>
 <h2>Introduction</h2>
-<p>A Pool structure defines a pool of handles to a resource, and allows a safe way to access them in a multi-threaded environment.</p>
+<p>A <a class="el" href="class_pool.html" title="File test class used to test the functionality of file.c.">Pool</a> structure defines a pool of handles to a resource, and allows a safe way to access them in a multi-threaded environment.</p>
 <h2>Creation</h2>
 <p>The <a class="el" href="group___fifty_one_degrees_pool.html#ga20b9ac82c9f6aa4587c5c1247359a9df" title="Initialises a pool data structure to support the number of concurrent requests that can be made to th...">fiftyoneDegreesPoolInit</a> method is used to initialise a pointer to a <a class="el" href="structfiftyone_degrees_pool.html" title="Pool of resources stored as items in a stack.">fiftyoneDegreesPool</a>. A concurrency value is provided to indicate the maximum number of threads that will be in operation. If this value is lower than the actual number of threads the stack can be exhausted and a null pointer is returned instead of a valid item. The concurrency value must always be the same or greater than the number of threads. When compiled in single threaded operation a pool is not strictly required and the implementation maintains a simple stack for consistency of interface and to minimise divergent code.</p>
 <h2>Get &amp; Release</h2>
@@ -101,7 +101,7 @@ Structs</h2>
 <tr class="c-table__row memitem:"><td class="c-table__cell">struct <!-- insertMemberAlign -->
 &#160;</td><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_pool_item.html">fiftyoneDegreesPoolItem</a>
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:">Pool item node in the stack of items.  <a href="structfiftyone_degrees_pool_item.html#details">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:"><a class="el" href="class_pool.html" title="File test class used to test the functionality of file.c.">Pool</a> item node in the stack of items.  <a href="structfiftyone_degrees_pool_item.html#details">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
@@ -115,7 +115,7 @@ Structs</h2>
 <tr class="c-table__row memitem:"><td class="c-table__cell">struct <!-- insertMemberAlign -->
 &#160;</td><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_pool.html">fiftyoneDegreesPool</a>
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:">Pool of resources stored as items in a stack.  <a href="structfiftyone_degrees_pool.html#details">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:"><a class="el" href="class_pool.html" title="File test class used to test the functionality of file.c.">Pool</a> of resources stored as items in a stack.  <a href="structfiftyone_degrees_pool.html#details">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- endMemberList -->
 <!-- end member list -->

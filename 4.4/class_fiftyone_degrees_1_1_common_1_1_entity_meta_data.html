@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>51Degrees Device Detection C/C++: FiftyoneDegrees::Common::EntityMetaData&lt; K &gt; Class Template Reference</title>
+<title>51Degrees IP Intelligence C/C++: FiftyoneDegrees::Common::EntityMetaData&lt; K &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,12 +28,12 @@
 <div id="titlearea" class="g-header g-header--docs">
   <h1 class="c-brand">
   <a id="projectlogo" href="../../documentation/4.4/index.html" class="c-brand__link"><img class="c-brand__image" alt="Logo" src="logo-51Degrees-Docs.png" style="width:172px;"/></a>
-  <span class="c-tagline">51Degrees Device Detection C/C++
+  <span class="c-tagline">51Degrees IP Intelligence C/C++
    &#160;<span id="projectnumber">4.4</span>
   </span>
   </h1>
   <div id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectbrief">A device detection library that is used natively or by 51Degrees products</div>
+   <div id="projectbrief">IP intelligence services for 51Degrees Pipeline</div>
   </div>
   <div id="main-nav"></div>
   <section class="g-search">
@@ -74,7 +74,7 @@ $(document).ready(function(){initNavTree('class_fiftyone_degrees_1_1_common_1_1_
 <section class="g-docs__section"><h3>template&lt;class K&gt;<br />
 class FiftyoneDegrees::Common::EntityMetaData&lt; K &gt;</h3>
 
-<p>Base class for any entity meta data. </p>
+<p><a class="el" href="class_base.html" title="Base test class used to carry out memory leak checks.">Base</a> class for any entity meta data. </p>
 <p>All meta data classes should extend this class.</p>
 <p>A meta data instance is immutable once it has been instantiated. An instance is also comparable to another via the <code>==</code> and <code>!=</code> operators, provided the type K is properly implemented. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Template Parameters</dt><dd class="c-list-definition__desc">
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">K</span> - key type for the entity which must be unique e.g. string is used for property meta data where the unique key is the name of the property. The type K must implement the <code>&lt;</code> and <code>==</code> operators. </dd>

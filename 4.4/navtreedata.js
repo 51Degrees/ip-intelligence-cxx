@@ -24,8 +24,10 @@ for the JavaScript code in this file
 var NAVTREE =
 [
     [ "General Docs", "../../documentation/4.4/index.html", null ],
-    [ "51Degrees Ip Intelligence API", "md__home_runner_work_ip-intelligence-cxx_ip-intelligence-cxx_common_ip-intelligence-cxx__r_e_a_d_m_e.html", null ],
+    [ "API Specific CI Approach", "md__home_runner_work_ip-intelligence-cxx_ip-intelligence-cxx_common_ip-intelligence-cxx_src_common-cxx_ci__r_e_a_d_m_e.html", null ],
     [ "51Degrees Common Code Library", "md__home_runner_work_ip-intelligence-cxx_ip-intelligence-cxx_common_ip-intelligence-cxx_src_common-cxx__r_e_a_d_m_e.html", null ],
+    [ "ip-graph-cxx", "md__home_runner_work_ip-intelligence-cxx_ip-intelligence-cxx_common_ip-intelligence-cxx_src_ip-graph-cxx__r_e_a_d_m_e.html", null ],
+    [ "51Degrees Ip Intelligence API", "md__home_runner_work_ip-intelligence-cxx_ip-intelligence-cxx_common_ip-intelligence-cxx__r_e_a_d_m_e.html", null ],
     [ "C Modules", "modules.html", "modules" ],
     [ "C++ Namespaces", "namespaces.html", "namespaces" ],
     [ "Examples", "examples.html", "examples" ]
@@ -38,10 +40,10 @@ var NAVTREEHIDESYNC = true;
 var NAVTREEINDEX =
 [
 "../../documentation/4.4/index.html",
-"group___fifty_one_degrees_profile.html#ga3e84d4aac0a0d232d450435405fe99eb",
-"group___fifty_one_degrees_synonyms.html#ga5f6072ed2971564be9b8028e5c42876f",
-"group___fifty_one_degrees_threading.html#gab55914121bc181a55ca78756c65822cb",
-"structfiftyone_degrees_header_array.html#acaf9090c3857441df95006a8ddea1280"
+"group___fifty_one_degrees_overrides.html#gaf065f09e0735e8f449a7ee5dfd669f76",
+"group___fifty_one_degrees_synonyms.html#ga529114c6ee5f76a73e6be324a904941d",
+"group___fifty_one_degrees_threading.html#ga0ace4283936aee9b6d58835426dc0917",
+"structfiftyone_degrees_data_set_ipi_header.html#afd43be91fc8ecf3f4e1d18d0cef53204"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

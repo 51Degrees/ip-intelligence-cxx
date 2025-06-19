@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>51Degrees Device Detection C/C++: FiftyoneDegrees::Common::MetaData Class Reference</title>
+<title>51Degrees IP Intelligence C/C++: FiftyoneDegrees::Common::MetaData Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,12 +28,12 @@
 <div id="titlearea" class="g-header g-header--docs">
   <h1 class="c-brand">
   <a id="projectlogo" href="../../documentation/4.4/index.html" class="c-brand__link"><img class="c-brand__image" alt="Logo" src="logo-51Degrees-Docs.png" style="width:172px;"/></a>
-  <span class="c-tagline">51Degrees Device Detection C/C++
+  <span class="c-tagline">51Degrees IP Intelligence C/C++
    &#160;<span id="projectnumber">4.4</span>
   </span>
   </h1>
   <div id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectbrief">A device detection library that is used natively or by 51Degrees products</div>
+   <div id="projectbrief">IP intelligence services for 51Degrees Pipeline</div>
   </div>
   <div id="main-nav"></div>
   <section class="g-search">
@@ -77,7 +77,7 @@ $(document).ready(function(){initNavTree('class_fiftyone_degrees_1_1_common_1_1_
 <section class="g-docs__section"><p>Contains meta data for the properties, values, profiles and components that exist within the engine instance. </p>
 <p>All Collections returned are new instances which hold a reference to the underlying data structures, so must be disposed of. All single meta data instances returned either by this class or the Collections it returns hold no reference and are safe to hold on to.</p>
 <h2>Example Usage</h2>
-<div class="c-code__block c-code__block--outline"><div class="c-code__line"><span class="c-code__keyword">using namespace </span><a class="code" href="namespace_fiftyone_degrees_1_1_common.html">FiftyoneDegrees::Common</a>;</div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_common_1_1_engine_base.html">EngineBase</a> *engine;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Get the meta data from an engine</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_common_1_1_meta_data.html">MetaData</a> *metaData = engine-&gt;<a class="code" href="class_fiftyone_degrees_1_1_common_1_1_engine_base.html#a719f619e79ba865e0a0f5ec5832f9ee5">getMetaData</a>();</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Get the meta data for the engine&#39;s properties</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_common_1_1_collection.html">Collection&lt;string, PropertyMetaData&gt;</a> *properties =</div><div class="c-code__line">    metaData-&gt;<a class="code" href="class_fiftyone_degrees_1_1_common_1_1_meta_data.html#a9e7ea1b916c2d634ca9ff19a9c3592f8">getProperties</a>();</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Do something with the properties (see Collection.hpp for an</span></div><div class="c-code__line"><span class="c-code__comment">// example).</span></div><div class="c-code__line"><span class="c-code__comment">// ...</span></div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Delete the properties collection</span></div><div class="c-code__line"><span class="c-code__keyword">delete</span> properties;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Delete the meta data instance</span></div><div class="c-code__line"><span class="c-code__keyword">delete</span> metaData;</div></div> </section></section>
+<div class="c-code__block c-code__block--outline"><div class="c-code__line"><span class="c-code__keyword">using namespace </span><a class="code" href="namespace_fiftyone_degrees_1_1_common.html">FiftyoneDegrees::Common</a>;</div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_common_1_1_engine_base.html">EngineBase</a> *engine;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Get the meta data from an engine</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_common_1_1_meta_data.html">MetaData</a> *metaData = engine-&gt;<a class="code" href="class_fiftyone_degrees_1_1_common_1_1_engine_base.html#a5fbbb729285e3670732ad354133a9c80">getMetaData</a>();</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Get the meta data for the engine&#39;s properties</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_common_1_1_collection.html">Collection&lt;string, PropertyMetaData&gt;</a> *properties =</div><div class="c-code__line">    metaData-&gt;<a class="code" href="class_fiftyone_degrees_1_1_common_1_1_meta_data.html#a9e7ea1b916c2d634ca9ff19a9c3592f8">getProperties</a>();</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Do something with the properties (see Collection.hpp for an</span></div><div class="c-code__line"><span class="c-code__comment">// example).</span></div><div class="c-code__line"><span class="c-code__comment">// ...</span></div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Delete the properties collection</span></div><div class="c-code__line"><span class="c-code__keyword">delete</span> properties;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Delete the meta data instance</span></div><div class="c-code__line"><span class="c-code__keyword">delete</span> metaData;</div></div> </section></section>
 <!-- start ClassInheritanceGraph -->
 <section class="g-docs__section">
 <h2 class="g-docs__section-heading">
@@ -123,18 +123,18 @@ Public Member Functions</h2>
 <tr class="c-table__row"><td class="c-table__cell" colspan="2"><h3 class="c-table__heading">Constructors and Destructors</h3></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a4cae23578d35c27b385640997f30d4f7"><td class="c-table__cell"><!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_meta_data.html#a4cae23578d35c27b385640997f30d4f7">MetaData</a> (shared_ptr&lt; <a class="el" href="structfiftyone_degrees_resource_manager.html">fiftyoneDegreesResourceManager</a> &gt; <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_meta_data.html#a47e8a5dda981e8c9221ed9000c3b910c">manager</a>)
+<tr class="c-table__row memitem:afdd4517a4db57b29aea9f2d45db20491"><td class="c-table__cell"><!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_meta_data.html#afdd4517a4db57b29aea9f2d45db20491">MetaData</a> (shared_ptr&lt; <a class="el" href="structfiftyone_degrees_resource_manager.html">fiftyoneDegreesResourceManager</a> &gt; <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_meta_data.html#a47e8a5dda981e8c9221ed9000c3b910c">manager</a>)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a4cae23578d35c27b385640997f30d4f7">Construct a new instance of <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_meta_data.html" title="Contains meta data for the properties, values, profiles and components that exist within the engine i...">MetaData</a>.  <a href="#a4cae23578d35c27b385640997f30d4f7">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:afdd4517a4db57b29aea9f2d45db20491">Construct a new instance of <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_meta_data.html" title="Contains meta data for the properties, values, profiles and components that exist within the engine i...">MetaData</a>.  <a href="#afdd4517a4db57b29aea9f2d45db20491">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a1527fd0deb77766e8154c33d01ab43e2"><td class="c-table__cell"><a id="a1527fd0deb77766e8154c33d01ab43e2"></a>
+<tr class="c-table__row memitem:adc730f82d9aa1ecebbe04fff54ed5b7d"><td class="c-table__cell"><a id="adc730f82d9aa1ecebbe04fff54ed5b7d"></a>
 virtual<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_meta_data.html#a1527fd0deb77766e8154c33d01ab43e2">~MetaData</a> ()
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_meta_data.html#adc730f82d9aa1ecebbe04fff54ed5b7d">~MetaData</a> ()
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a1527fd0deb77766e8154c33d01ab43e2">Free any data and handles used for the meta data. <!-- endMemberDescription -->
+<div class="c-table__desc memdesc:adc730f82d9aa1ecebbe04fff54ed5b7d">Free any data and handles used for the meta data. <!-- endMemberDescription -->
 </div></td></tr>
 <tr class="c-table__row"><td class="c-table__cell" colspan="2"><h3 class="c-table__heading">Getters</h3></td></tr>
 <!-- member dec start -->
@@ -256,10 +256,10 @@ Protected Member Functions</h2>
 <tbody class="c-table__body">
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a587048e60d091f4d12c49382190dd9af"><td class="c-table__cell">string<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_meta_data.html#a587048e60d091f4d12c49382190dd9af">getValue</a> (<a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *strings, uint32_t offset, fiftyoneDegreesPropertyValueType storedValueType)
+<tr class="c-table__row memitem:aa90c7bba8a374ef8996f3bce7dccf918"><td class="c-table__cell">string<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_meta_data.html#aa90c7bba8a374ef8996f3bce7dccf918">getValue</a> (<a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *strings, uint32_t offset, fiftyoneDegreesPropertyValueType storedValueType)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a587048e60d091f4d12c49382190dd9af">Get a value from the collection and copy it as string to a C++ string instance.  <a href="#a587048e60d091f4d12c49382190dd9af">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:aa90c7bba8a374ef8996f3bce7dccf918">Get a value from the collection and copy it as string to a C++ string instance.  <a href="#aa90c7bba8a374ef8996f3bce7dccf918">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- endMemberList -->
 <!-- end member list -->
@@ -327,9 +327,9 @@ Protected Attributes</h2>
 <h2 class="g-docs__section-heading">Constructor &amp; Destructor Documentation</h2>
 <!-- startMemberDocList -->
 <article class="c-member">
-<a id="a4cae23578d35c27b385640997f30d4f7"></a><!-- startMemberDoc -->
+<a id="afdd4517a4db57b29aea9f2d45db20491"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a4cae23578d35c27b385640997f30d4f7">&#9670;&nbsp;</a></span>MetaData()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#afdd4517a4db57b29aea9f2d45db20491">&#9670;&nbsp;</a></span>MetaData()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -338,7 +338,7 @@ Protected Attributes</h2>
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">FiftyoneDegrees::Common::MetaData::MetaData <!-- endMemberDocName -->
+              <td class="c-table__cell">MetaData::MetaData <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -415,7 +415,7 @@ Protected Attributes</h2>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">component the profile relates to </dd></dl>
 
-<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#af60fbe2140830ea2a2bca7d0ee3410f7">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
+<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a3e2e38f99981fee9e2a31e0d5a415633">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
 <!-- endIndent -->
 
 </div>
@@ -465,7 +465,7 @@ Protected Attributes</h2>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">component the property relates to </dd></dl>
 
-<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a3ac89df1735c60be91f4d6ced545ab2f">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
+<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#aa7caa7ed67b577b792b090094c89a9b4">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
 <!-- endIndent -->
 
 </div>
@@ -508,7 +508,7 @@ Protected Attributes</h2>
 <p>Get a new <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection.html" title="A group of items accessible by index or key.">Collection</a> instance of all component meta data keyed on the unique id of the component. </p>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">all components </dd></dl>
 
-<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a0ae300c60abd361fe77adfabdce0de93">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
+<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#aaa2ab1ef89eebd10212d77c489d59361">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
 <!-- endIndent -->
 
 </div>
@@ -558,7 +558,7 @@ Protected Attributes</h2>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">default profile for the component </dd></dl>
 
-<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a0881779a43e036e60c18dd657b2b6c4d">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
+<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a62f6d7100679e42a646e283708b01e55">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
 <!-- endIndent -->
 
 </div>
@@ -608,7 +608,7 @@ Protected Attributes</h2>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">default value for the property </dd></dl>
 
-<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a694ea4de8a956743b6689787abee9073">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
+<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a3520fd1aa593cdd562b91759f97bd0b2">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
 <!-- endIndent -->
 
 </div>
@@ -658,7 +658,7 @@ Protected Attributes</h2>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">evidence properties for the property </dd></dl>
 
-<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a0a96a41d147cce0da9c96e7654dea7c2">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
+<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a3888acafa95b44fab0fa033a2d2aef6e">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
 <!-- endIndent -->
 
 </div>
@@ -701,7 +701,7 @@ Protected Attributes</h2>
 <p>Get a new <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection.html" title="A group of items accessible by index or key.">Collection</a> instance of all profile meta data keyed on the unique id of the profile. </p>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">all profiles </dd></dl>
 
-<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a4818a60324d39a8b0792a92bbc4d5273">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
+<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#af915caf9cd6abebf5192026b9834469b">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
 <!-- endIndent -->
 
 </div>
@@ -744,7 +744,9 @@ Protected Attributes</h2>
 <p>Get a new <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection.html" title="A group of items accessible by index or key.">Collection</a> instance of all property meta data keyed on the name of the property. </p>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">all properties </dd></dl>
 
-<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#aff00b73b89c64a0a3d98389cf16c3cd6">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
+<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a38b4eb8f3ac3b07076775ac1bb5695d2">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
+<dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd class="c-list-definition__desc"><a class="el" href="_ip_intelligence_2_meta_data_8cpp-example.html#a5">IpIntelligence/MetaData.cpp</a>.</dd>
+</dl>
 <!-- endIndent -->
 
 </div>
@@ -794,7 +796,7 @@ Protected Attributes</h2>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">properties for the component </dd></dl>
 
-<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a0435f15a9743d8883e45e12ba05b6f12">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
+<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a94290a92ba58e55af8eee3c418746c10">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
 <!-- endIndent -->
 
 </div>
@@ -844,16 +846,16 @@ Protected Attributes</h2>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">property the value relates to </dd></dl>
 
-<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a384256c00b2ac51b9380636bbecd5b3f">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
+<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a054aa374891be543f98e978d356e651d">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
 <!-- endIndent -->
 
 </div>
 </div>
 </article>
 <article class="c-member">
-<a id="a587048e60d091f4d12c49382190dd9af"></a><!-- startMemberDoc -->
+<a id="aa90c7bba8a374ef8996f3bce7dccf918"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a587048e60d091f4d12c49382190dd9af">&#9670;&nbsp;</a></span>getValue()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#aa90c7bba8a374ef8996f3bce7dccf918">&#9670;&nbsp;</a></span>getValue()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -862,7 +864,7 @@ Protected Attributes</h2>
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">string FiftyoneDegrees::Common::MetaData::getValue <!-- endMemberDocName -->
+              <td class="c-table__cell">string MetaData::getValue <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -961,7 +963,9 @@ Protected Attributes</h2>
 <p>Get a new <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection.html" title="A group of items accessible by index or key.">Collection</a> instance of all value meta data keyed on the name of the value and the property it relates to. </p>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">all values </dd></dl>
 
-<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#ae99904bdcf7643c81d8aa40eb43eb9f5">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
+<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a7a20a587472918f52501dffeac87389b">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
+<dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd class="c-list-definition__desc"><a class="el" href="_ip_intelligence_2_meta_data_8cpp-example.html#a12">IpIntelligence/MetaData.cpp</a>.</dd>
+</dl>
 <!-- endIndent -->
 
 </div>
@@ -1011,7 +1015,7 @@ Protected Attributes</h2>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">values for the profile </dd></dl>
 
-<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a282b7cf35129338fe072fe7b1552f120">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
+<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#ad8d93c137dfa232bd5d034bd2a5e535d">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
 <!-- endIndent -->
 
 </div>
@@ -1061,7 +1065,7 @@ Protected Attributes</h2>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">values for the property </dd></dl>
 
-<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#adb75e701d1d7535cc29bd3530ab23a22">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
+<p>Implemented in <a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_meta_data_ipi.html#a97437c0085b3f31c92d4b53dad1b7868">FiftyoneDegrees::IpIntelligence::MetaDataIpi</a>.</p>
 <!-- endIndent -->
 
 </div>
@@ -1106,8 +1110,9 @@ Protected Attributes</h2>
 </article>
 <!-- endMemberDocList -->
 </section>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/common-cxx/<a class="el" href="_meta_data_8hpp_source.html">MetaData.hpp</a></li>
+<li>/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/common-cxx/MetaData.cpp</li>
 </ul>
 </div><!-- primary -->
   <div class="g-docs__sidebar">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>51Degrees Device Detection C/C++: FiftyoneDegrees::IpIntelligence::ConfigIpi Class Reference</title>
+<title>51Degrees IP Intelligence C/C++: FiftyoneDegrees::IpIntelligence::ConfigIpi Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,12 +28,12 @@
 <div id="titlearea" class="g-header g-header--docs">
   <h1 class="c-brand">
   <a id="projectlogo" href="../../documentation/4.4/index.html" class="c-brand__link"><img class="c-brand__image" alt="Logo" src="logo-51Degrees-Docs.png" style="width:172px;"/></a>
-  <span class="c-tagline">51Degrees Device Detection C/C++
+  <span class="c-tagline">51Degrees IP Intelligence C/C++
    &#160;<span id="projectnumber">4.4</span>
   </span>
   </h1>
   <div id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectbrief">A device detection library that is used natively or by 51Degrees products</div>
+   <div id="projectbrief">IP intelligence services for 51Degrees Pipeline</div>
   </div>
   <div id="main-nav"></div>
   <section class="g-search">
@@ -76,7 +76,9 @@ $(document).ready(function(){initNavTree('class_fiftyone_degrees_1_1_ip_intellig
 <p>This extends the ConfigBase class to add IP Intelligence specific configuration options.</p>
 <p>Configuration options are set using setter methods and fetched using corresponding getter methods. The names are self explanatory.</p>
 <h2>Usage Example</h2>
-<div class="c-code__block c-code__block--outline"><div class="c-code__line"><span class="c-code__keyword">using namespace </span><a class="code" href="namespace_fiftyone_degrees_1_1_common.html">FiftyoneDegrees::Common</a>;</div><div class="c-code__line"><span class="c-code__keyword">using namespace </span><a class="code" href="namespace_fiftyone_degrees_1_1_ip_intelligence.html">FiftyoneDegrees::IpIntelligence</a>;</div><div class="c-code__line"><span class="c-code__keywordtype">string</span> dataFilePath;</div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html">RequiredPropertiesConfig</a> *properties;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Construct a new configuration</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html">ConfigIpi</a> *config = <span class="c-code__keyword">new</span> <a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#afe57c3b94209cf1267012eae25de40d0">ConfigIpi</a>();</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Use the configuration when constructing an engine</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_engine_ipi.html">EngineIpi</a> *engine = <span class="c-code__keyword">new</span> <a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_engine_ipi.html">EngineIpi</a>(</div><div class="c-code__line">    dataFilePath,</div><div class="c-code__line">    config,</div><div class="c-code__line">    properties);</div></div> </section></section>
+<div class="c-code__block c-code__block--outline"><div class="c-code__line"><span class="c-code__keyword">using namespace </span><a class="code" href="namespace_fiftyone_degrees_1_1_common.html">FiftyoneDegrees::Common</a>;</div><div class="c-code__line"><span class="c-code__keyword">using namespace </span><a class="code" href="namespace_fiftyone_degrees_1_1_ip_intelligence.html">FiftyoneDegrees::IpIntelligence</a>;</div><div class="c-code__line"><span class="c-code__keywordtype">string</span> dataFilePath;</div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html">RequiredPropertiesConfig</a> *properties;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Construct a new configuration</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html">ConfigIpi</a> *config = <span class="c-code__keyword">new</span> <a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a9a9e56354520cde157f6c78510c08082">ConfigIpi</a>();</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Use the configuration when constructing an engine</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_engine_ipi.html">EngineIpi</a> *engine = <span class="c-code__keyword">new</span> <a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_engine_ipi.html">EngineIpi</a>(</div><div class="c-code__line">    dataFilePath,</div><div class="c-code__line">    config,</div><div class="c-code__line">    properties);</div></div> <dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd class="c-list-definition__desc"><a class="el" href="_ip_intelligence_2_getting_started_8cpp-example.html#_a1">IpIntelligence/GettingStarted.cpp</a>, <a class="el" href="_ip_intelligence_2_meta_data_8cpp-example.html#_a1">IpIntelligence/MetaData.cpp</a>, and <a class="el" href="_ip_intelligence_2_strongly_typed_8cpp-example.html#_a1">IpIntelligence/StronglyTyped.cpp</a>.</dd>
+</dl>
+</section></section>
 <!-- start ClassInheritanceGraph -->
 <section class="g-docs__section">
 <h2 class="g-docs__section-heading">
@@ -122,240 +124,240 @@ Public Member Functions</h2>
 <tr class="c-table__row"><td class="c-table__cell" colspan="2"><h3 class="c-table__heading">Constructors</h3></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:afe57c3b94209cf1267012eae25de40d0"><td class="c-table__cell"><a id="afe57c3b94209cf1267012eae25de40d0"></a>
+<tr class="c-table__row memitem:a9a9e56354520cde157f6c78510c08082"><td class="c-table__cell"><a id="a9a9e56354520cde157f6c78510c08082"></a>
 <!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#afe57c3b94209cf1267012eae25de40d0">ConfigIpi</a> ()
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a9a9e56354520cde157f6c78510c08082">ConfigIpi</a> ()
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:afe57c3b94209cf1267012eae25de40d0">Construct a new instance using the default configuration <a class="el" href="group___fifty_one_degrees_ip_intelligence_api.html#ga26112262d38672fbdee288e1c0b39d87" title="Default detection configuration.">fiftyoneDegreesIpiDefaultConfig</a>. <!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a9a9e56354520cde157f6c78510c08082">Construct a new instance using the default configuration <a class="el" href="group___fifty_one_degrees_ip_intelligence_api.html#ga26112262d38672fbdee288e1c0b39d87" title="Default detection configuration.">fiftyoneDegreesIpiDefaultConfig</a>. <!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ac7c77d7b489b0dee3eaafeaf88158a6b"><td class="c-table__cell"><!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#ac7c77d7b489b0dee3eaafeaf88158a6b">ConfigIpi</a> (<a class="el" href="structfiftyone_degrees_config_ipi.html">fiftyoneDegreesConfigIpi</a> *config)
+<tr class="c-table__row memitem:a393ef985b346d2f272458a044b271e23"><td class="c-table__cell"><!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a393ef985b346d2f272458a044b271e23">ConfigIpi</a> (<a class="el" href="structfiftyone_degrees_config_ipi.html">fiftyoneDegreesConfigIpi</a> *config)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ac7c77d7b489b0dee3eaafeaf88158a6b">Construct a new instance using the configuration provided.  <a href="#ac7c77d7b489b0dee3eaafeaf88158a6b">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a393ef985b346d2f272458a044b271e23">Construct a new instance using the configuration provided.  <a href="#a393ef985b346d2f272458a044b271e23">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <tr class="c-table__row"><td class="c-table__cell" colspan="2"><h3 class="c-table__heading">Setters</h3></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a809efea67b32b4ed3d228dd6c4c5347f"><td class="c-table__cell">void<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a809efea67b32b4ed3d228dd6c4c5347f">setHighPerformance</a> ()
+<tr class="c-table__row memitem:aa923ee4730348483d7e73334db66b94f"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#aa923ee4730348483d7e73334db66b94f">setHighPerformance</a> ()
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a809efea67b32b4ed3d228dd6c4c5347f">Set the collections to use the high performance configuration.  <a href="#a809efea67b32b4ed3d228dd6c4c5347f">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:aa923ee4730348483d7e73334db66b94f">Set the collections to use the high performance configuration.  <a href="#aa923ee4730348483d7e73334db66b94f">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ae3ec32de37de5195d497e9f3ddd711c3"><td class="c-table__cell">void<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#ae3ec32de37de5195d497e9f3ddd711c3">setBalanced</a> ()
+<tr class="c-table__row memitem:a696a18ae8b6760932807b3e3cdcf2238"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a696a18ae8b6760932807b3e3cdcf2238">setBalanced</a> ()
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ae3ec32de37de5195d497e9f3ddd711c3">Set the collections to use the balanced configuration.  <a href="#ae3ec32de37de5195d497e9f3ddd711c3">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a696a18ae8b6760932807b3e3cdcf2238">Set the collections to use the balanced configuration.  <a href="#a696a18ae8b6760932807b3e3cdcf2238">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:afe6155589704270be1f6c9e6996a946c"><td class="c-table__cell">void<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#afe6155589704270be1f6c9e6996a946c">setBalancedTemp</a> ()
+<tr class="c-table__row memitem:aeaf4dff21869d60fd635bb8b98062c8f"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#aeaf4dff21869d60fd635bb8b98062c8f">setBalancedTemp</a> ()
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:afe6155589704270be1f6c9e6996a946c">Set the collections to use the balanced temp configuration.  <a href="#afe6155589704270be1f6c9e6996a946c">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:aeaf4dff21869d60fd635bb8b98062c8f">Set the collections to use the balanced temp configuration.  <a href="#aeaf4dff21869d60fd635bb8b98062c8f">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a496e2f984405263177883cd73be4a31a"><td class="c-table__cell">void<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a496e2f984405263177883cd73be4a31a">setLowMemory</a> ()
+<tr class="c-table__row memitem:a80ffec4333ca5217f18042c646ae1d4b"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a80ffec4333ca5217f18042c646ae1d4b">setLowMemory</a> ()
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a496e2f984405263177883cd73be4a31a">Set the collections to use the low memory configuration.  <a href="#a496e2f984405263177883cd73be4a31a">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a80ffec4333ca5217f18042c646ae1d4b">Set the collections to use the low memory configuration.  <a href="#a80ffec4333ca5217f18042c646ae1d4b">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a437fc8406445921d0ca06913bd7e0b7b"><td class="c-table__cell">void<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a437fc8406445921d0ca06913bd7e0b7b">setMaxPerformance</a> ()
+<tr class="c-table__row memitem:a2c7cb1c002a409e2b2a6aff2fa334fd1"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a2c7cb1c002a409e2b2a6aff2fa334fd1">setMaxPerformance</a> ()
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a437fc8406445921d0ca06913bd7e0b7b">Set the collections to use the entirely in memory configuration.  <a href="#a437fc8406445921d0ca06913bd7e0b7b">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a2c7cb1c002a409e2b2a6aff2fa334fd1">Set the collections to use the entirely in memory configuration.  <a href="#a2c7cb1c002a409e2b2a6aff2fa334fd1">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ab29cbe4c798ab415adc5ecb2e19415cd"><td class="c-table__cell">void<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#ab29cbe4c798ab415adc5ecb2e19415cd">setConcurrency</a> (uint16_t concurrency)
+<tr class="c-table__row memitem:aefa7900612100b6eb2e26e49f3dac921"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#aefa7900612100b6eb2e26e49f3dac921">setConcurrency</a> (uint16_t concurrency)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ab29cbe4c798ab415adc5ecb2e19415cd">Set the expected concurrent requests for all the data set's collections.  <a href="#ab29cbe4c798ab415adc5ecb2e19415cd">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:aefa7900612100b6eb2e26e49f3dac921">Set the expected concurrent requests for all the data set's collections.  <a href="#aefa7900612100b6eb2e26e49f3dac921">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <tr class="c-table__row"><td class="c-table__cell" colspan="2"><h3 class="c-table__heading">Getters</h3></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ac3f80bac41e4c2d20e761ed22f04dcfd"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#ac3f80bac41e4c2d20e761ed22f04dcfd">getStrings</a> () const
+<tr class="c-table__row memitem:a5d597cf0873ba03032df867f995cc906"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a5d597cf0873ba03032df867f995cc906">getStrings</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ac3f80bac41e4c2d20e761ed22f04dcfd">Get the configuration for the strings collection.  <a href="#ac3f80bac41e4c2d20e761ed22f04dcfd">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a5d597cf0873ba03032df867f995cc906">Get the configuration for the strings collection.  <a href="#a5d597cf0873ba03032df867f995cc906">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a4b6b8cc07033882d33f776b7a1685d1f"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a4b6b8cc07033882d33f776b7a1685d1f">getComponents</a> () const
+<tr class="c-table__row memitem:a594c3812b49c31013f2a26538ee0d9ce"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a594c3812b49c31013f2a26538ee0d9ce">getComponents</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a4b6b8cc07033882d33f776b7a1685d1f">Get the configuration for the components collection.  <a href="#a4b6b8cc07033882d33f776b7a1685d1f">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a594c3812b49c31013f2a26538ee0d9ce">Get the configuration for the components collection.  <a href="#a594c3812b49c31013f2a26538ee0d9ce">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a5d42f69eecd1f3e9efe3d63222be216d"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a5d42f69eecd1f3e9efe3d63222be216d">getMaps</a> () const
+<tr class="c-table__row memitem:a00ff93fd2b77a3c260bb788a704837cd"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a00ff93fd2b77a3c260bb788a704837cd">getMaps</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a5d42f69eecd1f3e9efe3d63222be216d">Get the configuration for the maps collection.  <a href="#a5d42f69eecd1f3e9efe3d63222be216d">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a00ff93fd2b77a3c260bb788a704837cd">Get the configuration for the maps collection.  <a href="#a00ff93fd2b77a3c260bb788a704837cd">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a70941c7c6d2e60a3a0ce15cf86ed8d80"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a70941c7c6d2e60a3a0ce15cf86ed8d80">getProperties</a> () const
+<tr class="c-table__row memitem:a7d1b84086e01e8b8e0c79084754f5173"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a7d1b84086e01e8b8e0c79084754f5173">getProperties</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a70941c7c6d2e60a3a0ce15cf86ed8d80">Get the configuration for the properties collection.  <a href="#a70941c7c6d2e60a3a0ce15cf86ed8d80">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a7d1b84086e01e8b8e0c79084754f5173">Get the configuration for the properties collection.  <a href="#a7d1b84086e01e8b8e0c79084754f5173">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:affea7d038714785f63df891f330c07be"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#affea7d038714785f63df891f330c07be">getValues</a> () const
+<tr class="c-table__row memitem:ad637d0b828a2b59a64815f0d99037909"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#ad637d0b828a2b59a64815f0d99037909">getValues</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:affea7d038714785f63df891f330c07be">Get the configuration for the values collection.  <a href="#affea7d038714785f63df891f330c07be">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:ad637d0b828a2b59a64815f0d99037909">Get the configuration for the values collection.  <a href="#ad637d0b828a2b59a64815f0d99037909">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a684a8e251f0df7bf317118ec18cb8831"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a684a8e251f0df7bf317118ec18cb8831">getProfiles</a> () const
+<tr class="c-table__row memitem:a60e8be850d060573213ae86dcae2c1d1"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a60e8be850d060573213ae86dcae2c1d1">getProfiles</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a684a8e251f0df7bf317118ec18cb8831">Get the configuration for the profiles collection.  <a href="#a684a8e251f0df7bf317118ec18cb8831">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a60e8be850d060573213ae86dcae2c1d1">Get the configuration for the profiles collection.  <a href="#a60e8be850d060573213ae86dcae2c1d1">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ae6dc776eb9297fcfa8d932892e1bcbc3"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#ae6dc776eb9297fcfa8d932892e1bcbc3">getGraphs</a> () const
+<tr class="c-table__row memitem:a4133e4610ce6b4dc1ac47d8d6f2806f4"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a4133e4610ce6b4dc1ac47d8d6f2806f4">getGraphs</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ae6dc776eb9297fcfa8d932892e1bcbc3">Get the configuration for the graphs collection.  <a href="#ae6dc776eb9297fcfa8d932892e1bcbc3">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a4133e4610ce6b4dc1ac47d8d6f2806f4">Get the configuration for the graphs collection.  <a href="#a4133e4610ce6b4dc1ac47d8d6f2806f4">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a70fb06eab806aa0d4b669e0ea7cc4da8"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a70fb06eab806aa0d4b669e0ea7cc4da8">getProfileGroups</a> () const
+<tr class="c-table__row memitem:a9e490b002ba84e8b8a7e3255ce1f5266"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a9e490b002ba84e8b8a7e3255ce1f5266">getProfileGroups</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a70fb06eab806aa0d4b669e0ea7cc4da8">Get the configuration for the profile groups collection.  <a href="#a70fb06eab806aa0d4b669e0ea7cc4da8">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a9e490b002ba84e8b8a7e3255ce1f5266">Get the configuration for the profile groups collection.  <a href="#a9e490b002ba84e8b8a7e3255ce1f5266">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a9247cfeb16903656718c89843871dfe8"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a9247cfeb16903656718c89843871dfe8">getProfileOffsets</a> () const
+<tr class="c-table__row memitem:aafda0a016a6b0588f8f208f298987adc"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#aafda0a016a6b0588f8f208f298987adc">getProfileOffsets</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a9247cfeb16903656718c89843871dfe8">Get the configuration for the profile offsets collection.  <a href="#a9247cfeb16903656718c89843871dfe8">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:aafda0a016a6b0588f8f208f298987adc">Get the configuration for the profile offsets collection.  <a href="#aafda0a016a6b0588f8f208f298987adc">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a4f6c7d8c260812ca657500d3ff0dbe29"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a4f6c7d8c260812ca657500d3ff0dbe29">getPropertyTypes</a> () const
+<tr class="c-table__row memitem:aa2fbcf589dfcee52060628967ecff113"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#aa2fbcf589dfcee52060628967ecff113">getPropertyTypes</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a4f6c7d8c260812ca657500d3ff0dbe29">Get the configuration for the property types collection.  <a href="#a4f6c7d8c260812ca657500d3ff0dbe29">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:aa2fbcf589dfcee52060628967ecff113">Get the configuration for the property types collection.  <a href="#aa2fbcf589dfcee52060628967ecff113">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ab825d4f35c572cd3336a131bdbc27478"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#ab825d4f35c572cd3336a131bdbc27478">getGraph</a> () const
+<tr class="c-table__row memitem:a44a8b4705a3099a1a6af489df266e6eb"><td class="c-table__cell">const&#160;<a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&#160;&amp;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a44a8b4705a3099a1a6af489df266e6eb">getGraph</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ab825d4f35c572cd3336a131bdbc27478">Get the configuration for the graph collection.  <a href="#ab825d4f35c572cd3336a131bdbc27478">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a44a8b4705a3099a1a6af489df266e6eb">Get the configuration for the graph collection.  <a href="#a44a8b4705a3099a1a6af489df266e6eb">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a348cd29770c3865fce15237ffebe041f"><td class="c-table__cell">uint16_t<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a348cd29770c3865fce15237ffebe041f">getConcurrency</a> () const override
+<tr class="c-table__row memitem:a1b1ac955ce338c9019bfdd4c02f1ea76"><td class="c-table__cell">uint16_t<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a1b1ac955ce338c9019bfdd4c02f1ea76">getConcurrency</a> () const override
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a348cd29770c3865fce15237ffebe041f">Get the lowest concurrency value in the list of possible concurrencies.  <a href="#a348cd29770c3865fce15237ffebe041f">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a1b1ac955ce338c9019bfdd4c02f1ea76">Get the lowest concurrency value in the list of possible concurrencies.  <a href="#a1b1ac955ce338c9019bfdd4c02f1ea76">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a0b16f84bd63d1b3025d802744427a8f3"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_config_ipi.html">fiftyoneDegreesConfigIpi</a>&#160;&amp;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#a0b16f84bd63d1b3025d802744427a8f3">getConfig</a> ()
+<tr class="c-table__row memitem:aa615758a1326b3edd180d6925f79b72f"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_config_ipi.html">fiftyoneDegreesConfigIpi</a>&#160;&amp;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_config_ipi.html#aa615758a1326b3edd180d6925f79b72f">getConfig</a> ()
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a0b16f84bd63d1b3025d802744427a8f3">Gets the configuration data structure for use in C code.  <a href="#a0b16f84bd63d1b3025d802744427a8f3">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:aa615758a1326b3edd180d6925f79b72f">Gets the configuration data structure for use in C code.  <a href="#aa615758a1326b3edd180d6925f79b72f">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- writeInheritedSectionTitle -->
 <tr class="c-table__row pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell c-table__cell--parent" colspan="2" onclick="javascript:toggleInherit('pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base')"><span class="c-table__arrow c-table__arrow--is-open"></span><h3 class="c-table__heading">Public Member Functions inherited from <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html">FiftyoneDegrees::Common::ConfigBase</a></h3></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ac301d21e9d3ef1d3bcd9ed4a80097d70 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell"><!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#ac301d21e9d3ef1d3bcd9ed4a80097d70">ConfigBase</a> (<a class="el" href="structfiftyone_degrees_config_base.html">fiftyoneDegreesConfigBase</a> *config)
+<tr class="c-table__row memitem:abc68bb1aa7b45b01b6d04f13faacdd06 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell"><!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#abc68bb1aa7b45b01b6d04f13faacdd06">ConfigBase</a> (<a class="el" href="structfiftyone_degrees_config_base.html">fiftyoneDegreesConfigBase</a> *config)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ac301d21e9d3ef1d3bcd9ed4a80097d70 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Constructs a new instance of the configuration with a reference to the C configuration provided.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#ac301d21e9d3ef1d3bcd9ed4a80097d70">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:abc68bb1aa7b45b01b6d04f13faacdd06 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Constructs a new instance of the configuration with a reference to the C configuration provided.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#abc68bb1aa7b45b01b6d04f13faacdd06">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a9f440982a9f6c91b4eab7916a07e582e inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell"><a id="a9f440982a9f6c91b4eab7916a07e582e"></a>
+<tr class="c-table__row memitem:a429987eb53dd57fb0467501eb7a6ce80 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell"><a id="a429987eb53dd57fb0467501eb7a6ce80"></a>
 virtual<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a9f440982a9f6c91b4eab7916a07e582e">~ConfigBase</a> ()
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a429987eb53dd57fb0467501eb7a6ce80">~ConfigBase</a> ()
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a9f440982a9f6c91b4eab7916a07e582e inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Free any memory associated with temporary directories. <!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a429987eb53dd57fb0467501eb7a6ce80 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Free any memory associated with temporary directories. <!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a73be8311fd58e69ff079dbcc41b70dd7 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">void<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a73be8311fd58e69ff079dbcc41b70dd7">setUseUpperPrefixHeaders</a> (bool use)
+<tr class="c-table__row memitem:a11a2fbaaccb9318ab172aea676fa6082 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a11a2fbaaccb9318ab172aea676fa6082">setUseUpperPrefixHeaders</a> (bool use)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a73be8311fd58e69ff079dbcc41b70dd7 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Set whether or not the HTTP header field might be prefixed with 'HTTP_'.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a73be8311fd58e69ff079dbcc41b70dd7">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a11a2fbaaccb9318ab172aea676fa6082 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Set whether or not the HTTP header field might be prefixed with 'HTTP_'.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a11a2fbaaccb9318ab172aea676fa6082">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a6ab6ccb25819b965c70b3e6de03e7711 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">void<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a6ab6ccb25819b965c70b3e6de03e7711">setUseTempFile</a> (bool use)
+<tr class="c-table__row memitem:af06380acf17672ee40c48fb56b43fc36 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#af06380acf17672ee40c48fb56b43fc36">setUseTempFile</a> (bool use)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a6ab6ccb25819b965c70b3e6de03e7711 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Set whether or not a temporary file should be created from the original data file and used to initialise the data set.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a6ab6ccb25819b965c70b3e6de03e7711">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:af06380acf17672ee40c48fb56b43fc36 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Set whether or not a temporary file should be created from the original data file and used to initialise the data set.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#af06380acf17672ee40c48fb56b43fc36">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a67114f1fb944583798cdcf7a9e89ec53 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">void<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a67114f1fb944583798cdcf7a9e89ec53">setReuseTempFile</a> (bool reuse)
+<tr class="c-table__row memitem:aa5a03aa05f1c71a5f0f3886a69bf1f85 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#aa5a03aa05f1c71a5f0f3886a69bf1f85">setReuseTempFile</a> (bool reuse)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a67114f1fb944583798cdcf7a9e89ec53 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Set whether or not a temporary file that already exists for a master file should be reused by another process.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a67114f1fb944583798cdcf7a9e89ec53">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:aa5a03aa05f1c71a5f0f3886a69bf1f85 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Set whether or not a temporary file that already exists for a master file should be reused by another process.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#aa5a03aa05f1c71a5f0f3886a69bf1f85">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:aeeda5d90f0fec174885fe9ed3d302d43 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">void<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#aeeda5d90f0fec174885fe9ed3d302d43">setTempDirectories</a> (vector&lt; string &gt; tempDirs)
+<tr class="c-table__row memitem:a9d41288a63b0f2c05edacaf7caa2207e inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a9d41288a63b0f2c05edacaf7caa2207e">setTempDirectories</a> (vector&lt; string &gt; tempDirs)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:aeeda5d90f0fec174885fe9ed3d302d43 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Sets a collection of temporary directories to use if temporary file operation is required in the order in which the directories should be used.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#aeeda5d90f0fec174885fe9ed3d302d43">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a9d41288a63b0f2c05edacaf7caa2207e inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Sets a collection of temporary directories to use if temporary file operation is required in the order in which the directories should be used.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a9d41288a63b0f2c05edacaf7caa2207e">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a653b8caa33f99722f3cc5e5e171858aa inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">void<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a653b8caa33f99722f3cc5e5e171858aa">setPropertyValueIndex</a> (bool index)
+<tr class="c-table__row memitem:a851fa34527a57447cde49f87414c125b inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a851fa34527a57447cde49f87414c125b">setPropertyValueIndex</a> (bool index)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a653b8caa33f99722f3cc5e5e171858aa inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Set whether or not an index to speed up the retrieval of values for profiles and properties is created.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a653b8caa33f99722f3cc5e5e171858aa">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a851fa34527a57447cde49f87414c125b inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Set whether or not an index to speed up the retrieval of values for profiles and properties is created.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a851fa34527a57447cde49f87414c125b">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a76996ce2acdc4c891a73b5922356514e inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">bool<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a76996ce2acdc4c891a73b5922356514e">getUseUpperPrefixHeaders</a> () const
+<tr class="c-table__row memitem:a54a55632045aec896719b56d52dffb61 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">bool<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a54a55632045aec896719b56d52dffb61">getUseUpperPrefixHeaders</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a76996ce2acdc4c891a73b5922356514e inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Get whether or not an HTTP_ upper case prefixes should be considered when evaluating HTTP headers.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a76996ce2acdc4c891a73b5922356514e">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a54a55632045aec896719b56d52dffb61 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Get whether or not an HTTP_ upper case prefixes should be considered when evaluating HTTP headers.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a54a55632045aec896719b56d52dffb61">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a4e2ed393eb1682d20add8a51975f4592 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">bool<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a4e2ed393eb1682d20add8a51975f4592">getUseTempFile</a> () const
+<tr class="c-table__row memitem:a84bd2d9e6ebae894c29e52f2a5d914d0 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">bool<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a84bd2d9e6ebae894c29e52f2a5d914d0">getUseTempFile</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a4e2ed393eb1682d20add8a51975f4592 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Get whether or not a temporary file should be created from the original data file and used to initialise the data set.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a4e2ed393eb1682d20add8a51975f4592">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a84bd2d9e6ebae894c29e52f2a5d914d0 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Get whether or not a temporary file should be created from the original data file and used to initialise the data set.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a84bd2d9e6ebae894c29e52f2a5d914d0">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:af40d364b6fa7a90868ffa97213bb74f8 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">bool<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#af40d364b6fa7a90868ffa97213bb74f8">getReuseTempFile</a> () const
+<tr class="c-table__row memitem:a4cc376df676b8c2440438d1d113bbe6e inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">bool<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a4cc376df676b8c2440438d1d113bbe6e">getReuseTempFile</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:af40d364b6fa7a90868ffa97213bb74f8 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Get whether temporary files can be reused across multiple processes.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#af40d364b6fa7a90868ffa97213bb74f8">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a4cc376df676b8c2440438d1d113bbe6e inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Get whether temporary files can be reused across multiple processes.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a4cc376df676b8c2440438d1d113bbe6e">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a7b225e7608974c696df8c175d2b87542 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">vector&lt;&#160;string&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a7b225e7608974c696df8c175d2b87542">getTempDirectories</a> () const
+<tr class="c-table__row memitem:a7ff2c185aaba48c98b6d4e618945e664 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">vector&lt;&#160;string&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a7ff2c185aaba48c98b6d4e618945e664">getTempDirectories</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a7b225e7608974c696df8c175d2b87542 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Gets a vector of temporary directory strings which should be used to store temporary files.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a7b225e7608974c696df8c175d2b87542">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a7ff2c185aaba48c98b6d4e618945e664 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Gets a vector of temporary directory strings which should be used to store temporary files.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a7ff2c185aaba48c98b6d4e618945e664">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a64dc83cb38acb49705806395cee4e5c9 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">bool<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a64dc83cb38acb49705806395cee4e5c9">getPropertyValueIndex</a> () const
+<tr class="c-table__row memitem:a9e1b64c58422ad559c6a1ce776bb6948 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base"><td class="c-table__cell">bool<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a9e1b64c58422ad559c6a1ce776bb6948">getPropertyValueIndex</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a64dc83cb38acb49705806395cee4e5c9 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Gets a flag indicating if an index of values for properties and profile is created.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a64dc83cb38acb49705806395cee4e5c9">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a9e1b64c58422ad559c6a1ce776bb6948 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_config_base">Gets a flag indicating if an index of values for properties and profile is created.  <a href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a9e1b64c58422ad559c6a1ce776bb6948">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- endMemberList -->
 <!-- end member list -->
@@ -415,9 +417,9 @@ virtual<!-- insertMemberAlign -->
 <h2 class="g-docs__section-heading">Constructor &amp; Destructor Documentation</h2>
 <!-- startMemberDocList -->
 <article class="c-member">
-<a id="ac7c77d7b489b0dee3eaafeaf88158a6b"></a><!-- startMemberDoc -->
+<a id="a393ef985b346d2f272458a044b271e23"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ac7c77d7b489b0dee3eaafeaf88158a6b">&#9670;&nbsp;</a></span>ConfigIpi()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a393ef985b346d2f272458a044b271e23">&#9670;&nbsp;</a></span>ConfigIpi()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -426,7 +428,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">FiftyoneDegrees::IpIntelligence::ConfigIpi::ConfigIpi <!-- endMemberDocName -->
+              <td class="c-table__cell">ConfigIpi::ConfigIpi <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -460,9 +462,9 @@ virtual<!-- insertMemberAlign -->
 <h2 class="g-docs__section-heading">Member Function Documentation</h2>
 <!-- startMemberDocList -->
 <article class="c-member">
-<a id="a4b6b8cc07033882d33f776b7a1685d1f"></a><!-- startMemberDoc -->
+<a id="a594c3812b49c31013f2a26538ee0d9ce"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a4b6b8cc07033882d33f776b7a1685d1f">&#9670;&nbsp;</a></span>getComponents()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a594c3812b49c31013f2a26538ee0d9ce">&#9670;&nbsp;</a></span>getComponents()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -471,7 +473,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&amp; FiftyoneDegrees::IpIntelligence::ConfigIpi::getComponents <!-- endMemberDocName -->
+              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a> &amp; ConfigIpi::getComponents <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -496,9 +498,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a348cd29770c3865fce15237ffebe041f"></a><!-- startMemberDoc -->
+<a id="a1b1ac955ce338c9019bfdd4c02f1ea76"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a348cd29770c3865fce15237ffebe041f">&#9670;&nbsp;</a></span>getConcurrency()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a1b1ac955ce338c9019bfdd4c02f1ea76">&#9670;&nbsp;</a></span>getConcurrency()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -507,7 +509,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">uint16_t FiftyoneDegrees::IpIntelligence::ConfigIpi::getConcurrency <!-- endMemberDocName -->
+              <td class="c-table__cell">uint16_t ConfigIpi::getConcurrency <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -531,18 +533,19 @@ virtual<!-- insertMemberAlign -->
 <div class="c-member__body">
 
 <p>Get the lowest concurrency value in the list of possible concurrencies. </p>
+<p>Provides the lowest concurrency value in the list of possible concurrencies.</p>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a 16 bit integer with the minimum concurrency value. </dd></dl>
 
-<p>Reimplemented from <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a2f67bc630b95186339e28591a636a2fa">FiftyoneDegrees::Common::ConfigBase</a>.</p>
+<p>Reimplemented from <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html#a8429a052b6114f3e4a87b952bd79f551">FiftyoneDegrees::Common::ConfigBase</a>.</p>
 <!-- endIndent -->
 
 </div>
 </div>
 </article>
 <article class="c-member">
-<a id="a0b16f84bd63d1b3025d802744427a8f3"></a><!-- startMemberDoc -->
+<a id="aa615758a1326b3edd180d6925f79b72f"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a0b16f84bd63d1b3025d802744427a8f3">&#9670;&nbsp;</a></span>getConfig()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#aa615758a1326b3edd180d6925f79b72f">&#9670;&nbsp;</a></span>getConfig()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -551,7 +554,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_config_ipi.html">fiftyoneDegreesConfigIpi</a>&amp; FiftyoneDegrees::IpIntelligence::ConfigIpi::getConfig <!-- endMemberDocName -->
+              <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_config_ipi.html">fiftyoneDegreesConfigIpi</a> &amp; ConfigIpi::getConfig <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -569,16 +572,17 @@ virtual<!-- insertMemberAlign -->
 <div class="c-member__body">
 
 <p>Gets the configuration data structure for use in C code. </p>
-<p>Used internally. </p><dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">pointer to the underlying configuration data structure. </dd></dl>
+<p>Used internally. </p><dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">pointer to the underlying configuration data structure.</dd></dl>
+<p>Used internally. </p><dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">the underlying configuration data structure. </dd></dl>
 <!-- endIndent -->
 
 </div>
 </div>
 </article>
 <article class="c-member">
-<a id="ab825d4f35c572cd3336a131bdbc27478"></a><!-- startMemberDoc -->
+<a id="a44a8b4705a3099a1a6af489df266e6eb"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ab825d4f35c572cd3336a131bdbc27478">&#9670;&nbsp;</a></span>getGraph()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a44a8b4705a3099a1a6af489df266e6eb">&#9670;&nbsp;</a></span>getGraph()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -587,7 +591,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&amp; FiftyoneDegrees::IpIntelligence::ConfigIpi::getGraph <!-- endMemberDocName -->
+              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a> &amp; ConfigIpi::getGraph <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -612,9 +616,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="ae6dc776eb9297fcfa8d932892e1bcbc3"></a><!-- startMemberDoc -->
+<a id="a4133e4610ce6b4dc1ac47d8d6f2806f4"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ae6dc776eb9297fcfa8d932892e1bcbc3">&#9670;&nbsp;</a></span>getGraphs()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a4133e4610ce6b4dc1ac47d8d6f2806f4">&#9670;&nbsp;</a></span>getGraphs()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -623,7 +627,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&amp; FiftyoneDegrees::IpIntelligence::ConfigIpi::getGraphs <!-- endMemberDocName -->
+              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a> &amp; ConfigIpi::getGraphs <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -648,9 +652,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a5d42f69eecd1f3e9efe3d63222be216d"></a><!-- startMemberDoc -->
+<a id="a00ff93fd2b77a3c260bb788a704837cd"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a5d42f69eecd1f3e9efe3d63222be216d">&#9670;&nbsp;</a></span>getMaps()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a00ff93fd2b77a3c260bb788a704837cd">&#9670;&nbsp;</a></span>getMaps()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -659,7 +663,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&amp; FiftyoneDegrees::IpIntelligence::ConfigIpi::getMaps <!-- endMemberDocName -->
+              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a> &amp; ConfigIpi::getMaps <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -684,9 +688,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a70fb06eab806aa0d4b669e0ea7cc4da8"></a><!-- startMemberDoc -->
+<a id="a9e490b002ba84e8b8a7e3255ce1f5266"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a70fb06eab806aa0d4b669e0ea7cc4da8">&#9670;&nbsp;</a></span>getProfileGroups()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a9e490b002ba84e8b8a7e3255ce1f5266">&#9670;&nbsp;</a></span>getProfileGroups()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -695,7 +699,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&amp; FiftyoneDegrees::IpIntelligence::ConfigIpi::getProfileGroups <!-- endMemberDocName -->
+              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a> &amp; ConfigIpi::getProfileGroups <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -720,9 +724,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a9247cfeb16903656718c89843871dfe8"></a><!-- startMemberDoc -->
+<a id="aafda0a016a6b0588f8f208f298987adc"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a9247cfeb16903656718c89843871dfe8">&#9670;&nbsp;</a></span>getProfileOffsets()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#aafda0a016a6b0588f8f208f298987adc">&#9670;&nbsp;</a></span>getProfileOffsets()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -731,7 +735,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&amp; FiftyoneDegrees::IpIntelligence::ConfigIpi::getProfileOffsets <!-- endMemberDocName -->
+              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a> &amp; ConfigIpi::getProfileOffsets <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -756,9 +760,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a684a8e251f0df7bf317118ec18cb8831"></a><!-- startMemberDoc -->
+<a id="a60e8be850d060573213ae86dcae2c1d1"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a684a8e251f0df7bf317118ec18cb8831">&#9670;&nbsp;</a></span>getProfiles()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a60e8be850d060573213ae86dcae2c1d1">&#9670;&nbsp;</a></span>getProfiles()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -767,7 +771,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&amp; FiftyoneDegrees::IpIntelligence::ConfigIpi::getProfiles <!-- endMemberDocName -->
+              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a> &amp; ConfigIpi::getProfiles <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -792,9 +796,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a70941c7c6d2e60a3a0ce15cf86ed8d80"></a><!-- startMemberDoc -->
+<a id="a7d1b84086e01e8b8e0c79084754f5173"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a70941c7c6d2e60a3a0ce15cf86ed8d80">&#9670;&nbsp;</a></span>getProperties()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a7d1b84086e01e8b8e0c79084754f5173">&#9670;&nbsp;</a></span>getProperties()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -803,7 +807,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&amp; FiftyoneDegrees::IpIntelligence::ConfigIpi::getProperties <!-- endMemberDocName -->
+              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a> &amp; ConfigIpi::getProperties <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -828,9 +832,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a4f6c7d8c260812ca657500d3ff0dbe29"></a><!-- startMemberDoc -->
+<a id="aa2fbcf589dfcee52060628967ecff113"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a4f6c7d8c260812ca657500d3ff0dbe29">&#9670;&nbsp;</a></span>getPropertyTypes()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#aa2fbcf589dfcee52060628967ecff113">&#9670;&nbsp;</a></span>getPropertyTypes()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -839,7 +843,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&amp; FiftyoneDegrees::IpIntelligence::ConfigIpi::getPropertyTypes <!-- endMemberDocName -->
+              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a> &amp; ConfigIpi::getPropertyTypes <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -864,9 +868,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="ac3f80bac41e4c2d20e761ed22f04dcfd"></a><!-- startMemberDoc -->
+<a id="a5d597cf0873ba03032df867f995cc906"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ac3f80bac41e4c2d20e761ed22f04dcfd">&#9670;&nbsp;</a></span>getStrings()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a5d597cf0873ba03032df867f995cc906">&#9670;&nbsp;</a></span>getStrings()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -875,7 +879,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&amp; FiftyoneDegrees::IpIntelligence::ConfigIpi::getStrings <!-- endMemberDocName -->
+              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a> &amp; ConfigIpi::getStrings <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -900,9 +904,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="affea7d038714785f63df891f330c07be"></a><!-- startMemberDoc -->
+<a id="ad637d0b828a2b59a64815f0d99037909"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#affea7d038714785f63df891f330c07be">&#9670;&nbsp;</a></span>getValues()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ad637d0b828a2b59a64815f0d99037909">&#9670;&nbsp;</a></span>getValues()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -911,7 +915,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a>&amp; FiftyoneDegrees::IpIntelligence::ConfigIpi::getValues <!-- endMemberDocName -->
+              <td class="c-table__cell">const <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html">CollectionConfig</a> &amp; ConfigIpi::getValues <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -936,9 +940,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="ae3ec32de37de5195d497e9f3ddd711c3"></a><!-- startMemberDoc -->
+<a id="a696a18ae8b6760932807b3e3cdcf2238"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ae3ec32de37de5195d497e9f3ddd711c3">&#9670;&nbsp;</a></span>setBalanced()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a696a18ae8b6760932807b3e3cdcf2238">&#9670;&nbsp;</a></span>setBalanced()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -947,7 +951,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">void FiftyoneDegrees::IpIntelligence::ConfigIpi::setBalanced <!-- endMemberDocName -->
+              <td class="c-table__cell">void ConfigIpi::setBalanced <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -972,9 +976,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="afe6155589704270be1f6c9e6996a946c"></a><!-- startMemberDoc -->
+<a id="aeaf4dff21869d60fd635bb8b98062c8f"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#afe6155589704270be1f6c9e6996a946c">&#9670;&nbsp;</a></span>setBalancedTemp()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#aeaf4dff21869d60fd635bb8b98062c8f">&#9670;&nbsp;</a></span>setBalancedTemp()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -983,7 +987,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">void FiftyoneDegrees::IpIntelligence::ConfigIpi::setBalancedTemp <!-- endMemberDocName -->
+              <td class="c-table__cell">void ConfigIpi::setBalancedTemp <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -1008,9 +1012,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="ab29cbe4c798ab415adc5ecb2e19415cd"></a><!-- startMemberDoc -->
+<a id="aefa7900612100b6eb2e26e49f3dac921"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ab29cbe4c798ab415adc5ecb2e19415cd">&#9670;&nbsp;</a></span>setConcurrency()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#aefa7900612100b6eb2e26e49f3dac921">&#9670;&nbsp;</a></span>setConcurrency()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -1019,7 +1023,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">void FiftyoneDegrees::IpIntelligence::ConfigIpi::setConcurrency <!-- endMemberDocName -->
+              <td class="c-table__cell">void ConfigIpi::setConcurrency <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -1040,7 +1044,7 @@ virtual<!-- insertMemberAlign -->
 <div class="c-member__body">
 
 <p>Set the expected concurrent requests for all the data set's collections. </p>
-<p>All collections in the data set which use cached elements will have their caches constructued to allow for the concurrency value set here. See <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html#af61b8a5cf3476620410356b91a77c5d1" title="Set the expected number of concurrent requests.">CollectionConfig::setConcurrency</a> </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+<p>All collections in the data set which use cached elements will have their caches constructued to allow for the concurrency value set here. See <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_collection_config.html#aed82b94d51bfca983b92464dc04fe34f" title="Set the expected number of concurrent requests.">CollectionConfig::setConcurrency</a> </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">concurrency</span> - expected concurrent requests </dd>
   </dd>
 </dl>
@@ -1050,9 +1054,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a809efea67b32b4ed3d228dd6c4c5347f"></a><!-- startMemberDoc -->
+<a id="aa923ee4730348483d7e73334db66b94f"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a809efea67b32b4ed3d228dd6c4c5347f">&#9670;&nbsp;</a></span>setHighPerformance()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#aa923ee4730348483d7e73334db66b94f">&#9670;&nbsp;</a></span>setHighPerformance()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -1061,7 +1065,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">void FiftyoneDegrees::IpIntelligence::ConfigIpi::setHighPerformance <!-- endMemberDocName -->
+              <td class="c-table__cell">void ConfigIpi::setHighPerformance <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -1086,9 +1090,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a496e2f984405263177883cd73be4a31a"></a><!-- startMemberDoc -->
+<a id="a80ffec4333ca5217f18042c646ae1d4b"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a496e2f984405263177883cd73be4a31a">&#9670;&nbsp;</a></span>setLowMemory()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a80ffec4333ca5217f18042c646ae1d4b">&#9670;&nbsp;</a></span>setLowMemory()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -1097,7 +1101,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">void FiftyoneDegrees::IpIntelligence::ConfigIpi::setLowMemory <!-- endMemberDocName -->
+              <td class="c-table__cell">void ConfigIpi::setLowMemory <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -1122,9 +1126,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a437fc8406445921d0ca06913bd7e0b7b"></a><!-- startMemberDoc -->
+<a id="a2c7cb1c002a409e2b2a6aff2fa334fd1"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a437fc8406445921d0ca06913bd7e0b7b">&#9670;&nbsp;</a></span>setMaxPerformance()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a2c7cb1c002a409e2b2a6aff2fa334fd1">&#9670;&nbsp;</a></span>setMaxPerformance()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -1133,7 +1137,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">void FiftyoneDegrees::IpIntelligence::ConfigIpi::setMaxPerformance <!-- endMemberDocName -->
+              <td class="c-table__cell">void ConfigIpi::setMaxPerformance <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -1159,8 +1163,9 @@ virtual<!-- insertMemberAlign -->
 </article>
 <!-- endMemberDocList -->
 </section>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/<a class="el" href="_config_ipi_8hpp_source.html">ConfigIpi.hpp</a></li>
+<li>/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/ConfigIpi.cpp</li>
 </ul>
 </div><!-- primary -->
 </div><!-- inner-->

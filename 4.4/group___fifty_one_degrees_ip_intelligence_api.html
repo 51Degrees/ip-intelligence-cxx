@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>51Degrees Device Detection C/C++: IpIntelligence</title>
+<title>51Degrees IP Intelligence C/C++: IpIntelligence</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,12 +28,12 @@
 <div id="titlearea" class="g-header g-header--docs">
   <h1 class="c-brand">
   <a id="projectlogo" href="../../documentation/4.4/index.html" class="c-brand__link"><img class="c-brand__image" alt="Logo" src="logo-51Degrees-Docs.png" style="width:172px;"/></a>
-  <span class="c-tagline">51Degrees Device Detection C/C++
+  <span class="c-tagline">51Degrees IP Intelligence C/C++
    &#160;<span id="projectnumber">4.4</span>
   </span>
   </h1>
   <div id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectbrief">A device detection library that is used natively or by 51Degrees products</div>
+   <div id="projectbrief">IP intelligence services for 51Degrees Pipeline</div>
   </div>
   <div id="main-nav"></div>
   <section class="g-search">
@@ -66,7 +66,19 @@ $(document).ready(function(){initNavTree('group___fifty_one_degrees_ip_intellige
 <div class="g-docs__inner">
 <div class="g-docs__primary" id="primary">
 <a name="details" id="details"></a><h2 class="g-docs__section-heading">Detailed Description</h2>
-<p>All the functions specific to the IP Intelligence API. </p>
+<p>All the functions specific to the IP Intelligence Graph. </p>
+<p>All the functions specific to the IP Intelligence API.</p>
+<p>Evaluates an IP address and component id to determine the index associated with the profile or profile group from the related component.</p>
+<h2>Overview</h2>
+<p>fiftyoneDegreesIpiGraphCreateFrom[Memory|File] should be used to create an array of component graph information records from a suitable data source.</p>
+<p>This array is past to the fiftyoneDegreesIpiGraphEvaluate function along with the IP address and the id of the component required. The following code would be used to obtain the result for component id 1 and IP address 51.51.51.51.</p>
+<p>Exception exception; uint32_t result = 0; const char* ipAddress = "51.51.51.51"; IpAddress parsedIpAddress; parsedIpAddress.type = 0; if (IpAddressParse( ipAddress, ipAddress + sizeof(ipAddress), &amp;parsedIpAddress)) { result = fiftyoneDegreesIpiGraphEvaluate( wrapper-&gt;array, (byte)1, parsedIpAddress,</p>
+<p>&amp;exception); }</p>
+<p>The IP address is parsed from a string into a IpAddress instance using the common-cxx IP functions.</p>
+<p>The array created must be freed with the fiftyoneDegreesIpiGraphFree method when finished with.</p>
+<h2>Note</h2>
+<p>The methods marked trace are for 51Degrees internal purposes and are not intended for production usage.</p>
+<p>Associated tests are not provided as open source. Contact 51Degrees if more information is required. </p>
 <!-- startMemberSections -->
 <!-- startMemberHeader -->
 <h2 class="g-docs__section-heading">
@@ -78,6 +90,48 @@ Structs</h2>
 <div class="g-table g-table--overflow">
 <table class="c-table c-table--members">
 <tbody class="c-table__body">
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:"><td class="c-table__cell">struct <!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ipi_cg_member.html">fiftyoneDegreesIpiCgMember</a>
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:">DATA STRUCTURES.  <a href="structfiftyone_degrees_ipi_cg_member.html#details">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:"><td class="c-table__cell">struct <!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ipi_cg_member_node.html">fiftyoneDegreesIpiCgMemberNode</a>
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:">Data structure used for the values collection.  <a href="structfiftyone_degrees_ipi_cg_member_node.html#details">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:"><td class="c-table__cell">struct <!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ipi_cg_info.html">fiftyoneDegreesIpiCgInfo</a>
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:">Fixed width record in the collection where the record relates to a component and IP version.  <a href="structfiftyone_degrees_ipi_cg_info.html#details">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:"><td class="c-table__cell">struct <!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ipi_cg.html">fiftyoneDegreesIpiCg</a>
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:">The information and a working collection to retrieve entries from the component graph.  <a href="structfiftyone_degrees_ipi_cg.html#details">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:"><td class="c-table__cell">struct <!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ipi_cg_result.html">fiftyoneDegreesIpiCgResult</a>
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:">The evaluation result from graph collection.  <a href="structfiftyone_degrees_ipi_cg_result.html#details">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:"><td class="c-table__cell">struct <!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ipi_cg_array.html">fiftyoneDegreesIpiCgArray</a>
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:">An array of all the component graphs and collections available.  <a href="structfiftyone_degrees_ipi_cg_array.html#details">More...</a><!-- endMemberDescription -->
+</div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
 <tr class="c-table__row memitem:"><td class="c-table__cell">struct <!-- insertMemberAlign -->
@@ -162,6 +216,13 @@ Macros</h2>
 <div class="g-table g-table--overflow">
 <table class="c-table c-table--members">
 <tbody class="c-table__body">
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga858684a770e4595ab7e8ed0d77aad0e4"><td class="c-table__cell">#define<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_ip_intelligence_api.html#ga858684a770e4595ab7e8ed0d77aad0e4">FIFTYONE_DEGREES_IPI_CG_RESULT_DEFAULT</a>
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga858684a770e4595ab7e8ed0d77aad0e4">Default value for <a class="el" href="structfiftyone_degrees_ipi_cg_result.html" title="The evaluation result from graph collection.">fiftyoneDegreesIpiCgResult</a>.  <a href="#ga858684a770e4595ab7e8ed0d77aad0e4">More...</a><!-- endMemberDescription -->
+</div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
 <tr class="c-table__row memitem:gad9a9cd3d9a017ce10a49b7b1303214d6"><td class="c-table__cell">#define<!-- insertMemberAlign -->
@@ -353,6 +414,41 @@ Functions</h2>
 <div class="g-table g-table--overflow">
 <table class="c-table c-table--members">
 <tbody class="c-table__body">
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga141ea7a24bde25d8b29a0b81ad7e9972"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_ip_intelligence_api.html#ga141ea7a24bde25d8b29a0b81ad7e9972">fiftyoneDegreesIpiGraphFree</a> (<a class="el" href="structfiftyone_degrees_ipi_cg_array.html">fiftyoneDegreesIpiCgArray</a> *graphs)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga141ea7a24bde25d8b29a0b81ad7e9972">Frees all the memory and resources associated with an array of graphs previous created with fiftyoneDegreesIpiGraphCreateFromFile or fiftyoneDegreesIpiGraphCreateFromMemory.  <a href="#ga141ea7a24bde25d8b29a0b81ad7e9972">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:ga067d929fb0d89b96b3ed408074a87526"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ipi_cg_array.html">fiftyoneDegreesIpiCgArray</a>&#160;*<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_ip_intelligence_api.html#ga067d929fb0d89b96b3ed408074a87526">fiftyoneDegreesIpiGraphCreateFromMemory</a> (<a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *collection, <a class="el" href="structfiftyone_degrees_memory_reader.html">fiftyoneDegreesMemoryReader</a> *reader, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:ga067d929fb0d89b96b3ed408074a87526">Creates and initializes an array of graphs for the collection where the underlying data set is held in memory.  <a href="#ga067d929fb0d89b96b3ed408074a87526">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:gad3a91b5a56a181645706c37773370b41"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ipi_cg_array.html">fiftyoneDegreesIpiCgArray</a>&#160;*<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_ip_intelligence_api.html#gad3a91b5a56a181645706c37773370b41">fiftyoneDegreesIpiGraphCreateFromFile</a> (<a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *collection, FILE *file, <a class="el" href="structfiftyone_degrees_file_pool.html">fiftyoneDegreesFilePool</a> *reader, const <a class="el" href="structfiftyone_degrees_collection_config.html">fiftyoneDegreesCollectionConfig</a> config, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:gad3a91b5a56a181645706c37773370b41">Creates and initializes an array of graphs for the collection where the underlying data set is on the file system.  <a href="#gad3a91b5a56a181645706c37773370b41">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:gafeea66d6d71cbd9da8f5192bbf1698a1"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ipi_cg_result.html">fiftyoneDegreesIpiCgResult</a><!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_ip_intelligence_api.html#gafeea66d6d71cbd9da8f5192bbf1698a1">fiftyoneDegreesIpiGraphEvaluate</a> (const <a class="el" href="structfiftyone_degrees_ipi_cg_array.html">fiftyoneDegreesIpiCgArray</a> *graphs, <a class="el" href="group___fifty_one_degrees_data.html#ga0c8186d9b9b7880309c27230bbb5e69d">byte</a> componentId, <a class="el" href="structfiftyone_degrees_ip_address.html">fiftyoneDegreesIpAddress</a> address, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:gafeea66d6d71cbd9da8f5192bbf1698a1">Obtains the profile index for the IP address and component id provided.  <a href="#gafeea66d6d71cbd9da8f5192bbf1698a1">More...</a><!-- endMemberDescription -->
+</div></td></tr>
+<!-- member dec start -->
+<!-- startMemberItem() -->
+<tr class="c-table__row memitem:gafe52c8ed055e6a9f0676e95ac6564848"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ipi_cg_result.html">fiftyoneDegreesIpiCgResult</a><!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_ip_intelligence_api.html#gafe52c8ed055e6a9f0676e95ac6564848">fiftyoneDegreesIpiGraphEvaluateTrace</a> (<a class="el" href="structfiftyone_degrees_ipi_cg_array.html">fiftyoneDegreesIpiCgArray</a> *graphs, <a class="el" href="group___fifty_one_degrees_data.html#ga0c8186d9b9b7880309c27230bbb5e69d">byte</a> componentId, <a class="el" href="structfiftyone_degrees_ip_address.html">fiftyoneDegreesIpAddress</a> address, char *buffer, int const length, <a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *exception)
+<!-- startMemberDescription -->
+<div class="c-table__desc memdesc:gafe52c8ed055e6a9f0676e95ac6564848">Obtains the profile index for the IP address and component id provided populating the buffer provided with trace information.  <a href="#gafe52c8ed055e6a9f0676e95ac6564848">More...</a><!-- endMemberDescription -->
+</div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
 <tr class="c-table__row memitem:ga0f386c511289617c6347229d28e8c9b7"><td class="c-table__cell"><!-- insertMemberAlign -->
@@ -703,6 +799,35 @@ EXTERNAL_VAR&#160;<a class="el" href="structfiftyone_degrees_config_ipi.html">fi
 <div class="c-member__body">
 <b>Value:</b><div class="c-code__block c-code__block--outline"><div class="c-code__line"><span class="c-code__keyword">typedef</span> <span class="c-code__keyword">struct </span>fiftyone_degrees_dataset_ip_v##v##_range_t { \</div><div class="c-code__line">    byte start[s];  \</div><div class="c-code__line">    int32_t profileOffsetIndex;  \</div><div class="c-code__line">} fiftyoneDegreesIpv##v##Range;</div></div>
 <p>Define the IP range structure. </p>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ga858684a770e4595ab7e8ed0d77aad0e4"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga858684a770e4595ab7e8ed0d77aad0e4">&#9670;&nbsp;</a></span>FIFTYONE_DEGREES_IPI_CG_RESULT_DEFAULT</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">#define FIFTYONE_DEGREES_IPI_CG_RESULT_DEFAULT<!-- endMemberDocName -->
+</td>
+<!-- endMemberDoc -->
+            </tr>
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+<b>Value:</b><div class="c-code__block c-code__block--outline"><div class="c-code__line">(<a class="code" href="structfiftyone_degrees_ipi_cg_result.html">fiftyoneDegreesIpiCgResult</a>){ \</div><div class="c-code__line">    UINT32_MAX, \</div><div class="c-code__line">    UINT32_MAX, \</div><div class="c-code__line">    false \</div><div class="c-code__line">}</div><div class="ttc" id="structfiftyone_degrees_ipi_cg_result_html"><div class="ttname"><a href="structfiftyone_degrees_ipi_cg_result.html">fiftyoneDegreesIpiCgResult</a></div><div class="ttdoc">The evaluation result from graph collection.</div><div class="ttdef"><b>Definition:</b> graph.h:181</div></div>
+</div>
+<p>Default value for <a class="el" href="structfiftyone_degrees_ipi_cg_result.html" title="The evaluation result from graph collection.">fiftyoneDegreesIpiCgResult</a>. </p>
 <!-- endIndent -->
 
 </div>
@@ -1157,6 +1282,390 @@ EXTERNAL_VAR&#160;<a class="el" href="structfiftyone_degrees_config_ipi.html">fi
   </dd>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">the result profile index to start from in the next call for fetching the remaining of the network ID. All indices will be -1s there is no more to fetch. The returned format does not contain leading or trailing separator so the separator will need to be added explicitly if more than one call is required. </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="gad3a91b5a56a181645706c37773370b41"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gad3a91b5a56a181645706c37773370b41">&#9670;&nbsp;</a></span>fiftyoneDegreesIpiGraphCreateFromFile()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ipi_cg_array.html">fiftyoneDegreesIpiCgArray</a>* fiftyoneDegreesIpiGraphCreateFromFile <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>collection</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">FILE *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>file</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_file_pool.html">fiftyoneDegreesFilePool</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>reader</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">const <a class="el" href="structfiftyone_degrees_collection_config.html">fiftyoneDegreesCollectionConfig</a><!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>config</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>exception</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Creates and initializes an array of graphs for the collection where the underlying data set is on the file system. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">collection</span> - of <a class="el" href="structfiftyone_degrees_ipi_cg_info.html" title="Fixed width record in the collection where the record relates to a component and IP version.">fiftyoneDegreesIpiCgInfo</a> records </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">file</span> - for to the source data </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">reader</span> - pool connected to the file </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">config</span> - for the collections created for each graph </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">exception</span> - pointer to an exception data structure to be used if an exception occurs. See <a class="el" href="exceptions_8h_source.html">exceptions.h</a>. </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a pointer to the newly allocated array, or null if the operation was not successful. </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ga067d929fb0d89b96b3ed408074a87526"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga067d929fb0d89b96b3ed408074a87526">&#9670;&nbsp;</a></span>fiftyoneDegreesIpiGraphCreateFromMemory()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ipi_cg_array.html">fiftyoneDegreesIpiCgArray</a>* fiftyoneDegreesIpiGraphCreateFromMemory <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_collection.html">fiftyoneDegreesCollection</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>collection</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_memory_reader.html">fiftyoneDegreesMemoryReader</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>reader</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>exception</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Creates and initializes an array of graphs for the collection where the underlying data set is held in memory. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">collection</span> - of <a class="el" href="structfiftyone_degrees_ipi_cg_info.html" title="Fixed width record in the collection where the record relates to a component and IP version.">fiftyoneDegreesIpiCgInfo</a> records </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">reader</span> - to the source data </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">exception</span> - pointer to an exception data structure to be used if an exception occurs. See <a class="el" href="exceptions_8h_source.html">exceptions.h</a>. </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">a pointer to the newly allocated array, or null if the operation was not successful. </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="gafeea66d6d71cbd9da8f5192bbf1698a1"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gafeea66d6d71cbd9da8f5192bbf1698a1">&#9670;&nbsp;</a></span>fiftyoneDegreesIpiGraphEvaluate()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ipi_cg_result.html">fiftyoneDegreesIpiCgResult</a> fiftyoneDegreesIpiGraphEvaluate <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell">const <a class="el" href="structfiftyone_degrees_ipi_cg_array.html">fiftyoneDegreesIpiCgArray</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>graphs</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_data.html#ga0c8186d9b9b7880309c27230bbb5e69d">byte</a><!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>componentId</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ip_address.html">fiftyoneDegreesIpAddress</a><!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>address</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>exception</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Obtains the profile index for the IP address and component id provided. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">graphs</span> - array for each component id and IP version </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">componentId</span> - of the index required </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">address</span> - IP address to return a profile index for </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">exception</span> - pointer to an exception data structure to be used if an exception occurs. See <a class="el" href="exceptions_8h_source.html">exceptions.h</a>. </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">the index of the profile (or group) associated with the IP address. </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="gafe52c8ed055e6a9f0676e95ac6564848"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#gafe52c8ed055e6a9f0676e95ac6564848">&#9670;&nbsp;</a></span>fiftyoneDegreesIpiGraphEvaluateTrace()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ipi_cg_result.html">fiftyoneDegreesIpiCgResult</a> fiftyoneDegreesIpiGraphEvaluateTrace <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ipi_cg_array.html">fiftyoneDegreesIpiCgArray</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>graphs</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_data.html#ga0c8186d9b9b7880309c27230bbb5e69d">byte</a><!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>componentId</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ip_address.html">fiftyoneDegreesIpAddress</a><!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>address</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">char *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>buffer</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell">int const<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>length</em>, <!-- endParameterName -->
+</td>
+        </tr>
+<!-- startParameterType -->
+        <tr>
+          <td class="c-table__cell"></td>
+          <td></td>
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_exception.html">fiftyoneDegreesException</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>exception</em><!-- endParameterName -->
+&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Obtains the profile index for the IP address and component id provided populating the buffer provided with trace information. </p>
+<p>Requires the definition FIFTYONE_DEGREES_IPI_GRAPH_TRACE to be present. </p><dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">graphs</span> - array for each component id and IP version </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">componentId</span> - of the index required </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">address</span> - IP address to return a profile index for </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">buffer</span> - that will be populated with the trace information </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">length</span> - of the buffer </dd>
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">exception</span> - pointer to an exception data structure to be used if an exception occurs. See <a class="el" href="exceptions_8h_source.html">exceptions.h</a>. </dd>
+  </dd>
+</dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">the index of the profile (or group) associated with the IP address. </dd></dl>
+<!-- endIndent -->
+
+</div>
+</div>
+</article>
+<article class="c-member">
+<a id="ga141ea7a24bde25d8b29a0b81ad7e9972"></a><!-- startMemberDoc -->
+
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ga141ea7a24bde25d8b29a0b81ad7e9972">&#9670;&nbsp;</a></span>fiftyoneDegreesIpiGraphFree()</h2>
+
+<div class="c-member__main">
+<div class="c-member__head">
+<!-- startMemberDocName -->
+      <div class="c-member__split">
+        <div class="g-table g-table--overflow">
+          <table class="c-table c-table--article">
+            <tr class="c-table__row">
+              <td class="c-table__cell">void fiftyoneDegreesIpiGraphFree <!-- endMemberDocName -->
+</td>
+<!-- startParameterList -->
+          <td>(</td>
+<!-- startFirstParameterType -->
+          <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_ipi_cg_array.html">fiftyoneDegreesIpiCgArray</a> *<!-- endParameterType -->
+&#160;</td>
+<!-- startParameterName -->
+          <td class="c-table__cell"><em>graphs</em><!-- endParameterName -->
+</td><td>)</td>
+          <td><!-- endParameterList -->
+</td>
+        </tr>
+<!-- endMemberDoc -->
+          </table>
+        </div>
+      </div>
+</div><!-- startIndent -->
+<div class="c-member__body">
+
+<p>Frees all the memory and resources associated with an array of graphs previous created with fiftyoneDegreesIpiGraphCreateFromFile or fiftyoneDegreesIpiGraphCreateFromMemory. </p>
+<dl class="c-list-definition"><dt class="c-list-definition__title">Parameters</dt><dd class="c-list-definition__desc">
+    <tr><dd class="c-list-definition__desc"><span class="b-text--red">graphs</span> - pointer to the array to be freed </dd>
+  </dd>
+</dl>
 <!-- endIndent -->
 
 </div>
@@ -2048,7 +2557,8 @@ EXTERNAL_VAR&#160;<a class="el" href="structfiftyone_degrees_config_ipi.html">fi
     <tr><dd class="c-list-definition__desc"><span class="b-text--red">manager</span> - pointer to the resource manager which manages a IP Intelligence data set </dd>
   </dd>
 </dl>
-<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">newly created results structure </dd></dl>
+<dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">newly created results structure</dd></dl>
+<p>Allocates a results structure containing a reference to the IP Intelligence data set managed by the resource manager provided. </p>
 <!-- endIndent -->
 
 </div>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>51Degrees Device Detection C/C++: FiftyoneDegrees::IpIntelligence::EvidenceIpi Class Reference</title>
+<title>51Degrees IP Intelligence C/C++: FiftyoneDegrees::IpIntelligence::EvidenceIpi Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,12 +28,12 @@
 <div id="titlearea" class="g-header g-header--docs">
   <h1 class="c-brand">
   <a id="projectlogo" href="../../documentation/4.4/index.html" class="c-brand__link"><img class="c-brand__image" alt="Logo" src="logo-51Degrees-Docs.png" style="width:172px;"/></a>
-  <span class="c-tagline">51Degrees Device Detection C/C++
+  <span class="c-tagline">51Degrees IP Intelligence C/C++
    &#160;<span id="projectnumber">4.4</span>
   </span>
   </h1>
   <div id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectbrief">A device detection library that is used natively or by 51Degrees products</div>
+   <div id="projectbrief">IP intelligence services for 51Degrees Pipeline</div>
   </div>
   <div id="main-nav"></div>
   <section class="g-search">
@@ -73,15 +73,17 @@ $(document).ready(function(){initNavTree('class_fiftyone_degrees_1_1_ip_intellig
 <a name="details" id="details"></a><h2 class="g-docs__section-heading">Detailed Description</h2>
 <section class="g-docs__section"><p>IP Intelligence specific evidence class containing evidence to be processed by an IP intelligence engine. </p>
 <p>This wraps a dynamically generated C evidence structure.</p>
-<p>The class extends the EvidenceBase class to implement the <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a8c7937e2ab8a7b0834a81c9372d28a33" title="Get whether or not the evidence key prefix is relevant or not.">EvidenceBase::isRelevant</a> method to return for IP intelligence specific evidence keys.</p>
+<p>The class extends the EvidenceBase class to implement the <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#aff8d5ed2eca6fe1314c1fcfb2494067a" title="Get whether or not the evidence key prefix is relevant or not.">EvidenceBase::isRelevant</a> method to return for IP intelligence specific evidence keys.</p>
 <h2>Usage Example</h2>
-<div class="c-code__block c-code__block--outline"><div class="c-code__line"><span class="c-code__keyword">using namespace </span><a class="code" href="namespace_fiftyone_degrees_1_1_ip_intelligence.html">FiftyoneDegrees::IpIntelligence</a>;</div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_engine_ipi.html">EngineIpi</a> *engine;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Construct a new evidence instance</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_evidence_ipi.html">EvidenceIpi</a> *evidence = <span class="c-code__keyword">new</span> <a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_evidence_ipi.html#a795a3934f9ec1b6e95f1ecd6aeb9c9e8">EvidenceIpi</a>();</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Add an item of evidence</span></div><div class="c-code__line">evidence-&gt;operator[](<span class="c-code__stringliteral">&quot;evidence key&quot;</span>) = <span class="c-code__stringliteral">&quot;evidence value&quot;</span>;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Give the evidence to an engine for processing</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html">ResultsIpi</a> *results = engine-&gt;<a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_engine_ipi.html#a599f72973b6fa751291d48f4e771e28f">process</a>(evidence);</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Do something with the results (and delete them once finished)</span></div><div class="c-code__line"><span class="c-code__comment">// ...</span></div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Delete the evidence</span></div><div class="c-code__line"><span class="c-code__keyword">delete</span> evidence;</div></div> </section></section>
+<div class="c-code__block c-code__block--outline"><div class="c-code__line"><span class="c-code__keyword">using namespace </span><a class="code" href="namespace_fiftyone_degrees_1_1_ip_intelligence.html">FiftyoneDegrees::IpIntelligence</a>;</div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_engine_ipi.html">EngineIpi</a> *engine;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Construct a new evidence instance</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_evidence_ipi.html">EvidenceIpi</a> *evidence = <span class="c-code__keyword">new</span> <a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_evidence_ipi.html#a795a3934f9ec1b6e95f1ecd6aeb9c9e8">EvidenceIpi</a>();</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Add an item of evidence</span></div><div class="c-code__line">evidence-&gt;operator[](<span class="c-code__stringliteral">&quot;evidence key&quot;</span>) = <span class="c-code__stringliteral">&quot;evidence value&quot;</span>;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Give the evidence to an engine for processing</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_results_ipi.html">ResultsIpi</a> *results = engine-&gt;<a class="code" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_engine_ipi.html#aa97146951bce55b27d892bbd20c1bbe5">process</a>(evidence);</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Do something with the results (and delete them once finished)</span></div><div class="c-code__line"><span class="c-code__comment">// ...</span></div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Delete the evidence</span></div><div class="c-code__line"><span class="c-code__keyword">delete</span> evidence;</div></div> <dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd class="c-list-definition__desc"><a class="el" href="_ip_intelligence_2_getting_started_8cpp-example.html#_a3">IpIntelligence/GettingStarted.cpp</a>, and <a class="el" href="_ip_intelligence_2_strongly_typed_8cpp-example.html#_a3">IpIntelligence/StronglyTyped.cpp</a>.</dd>
+</dl>
+</section></section>
 <!-- start ClassInheritanceGraph -->
 <section class="g-docs__section">
 <h2 class="g-docs__section-heading">
 Inheritance diagram for FiftyoneDegrees::IpIntelligence::EvidenceIpi:</h2>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="class_fiftyone_degrees_1_1_ip_intelligence_1_1_evidence_ipi__inherit__graph.svg" width="235" height="216"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="class_fiftyone_degrees_1_1_ip_intelligence_1_1_evidence_ipi__inherit__graph.svg" width="240" height="308"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 </section>
@@ -90,7 +92,7 @@ Inheritance diagram for FiftyoneDegrees::IpIntelligence::EvidenceIpi:</h2>
 <h2 class="g-docs__section-heading">
 Collaboration diagram for FiftyoneDegrees::IpIntelligence::EvidenceIpi:</h2>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="class_fiftyone_degrees_1_1_ip_intelligence_1_1_evidence_ipi__coll__graph.svg" width="235" height="216"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="class_fiftyone_degrees_1_1_ip_intelligence_1_1_evidence_ipi__coll__graph.svg" width="240" height="308"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 </section>
@@ -130,48 +132,48 @@ Public Member Functions</h2>
 <tr class="c-table__row pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base"><td class="c-table__cell c-table__cell--parent" colspan="2" onclick="javascript:toggleInherit('pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base')"><span class="c-table__arrow c-table__arrow--is-open"></span><h3 class="c-table__heading">Public Member Functions inherited from <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html">FiftyoneDegrees::Common::EvidenceBase</a></h3></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a32037e44b058ce986538331237b72430 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base"><td class="c-table__cell"><a id="a32037e44b058ce986538331237b72430"></a>
+<tr class="c-table__row memitem:a22efaa733a9ef63b14b93a5347c4e90c inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base"><td class="c-table__cell"><a id="a22efaa733a9ef63b14b93a5347c4e90c"></a>
 <!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a32037e44b058ce986538331237b72430">EvidenceBase</a> ()
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a22efaa733a9ef63b14b93a5347c4e90c">EvidenceBase</a> ()
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a32037e44b058ce986538331237b72430 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base">Construct a new instance containing no evidence. <!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a22efaa733a9ef63b14b93a5347c4e90c inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base">Construct a new instance containing no evidence. <!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a6a733389c83d287d056dabb3edd60f38 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base"><td class="c-table__cell"><a id="a6a733389c83d287d056dabb3edd60f38"></a>
+<tr class="c-table__row memitem:a8d0616f6ee55e952b12086cd03cea478 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base"><td class="c-table__cell"><a id="a8d0616f6ee55e952b12086cd03cea478"></a>
 virtual<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a6a733389c83d287d056dabb3edd60f38">~EvidenceBase</a> ()
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a8d0616f6ee55e952b12086cd03cea478">~EvidenceBase</a> ()
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a6a733389c83d287d056dabb3edd60f38 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base">Free all the underlying memory containing the evidence. <!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a8d0616f6ee55e952b12086cd03cea478 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base">Free all the underlying memory containing the evidence. <!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a496bdae1e7ea7f7ef4326de46f8f4389 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_evidence_key_value_pair_array.html">fiftyoneDegreesEvidenceKeyValuePairArray</a>&#160;*<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a496bdae1e7ea7f7ef4326de46f8f4389">get</a> ()
+<tr class="c-table__row memitem:a3bfd3a0bb9ec04382c85e8a486b5586e inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_evidence_key_value_pair_array.html">fiftyoneDegreesEvidenceKeyValuePairArray</a>&#160;*<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a3bfd3a0bb9ec04382c85e8a486b5586e">get</a> ()
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a496bdae1e7ea7f7ef4326de46f8f4389 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base">Get the underlying C structure containing the evidence.  <a href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a496bdae1e7ea7f7ef4326de46f8f4389">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a3bfd3a0bb9ec04382c85e8a486b5586e inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base">Get the underlying C structure containing the evidence.  <a href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a3bfd3a0bb9ec04382c85e8a486b5586e">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a18105a88049cd8c4e4928a88a43e6f60 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base"><td class="c-table__cell"><a id="a18105a88049cd8c4e4928a88a43e6f60"></a>
+<tr class="c-table__row memitem:a0070984e795bd284e6fbcd56ea7917c0 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base"><td class="c-table__cell"><a id="a0070984e795bd284e6fbcd56ea7917c0"></a>
 void<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a18105a88049cd8c4e4928a88a43e6f60">clear</a> ()
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a0070984e795bd284e6fbcd56ea7917c0">clear</a> ()
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a18105a88049cd8c4e4928a88a43e6f60 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base">Clear all evidence items from the instance. <!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a0070984e795bd284e6fbcd56ea7917c0 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base">Clear all evidence items from the instance. <!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:ac10e1c43828cba52204980a3b3f8faeb inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base"><td class="c-table__cell">void<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#ac10e1c43828cba52204980a3b3f8faeb">erase</a> (iterator position)
+<tr class="c-table__row memitem:ab6e4842ff211f252c2190568dbf6cc8b inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#ab6e4842ff211f252c2190568dbf6cc8b">erase</a> (iterator position)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:ac10e1c43828cba52204980a3b3f8faeb inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base">Remove the evidence item at the position indicated.  <a href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#ac10e1c43828cba52204980a3b3f8faeb">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:ab6e4842ff211f252c2190568dbf6cc8b inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base">Remove the evidence item at the position indicated.  <a href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#ab6e4842ff211f252c2190568dbf6cc8b">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a7877fe71622e39629016b593d07dfba9 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base"><td class="c-table__cell">void<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a7877fe71622e39629016b593d07dfba9">erase</a> (iterator first, iterator last)
+<tr class="c-table__row memitem:a4928a69040bf1235ffff138a054112ba inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base"><td class="c-table__cell">void<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a4928a69040bf1235ffff138a054112ba">erase</a> (iterator first, iterator last)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a7877fe71622e39629016b593d07dfba9 inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base">Remove the evidence items between the two position indicated.  <a href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a7877fe71622e39629016b593d07dfba9">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a4928a69040bf1235ffff138a054112ba inherit pub_methods_class_fiftyone_degrees_1_1_common_1_1_evidence_base">Remove the evidence items between the two position indicated.  <a href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a4928a69040bf1235ffff138a054112ba">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- endMemberList -->
 <!-- end member list -->
@@ -200,10 +202,10 @@ Protected Member Functions</h2>
 <tbody class="c-table__body">
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a9f1cd5fe27b2d47f59841dddb5ff1606"><td class="c-table__cell">bool<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_evidence_ipi.html#a9f1cd5fe27b2d47f59841dddb5ff1606">isRelevant</a> (<a class="el" href="group___fifty_one_degrees_common.html#ga1ff9010650f2716970e86c12c5a97a76">fiftyoneDegreesEvidencePrefix</a> prefix) override
+<tr class="c-table__row memitem:a5f3fd50933c900d14d7e2fba3e4db70c"><td class="c-table__cell">bool<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_ip_intelligence_1_1_evidence_ipi.html#a5f3fd50933c900d14d7e2fba3e4db70c">isRelevant</a> (<a class="el" href="group___fifty_one_degrees_common.html#ga1ff9010650f2716970e86c12c5a97a76">fiftyoneDegreesEvidencePrefix</a> prefix) override
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a9f1cd5fe27b2d47f59841dddb5ff1606">Get whether or not the evidence key prefix is relevant or not.  <a href="#a9f1cd5fe27b2d47f59841dddb5ff1606">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a5f3fd50933c900d14d7e2fba3e4db70c">Get whether or not the evidence key prefix is relevant or not.  <a href="#a5f3fd50933c900d14d7e2fba3e4db70c">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- endMemberList -->
 <!-- end member list -->
@@ -294,9 +296,9 @@ Protected Member Functions</h2>
 <h2 class="g-docs__section-heading">Member Function Documentation</h2>
 <!-- startMemberDocList -->
 <article class="c-member">
-<a id="a9f1cd5fe27b2d47f59841dddb5ff1606"></a><!-- startMemberDoc -->
+<a id="a5f3fd50933c900d14d7e2fba3e4db70c"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a9f1cd5fe27b2d47f59841dddb5ff1606">&#9670;&nbsp;</a></span>isRelevant()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a5f3fd50933c900d14d7e2fba3e4db70c">&#9670;&nbsp;</a></span>isRelevant()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -305,7 +307,7 @@ Protected Member Functions</h2>
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">bool FiftyoneDegrees::IpIntelligence::EvidenceIpi::isRelevant <!-- endMemberDocName -->
+              <td class="c-table__cell">bool EvidenceIpi::isRelevant <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -339,7 +341,7 @@ Protected Member Functions</h2>
 </dl>
 <dl class="c-list-definition return"><dt class="c-list-definition__title">Returns</dt><dd class="c-list-definition__desc">true if the key prefix relevant and should be used </dd></dl>
 
-<p>Reimplemented from <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#a8c7937e2ab8a7b0834a81c9372d28a33">FiftyoneDegrees::Common::EvidenceBase</a>.</p>
+<p>Reimplemented from <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_evidence_base.html#aff8d5ed2eca6fe1314c1fcfb2494067a">FiftyoneDegrees::Common::EvidenceBase</a>.</p>
 <!-- endIndent -->
 
 </div>
@@ -347,8 +349,9 @@ Protected Member Functions</h2>
 </article>
 <!-- endMemberDocList -->
 </section>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/<a class="el" href="_evidence_ipi_8hpp_source.html">EvidenceIpi.hpp</a></li>
+<li>/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/EvidenceIpi.cpp</li>
 </ul>
 </div><!-- primary -->
   <div class="g-docs__sidebar">

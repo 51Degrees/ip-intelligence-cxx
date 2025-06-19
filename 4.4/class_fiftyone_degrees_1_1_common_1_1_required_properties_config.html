@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>51Degrees Device Detection C/C++: FiftyoneDegrees::Common::RequiredPropertiesConfig Class Reference</title>
+<title>51Degrees IP Intelligence C/C++: FiftyoneDegrees::Common::RequiredPropertiesConfig Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,12 +28,12 @@
 <div id="titlearea" class="g-header g-header--docs">
   <h1 class="c-brand">
   <a id="projectlogo" href="../../documentation/4.4/index.html" class="c-brand__link"><img class="c-brand__image" alt="Logo" src="logo-51Degrees-Docs.png" style="width:172px;"/></a>
-  <span class="c-tagline">51Degrees Device Detection C/C++
+  <span class="c-tagline">51Degrees IP Intelligence C/C++
    &#160;<span id="projectnumber">4.4</span>
   </span>
   </h1>
   <div id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectbrief">A device detection library that is used natively or by 51Degrees products</div>
+   <div id="projectbrief">IP intelligence services for 51Degrees Pipeline</div>
   </div>
   <div id="main-nav"></div>
   <section class="g-search">
@@ -75,7 +75,9 @@ $(document).ready(function(){initNavTree('class_fiftyone_degrees_1_1_common_1_1_
 <p>It defines a set of properties which are required by a caller, usually to a data set constructor.</p>
 <p>An instance is immutable once instantiated.</p>
 <h2>Usage Example</h2>
-<div class="c-code__block c-code__block--outline"><div class="c-code__line"><span class="c-code__keyword">using namespace </span><a class="code" href="namespace_fiftyone_degrees_1_1_common.html">FiftyoneDegrees::Common</a>;</div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html">ConfigBase</a> *config;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Construct a required properties configuration with a list of</span></div><div class="c-code__line"><span class="c-code__comment">// required properties</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html">RequiredPropertiesConfig</a> *properties =</div><div class="c-code__line">    <span class="c-code__keyword">new</span> <a class="code" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#a5613eac2f2384918cee51a1230950d2b">RequiredPropertiesConfig</a>(<span class="c-code__stringliteral">&quot;a property, another property&quot;</span>);</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Use the required properties configuration when constructing an</span></div><div class="c-code__line"><span class="c-code__comment">// engine</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_common_1_1_engine_base.html">EngineBase</a> *engine = <span class="c-code__keyword">new</span> <a class="code" href="class_fiftyone_degrees_1_1_common_1_1_engine_base.html">EngineBase</a>(config, properties);</div></div> </section></section>
+<div class="c-code__block c-code__block--outline"><div class="c-code__line"><span class="c-code__keyword">using namespace </span><a class="code" href="namespace_fiftyone_degrees_1_1_common.html">FiftyoneDegrees::Common</a>;</div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_common_1_1_config_base.html">ConfigBase</a> *config;</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Construct a required properties configuration with a list of</span></div><div class="c-code__line"><span class="c-code__comment">// required properties</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html">RequiredPropertiesConfig</a> *properties =</div><div class="c-code__line">    <span class="c-code__keyword">new</span> <a class="code" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#a3d19e6b8e2fd35f3f13d645d40fb8b9f">RequiredPropertiesConfig</a>(<span class="c-code__stringliteral">&quot;a property, another property&quot;</span>);</div><div class="c-code__line"></div><div class="c-code__line"><span class="c-code__comment">// Use the required properties configuration when constructing an</span></div><div class="c-code__line"><span class="c-code__comment">// engine</span></div><div class="c-code__line"><a class="code" href="class_fiftyone_degrees_1_1_common_1_1_engine_base.html">EngineBase</a> *engine = <span class="c-code__keyword">new</span> <a class="code" href="class_fiftyone_degrees_1_1_common_1_1_engine_base.html">EngineBase</a>(config, properties);</div></div> <dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd class="c-list-definition__desc"><a class="el" href="_ip_intelligence_2_getting_started_8cpp-example.html#_a0">IpIntelligence/GettingStarted.cpp</a>, <a class="el" href="_ip_intelligence_2_meta_data_8cpp-example.html#_a0">IpIntelligence/MetaData.cpp</a>, and <a class="el" href="_ip_intelligence_2_strongly_typed_8cpp-example.html#_a0">IpIntelligence/StronglyTyped.cpp</a>.</dd>
+</dl>
+</section></section>
 <!-- start ClassInheritanceGraph -->
 <section class="g-docs__section">
 </section>
@@ -108,91 +110,91 @@ Public Member Functions</h2>
 <tbody class="c-table__body">
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a03565f20d7508758cfbf88bb2055fb86"><td class="c-table__cell">bool<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#a03565f20d7508758cfbf88bb2055fb86">containsProperty</a> (const char *property) const
+<tr class="c-table__row memitem:a59ea93bfd225c07353d7b283f9c6f861"><td class="c-table__cell">bool<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#a59ea93bfd225c07353d7b283f9c6f861">containsProperty</a> (const char *property) const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a03565f20d7508758cfbf88bb2055fb86">Get whether or not the property name supplied is contained in the required properties configuration.  <a href="#a03565f20d7508758cfbf88bb2055fb86">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a59ea93bfd225c07353d7b283f9c6f861">Get whether or not the property name supplied is contained in the required properties configuration.  <a href="#a59ea93bfd225c07353d7b283f9c6f861">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:afb660d8b35da77c7feb46aee1fd52a23"><td class="c-table__cell">bool<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#afb660d8b35da77c7feb46aee1fd52a23">containsProperty</a> (const string property) const
+<tr class="c-table__row memitem:a1be6ce892f5540d2ebaba9354ab351d7"><td class="c-table__cell">bool<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#a1be6ce892f5540d2ebaba9354ab351d7">containsProperty</a> (const string property) const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:afb660d8b35da77c7feb46aee1fd52a23">Get whether or not the property name supplied is contained in the required properties configuration.  <a href="#afb660d8b35da77c7feb46aee1fd52a23">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a1be6ce892f5540d2ebaba9354ab351d7">Get whether or not the property name supplied is contained in the required properties configuration.  <a href="#a1be6ce892f5540d2ebaba9354ab351d7">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <tr class="c-table__row"><td class="c-table__cell" colspan="2"><h3 class="c-table__heading">Constructors and Destructors</h3></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a5613eac2f2384918cee51a1230950d2b"><td class="c-table__cell"><a id="a5613eac2f2384918cee51a1230950d2b"></a>
+<tr class="c-table__row memitem:a3d19e6b8e2fd35f3f13d645d40fb8b9f"><td class="c-table__cell"><a id="a3d19e6b8e2fd35f3f13d645d40fb8b9f"></a>
 <!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#a5613eac2f2384918cee51a1230950d2b">RequiredPropertiesConfig</a> ()
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#a3d19e6b8e2fd35f3f13d645d40fb8b9f">RequiredPropertiesConfig</a> ()
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a5613eac2f2384918cee51a1230950d2b">Constructs a new instance of the <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html" title="C++ class wrapper for the fiftyoneDegreesPropertiesRequired structure.">RequiredPropertiesConfig</a> so that all possible properties contained in the data are available for inspection. <!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a3d19e6b8e2fd35f3f13d645d40fb8b9f">Constructs a new instance of the <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html" title="C++ class wrapper for the fiftyoneDegreesPropertiesRequired structure.">RequiredPropertiesConfig</a> so that all possible properties contained in the data are available for inspection. <!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:aa8c081eda49766274d1b002bdd6922cb"><td class="c-table__cell"><!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#aa8c081eda49766274d1b002bdd6922cb">RequiredPropertiesConfig</a> (const vector&lt; string &gt; *properties)
+<tr class="c-table__row memitem:ade0d0230302d76136586c7a4dd2225de"><td class="c-table__cell"><!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#ade0d0230302d76136586c7a4dd2225de">RequiredPropertiesConfig</a> (const vector&lt; string &gt; *properties)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:aa8c081eda49766274d1b002bdd6922cb">Construct a new instance of required <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html" title="C++ class wrapper for the fiftyoneDegreesPropertiesRequired structure.">RequiredPropertiesConfig</a> using the list of property names supplied.  <a href="#aa8c081eda49766274d1b002bdd6922cb">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:ade0d0230302d76136586c7a4dd2225de">Construct a new instance of required <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html" title="C++ class wrapper for the fiftyoneDegreesPropertiesRequired structure.">RequiredPropertiesConfig</a> using the list of property names supplied.  <a href="#ade0d0230302d76136586c7a4dd2225de">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:aa4b2b90a0523e9929096e80ce0636a91"><td class="c-table__cell"><!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#aa4b2b90a0523e9929096e80ce0636a91">RequiredPropertiesConfig</a> (vector&lt; string &gt; *properties)
+<tr class="c-table__row memitem:adb3bec6cc5269f46ac028226118c8a76"><td class="c-table__cell"><!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#adb3bec6cc5269f46ac028226118c8a76">RequiredPropertiesConfig</a> (vector&lt; string &gt; *properties)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:aa4b2b90a0523e9929096e80ce0636a91">Construct a new instance of required <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html" title="C++ class wrapper for the fiftyoneDegreesPropertiesRequired structure.">RequiredPropertiesConfig</a> using the list of property names supplied.  <a href="#aa4b2b90a0523e9929096e80ce0636a91">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:adb3bec6cc5269f46ac028226118c8a76">Construct a new instance of required <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html" title="C++ class wrapper for the fiftyoneDegreesPropertiesRequired structure.">RequiredPropertiesConfig</a> using the list of property names supplied.  <a href="#adb3bec6cc5269f46ac028226118c8a76">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a4a2235bee40775b2c577a359b6bd4c26"><td class="c-table__cell"><!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#a4a2235bee40775b2c577a359b6bd4c26">RequiredPropertiesConfig</a> (const char *properties)
+<tr class="c-table__row memitem:ab36b1ed5e4aedb271b3450ba635fe01c"><td class="c-table__cell"><!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#ab36b1ed5e4aedb271b3450ba635fe01c">RequiredPropertiesConfig</a> (const char *properties)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a4a2235bee40775b2c577a359b6bd4c26">Construct a new instance of required <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html" title="C++ class wrapper for the fiftyoneDegreesPropertiesRequired structure.">RequiredPropertiesConfig</a> using the list of property names supplied.  <a href="#a4a2235bee40775b2c577a359b6bd4c26">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:ab36b1ed5e4aedb271b3450ba635fe01c">Construct a new instance of required <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html" title="C++ class wrapper for the fiftyoneDegreesPropertiesRequired structure.">RequiredPropertiesConfig</a> using the list of property names supplied.  <a href="#ab36b1ed5e4aedb271b3450ba635fe01c">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:af635e6c3ce4eb6dbf098f5cae45b8dfe"><td class="c-table__cell"><!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#af635e6c3ce4eb6dbf098f5cae45b8dfe">RequiredPropertiesConfig</a> (const string &amp;properties)
+<tr class="c-table__row memitem:a5da8a3b2d090ecddc3226cf96bb3a579"><td class="c-table__cell"><!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#a5da8a3b2d090ecddc3226cf96bb3a579">RequiredPropertiesConfig</a> (const string &amp;properties)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:af635e6c3ce4eb6dbf098f5cae45b8dfe">Construct a new instance of required <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html" title="C++ class wrapper for the fiftyoneDegreesPropertiesRequired structure.">RequiredPropertiesConfig</a> using the list of property names supplied.  <a href="#af635e6c3ce4eb6dbf098f5cae45b8dfe">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a5da8a3b2d090ecddc3226cf96bb3a579">Construct a new instance of required <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html" title="C++ class wrapper for the fiftyoneDegreesPropertiesRequired structure.">RequiredPropertiesConfig</a> using the list of property names supplied.  <a href="#a5da8a3b2d090ecddc3226cf96bb3a579">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a3fc7934620558a40bf0e75c9619da5d5"><td class="c-table__cell"><!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#a3fc7934620558a40bf0e75c9619da5d5">RequiredPropertiesConfig</a> (const string *properties)
+<tr class="c-table__row memitem:add36ced51e06b5207409a5a01e3b5de7"><td class="c-table__cell"><!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#add36ced51e06b5207409a5a01e3b5de7">RequiredPropertiesConfig</a> (const string *properties)
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a3fc7934620558a40bf0e75c9619da5d5">Construct a new instance of required <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html" title="C++ class wrapper for the fiftyoneDegreesPropertiesRequired structure.">RequiredPropertiesConfig</a> using the list of property names supplied.  <a href="#a3fc7934620558a40bf0e75c9619da5d5">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:add36ced51e06b5207409a5a01e3b5de7">Construct a new instance of required <a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html" title="C++ class wrapper for the fiftyoneDegreesPropertiesRequired structure.">RequiredPropertiesConfig</a> using the list of property names supplied.  <a href="#add36ced51e06b5207409a5a01e3b5de7">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:aade9128815811a215093b012695faa98"><td class="c-table__cell"><a id="aade9128815811a215093b012695faa98"></a>
+<tr class="c-table__row memitem:ad31e0eab9a0486bd6ce08e9fd5ecc61d"><td class="c-table__cell"><a id="ad31e0eab9a0486bd6ce08e9fd5ecc61d"></a>
 virtual<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#aade9128815811a215093b012695faa98">~RequiredPropertiesConfig</a> ()
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#ad31e0eab9a0486bd6ce08e9fd5ecc61d">~RequiredPropertiesConfig</a> ()
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:aade9128815811a215093b012695faa98">Destroy the configuration, freeing all the memory allocated within it. <!-- endMemberDescription -->
+<div class="c-table__desc memdesc:ad31e0eab9a0486bd6ce08e9fd5ecc61d">Destroy the configuration, freeing all the memory allocated within it. <!-- endMemberDescription -->
 </div></td></tr>
 <tr class="c-table__row"><td class="c-table__cell" colspan="2"><h3 class="c-table__heading">Getters</h3></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a1b524c7e0f6c771c9e2ebf1d4c53f234"><td class="c-table__cell">vector&lt;&#160;string&#160;&gt;<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#a1b524c7e0f6c771c9e2ebf1d4c53f234">getProperties</a> () const
+<tr class="c-table__row memitem:a35d8bade0722d0db29bcd6ed9a8c9ace"><td class="c-table__cell">vector&lt;&#160;string&#160;&gt;<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#a35d8bade0722d0db29bcd6ed9a8c9ace">getProperties</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a1b524c7e0f6c771c9e2ebf1d4c53f234">Get the list of properties which are required.  <a href="#a1b524c7e0f6c771c9e2ebf1d4c53f234">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a35d8bade0722d0db29bcd6ed9a8c9ace">Get the list of properties which are required.  <a href="#a35d8bade0722d0db29bcd6ed9a8c9ace">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a8d46e19dd75e586d229be08cbf6be28c"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_properties_required.html">fiftyoneDegreesPropertiesRequired</a>&#160;*<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#a8d46e19dd75e586d229be08cbf6be28c">getConfig</a> ()
+<tr class="c-table__row memitem:a674fa2672b5a2b045e403409531ff17b"><td class="c-table__cell"><a class="el" href="structfiftyone_degrees_properties_required.html">fiftyoneDegreesPropertiesRequired</a>&#160;*<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#a674fa2672b5a2b045e403409531ff17b">getConfig</a> ()
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a8d46e19dd75e586d229be08cbf6be28c">Get a pointer to the underlying C required properties structure.  <a href="#a8d46e19dd75e586d229be08cbf6be28c">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:a674fa2672b5a2b045e403409531ff17b">Get a pointer to the underlying C required properties structure.  <a href="#a674fa2672b5a2b045e403409531ff17b">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- member dec start -->
 <!-- startMemberItem() -->
-<tr class="c-table__row memitem:a51e8e3015fbdeb7554b8191416600988"><td class="c-table__cell">int<!-- insertMemberAlign -->
-&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#a51e8e3015fbdeb7554b8191416600988">getCount</a> () const
+<tr class="c-table__row memitem:ac56c5ca1a5eeab1a3f0846133d117f0c"><td class="c-table__cell">int<!-- insertMemberAlign -->
+&#160;</td><td class="c-table__cell"><a class="el" href="class_fiftyone_degrees_1_1_common_1_1_required_properties_config.html#ac56c5ca1a5eeab1a3f0846133d117f0c">getCount</a> () const
 <!-- startMemberDescription -->
-<div class="c-table__desc memdesc:a51e8e3015fbdeb7554b8191416600988">Get the number of properties contained within the required properties configuration.  <a href="#a51e8e3015fbdeb7554b8191416600988">More...</a><!-- endMemberDescription -->
+<div class="c-table__desc memdesc:ac56c5ca1a5eeab1a3f0846133d117f0c">Get the number of properties contained within the required properties configuration.  <a href="#ac56c5ca1a5eeab1a3f0846133d117f0c">More...</a><!-- endMemberDescription -->
 </div></td></tr>
 <!-- endMemberList -->
 <!-- end member list -->
@@ -252,9 +254,9 @@ virtual<!-- insertMemberAlign -->
 <h2 class="g-docs__section-heading">Constructor &amp; Destructor Documentation</h2>
 <!-- startMemberDocList -->
 <article class="c-member">
-<a id="aa8c081eda49766274d1b002bdd6922cb"></a><!-- startMemberDoc -->
+<a id="ade0d0230302d76136586c7a4dd2225de"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#aa8c081eda49766274d1b002bdd6922cb">&#9670;&nbsp;</a></span>RequiredPropertiesConfig() <span class="c-member__count">[1/5]</span></h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ade0d0230302d76136586c7a4dd2225de">&#9670;&nbsp;</a></span>RequiredPropertiesConfig() <span class="c-member__count">[1/5]</span></h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -263,7 +265,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">FiftyoneDegrees::Common::RequiredPropertiesConfig::RequiredPropertiesConfig <!-- endMemberDocName -->
+              <td class="c-table__cell">RequiredPropertiesConfig::RequiredPropertiesConfig <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -294,9 +296,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="aa4b2b90a0523e9929096e80ce0636a91"></a><!-- startMemberDoc -->
+<a id="adb3bec6cc5269f46ac028226118c8a76"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#aa4b2b90a0523e9929096e80ce0636a91">&#9670;&nbsp;</a></span>RequiredPropertiesConfig() <span class="c-member__count">[2/5]</span></h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#adb3bec6cc5269f46ac028226118c8a76">&#9670;&nbsp;</a></span>RequiredPropertiesConfig() <span class="c-member__count">[2/5]</span></h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -305,7 +307,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">FiftyoneDegrees::Common::RequiredPropertiesConfig::RequiredPropertiesConfig <!-- endMemberDocName -->
+              <td class="c-table__cell">RequiredPropertiesConfig::RequiredPropertiesConfig <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -336,9 +338,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a4a2235bee40775b2c577a359b6bd4c26"></a><!-- startMemberDoc -->
+<a id="ab36b1ed5e4aedb271b3450ba635fe01c"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a4a2235bee40775b2c577a359b6bd4c26">&#9670;&nbsp;</a></span>RequiredPropertiesConfig() <span class="c-member__count">[3/5]</span></h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ab36b1ed5e4aedb271b3450ba635fe01c">&#9670;&nbsp;</a></span>RequiredPropertiesConfig() <span class="c-member__count">[3/5]</span></h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -347,7 +349,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">FiftyoneDegrees::Common::RequiredPropertiesConfig::RequiredPropertiesConfig <!-- endMemberDocName -->
+              <td class="c-table__cell">RequiredPropertiesConfig::RequiredPropertiesConfig <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -378,9 +380,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="af635e6c3ce4eb6dbf098f5cae45b8dfe"></a><!-- startMemberDoc -->
+<a id="a5da8a3b2d090ecddc3226cf96bb3a579"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#af635e6c3ce4eb6dbf098f5cae45b8dfe">&#9670;&nbsp;</a></span>RequiredPropertiesConfig() <span class="c-member__count">[4/5]</span></h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a5da8a3b2d090ecddc3226cf96bb3a579">&#9670;&nbsp;</a></span>RequiredPropertiesConfig() <span class="c-member__count">[4/5]</span></h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -389,7 +391,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">FiftyoneDegrees::Common::RequiredPropertiesConfig::RequiredPropertiesConfig <!-- endMemberDocName -->
+              <td class="c-table__cell">RequiredPropertiesConfig::RequiredPropertiesConfig <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -420,9 +422,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a3fc7934620558a40bf0e75c9619da5d5"></a><!-- startMemberDoc -->
+<a id="add36ced51e06b5207409a5a01e3b5de7"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a3fc7934620558a40bf0e75c9619da5d5">&#9670;&nbsp;</a></span>RequiredPropertiesConfig() <span class="c-member__count">[5/5]</span></h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#add36ced51e06b5207409a5a01e3b5de7">&#9670;&nbsp;</a></span>RequiredPropertiesConfig() <span class="c-member__count">[5/5]</span></h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -431,7 +433,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">FiftyoneDegrees::Common::RequiredPropertiesConfig::RequiredPropertiesConfig <!-- endMemberDocName -->
+              <td class="c-table__cell">RequiredPropertiesConfig::RequiredPropertiesConfig <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -465,9 +467,9 @@ virtual<!-- insertMemberAlign -->
 <h2 class="g-docs__section-heading">Member Function Documentation</h2>
 <!-- startMemberDocList -->
 <article class="c-member">
-<a id="a03565f20d7508758cfbf88bb2055fb86"></a><!-- startMemberDoc -->
+<a id="a59ea93bfd225c07353d7b283f9c6f861"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a03565f20d7508758cfbf88bb2055fb86">&#9670;&nbsp;</a></span>containsProperty() <span class="c-member__count">[1/2]</span></h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a59ea93bfd225c07353d7b283f9c6f861">&#9670;&nbsp;</a></span>containsProperty() <span class="c-member__count">[1/2]</span></h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -476,7 +478,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">bool FiftyoneDegrees::Common::RequiredPropertiesConfig::containsProperty <!-- endMemberDocName -->
+              <td class="c-table__cell">bool RequiredPropertiesConfig::containsProperty <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -508,9 +510,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="afb660d8b35da77c7feb46aee1fd52a23"></a><!-- startMemberDoc -->
+<a id="a1be6ce892f5540d2ebaba9354ab351d7"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#afb660d8b35da77c7feb46aee1fd52a23">&#9670;&nbsp;</a></span>containsProperty() <span class="c-member__count">[2/2]</span></h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a1be6ce892f5540d2ebaba9354ab351d7">&#9670;&nbsp;</a></span>containsProperty() <span class="c-member__count">[2/2]</span></h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -519,7 +521,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">bool FiftyoneDegrees::Common::RequiredPropertiesConfig::containsProperty <!-- endMemberDocName -->
+              <td class="c-table__cell">bool RequiredPropertiesConfig::containsProperty <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -551,9 +553,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a8d46e19dd75e586d229be08cbf6be28c"></a><!-- startMemberDoc -->
+<a id="a674fa2672b5a2b045e403409531ff17b"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a8d46e19dd75e586d229be08cbf6be28c">&#9670;&nbsp;</a></span>getConfig()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a674fa2672b5a2b045e403409531ff17b">&#9670;&nbsp;</a></span>getConfig()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -562,7 +564,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell"><a class="el" href="structfiftyone_degrees_properties_required.html">fiftyoneDegreesPropertiesRequired</a>* FiftyoneDegrees::Common::RequiredPropertiesConfig::getConfig <!-- endMemberDocName -->
+              <td class="c-table__cell"><a class="el" href="group___fifty_one_degrees_synonyms.html#gad18b8b685dd62adf468d57ab172019fc">PropertiesRequired</a> * RequiredPropertiesConfig::getConfig <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -587,9 +589,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a51e8e3015fbdeb7554b8191416600988"></a><!-- startMemberDoc -->
+<a id="ac56c5ca1a5eeab1a3f0846133d117f0c"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a51e8e3015fbdeb7554b8191416600988">&#9670;&nbsp;</a></span>getCount()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#ac56c5ca1a5eeab1a3f0846133d117f0c">&#9670;&nbsp;</a></span>getCount()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -598,7 +600,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">int FiftyoneDegrees::Common::RequiredPropertiesConfig::getCount <!-- endMemberDocName -->
+              <td class="c-table__cell">int RequiredPropertiesConfig::getCount <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -623,9 +625,9 @@ virtual<!-- insertMemberAlign -->
 </div>
 </article>
 <article class="c-member">
-<a id="a1b524c7e0f6c771c9e2ebf1d4c53f234"></a><!-- startMemberDoc -->
+<a id="a35d8bade0722d0db29bcd6ed9a8c9ace"></a><!-- startMemberDoc -->
 
-<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a1b524c7e0f6c771c9e2ebf1d4c53f234">&#9670;&nbsp;</a></span>getProperties()</h2>
+<h2 class="c-member__title"><span class="c-member__anchor"><a href="#a35d8bade0722d0db29bcd6ed9a8c9ace">&#9670;&nbsp;</a></span>getProperties()</h2>
 
 <div class="c-member__main">
 <div class="c-member__head">
@@ -634,7 +636,7 @@ virtual<!-- insertMemberAlign -->
         <div class="g-table g-table--overflow">
           <table class="c-table c-table--article">
             <tr class="c-table__row">
-              <td class="c-table__cell">vector&lt;string&gt; FiftyoneDegrees::Common::RequiredPropertiesConfig::getProperties <!-- endMemberDocName -->
+              <td class="c-table__cell">vector&lt; string &gt; RequiredPropertiesConfig::getProperties <!-- endMemberDocName -->
 </td>
 <!-- startParameterList -->
           <td>(</td>
@@ -660,8 +662,9 @@ virtual<!-- insertMemberAlign -->
 </article>
 <!-- endMemberDocList -->
 </section>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/common-cxx/<a class="el" href="_required_properties_config_8hpp_source.html">RequiredPropertiesConfig.hpp</a></li>
+<li>/home/runner/work/ip-intelligence-cxx/ip-intelligence-cxx/common/ip-intelligence-cxx/src/common-cxx/RequiredPropertiesConfig.cpp</li>
 </ul>
 </div><!-- primary -->
   <div class="g-docs__sidebar">

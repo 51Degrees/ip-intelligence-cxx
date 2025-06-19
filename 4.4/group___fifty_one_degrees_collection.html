@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>51Degrees Device Detection C/C++: Collection</title>
+<title>51Degrees IP Intelligence C/C++: Collection</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,12 +28,12 @@
 <div id="titlearea" class="g-header g-header--docs">
   <h1 class="c-brand">
   <a id="projectlogo" href="../../documentation/4.4/index.html" class="c-brand__link"><img class="c-brand__image" alt="Logo" src="logo-51Degrees-Docs.png" style="width:172px;"/></a>
-  <span class="c-tagline">51Degrees Device Detection C/C++
+  <span class="c-tagline">51Degrees IP Intelligence C/C++
    &#160;<span id="projectnumber">4.4</span>
   </span>
   </h1>
   <div id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectbrief">A device detection library that is used natively or by 51Degrees products</div>
+   <div id="projectbrief">IP intelligence services for 51Degrees Pipeline</div>
   </div>
   <div id="main-nav"></div>
   <section class="g-search">
@@ -79,8 +79,8 @@ $(document).ready(function(){initNavTree('group___fifty_one_degrees_collection.h
 <p>In some configurations it may be more efficient to load all related Items into memory in a continuous address space exactly matching the data structure used in the source data. In others it may be desirable to only load in memory the Items from the source data when required. In all configurations the logical methods to retrieve and release these items are identical.</p>
 <p>The methods in the Collection abstract the implementation for collection of items to support the following configurations:</p>
 <p><b>Memory</b> : all the Items in the Collection are held in a continuous address space. The fastest access option where all memory can be allocated during initialisation.</p>
-<p><b>File</b> : none of the Items are loaded into memory and they are retrieved from the data source when required. The slowest access option but the most memory efficient. The memory needed to store the item is allocated when the Item is requested and deallocated when released.</p>
-<p><b>Cache</b> : a hybrid mode where the Least Recently Used (LRU) cache is used to store a limited number of Items in memory. Cache is a compromise between in memory and file based configurations. Unlike Memory and File the cache needs to be locked when accessed for both Get and Release and performance may degrade when used in a multi threaded configuration.</p>
+<p><b><a class="el" href="class_file.html" title="File test class used to test the functionality of file.c.">File</a></b> : none of the Items are loaded into memory and they are retrieved from the data source when required. The slowest access option but the most memory efficient. The memory needed to store the item is allocated when the Item is requested and deallocated when released.</p>
+<p><b>Cache</b> : a hybrid mode where the Least Recently Used (LRU) cache is used to store a limited number of Items in memory. Cache is a compromise between in memory and file based configurations. Unlike Memory and <a class="el" href="class_file.html" title="File test class used to test the functionality of file.c.">File</a> the cache needs to be locked when accessed for both Get and Release and performance may degrade when used in a multi threaded configuration.</p>
 <p>Sometimes it may be desirable to use multiple configurations of Collection with the same underlying data. Consider a data structure where the most frequently required Items exist at the start of the structure. These Items would benefit from being held in memory for fast retrieval whilst the remaining Items which may be infrequently required are cached or loaded when needed from the file. For these situations Collections can be chained together such that the first Collection may not contain data for the requested index or offset and can pass the retrieval to the next Collection in the chain. It is important to note that all chained Collections must be a subset of the final Collection in the chain (as opposed to additional Collections), i.e. all elements are 'gettable' from the final Collection.</p>
 <p>Once a Collection is created the only methods that should be used to access data are those exposed in the <a class="el" href="structfiftyone_degrees_collection.html" title="All the shared methods and fields required by file, memory and cached collections.">fiftyoneDegreesCollection</a> instance. It is for this reason the <a class="el" href="collection_8h_source.html">collection.h</a> file exposes so few external methods.</p>
 <h2>Creation</h2>

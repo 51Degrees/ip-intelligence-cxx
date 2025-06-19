@@ -1,5 +1,48 @@
 var group___fifty_one_degrees_ip_intelligence_api =
 [
+    [ "fiftyoneDegreesIpiCgMember", "structfiftyone_degrees_ipi_cg_member.html", [
+      [ "mask", "structfiftyone_degrees_ipi_cg_member.html#a643726c3c94dfcf924316b549e183c5f", null ],
+      [ "shift", "structfiftyone_degrees_ipi_cg_member.html#a80cbb9f0ea892b7b480146c7f787fda9", null ]
+    ] ],
+    [ "fiftyoneDegreesIpiCgMemberNode", "structfiftyone_degrees_ipi_cg_member_node.html", [
+      [ "collection", "structfiftyone_degrees_ipi_cg_member_node.html#aac1c07a270bd46f9a671cd9130d62d1b", null ],
+      [ "lowFlag", "structfiftyone_degrees_ipi_cg_member_node.html#ab1b8c3d85dde5e80eaa0303ad19e9248", null ],
+      [ "recordSize", "structfiftyone_degrees_ipi_cg_member_node.html#ad342b1d99d9327fe003a5a83c4ff22aa", null ],
+      [ "spanIndex", "structfiftyone_degrees_ipi_cg_member_node.html#a9e1597b1c02e455cfde112cf29895bd9", null ],
+      [ "value", "structfiftyone_degrees_ipi_cg_member_node.html#abdbce79a95b1cbaf39a43002fe2e0dba", null ]
+    ] ],
+    [ "fiftyoneDegreesIpiCgInfo", "structfiftyone_degrees_ipi_cg_info.html", [
+      [ "clusters", "structfiftyone_degrees_ipi_cg_info.html#a80cffdc4683c38b60000d9568c65bae5", null ],
+      [ "componentId", "structfiftyone_degrees_ipi_cg_info.html#a6705b38d3cbe1261345936fd3f4dcafd", null ],
+      [ "firstProfileGroupIndex", "structfiftyone_degrees_ipi_cg_info.html#abfc503dc4b6e55e8ba277429e82aedfb", null ],
+      [ "firstProfileIndex", "structfiftyone_degrees_ipi_cg_info.html#a60ff327fa7268e9c0f626c9ba480bd2c", null ],
+      [ "graphIndex", "structfiftyone_degrees_ipi_cg_info.html#a28b2d32db3eff3e8e62929f2bbb1118c", null ],
+      [ "nodes", "structfiftyone_degrees_ipi_cg_info.html#aab0b7ea3a1fbbc252c02639bdc75901f", null ],
+      [ "profileCount", "structfiftyone_degrees_ipi_cg_info.html#ab2ed637b5e599ab6774708dfd4e47ce7", null ],
+      [ "profileGroupCount", "structfiftyone_degrees_ipi_cg_info.html#ac45ac23e1eb9d1333aae2367b42f650f", null ],
+      [ "spanBytes", "structfiftyone_degrees_ipi_cg_info.html#a59ca5c8bf1714f2469ff6ae75f05c469", null ],
+      [ "spans", "structfiftyone_degrees_ipi_cg_info.html#a94905f0ea9783793cb97475a5a29f8d6", null ],
+      [ "version", "structfiftyone_degrees_ipi_cg_info.html#a2ffabbd2e690eb1236f15609972803a7", null ]
+    ] ],
+    [ "fiftyoneDegreesIpiCg", "structfiftyone_degrees_ipi_cg.html", [
+      [ "clusters", "structfiftyone_degrees_ipi_cg.html#a4f57decb10cfa60c2e0b81235428699f", null ],
+      [ "clustersCount", "structfiftyone_degrees_ipi_cg.html#a53d053545ba66c75750fae546b171efd", null ],
+      [ "info", "structfiftyone_degrees_ipi_cg.html#aa49012973b5b0525178dc2b9b12fc665", null ],
+      [ "nodes", "structfiftyone_degrees_ipi_cg.html#ad1c76fa20091d5614495f2c687918a28", null ],
+      [ "spanBytes", "structfiftyone_degrees_ipi_cg.html#ac34ba9022afb137b1ab876e981dca806", null ],
+      [ "spans", "structfiftyone_degrees_ipi_cg.html#ae31c5c4e1fe8a2341fdbf613c674cdb2", null ],
+      [ "spansCount", "structfiftyone_degrees_ipi_cg.html#adf352bca7c08de9588abcb5486a1261f", null ]
+    ] ],
+    [ "fiftyoneDegreesIpiCgResult", "structfiftyone_degrees_ipi_cg_result.html", [
+      [ "isGroupOffset", "structfiftyone_degrees_ipi_cg_result.html#a70f3d08e6f349a4acd6991a24b807e58", null ],
+      [ "offset", "structfiftyone_degrees_ipi_cg_result.html#a539c48a12cdc12346c46adb81b783a08", null ],
+      [ "rawOffset", "structfiftyone_degrees_ipi_cg_result.html#ad50018bf84c8cc434460fa7510509612", null ]
+    ] ],
+    [ "fiftyoneDegreesIpiCgArray", "structfiftyone_degrees_ipi_cg_array.html", [
+      [ "capacity", "structfiftyone_degrees_ipi_cg_array.html#a0729e1a47e43d06e610f71ecdf3651e4", null ],
+      [ "count", "structfiftyone_degrees_ipi_cg_array.html#a2572285879c4f1d285e4b82559ca5a0d", null ],
+      [ "items", "structfiftyone_degrees_ipi_cg_array.html#a0ae24219534f3592a61bb569aad0c951", null ]
+    ] ],
     [ "fiftyoneDegreesDataSetIpiHeader", "structfiftyone_degrees_data_set_ipi_header.html", [
       [ "age", "structfiftyone_degrees_data_set_ipi_header.html#aa9c9316c3e0b3ac08205578f41975680", null ],
       [ "components", "structfiftyone_degrees_data_set_ipi_header.html#afbb4b01368a1343d9d031392ccd03a73", null ],
@@ -98,6 +141,7 @@ var group___fifty_one_degrees_ip_intelligence_api =
     [ "FIFTYONE_DEGREES_IP_GRAPHS_CACHE_SIZE", "group___fifty_one_degrees_ip_intelligence_api.html#gaaad2d100c3ce41bf1baf943b387cef78", null ],
     [ "FIFTYONE_DEGREES_IP_GRAPHS_LOADED", "group___fifty_one_degrees_ip_intelligence_api.html#ga7f7ac6311de86eccf5dc833f2948e406", null ],
     [ "FIFTYONE_DEGREES_IP_RANGE", "group___fifty_one_degrees_ip_intelligence_api.html#ga4d3d4e2b40003263e914c227577c688f", null ],
+    [ "FIFTYONE_DEGREES_IPI_CG_RESULT_DEFAULT", "group___fifty_one_degrees_ip_intelligence_api.html#ga858684a770e4595ab7e8ed0d77aad0e4", null ],
     [ "FIFTYONE_DEGREES_PROFILE_CACHE_SIZE", "group___fifty_one_degrees_ip_intelligence_api.html#gacd4998b9dd1b8a888333d381ea261592", null ],
     [ "FIFTYONE_DEGREES_PROFILE_GROUPS_CACHE_SIZE", "group___fifty_one_degrees_ip_intelligence_api.html#ga265c1675455dee9a25e315fd79a57634", null ],
     [ "FIFTYONE_DEGREES_PROFILE_GROUPS_LOADED", "group___fifty_one_degrees_ip_intelligence_api.html#ga17ee0b666ee8d7075851c03e66fcb98e", null ],
@@ -118,6 +162,11 @@ var group___fifty_one_degrees_ip_intelligence_api =
     [ "fiftyoneDegreesIpiGetIpAddressAsString", "group___fifty_one_degrees_ip_intelligence_api.html#gadc874147b98230ca1326ad583a69b3b5", null ],
     [ "fiftyoneDegreesIpiGetNetworkIdFromResult", "group___fifty_one_degrees_ip_intelligence_api.html#ga1ee2c0dd3787aefd800495b77334b9b5", null ],
     [ "fiftyoneDegreesIpiGetNetworkIdFromResults", "group___fifty_one_degrees_ip_intelligence_api.html#gaac879f43d5ad49ca977c3e0e0d51f69d", null ],
+    [ "fiftyoneDegreesIpiGraphCreateFromFile", "group___fifty_one_degrees_ip_intelligence_api.html#gad3a91b5a56a181645706c37773370b41", null ],
+    [ "fiftyoneDegreesIpiGraphCreateFromMemory", "group___fifty_one_degrees_ip_intelligence_api.html#ga067d929fb0d89b96b3ed408074a87526", null ],
+    [ "fiftyoneDegreesIpiGraphEvaluate", "group___fifty_one_degrees_ip_intelligence_api.html#gafeea66d6d71cbd9da8f5192bbf1698a1", null ],
+    [ "fiftyoneDegreesIpiGraphEvaluateTrace", "group___fifty_one_degrees_ip_intelligence_api.html#gafe52c8ed055e6a9f0676e95ac6564848", null ],
+    [ "fiftyoneDegreesIpiGraphFree", "group___fifty_one_degrees_ip_intelligence_api.html#ga141ea7a24bde25d8b29a0b81ad7e9972", null ],
     [ "fiftyoneDegreesIpiInitManagerFromFile", "group___fifty_one_degrees_ip_intelligence_api.html#ga8312256ca5f061d83d5454ba6e61df1d", null ],
     [ "fiftyoneDegreesIpiInitManagerFromMemory", "group___fifty_one_degrees_ip_intelligence_api.html#ga5b98f3d623b806239e1c89bacb07b11f", null ],
     [ "fiftyoneDegreesIpiIterateProfilesForPropertyAndValue", "group___fifty_one_degrees_ip_intelligence_api.html#gaf1b137e0aeef4acd73b8ddb0e2067e70", null ],
