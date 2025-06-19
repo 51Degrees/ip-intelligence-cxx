@@ -140,20 +140,54 @@ namespace FiftyoneDegrees {
 				 * @copydoc ExampleBase::run
 				 */
 				void run() {
-					cout << "Starting MetaData Example.\n";
-					auto const properties = std::unique_ptr<Collection<string, PropertyMetaData>>(engine->getMetaData()->getProperties());
-					for (uint32_t i = 0; i < properties->getSize(); i++){
-						auto const property = std::unique_ptr<PropertyMetaData>(properties->getByIndex(i));
-						cout << property->getName() << " - " << property->getDescription() << "\n";
+					{
+						cout << "Starting MetaData Example.\n";
+						auto const properties = std::unique_ptr<Collection<string, PropertyMetaData>>(engine->getMetaData()->getProperties());
+						for (uint32_t i = 0; i < properties->getSize(); i++) {
+							auto const property = std::unique_ptr<PropertyMetaData>(properties->getByIndex(i));
+							cout << property->getName() << " - " << property->getDescription() << "\n";
+							auto const values = std::unique_ptr<Collection<ValueMetaDataKey, ValueMetaData>>(
+								engine->getMetaData()->getValuesForProperty(property.get()));
+							const uint32_t maxCount = 12;
+							for (uint32_t j = 0; j < values->getSize() && j < maxCount; j++) {
+								auto const valueMetadata = std::unique_ptr<ValueMetaData>(values->getByIndex(j));
+								cout << "  - " << valueMetadata->getName() << "\n";
+							}
+							if (values->getSize() > maxCount) {
+								cout << "  + " << values->getSize() - maxCount << " more.\n";
+							}
+							cout << "  ^ " << values->getSize() << " in total.\n";
+						}
 					}
-
-
-					cout << "\n\nGet specific property value\n";
-					auto const values = std::unique_ptr<Collection<ValueMetaDataKey, ValueMetaData>>(engine->getMetaData()->getValues());
-					auto const value = std::unique_ptr<ValueMetaData>(values->getByKey(ValueMetaDataKey("IpRangeStart", "0.0.0.0")));
-					if (value != nullptr) {
-						cout << value->getKey().getPropertyName() << " - " << value->getName() 
-							<< " - " << value->getDescription() << "\n";
+					{
+						cout << "\n\nGet specific property value\n";
+						auto const values = std::unique_ptr<Collection<ValueMetaDataKey, ValueMetaData>>(engine->getMetaData()->getValues());
+						auto const value = std::unique_ptr<ValueMetaData>(values->getByKey(ValueMetaDataKey("IpRangeStart", "1.0.0.0")));
+						if (value != nullptr) {
+							cout << "  " << value->getKey().getPropertyName() << " - " << value->getName()
+								<< " - " << value->getDescription() << "\n";
+						}
+					}
+					{
+						cout << "\n\nGet profile property values\n";
+						const uint32_t maxCount = 4;
+						auto const profiles = std::unique_ptr<Collection<uint32_t, ProfileMetaData>>(
+							engine->getMetaData()->getProfiles());
+						for (uint32_t i = 0; i < profiles->getSize() && i < maxCount; i++) {
+							cout << "  - PROFILE " << i << ":\n";
+							auto const profile = std::unique_ptr<ProfileMetaData>(profiles->getByIndex(i));
+							auto const componentValues = std::unique_ptr<Collection<ValueMetaDataKey, ValueMetaData>>(
+								engine->getMetaData()->getValuesForProfile(profile.get()));
+							for (uint32_t j = 0; j < componentValues->getSize(); j++) {
+								auto const q = std::unique_ptr<ValueMetaData>(componentValues->getByIndex(j));
+								cout << "    - [" << q->getKey().getPropertyName() << "] = " << q->getName() << "\n";
+							}
+							cout << "    ^ " << componentValues->getSize() << " in total.\n";
+						}
+						if (profiles->getSize() > maxCount) {
+							cout << "  + " << profiles->getSize() - maxCount << " more.\n";
+						}
+						cout << "  ^ " << profiles->getSize() << " profiles in total.\n";
 					}
 				}
 			};
