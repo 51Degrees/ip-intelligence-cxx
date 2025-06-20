@@ -69,14 +69,14 @@ typedef struct fiftyone_degrees_weighted_values_collection_t {
 } fiftyoneDegreesWeightedValuesCollection;
 
 
-fiftyoneDegreesWeightedValuesCollection fiftyoneDegreesResultsIpiGetValuesCollection(
+EXTERNAL fiftyoneDegreesWeightedValuesCollection fiftyoneDegreesResultsIpiGetValuesCollection(
  fiftyoneDegreesResultsIpi *results,
  const int *requiredPropertyIndexes,
  int requiredPropertyIndexesLength,
  fiftyoneDegreesData *tempData,
  fiftyoneDegreesException* exception);
 
-void fiftyoneDegreesWeightedValuesCollectionRelease(
+EXTERNAL void fiftyoneDegreesWeightedValuesCollectionRelease(
  fiftyoneDegreesWeightedValuesCollection *collection);
 
 #endif //FIFTYONE_DEGREES_IPI_WEIGHTED_RESULTS_INCLUDED
