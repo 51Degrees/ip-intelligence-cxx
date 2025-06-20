@@ -494,8 +494,7 @@ static void PropValuesPopulate(
 
 static void PropValuesMoveItems(
     const PropValues * const values,
-    WeightedValuesCollection * const result,
-    Exception * const exception) {
+    WeightedValuesCollection * const result) {
 
     size_t totalSize = 0;
     uint32_t totalCount = 0;
@@ -532,7 +531,7 @@ static void PropValuesMoveItems(
 WeightedValuesCollection fiftyoneDegreesResultsIpiGetValuesCollection(
     ResultsIpi * const results,
     const int * const requiredPropertyIndexes,
-    const int requiredPropertyIndexesLength,
+    const uint32_t requiredPropertyIndexesLength,
     fiftyoneDegreesData * const tempData,
     Exception * const exception) {
 
@@ -580,7 +579,7 @@ WeightedValuesCollection fiftyoneDegreesResultsIpiGetValuesCollection(
             DataReset(&myTempData);
         }
     }
-    PropValuesMoveItems(&values, &result, exception);
+    PropValuesMoveItems(&values, &result);
     PropValuesRelease(&values);
     if (EXCEPTION_FAILED) {
         fiftyoneDegreesWeightedValuesCollectionRelease(&result);

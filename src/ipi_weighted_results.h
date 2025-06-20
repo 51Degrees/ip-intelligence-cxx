@@ -72,7 +72,7 @@ typedef struct fiftyone_degrees_weighted_values_collection_t {
 EXTERNAL fiftyoneDegreesWeightedValuesCollection fiftyoneDegreesResultsIpiGetValuesCollection(
  fiftyoneDegreesResultsIpi *results,
  const int *requiredPropertyIndexes,
- int requiredPropertyIndexesLength,
+ uint32_t requiredPropertyIndexesLength,
  fiftyoneDegreesData *tempData,
  fiftyoneDegreesException* exception);
 
