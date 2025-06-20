@@ -181,15 +181,15 @@ static void reportStatus(StatusCode status,
 
 static void printPropertyValueFromResults(ResultsIpi *results) {
 	if (results != NULL && results->count > 0) {
-		printf("IpRangeStart: %s\n", getPropertyValueAsString(results, "IpRangeStart"));
-		printf("IpRangeEnd: %s\n", getPropertyValueAsString(results, "IpRangeEnd"));
-		printf("AccuracyRadius: %s\n", getPropertyValueAsString(results, "AccuracyRadius"));
-		printf("RegisteredCountry: %s\n", getPropertyValueAsString(results, "RegisteredCountry"));
-		printf("RegisteredName: %s\n", getPropertyValueAsString(results, "RegisteredName"));
-		printf("Longitude: %s\n", getPropertyValueAsString(results, "Longitude"));
-		printf("Latitude: %s\n", getPropertyValueAsString(results, "Latitude"));
-		printf("Areas: %s\n", getPropertyValueAsString(results, "Areas"));
-		// printf("Mcc: %s\n", getPropertyValueAsString(results, "Mcc"));
+		printf("- IpRangeStart: %s\n", getPropertyValueAsString(results, "IpRangeStart"));
+		printf("- IpRangeEnd: %s\n", getPropertyValueAsString(results, "IpRangeEnd"));
+		printf("- AccuracyRadius: %s\n", getPropertyValueAsString(results, "AccuracyRadius"));
+		printf("- RegisteredCountry: %s\n", getPropertyValueAsString(results, "RegisteredCountry"));
+		printf("- RegisteredName: %s\n", getPropertyValueAsString(results, "RegisteredName"));
+		printf("- Longitude: %s\n", getPropertyValueAsString(results, "Longitude"));
+		printf("- Latitude: %s\n", getPropertyValueAsString(results, "Latitude"));
+		printf("- Areas: %s\n", getPropertyValueAsString(results, "Areas"));
+		// printf("- Mcc: %s\n", getPropertyValueAsString(results, "Mcc"));
 	}
 	else {
 		printf("No results.");
