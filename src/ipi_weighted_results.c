@@ -205,23 +205,32 @@ static void SaveString(
         propertyValueType,
         state->decimalPlaces,
         exception);
+    StringBuilderComplete(&builder);
+    size_t added = builder.added;
     if (EXCEPTION_OKAY && builder.added > builder.length) {
         DataMalloc(state->tempData, builder.added + 2);
-        StringBuilderInit(&builder);
+        StringBuilder builder2 = {
+            (char *)state->tempData->ptr,
+            state->tempData->allocated,
+        };
+        StringBuilderInit(&builder2);
         StringBuilderAddStringValue(
-            &builder,
+            &builder2,
             storedBinaryValue,
             propertyValueType,
             state->decimalPlaces,
             exception);
+        StringBuilderComplete(&builder2);
+        added = builder.added;
     }
     if (EXCEPTION_OKAY) {
         WeightedString * const wString = (WeightedString*)header;
-        DataMalloc(&wString->stringData, builder.added);
+        DataMalloc(&wString->stringData, added + 1);
         memcpy(
             wString->stringData.ptr,
             state->tempData->ptr,
-            builder.added);
+            added + 1);
+        wString->value = (char*)wString->stringData.ptr;
     }
 }
 static void FreeString(WeightedValueHeader * const header) {
@@ -286,8 +295,9 @@ static const PropValuesConverter * PropValuesConverterFor(
             return &PropValuesConverter_Bool;
         case FIFTYONE_DEGREES_PROPERTY_VALUE_SINGLE_BYTE:
             return &PropValuesConverter_Byte;
-        case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING:
         default:
+            assert(false);
+        case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING:
             return &PropValuesConverter_String;
     }
 }
@@ -323,7 +333,9 @@ static void PropValuesChunkPopulate(
     for (uint32_t i = 0; (i < context->valuesCount) && EXCEPTION_OKAY; i++) {
         WeightedValueHeader * const header = (WeightedValueHeader *)(
             converter->itemSize * i + chunkDataPtr);
+        header->requiredPropertyIndex = context->chunk->requiredPropertyIndex;
         header->rawWeighting = context->valuesItems[i].rawWeighting;
+        header->valueType = converter->valueType;
         const StoredBinaryValue * const binaryValue = (StoredBinaryValue *)(
             context->valuesItems[i].item.data.ptr);
         converter->itemSaveFunc(
@@ -442,6 +454,7 @@ static void PropValuesChunkInit(
         case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_INTEGER:
             PropValuesChunkPopulate_Int(&context, defaults->intValue);
             break;
+        case FIFTYONE_DEGREES_PROPERTY_VALUE_SINGLE_PRECISION_FLOAT:
         case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_DOUBLE:
             PropValuesChunkPopulate_Double(&context, defaults->doubleValue);
             break;
@@ -471,7 +484,7 @@ static void PropValuesPopulate(
 
     for (uint32_t i = 0, n = values->count; (i < n) && EXCEPTION_OKAY; i++) {
         PropValuesChunkInit(
-            &values->items[i],
+            &(values->items[i]),
             results,
             defaults,
             tempData,
@@ -494,9 +507,11 @@ static void PropValuesMoveItems(
     DataMalloc(
         &result->itemsData,
         totalCount * sizeof(WeightedValueHeader*));
+    result->items = (WeightedValueHeader**)result->itemsData.ptr;
     uint8_t *nextChunkNew = (uint8_t *)result->valuesData.ptr;
     for (uint32_t i = 0, n = values->count; i < n; i++) {
-        PropValuesChunk * const nextChunk = &values->items[i];
+        PropValuesChunk * const nextChunk = &(values->items[i]);
+        const uint8_t *nextHeaderStart = (const uint8_t *)nextChunkNew;
         memcpy(nextChunkNew, nextChunk->data.ptr, nextChunk->data.allocated);
         result->valuesData.used += nextChunk->data.allocated;
         nextChunkNew += nextChunk->data.allocated;
@@ -504,10 +519,10 @@ static void PropValuesMoveItems(
             Free(nextChunk->data.ptr);
             DataReset(&nextChunk->data);
         }
-        const uint8_t *nextHeaderStart = (const uint8_t *)nextChunkNew;
         for (uint32_t j = 0, m = nextChunk->count; j < m; j++) {
-            result->items[result->itemsCount] = (
-                (WeightedValueHeader*)nextHeaderStart);
+            WeightedValueHeader* const nextHeader =
+                (WeightedValueHeader*)nextHeaderStart;
+            result->items[result->itemsCount] = nextHeader;
             nextHeaderStart += nextChunk->converter->itemSize;
             result->itemsCount++;
         }
@@ -578,7 +593,8 @@ void fiftyoneDegreesWeightedValuesCollectionRelease(
 
     if (collection->items && collection->itemsCount > 0) {
         for (uint32_t i = 0, n = collection->itemsCount; i < n; i++) {
-            const PropertyValueType valueType = collection->items[i]->valueType;
+            WeightedValueHeader * const nextHeader = collection->items[i];
+            const PropertyValueType valueType = nextHeader->valueType;
             const PropValuesConverter * const converter = (
                 PropValuesConverterFor(valueType));
             const PropValueFreeFunc freeFunc = converter->itemFreeFunc;

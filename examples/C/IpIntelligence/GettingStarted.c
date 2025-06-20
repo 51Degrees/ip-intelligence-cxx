@@ -146,6 +146,7 @@ Areas: "POLYGON EMPTY":1
 #include <stdio.h>
 #include "../../../src/ipi.h"
 #include "../../../src/fiftyone.h"
+#include "../../../src/ipi_weighted_results.h"
 
 static const char* dataDir = "ip-intelligence-data";
 
@@ -195,6 +196,82 @@ static void printPropertyValueFromResults(ResultsIpi *results) {
 	}
 }
 
+static void printPropertyValueFromResults2(ResultsIpi *results) {
+	printf("\n(Results using ResultsIpiGetValuesCollection):\n");
+	if (results != NULL && results->count > 0) {
+		EXCEPTION_CREATE;
+		fiftyoneDegreesWeightedValuesCollection collection =
+			fiftyoneDegreesResultsIpiGetValuesCollection(
+				results,
+				NULL,
+				0,
+				NULL,
+				exception);
+		if (EXCEPTION_OKAY) {
+			const DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
+			for (uint32_t i = 0, n = collection.itemsCount; i < n; i++) {
+				const fiftyoneDegreesWeightedValueHeader * const nextHeader =
+					collection.items[i];
+				const int requiredPropertyIndex =
+					nextHeader->requiredPropertyIndex;
+				const String * const propNameRaw = (const String *)(
+					dataSet->b.b.available->items[requiredPropertyIndex]
+					.name.data.ptr);
+				const char * const propName = &propNameRaw->value;
+				const double weight =
+					(float)(nextHeader->rawWeighting) / (float)(UINT16_MAX);
+				switch (nextHeader->valueType) {
+					case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_INTEGER: {
+						printf("- [%s] (int) <x%g> %d\n",
+							propName,
+							weight,
+							((const fiftyoneDegreesWeightedInt*)nextHeader)
+							->value);
+						break;
+					}
+					case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_DOUBLE: {
+						printf("- [%s] (double) <x%g> %g\n",
+							propName,
+							weight,
+							((const fiftyoneDegreesWeightedDouble*)nextHeader)
+							->value);
+						break;
+					}
+					case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_BOOLEAN: {
+						printf("- [%s] (bool) <x%g> %d\n",
+							propName,
+							weight,
+							((const fiftyoneDegreesWeightedBool*)nextHeader)
+							->value);
+						break;
+					}
+					case FIFTYONE_DEGREES_PROPERTY_VALUE_SINGLE_BYTE: {
+						printf("- [%s] (byte) <x%g> %d\n",
+							propName,
+							weight,
+							((const fiftyoneDegreesWeightedByte*)nextHeader)
+							->value);
+						break;
+					}
+					case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING:
+					default: {
+						printf("- [%s] (string) <x%g> %s\n",
+							propName,
+							weight,
+							((const fiftyoneDegreesWeightedString*)nextHeader)
+							->value);
+						break;
+					}
+				}
+			}
+			fiftyoneDegreesWeightedValuesCollectionRelease(&collection);
+		}
+	}
+	else {
+		printf("No results.");
+	}
+}
+
 void fiftyoneDegreesIpiGettingStarted(
 	const char* dataFilePath,
 	ConfigIpi* config) {
@@ -232,7 +309,7 @@ void fiftyoneDegreesIpiGettingStarted(
 	printf("Starting Getting Started Example.\n");
 
 	// Carries out a match for the ipv4 address
-	printf("\nIpv4 Address: %s\n", ipv4Address);
+	printf("\nIpv4 Address: %s\n\n", ipv4Address);
 	ResultsIpiFromIpAddressString(
 		results,
 		ipv4Address,
@@ -242,9 +319,10 @@ void fiftyoneDegreesIpiGettingStarted(
 		printf("%s\n", ExceptionGetMessage(exception));
 	}
 	printPropertyValueFromResults(results);
+	printPropertyValueFromResults2(results);
 
 	// Carries out a match for the ipv6 address
-	printf("\nIpv6 Address: %s\n", ipv6Address);
+	printf("\nIpv6 Address: %s\n\n", ipv6Address);
 	ResultsIpiFromIpAddressString(
 		results,
 		ipv6Address,
@@ -254,6 +332,7 @@ void fiftyoneDegreesIpiGettingStarted(
 		printf("%s\n", ExceptionGetMessage(exception));
 	}
 	printPropertyValueFromResults(results);
+	printPropertyValueFromResults2(results);
 
 	// Ensure the results are freed to avoid memory leaks.
 	ResultsIpiFree(results);
