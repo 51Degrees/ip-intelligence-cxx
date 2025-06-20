@@ -31,9 +31,34 @@ MAP_TYPE(WeightedByte);
 MAP_TYPE(WeightedString);
 MAP_TYPE(WeightedValuesCollection);
 
+
+typedef void (*PropValueInitFunc)(
+    WeightedValueHeader *header,
+    void *converterState);
+typedef void (*PropValueSaveFunc)(
+    WeightedValueHeader *header,
+    const StoredBinaryValue *storedBinaryValue,
+    PropertyValueType propertyValueType,
+    void *converterState,
+    Exception *exception);
+typedef void (*PropValueFreeFunc)(
+    WeightedValueHeader *header);
+
+typedef struct {
+    const char * const name;
+    const PropertyValueType valueType;
+    const PropValueInitFunc itemInitFunc;
+    const PropValueSaveFunc itemSaveFunc;
+    const PropValueFreeFunc itemFreeFunc;
+    const size_t itemSize;
+} PropValuesConverter;
+
+
 typedef struct {
     int requiredPropertyIndex;
     Data data;
+    uint32_t count;
+    const PropValuesConverter *converter;
 } PropValuesChunk;
 
 typedef struct {
@@ -46,6 +71,7 @@ static void PropValuesInit(PropValues * const values, const uint32_t count) {
     values->count = count;
     DataReset(&values->data);
     DataMalloc(&values->data, count * sizeof(PropValuesChunk));
+    values->data.used = values->data.allocated;
     values->items = (PropValuesChunk *)values->data.ptr;
     for (uint32_t i = 0, n = values->count; i < n; i++) {
         DataReset(&values->items[i].data);
@@ -69,28 +95,6 @@ static void PropValuesRelease(PropValues * const values) {
     values->count = 0;
     values->items = NULL;
 }
-
-
-typedef void (*PropValueInitFunc)(
-    WeightedValueHeader *header,
-    void *converterState);
-typedef void (*PropValueSaveFunc)(
-    WeightedValueHeader *header,
-    const StoredBinaryValue *storedBinaryValue,
-    PropertyValueType propertyValueType,
-    void *converterState,
-    Exception *exception);
-typedef void (*PropValueFreeFunc)(
-    WeightedValueHeader *header);
-
-typedef struct {
-    const char * const name;
-    const PropertyValueType valueType;
-    const PropValueInitFunc itemInitFunc;
-    const PropValueSaveFunc itemSaveFunc;
-    const PropValueFreeFunc itemFreeFunc;
-    const size_t itemSize;
-} PropValuesConverter;
 
 static void InitInt(
     WeightedValueHeader * const header,
@@ -272,7 +276,7 @@ static const PropValuesConverter PropValuesConverter_String = {
 
 
 typedef struct {
-    void * const chunkDataPtr;
+    PropValuesChunk * const chunk;
     const ProfilePercentage * const valuesItems;
     const uint32_t valuesCount;
     const PropertyValueType storedValueType;
@@ -286,14 +290,21 @@ static void PropValuesChunkPopulate(
 
     Exception * const exception = context->exception;
 
+    context->chunk->converter = converter;
+    DataMalloc(
+        &context->chunk->data,
+        context->chunk->count * converter->itemSize);
+    context->chunk->data.used = context->chunk->data.allocated;
+    void * const chunkDataPtr = context->chunk->data.ptr;
+
     for (uint32_t i = 0; i < context->valuesCount; i++) {
         WeightedValueHeader * const header = (WeightedValueHeader *)(
-            converter->itemSize * i + (uint8_t*)context->chunkDataPtr);
+            converter->itemSize * i + chunkDataPtr);
         converter->itemInitFunc(header, converterState);
     }
     for (uint32_t i = 0; (i < context->valuesCount) && EXCEPTION_OKAY; i++) {
         WeightedValueHeader * const header = (WeightedValueHeader *)(
-            converter->itemSize * i + (uint8_t*)context->chunkDataPtr);
+            converter->itemSize * i + chunkDataPtr);
         header->rawWeighting = context->valuesItems[i].rawWeighting;
         const StoredBinaryValue * const binaryValue = (StoredBinaryValue *)(
             context->valuesItems[i].item.data.ptr);
@@ -400,10 +411,11 @@ static void PropValuesChunkInit(
         return;
     }
 
+    chunk->count = results->values.count;
     const PropValuesChunkContext context = {
         chunk,
         valuesItems,
-        results->values.count,
+        chunk->count,
         storedValueType,
         exception,
     };
@@ -429,6 +441,7 @@ static void PropValuesChunkInit(
                 defaults->stringDecimalPlaces);
             break;
     }
+    chunk->data.used = chunk->data.allocated;
 }
 
 static void PropValuesPopulate(
@@ -450,10 +463,37 @@ static void PropValuesPopulate(
 
 static void PropValuesMoveItems(
     const PropValues * const values,
-    WeightedValuesCollection * const result) {
+    WeightedValuesCollection * const result,
+    Exception * const exception) {
 
-    // FIXME: Implement
-
+    size_t totalSize = 0;
+    uint32_t totalCount = 0;
+    for (uint32_t i = 0, n = values->count; i < n; i++) {
+        totalSize += values->items[i].data.allocated;
+        totalCount += values->items[i].count;
+    }
+    DataMalloc(&result->valuesData, totalSize);
+    DataMalloc(
+        &result->itemsData,
+        totalCount * sizeof(WeightedValueHeader*));
+    uint8_t *nextChunkNew = (uint8_t *)result->valuesData.ptr;
+    for (uint32_t i = 0, n = values->count; i < n; i++) {
+        PropValuesChunk * const nextChunk = &values->items[i];
+        memcpy(nextChunkNew, nextChunk->data.ptr, nextChunk->data.allocated);
+        result->valuesData.used += nextChunk->data.allocated;
+        nextChunkNew += nextChunk->data.allocated;
+        if (nextChunk->data.allocated) {
+            Free(nextChunk->data.ptr);
+            DataReset(&nextChunk->data);
+        }
+        const uint8_t *nextHeaderStart = (const uint8_t *)nextChunkNew;
+        for (uint32_t j = 0, m = nextChunk->count; j < m; j++) {
+            result->items[result->itemsCount] = (
+                (WeightedValueHeader*)nextHeaderStart);
+            nextHeaderStart += nextChunk->converter->itemSize;
+            result->itemsCount++;
+        }
+    }
 }
 
 WeightedValuesCollection fiftyoneDegreesResultsIpiGetValuesCollection(
@@ -507,7 +547,7 @@ WeightedValuesCollection fiftyoneDegreesResultsIpiGetValuesCollection(
             DataReset(&myTempData);
         }
     }
-    PropValuesMoveItems(&values, &result);
+    PropValuesMoveItems(&values, &result, exception);
     PropValuesRelease(&values);
     return result;
 }
