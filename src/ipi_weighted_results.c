@@ -275,6 +275,24 @@ static const PropValuesConverter PropValuesConverter_String = {
 };
 
 
+static const PropValuesConverter * PropValuesConverterFor(
+    const PropertyValueType valueType) {
+    switch (valueType) {
+        case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_INTEGER:
+            return &PropValuesConverter_Int;
+        case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_DOUBLE:
+            return &PropValuesConverter_Double;
+        case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_BOOLEAN:
+            return &PropValuesConverter_Bool;
+        case FIFTYONE_DEGREES_PROPERTY_VALUE_SINGLE_BYTE:
+            return &PropValuesConverter_Byte;
+        case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING:
+        default:
+            return &PropValuesConverter_String;
+    }
+}
+
+
 typedef struct {
     PropValuesChunk * const chunk;
     const ProfilePercentage * const valuesItems;
@@ -295,7 +313,7 @@ static void PropValuesChunkPopulate(
         &context->chunk->data,
         context->chunk->count * converter->itemSize);
     context->chunk->data.used = context->chunk->data.allocated;
-    void * const chunkDataPtr = context->chunk->data.ptr;
+    uint8_t * const chunkDataPtr = context->chunk->data.ptr;
 
     for (uint32_t i = 0; i < context->valuesCount; i++) {
         WeightedValueHeader * const header = (WeightedValueHeader *)(
@@ -549,16 +567,34 @@ WeightedValuesCollection fiftyoneDegreesResultsIpiGetValuesCollection(
     }
     PropValuesMoveItems(&values, &result, exception);
     PropValuesRelease(&values);
+    if (EXCEPTION_FAILED) {
+        fiftyoneDegreesWeightedValuesCollectionRelease(&result);
+    }
     return result;
 }
 
-void WeightedValuesCollectionRelease(
+void fiftyoneDegreesWeightedValuesCollectionRelease(
     WeightedValuesCollection * const collection) {
 
-    // FIXME: Implement
-
+    if (collection->items && collection->itemsCount > 0) {
+        for (uint32_t i = 0, n = collection->itemsCount; i < n; i++) {
+            const PropertyValueType valueType = collection->items[i]->valueType;
+            const PropValuesConverter * const converter = (
+                PropValuesConverterFor(valueType));
+            const PropValueFreeFunc freeFunc = converter->itemFreeFunc;
+            if (freeFunc) {
+                freeFunc(collection->items[i]);
+            }
+        }
+    }
+    collection->items = NULL;
+    collection->itemsCount = 0;
     if (collection->itemsData.allocated) {
         Free(collection->itemsData.ptr);
+        DataReset(&collection->itemsData);
     }
-    DataReset(&collection->itemsData);
+    if (collection->valuesData.allocated) {
+        Free(collection->valuesData.ptr);
+        DataReset(&collection->valuesData);
+    }
 }
