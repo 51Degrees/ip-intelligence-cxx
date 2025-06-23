@@ -24,12 +24,18 @@
     <ClInclude Include="..\..\src\ip-graph-cxx\graph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\ipi_weighted_results.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ipi.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ip-graph-cxx\graph.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ipi_weighted_results.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
