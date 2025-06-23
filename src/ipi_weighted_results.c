@@ -20,9 +20,19 @@
  * such notice(s) shall fulfill the requirements of that article.
  * ********************************************************************* */
 
+/**
+ * @file ipi_weighted_results.c
+ * @brief Implementation of weighted values handling for IP Intelligence results.
+ * 
+ * This file implements the functions and structures defined in ipi_weighted_results.h.
+ * It provides functionality for creating, managing, and releasing collections of
+ * weighted values of different types (int, double, bool, byte, string).
+ */
+
 #include "ipi_weighted_results.h"
 #include "fiftyone.h"
 
+/* Map types for various weighted value structures */
 MAP_TYPE(WeightedValueHeader);
 MAP_TYPE(WeightedInt);
 MAP_TYPE(WeightedDouble);
@@ -32,41 +42,88 @@ MAP_TYPE(WeightedString);
 MAP_TYPE(WeightedValuesCollection);
 
 
+/**
+ * @brief Function type for initializing a property value.
+ * 
+ * @param header Pointer to the weighted value header
+ * @param converterState Pointer to converter-specific state data
+ */
 typedef void (*PropValueInitFunc)(
     WeightedValueHeader *header,
     void *converterState);
+
+/**
+ * @brief Function type for saving a property value.
+ * 
+ * @param header Pointer to the weighted value header
+ * @param storedBinaryValue Pointer to the stored binary value
+ * @param propertyValueType Type of the property value
+ * @param converterState Pointer to converter-specific state data
+ * @param exception Pointer to an exception structure for error handling
+ */
 typedef void (*PropValueSaveFunc)(
     WeightedValueHeader *header,
     const StoredBinaryValue *storedBinaryValue,
     PropertyValueType propertyValueType,
     void *converterState,
     Exception *exception);
+
+/**
+ * @brief Function type for freeing a property value.
+ * 
+ * @param header Pointer to the weighted value header
+ */
 typedef void (*PropValueFreeFunc)(
     WeightedValueHeader *header);
 
+/**
+ * @brief Structure defining a converter for property values.
+ * 
+ * This structure contains all the information needed to convert property values
+ * of a specific type, including initialization, saving, and freeing functions.
+ */
 typedef struct {
-    const char * const name;
-    const PropertyValueType valueType;
-    const PropValueInitFunc itemInitFunc;
-    const PropValueSaveFunc itemSaveFunc;
-    const PropValueFreeFunc itemFreeFunc;
-    const size_t itemSize;
+    const char * const name;                /**< Name of the converter */
+    const PropertyValueType valueType;      /**< Type of property value this converter handles */
+    const PropValueInitFunc itemInitFunc;   /**< Function to initialize values */
+    const PropValueSaveFunc itemSaveFunc;   /**< Function to save values */
+    const PropValueFreeFunc itemFreeFunc;   /**< Function to free values (can be NULL) */
+    const size_t itemSize;                  /**< Size of the value structure */
 } PropValuesConverter;
 
 
+/**
+ * @brief Structure for a chunk of property values of the same type.
+ * 
+ * This structure holds a collection of property values for a single property.
+ */
 typedef struct {
-    int requiredPropertyIndex;
-    Data data;
-    uint32_t count;
-    const PropValuesConverter *converter;
+    int requiredPropertyIndex;              /**< Index of the required property */
+    Data data;                              /**< Data structure holding the values */
+    uint32_t count;                         /**< Number of values in the chunk */
+    const PropValuesConverter *converter;   /**< Converter for this value type */
 } PropValuesChunk;
 
+/**
+ * @brief Structure for a collection of property value chunks.
+ * 
+ * This structure holds multiple chunks of property values, where each chunk
+ * corresponds to a different property.
+ */
 typedef struct {
-    uint32_t count;
-    Data data;
-    PropValuesChunk *items;
+    uint32_t count;                         /**< Number of chunks */
+    Data data;                              /**< Data structure holding the chunks */
+    PropValuesChunk *items;                 /**< Array of chunks */
 } PropValues;
 
+/**
+ * @brief Initializes a PropValues structure.
+ * 
+ * Allocates memory for the specified number of property value chunks.
+ * 
+ * @param values Pointer to the PropValues structure to initialize
+ * @param count Number of chunks to allocate
+ */
 static void PropValuesInit(PropValues * const values, const uint32_t count) {
     values->count = count;
     DataReset(&values->data);
@@ -78,6 +135,13 @@ static void PropValuesInit(PropValues * const values, const uint32_t count) {
     }
 }
 
+/**
+ * @brief Releases resources used by a PropValues structure.
+ * 
+ * Frees all memory allocated for the PropValues structure and its chunks.
+ * 
+ * @param values Pointer to the PropValues structure to release
+ */
 static void PropValuesRelease(PropValues * const values) {
     if (values->items && values->count > 0) {
         for (uint32_t i = 0, n = values->count; i < n; i++) {
@@ -96,11 +160,30 @@ static void PropValuesRelease(PropValues * const values) {
     values->items = NULL;
 }
 
+/**
+ * @brief Initializes an integer weighted value.
+ * 
+ * Sets the integer value from the converter state.
+ * 
+ * @param header Pointer to the weighted value header
+ * @param converterState Pointer to the default integer value
+ */
 static void InitInt(
     WeightedValueHeader * const header,
     void * const converterState) {
     ((WeightedInt*)header)->value = *(int*)converterState;
 }
+/**
+ * @brief Saves an integer value from a stored binary value.
+ * 
+ * Converts the stored binary value to an integer and saves it in the weighted value.
+ * 
+ * @param header Pointer to the weighted value header
+ * @param storedBinaryValue Pointer to the stored binary value
+ * @param propertyValueType Type of the property value
+ * @param converterState Pointer to the default integer value
+ * @param exception Pointer to an exception structure (unused)
+ */
 static void SaveInt(
     WeightedValueHeader * const header,
     const StoredBinaryValue * const storedBinaryValue,
@@ -115,11 +198,30 @@ static void SaveInt(
         storedBinaryValue, propertyValueType, *(int*)converterState);
 }
 
+/**
+ * @brief Initializes a boolean weighted value.
+ * 
+ * Sets the boolean value from the converter state.
+ * 
+ * @param header Pointer to the weighted value header
+ * @param converterState Pointer to the default boolean value
+ */
 static void InitBool(
     WeightedValueHeader * const header,
     void * const converterState) {
     ((WeightedBool*)header)->value = *(bool*)converterState;
 }
+/**
+ * @brief Saves a boolean value from a stored binary value.
+ * 
+ * Converts the stored binary value to a boolean and saves it in the weighted value.
+ * 
+ * @param header Pointer to the weighted value header
+ * @param storedBinaryValue Pointer to the stored binary value
+ * @param propertyValueType Type of the property value
+ * @param converterState Pointer to the default boolean value
+ * @param exception Pointer to an exception structure (unused)
+ */
 static void SaveBool(
     WeightedValueHeader * const header,
     const StoredBinaryValue * const storedBinaryValue,
@@ -134,11 +236,30 @@ static void SaveBool(
         storedBinaryValue, propertyValueType, *(bool*)converterState);
 }
 
+/**
+ * @brief Initializes a double weighted value.
+ * 
+ * Sets the double value from the converter state.
+ * 
+ * @param header Pointer to the weighted value header
+ * @param converterState Pointer to the default double value
+ */
 static void InitDouble(
     WeightedValueHeader * const header,
     void * const converterState) {
     ((WeightedDouble*)header)->value = *(double*)converterState;
 }
+/**
+ * @brief Saves a double value from a stored binary value.
+ * 
+ * Converts the stored binary value to a double and saves it in the weighted value.
+ * 
+ * @param header Pointer to the weighted value header
+ * @param storedBinaryValue Pointer to the stored binary value
+ * @param propertyValueType Type of the property value
+ * @param converterState Pointer to the default double value
+ * @param exception Pointer to an exception structure (unused)
+ */
 static void SaveDouble(
     WeightedValueHeader * const header,
     const StoredBinaryValue * const storedBinaryValue,
@@ -153,11 +274,30 @@ static void SaveDouble(
         storedBinaryValue, propertyValueType, *(double*)converterState);
 }
 
+/**
+ * @brief Initializes a byte weighted value.
+ * 
+ * Sets the byte value from the converter state.
+ * 
+ * @param header Pointer to the weighted value header
+ * @param converterState Pointer to the default byte value
+ */
 static void InitByte(
     WeightedValueHeader * const header,
     void * const converterState) {
     ((WeightedByte*)header)->value = *(byte*)converterState;
 }
+/**
+ * @brief Saves a byte value from a stored binary value.
+ * 
+ * Converts the stored binary value to a byte and saves it in the weighted value.
+ * 
+ * @param header Pointer to the weighted value header
+ * @param storedBinaryValue Pointer to the stored binary value
+ * @param propertyValueType Type of the property value
+ * @param converterState Pointer to the default byte value
+ * @param exception Pointer to an exception structure (unused)
+ */
 static void SaveByte(
     WeightedValueHeader * const header,
     const StoredBinaryValue * const storedBinaryValue,
@@ -172,6 +312,14 @@ static void SaveByte(
         storedBinaryValue, propertyValueType, *(uint8_t*)converterState);
 }
 
+/**
+ * @brief Initializes a string weighted value.
+ * 
+ * Resets the string data and sets the value pointer to NULL.
+ * 
+ * @param header Pointer to the weighted value header
+ * @param converterState Pointer to converter state (unused)
+ */
 static void InitString(
     WeightedValueHeader * const header,
     void * const converterState) {
@@ -182,10 +330,27 @@ static void InitString(
     DataReset(&wString->stringData);
     wString->value = NULL;
 }
+/**
+ * @brief State structure for string value conversion.
+ * 
+ * Contains information needed for converting values to strings.
+ */
 typedef struct {
-    const uint8_t decimalPlaces;
-    Data * const tempData;
+    const uint8_t decimalPlaces;            /**< Number of decimal places for floating-point values */
+    Data * const tempData;                  /**< Temporary data structure for string operations */
 } StringConverterState;
+/**
+ * @brief Saves a string value from a stored binary value.
+ * 
+ * Converts the stored binary value to a string and saves it in the weighted value.
+ * This function handles memory allocation for the string.
+ * 
+ * @param header Pointer to the weighted value header
+ * @param storedBinaryValue Pointer to the stored binary value
+ * @param propertyValueType Type of the property value
+ * @param converterState Pointer to the string converter state
+ * @param exception Pointer to an exception structure for error handling
+ */
 static void SaveString(
     WeightedValueHeader * const header,
     const StoredBinaryValue * const storedBinaryValue,
@@ -233,6 +398,13 @@ static void SaveString(
         wString->value = (char*)wString->stringData.ptr;
     }
 }
+/**
+ * @brief Frees resources used by a string weighted value.
+ * 
+ * Releases the memory allocated for the string data.
+ * 
+ * @param header Pointer to the weighted value header
+ */
 static void FreeString(WeightedValueHeader * const header) {
     WeightedString * const wString = (WeightedString*)header;
     if (wString->stringData.allocated) {
@@ -284,6 +456,14 @@ static const PropValuesConverter PropValuesConverter_String = {
 };
 
 
+/**
+ * @brief Gets the appropriate converter for a property value type.
+ * 
+ * Returns a pointer to the converter structure that can handle the specified value type.
+ * 
+ * @param valueType The type of property value
+ * @return Pointer to the appropriate converter
+ */
 static const PropValuesConverter * PropValuesConverterFor(
     const PropertyValueType valueType) {
     switch (valueType) {
@@ -303,14 +483,28 @@ static const PropValuesConverter * PropValuesConverterFor(
 }
 
 
+/**
+ * @brief Context structure for populating a property values chunk.
+ * 
+ * Contains all the information needed to populate a chunk with values.
+ */
 typedef struct {
-    PropValuesChunk * const chunk;
-    const ProfilePercentage * const valuesItems;
-    const uint32_t valuesCount;
-    const PropertyValueType storedValueType;
-    Exception * const exception;
+    PropValuesChunk * const chunk;                  /**< Pointer to the chunk to populate */
+    const ProfilePercentage * const valuesItems;    /**< Array of profile percentages */
+    const uint32_t valuesCount;                     /**< Number of values */
+    const PropertyValueType storedValueType;        /**< Type of the stored values */
+    Exception * const exception;                    /**< Pointer to exception structure */
 } PropValuesChunkContext;
 
+/**
+ * @brief Populates a property values chunk with values.
+ * 
+ * Allocates memory for the chunk data and initializes all values in the chunk.
+ * 
+ * @param context Pointer to the chunk context
+ * @param converter Pointer to the converter for the value type
+ * @param converterState Pointer to converter-specific state data
+ */
 static void PropValuesChunkPopulate(
     const PropValuesChunkContext * const context,
     const PropValuesConverter * const converter,
@@ -347,6 +541,14 @@ static void PropValuesChunkPopulate(
     }
 }
 
+/**
+ * @brief Populates a property values chunk with integer values.
+ * 
+ * Wrapper for PropValuesChunkPopulate that uses the integer converter.
+ * 
+ * @param context Pointer to the chunk context
+ * @param defaultValue Default integer value to use
+ */
 static void PropValuesChunkPopulate_Int(
     const PropValuesChunkContext * const context,
     const int defaultValue) {
@@ -355,6 +557,14 @@ static void PropValuesChunkPopulate_Int(
         &PropValuesConverter_Int,
         (void *)&defaultValue);
 }
+/**
+ * @brief Populates a property values chunk with double values.
+ * 
+ * Wrapper for PropValuesChunkPopulate that uses the double converter.
+ * 
+ * @param context Pointer to the chunk context
+ * @param defaultValue Default double value to use
+ */
 static void PropValuesChunkPopulate_Double(
     const PropValuesChunkContext * const context,
     const double defaultValue) {
@@ -363,6 +573,14 @@ static void PropValuesChunkPopulate_Double(
         &PropValuesConverter_Double,
         (void *)&defaultValue);
 }
+/**
+ * @brief Populates a property values chunk with byte values.
+ * 
+ * Wrapper for PropValuesChunkPopulate that uses the byte converter.
+ * 
+ * @param context Pointer to the chunk context
+ * @param defaultValue Default byte value to use
+ */
 static void PropValuesChunkPopulate_Byte(
     const PropValuesChunkContext * const context,
     const byte defaultValue) {
@@ -371,6 +589,14 @@ static void PropValuesChunkPopulate_Byte(
         &PropValuesConverter_Byte,
         (void *)&defaultValue);
 }
+/**
+ * @brief Populates a property values chunk with boolean values.
+ * 
+ * Wrapper for PropValuesChunkPopulate that uses the boolean converter.
+ * 
+ * @param context Pointer to the chunk context
+ * @param defaultValue Default boolean value to use
+ */
 static void PropValuesChunkPopulate_Bool(
     const PropValuesChunkContext * const context,
     const bool defaultValue) {
@@ -379,6 +605,15 @@ static void PropValuesChunkPopulate_Bool(
         &PropValuesConverter_Bool,
         (void *)&defaultValue);
 }
+/**
+ * @brief Populates a property values chunk with string values.
+ * 
+ * Wrapper for PropValuesChunkPopulate that uses the string converter.
+ * 
+ * @param context Pointer to the chunk context
+ * @param tempData Temporary data structure for string conversion operations
+ * @param decimalPlaces Number of decimal places for floating-point to string conversion
+ */
 static void PropValuesChunkPopulate_String(
     const PropValuesChunkContext * const context,
     fiftyoneDegreesData * const tempData,
@@ -393,14 +628,31 @@ static void PropValuesChunkPopulate_String(
         (void *)&state);
 }
 
+/**
+ * @brief Default values for property value conversion.
+ * 
+ * Contains default values for each supported property value type.
+ */
 typedef struct {
-    int intValue;
-    double doubleValue;
-    bool boolValue;
-    uint8_t byteValue;
-    uint8_t stringDecimalPlaces;
+    int intValue;                           /**< Default integer value */
+    double doubleValue;                     /**< Default double value */
+    bool boolValue;                         /**< Default boolean value */
+    uint8_t byteValue;                      /**< Default byte value */
+    uint8_t stringDecimalPlaces;            /**< Default decimal places for string conversion */
 } PropValuesItemConversionDefaults;
 
+/**
+ * @brief Initializes a property values chunk with values from results.
+ * 
+ * Gets the property values from the results and populates the chunk with
+ * the appropriate type of values.
+ * 
+ * @param chunk Pointer to the chunk to initialize
+ * @param results Pointer to the IP Intelligence results
+ * @param defaults Pointer to the default values for conversion
+ * @param tempData Temporary data structure for string conversion operations
+ * @param exception Pointer to an exception structure for error handling
+ */
 static void PropValuesChunkInit(
     PropValuesChunk * const chunk,
     ResultsIpi * const results,
@@ -475,6 +727,17 @@ static void PropValuesChunkInit(
     chunk->data.used = chunk->data.allocated;
 }
 
+/**
+ * @brief Populates all chunks in a PropValues structure.
+ * 
+ * Initializes each chunk in the PropValues structure with values from the results.
+ * 
+ * @param values Pointer to the PropValues structure to populate
+ * @param results Pointer to the IP Intelligence results
+ * @param defaults Pointer to the default values for conversion
+ * @param tempData Temporary data structure for string conversion operations
+ * @param exception Pointer to an exception structure for error handling
+ */
 static void PropValuesPopulate(
     const PropValues * const values,
     ResultsIpi * const results,
@@ -492,6 +755,16 @@ static void PropValuesPopulate(
     }
 }
 
+/**
+ * @brief Moves items from PropValues to a WeightedValuesCollection.
+ * 
+ * Allocates memory in the result collection and copies all values from the
+ * PropValues structure to the collection. This function also builds the
+ * table of contents for the collection.
+ * 
+ * @param values Pointer to the PropValues structure containing the values
+ * @param result Pointer to the WeightedValuesCollection to populate
+ */
 static void PropValuesMoveItems(
     const PropValues * const values,
     WeightedValuesCollection * const result) {
@@ -528,6 +801,7 @@ static void PropValuesMoveItems(
     }
 }
 
+/* Implementation of the function declared in the header file */
 WeightedValuesCollection fiftyoneDegreesResultsIpiGetValuesCollection(
     ResultsIpi * const results,
     const int * const requiredPropertyIndexes,
@@ -587,6 +861,7 @@ WeightedValuesCollection fiftyoneDegreesResultsIpiGetValuesCollection(
     return result;
 }
 
+/* Implementation of the function declared in the header file */
 void fiftyoneDegreesWeightedValuesCollectionRelease(
     WeightedValuesCollection * const collection) {
 
