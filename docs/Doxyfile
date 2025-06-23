@@ -32,7 +32,7 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = "51Degrees Device Detection C/C++"
+PROJECT_NAME           = "51Degrees IP Intelligence C/C++"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
@@ -44,7 +44,7 @@ PROJECT_NUMBER         = 4.4
 # for a project that appears at the top of each page and should give viewer a
 # quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          = "A device detection library that is used natively or by 51Degrees products"
+PROJECT_BRIEF          = "IP intelligence services for 51Degrees Pipeline"
 
 # With the PROJECT_LOGO tag one can specify a logo or an icon that is included
 # in the documentation. The maximum height of the logo should not exceed 55
@@ -818,24 +818,9 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ../ \
-                         ../src/hash \
-                         ../src \
-                         ../src/common-cxx \
-                         ../examples/CPP/Hash \
-                         ../examples/CPP/Hash/GettingStarted.cpp \
-                         ../examples/CPP/Hash/MatchMetrics.cpp \
-                         ../examples/CPP/Hash/MetaData.cpp \
-                         ../examples/CPP/Hash/ReloadFromFile.cpp \
-                         ../examples/CPP/Hash/ReloadFromMemory.cpp \
-                         ../examples/CPP/Hash/StronglyTyped.cpp \
-                         ../examples/C/Hash/GettingStarted.c \
-                         ../examples/C/Hash/MatchMetrics.c \
-                         ../examples/C/Hash/OfflineProcessing.c \
-                         ../examples/C/Hash/Performance.c \
-                         ../examples/C/Hash/ReloadFromFile.c \
-                         ../examples/C/Hash/ReloadFromMemory.c \
-                         ../examples/C/Hash/StronglyTyped.c
+INPUT                  = ../src \
+                         ../README.md \
+                         ../examples
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -862,13 +847,15 @@ INPUT_ENCODING         = UTF-8
 
 FILE_PATTERNS          = *.h \
                          *.hpp \
+                         *.c \
+                         *.cpp \
                          *.md
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
 # The default value is: NO.
 
-RECURSIVE              = NO
+RECURSIVE              = YES
 
 # The EXCLUDE tag can be used to specify files and/or directories that should be
 # excluded from the INPUT source files. This way you can easily exclude a
@@ -913,8 +900,8 @@ EXCLUDE_SYMBOLS        = EXTERNAL \
 # that contain example code fragments that are included (see the \include
 # command).
 
-EXAMPLE_PATH           = ../examples/CPP \
-                         ../examples/C
+EXAMPLE_PATH           = ../examples \
+                         ../../documentation/src/snippets
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp and
@@ -922,6 +909,7 @@ EXAMPLE_PATH           = ../examples/CPP \
 # files are included.
 
 EXAMPLE_PATTERNS       = *.c \
+                         *.h \
                          *.cpp \
                          *.hpp
 
@@ -1198,8 +1186,8 @@ HTML_EXTRA_FILES       = ../../documentation/docs/images/icon-arrow-left-black.s
                          ../../documentation/docs/images/icon-arrow-solid-right-mute.svg \
                          ../../documentation/docs/images/icon-arrow-solid-right-orange.svg \
                          ../../documentation/docs/images/icon-search.svg \
-                         ../../documentation/docs/examplegrabber.js \
                          ../../documentation/docs/testedversionsgrabber.js \
+                         ../../documentation/docs/examplegrabber.js \
                          ../../documentation/docs/search51.js
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
