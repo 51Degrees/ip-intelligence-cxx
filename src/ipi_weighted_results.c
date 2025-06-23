@@ -32,15 +32,6 @@
 #include "ipi_weighted_results.h"
 #include "fiftyone.h"
 
-/* Map types for various weighted value structures */
-MAP_TYPE(WeightedValueHeader);
-MAP_TYPE(WeightedInt);
-MAP_TYPE(WeightedDouble);
-MAP_TYPE(WeightedBool);
-MAP_TYPE(WeightedByte);
-MAP_TYPE(WeightedString);
-MAP_TYPE(WeightedValuesCollection);
-
 
 /**
  * @brief Function type for initializing a property value.
