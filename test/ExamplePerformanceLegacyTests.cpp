@@ -42,8 +42,8 @@ public:
 TEST_F(ExampleTestPerformanceLegacy, InMemory) {
     run(fiftyoneDegreesIpiInMemoryConfig); 
 }
-// TEST_F(ExampleTestPerformance, LowMemory) {
-//     if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) {
-//         run(fiftyoneDegreesIpiLowMemoryConfig);
-//     }
-// }
+TEST_F(ExampleTestPerformanceLegacy, LowMemory) {
+    if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) {
+        run(fiftyoneDegreesIpiLowMemoryConfig);
+    }
+}

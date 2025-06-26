@@ -318,6 +318,11 @@ public:	\
  * Tests for memory leak with different configurations
  */
 #define MEM_TEST(c,t) \
+TEST_F(c, LowMemory) { \
+	if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) { \
+		run(fiftyoneDegrees##t##LowMemoryConfig); \
+	} \
+} \
 TEST_F(c, InMemory) { \
 	run(fiftyoneDegrees##t##InMemoryConfig); \
 }
