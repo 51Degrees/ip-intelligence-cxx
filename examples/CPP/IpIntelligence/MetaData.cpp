@@ -144,7 +144,19 @@ namespace FiftyoneDegrees {
 					auto const properties = std::unique_ptr<Collection<string, PropertyMetaData>>(engine->getMetaData()->getProperties());
 					for (uint32_t i = 0; i < properties->getSize(); i++){
 						auto const property = std::unique_ptr<PropertyMetaData>(properties->getByIndex(i));
-						cout << property->getName() << " - " << property->getDescription() << "\n";
+						if (!property) {
+							continue;
+						}
+						auto const propName = property->getName();
+						auto const propDesc = property->getDescription();
+						cout << propName << " - " << propDesc << "\n";
+						auto const defaultValue = std::unique_ptr<ValueMetaData>(
+							engine->getMetaData()->getDefaultValueForProperty(property.get()));
+						if (defaultValue) {
+							auto const defName = defaultValue->getName();
+							auto const defDesc = defaultValue->getDescription();
+							cout << "   -> default value = '" << defName << "', description = '" << defDesc << "'\n";
+						}
 					}
 
 
