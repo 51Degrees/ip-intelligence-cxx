@@ -42,9 +42,6 @@ const char* fiftyoneDegreesExampleGetConfigName(ConfigIpi config) {
 	if (CONFIG_EQUALS(IpiBalancedTempConfig)) {
 		return "BalancedTemp";
 	}
-	if (CONFIG_EQUALS(fiftyoneDegreesIpiSingleLoadedConfig)) {
-		return "SingleLoaded";
-	}
 	return "Unknown";
 }
 
