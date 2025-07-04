@@ -44,7 +44,28 @@ protected:
     const char *requiredProperties;
 };
 
+
 #define EXAMPLE_TESTS(c)                                        \
+    TEST_F(c, Default) {                                             \
+        if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) {     \
+            run(fiftyoneDegreesIpiDefaultConfig);                      \
+        }                                                              \
+    }                                                                \
+    TEST_F(c, BalancedTemp) {                                        \
+        if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) {     \
+            run(fiftyoneDegreesIpiBalancedTempConfig);                 \
+        }                                                              \
+    }                                                                \
+    TEST_F(c, Balanced) {                                            \
+        if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) {     \
+            run(fiftyoneDegreesIpiBalancedConfig);                     \
+        }                                                              \
+    }                                                                \
+    TEST_F(c, LowMemory) {                                           \
+        if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) {     \
+            run(fiftyoneDegreesIpiLowMemoryConfig);                    \
+        }                                                              \
+    }                                                                \
     TEST_F(c, HighPerformance) {                                     \
         run(fiftyoneDegreesIpiHighPerformanceConfig);                \
     }                                                                \

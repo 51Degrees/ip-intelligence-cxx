@@ -106,7 +106,7 @@ typedef struct performanceConfig_t {
  */
 performanceConfig performanceConfigs[] = {
 	{ &IpiInMemoryConfig, false },
-	// { &IpiInMemoryConfig, true },
+	{ &IpiInMemoryConfig, true },
 };
 
 /**
