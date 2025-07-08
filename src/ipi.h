@@ -92,7 +92,7 @@
  * collection configuration.
  */
 #ifndef FIFTYONE_DEGREES_STRING_LOADED
-#define FIFTYONE_DEGREES_STRING_LOADED 100
+#define FIFTYONE_DEGREES_STRING_LOADED true
 #endif
 /**
  * Default value for the graphs cache size used in the default collection
@@ -106,7 +106,7 @@
  * collection configuration.
  */
 #ifndef FIFTYONE_DEGREES_IP_GRAPHS_LOADED
-#define FIFTYONE_DEGREES_IP_GRAPHS_LOADED 1000
+#define FIFTYONE_DEGREES_IP_GRAPHS_LOADED true
 #endif
 /**
  * Default value for the graphs cache size used in the default collection
@@ -120,7 +120,7 @@
  * collection configuration.
  */
 #ifndef FIFTYONE_DEGREES_IP_GRAPH_LOADED
-#define FIFTYONE_DEGREES_IP_GRAPH_LOADED 5000
+#define FIFTYONE_DEGREES_IP_GRAPH_LOADED true
 #endif
 /**
  * Default value for the profile groups cache size used in the default 
@@ -134,7 +134,7 @@
  * configuration.
  */
 #ifndef FIFTYONE_DEGREES_PROFILE_GROUPS_LOADED
-#define FIFTYONE_DEGREES_PROFILE_GROUPS_LOADED 100
+#define FIFTYONE_DEGREES_PROFILE_GROUPS_LOADED false
 #endif
 /**
  * Default value for the profile cache size used in the default collection
@@ -148,7 +148,7 @@
  * collection configuration.
  */
 #ifndef FIFTYONE_DEGREES_PROFILE_LOADED
-#define FIFTYONE_DEGREES_PROFILE_LOADED 100
+#define FIFTYONE_DEGREES_PROFILE_LOADED false
 #endif
 /**
  * Default value for the value cache size used in the default collection
@@ -162,7 +162,7 @@
  * configuration.
  */
 #ifndef FIFTYONE_DEGREES_VALUE_LOADED
-#define FIFTYONE_DEGREES_VALUE_LOADED 0
+#define FIFTYONE_DEGREES_VALUE_LOADED false
 #endif
 /**
  * Default value for the property cache size used in the default collection
@@ -176,7 +176,7 @@
  * collection configuration.
  */
 #ifndef FIFTYONE_DEGREES_PROPERTY_LOADED
-#define FIFTYONE_DEGREES_PROPERTY_LOADED INT_MAX
+#define FIFTYONE_DEGREES_PROPERTY_LOADED true
 #endif
 
 /**
@@ -466,14 +466,6 @@ EXTERNAL_VAR fiftyoneDegreesConfigIpi fiftyoneDegreesIpiBalancedTempConfig;
  * a temp file.
  */
 EXTERNAL_VAR fiftyoneDegreesConfigIpi fiftyoneDegreesIpiDefaultConfig;
-
-/**
- * Configuration designed only for testing. This uses a loaded size of 1 in
- * all collections to ensure all every get and release calls can be tested for
- * items which do not exist in the root collection. This configuration is not
- * exposed through C++ intentionally as it is only used in testing.
- */
-EXTERNAL_VAR fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig;
 
 
 /**

@@ -54,7 +54,7 @@ namespace FiftyoneDegrees {
 			 */
 			static PropertyMetaData* build(
 				fiftyoneDegreesDataSetIpi *dataSet,
-				fiftyoneDegreesProperty *property);
+				const fiftyoneDegreesProperty *property);
 		private:
 			/**
 			 * Get a copy of the default value string from the underlying
@@ -86,7 +86,7 @@ namespace FiftyoneDegrees {
 			 * @param property pointer to the property to get the type of
 			 * @return copy of the type string
 			 */
-			static string getPropertyType(fiftyoneDegreesProperty *property);
+			static string getPropertyType(const fiftyoneDegreesProperty *property);
 
 			/**
 			 * Get the list of data set maps which contain the requested
@@ -100,9 +100,9 @@ namespace FiftyoneDegrees {
 			 * strings
 			 */
 			static vector<string> getPropertyMap(
-				fiftyoneDegreesCollection *strings,
-				fiftyoneDegreesCollection *maps,
-				fiftyoneDegreesProperty *property);
+				const fiftyoneDegreesCollection *strings,
+				const fiftyoneDegreesCollection *maps,
+				const fiftyoneDegreesProperty *property);
 
 			/**
 			 * Get the unique id of the component which the property
@@ -115,11 +115,11 @@ namespace FiftyoneDegrees {
 			 */
 			static ::byte getComponentId(
 				fiftyoneDegreesDataSetIpi *dataSet,
-				fiftyoneDegreesProperty *property);
+				const fiftyoneDegreesProperty *property);
 
 			static vector<uint32_t> getEvidenceProperties(
 				fiftyoneDegreesDataSetIpi *dataSet,
-				fiftyoneDegreesProperty *property);
+				const fiftyoneDegreesProperty *property);
 		};
 	}
 }

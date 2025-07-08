@@ -24,6 +24,7 @@
 #include "fiftyone.h"
 #include "common-cxx/config.h"
 #include "constantsIpi.h"
+#include "common-cxx/collectionKeyTypes.h"
 #include "ip-graph-cxx/graph.h"
 
 MAP_TYPE(Collection)
@@ -163,54 +164,39 @@ FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY_DEFAULT
 
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiHighPerformanceConfig = {
 	{ FIFTYONE_DEGREES_CONFIG_DEFAULT_WITH_INDEX },
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Strings
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Components
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Maps
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Properties
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Values
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Graphs
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // PropertyTypes
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileOffsets
-	{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // Graph
+	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Strings
+	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Components
+	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Maps
+	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Properties
+	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Values
+	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
+	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Graphs
+	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
+	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // PropertyTypes
+	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileOffsets
+	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // Graph
 };
 
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiLowMemoryConfig = {
 	{ FIFTYONE_DEGREES_CONFIG_DEFAULT_NO_INDEX },
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Strings
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Components
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Maps
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Properties
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Values
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Graphs
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // PropertyTypes
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileOffsets
-	{ 0, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // Graph
-};
-
-fiftyoneDegreesConfigIpi fiftyoneDegreesIpiSingleLoadedConfig = {
-	{ FIFTYONE_DEGREES_CONFIG_DEFAULT_NO_INDEX },
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Strings
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Components
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Maps
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Properties
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Values
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Graphs
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // PropertyTypes
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileOffsets
-	{ 1, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // Graph
+	{ false, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Strings
+	{ false, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Components
+	{ false, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Maps
+	{ false, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Properties
+	{ false, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Values
+	{ false, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Profiles
+	{ false, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Graphs
+	{ false, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileGroups
+	{ false, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // PropertyTypes
+	{ false, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // ProfileOffsets
+	{ false, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }  // Graph
 };
 
 #define FIFTYONE_DEGREES_IPI_CONFIG_BALANCED \
 { FIFTYONE_DEGREES_CONFIG_DEFAULT_WITH_INDEX }, \
 { FIFTYONE_DEGREES_STRING_LOADED, FIFTYONE_DEGREES_STRING_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Strings */ \
-{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Components */ \
-{ INT_MAX, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Maps */ \
+{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Components */ \
+{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Maps */ \
 { FIFTYONE_DEGREES_PROPERTY_LOADED, FIFTYONE_DEGREES_PROPERTY_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Properties */ \
 { FIFTYONE_DEGREES_VALUE_LOADED, FIFTYONE_DEGREES_VALUE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Values */ \
 { FIFTYONE_DEGREES_PROFILE_LOADED, FIFTYONE_DEGREES_PROFILE_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Profiles */ \
@@ -257,6 +243,17 @@ static int compareIpAddresses(
 	return 0;
 }
 
+static CollectionKeyType CollectionKeyType_Ipv4Range = {
+	FIFTYONE_DEGREES_COLLECTION_ENTRY_TYPE_IPV4_RANGE,
+	sizeof(Ipv4Range),
+	NULL,
+};
+static CollectionKeyType CollectionKeyType_Ipv6Range = {
+	FIFTYONE_DEGREES_COLLECTION_ENTRY_TYPE_IPV6_RANGE,
+	sizeof(Ipv6Range),
+	NULL,
+};
+
 static int compareToIpv4Range(
 	const void * const state,
 	const Item* item,
@@ -269,17 +266,25 @@ static int compareToIpv4Range(
 	if (tempResult < 0) {
 		Item nextItem;
 		DataReset(&nextItem.data);
-		if ((uint32_t)curIndex + 1 < item->collection->count &&
-			item->collection->get(
-				item->collection,
+		if ((uint32_t)curIndex + 1 < item->collection->count) {
+			const CollectionKey curKey = {
 				(uint32_t)++curIndex,
+				&CollectionKeyType_Ipv4Range,
+			};
+			if (item->collection->get(
+				item->collection,
+				&curKey,
 				&nextItem,
 				exception) != NULL && EXCEPTION_OKAY) {
-			if (compareIpAddresses(((Ipv4Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV4_LENGTH) <= 0) {
-				result = -1;
-			}
-			COLLECTION_RELEASE(item->collection, &nextItem);
+				if (compareIpAddresses(
+					((Ipv4Range*)nextItem.data.ptr)->start,
+					target.value,
+					FIFTYONE_DEGREES_IPV4_LENGTH) <= 0) {
+					result = -1;
 				}
+				COLLECTION_RELEASE(item->collection, &nextItem);
+			}
+		}
 	}
 	else if (tempResult > 0 && curIndex > 0) {
 		// The IP address is out of range
@@ -302,18 +307,24 @@ static int compareToIpv6Range(
 	if (tempResult < 0) {
 		Item nextItem;
 		DataReset(&nextItem.data);
-		if ((uint32_t)curIndex + 1 < item->collection->count &&
-			item->collection->get(
-				item->collection,
+		if ((uint32_t)curIndex + 1 < item->collection->count) {
+			const CollectionKey curKey = {
 				(uint32_t)++curIndex,
+				&CollectionKeyType_Ipv6Range,
+			};
+			if (item->collection->get(
+				item->collection,
+				&curKey,
 				&nextItem,
 				exception) != NULL && EXCEPTION_OKAY) {
-			if (compareIpAddresses(((Ipv6Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV6_LENGTH) <= 0) {
-				// The IP address is not within the range
-				result = -1;
-			}
-			COLLECTION_RELEASE(item->collection, &nextItem);
+
+				if (compareIpAddresses(((Ipv6Range*)nextItem.data.ptr)->start, target.value, FIFTYONE_DEGREES_IPV6_LENGTH) <= 0) {
+					// The IP address is not within the range
+					result = -1;
 				}
+				COLLECTION_RELEASE(item->collection, &nextItem);
+			}
+		}
 	}
 	else if (tempResult > 0 && curIndex > 0) {
 		// The IP address is out of range
@@ -420,11 +431,11 @@ static long initGetHttpHeaderString(
 	return -1;
 }
 
-static String* initGetPropertyString(
+static const String* initGetPropertyString(
 	void* state,
 	uint32_t index,
 	Item* item) {
-	String* name = NULL;
+	const String* name = NULL;
 	Item propertyItem;
 	Property* property;
 	const DataSetIpi* dataSet = (DataSetIpi*)((stateWithException*)state)->state;
@@ -435,9 +446,13 @@ static String* initGetPropertyString(
 		DataReset(&propertyItem.data);
 		item->collection = NULL;
 		item->handle = NULL;
+		const CollectionKey indexKey = {
+			index,
+			CollectionKeyType_Property,
+		};
 		property = (Property*)dataSet->properties->get(
 			dataSet->properties,
-			index,
+			&indexKey,
 			&propertyItem,
 			exception);
 		if (property != NULL && EXCEPTION_OKAY) {
@@ -497,7 +512,7 @@ static int findPropertyIndexByName(
 	int index;
 	bool found = false;
 	Property *property;
-	String *propertyName;
+	const String *propertyName;
 	Item propertyItem, nameItem;
 	const int count = CollectionGetCount(properties);
 	DataReset(&propertyItem.data);
@@ -528,14 +543,14 @@ static int findPropertyIndexByName(
 }
 
 static void initGetEvidencePropertyRelated(
-	DataSetIpi* dataSet,
-	PropertyAvailable* availableProperty,
-	EvidenceProperties* evidenceProperties,
-	int* count,
-	char* suffix,
-	Exception* exception) {
-	Property* property;
-	String* name;
+	DataSetIpi* const dataSet,
+	PropertyAvailable* const availableProperty,
+	EvidenceProperties* const evidenceProperties,
+	int* const count,
+	char* const suffix,
+	Exception* const exception) {
+	const Property* property;
+	const String* name;
 	const String* availableName = (String*)availableProperty->name.data.ptr;
 	const int requiredLength = ((int)strlen(suffix)) + availableName->size - 1;
 	Item propertyItem, nameItem;
@@ -672,18 +687,26 @@ static void dumpProperties(
 	const uint32_t valuesCount = CollectionGetCount(dataSet->values);
 	for (uint32_t i = 0; (i < valuesCount) && EXCEPTION_OKAY; i++) {
 		DataReset(&valueItem.data);
+		const CollectionKey valueKey = {
+			i,
+			CollectionKeyType_Value,
+		};
 		const Value * const nextValue = (Value*)dataSet->values->get(
 			dataSet->values,
-			i,
+			&valueKey,
 			&valueItem,
 			exception);
 		if (!(nextValue && EXCEPTION_OKAY)) {
 			return;
 		}
 		DataReset(&propTypeItem.data);
+		const CollectionKey typeRecordKey = {
+			nextValue->propertyIndex,
+			CollectionKeyType_PropertyTypeRecord,
+		};
 		const PropertyTypeRecord * const nextPropType = (PropertyTypeRecord*)dataSet->propertyTypes->get(
 			dataSet->propertyTypes,
-			nextValue->propertyIndex,
+			&typeRecordKey,
 			&propTypeItem,
 			exception);
 		if (!(nextPropType && EXCEPTION_OKAY)) {
@@ -1825,9 +1848,13 @@ static uint32_t addValuesFromSingleProfile(
 	Profile *profile = NULL;
 	if (profileOffset != NULL_PROFILE_OFFSET) {
 		DataReset(&profileItem.data);
+		const CollectionKey profileKey = {
+			profileOffset,
+			CollectionKeyType_Profile,
+		};
 		profile = (Profile*)dataSet->profiles->get(
 			dataSet->profiles,
-			profileOffset,
+			&profileKey,
 			&profileItem,
 			exception);
 		// If profile is found
@@ -1845,44 +1872,55 @@ static uint32_t addValuesFromSingleProfile(
 	return count;
 }
 
-static uint32_t addValuesFromProfileGroup(
-	ResultsIpi* results,
-	Property *property,
-	uint32_t profileGroupOffset,
-	Exception* exception) {
-	uint32_t count = 0;
-	Item profileGroupItem;
-	const DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
+static const CollectionKeyType CollectionKeyType_OffsetPercentage = {
+	FIFTYONE_DEGREES_COLLECTION_ENTRY_TYPE_OFFSET_PERCENTAGE,
+	sizeof(offsetPercentage),
+	NULL,
+};
 
-	if (profileGroupOffset != NULL_PROFILE_OFFSET) {
-		DataReset(&profileGroupItem.data);
-		const offsetPercentage* const firstWeightedProfileOffset = (offsetPercentage*)dataSet->profileGroups->get(
-			dataSet->profileGroups,
-			profileGroupOffset,
+static uint32_t addValuesFromProfileGroup(
+	ResultsIpi * const results,
+	Property * const property,
+	const uint32_t profileGroupOffset,
+	Exception * const exception) {
+	uint32_t count = 0;
+	const DataSetIpi * const dataSet = (const DataSetIpi*)results->b.dataSet;
+
+	if (profileGroupOffset == NULL_PROFILE_OFFSET) {
+		return 0;
+	}
+	Item profileGroupItem;
+	DataReset(&profileGroupItem.data);
+
+	const Collection * const profileGroups = dataSet->profileGroups;
+	for (uint32_t totalWeight = 0, nextOffset = profileGroupOffset;
+		(totalWeight < FULL_RAW_WEIGHTING) && EXCEPTION_OKAY;
+		++nextOffset) {
+		const CollectionKey profileGroupKey = {
+			nextOffset,
+			&CollectionKeyType_OffsetPercentage,
+		};
+		const offsetPercentage* const nextWeightedProfileOffset = (const offsetPercentage*)profileGroups->get(
+			profileGroups,
+			&profileGroupKey,
 			&profileGroupItem,
 			exception);
-		if (firstWeightedProfileOffset != NULL && EXCEPTION_OKAY) {
-			// FIXME: Do not rely on pointer arithmetic -- collection could be 'File'
-			const offsetPercentage *weightedProfileOffset = firstWeightedProfileOffset;
-			for (uint32_t totalWeight = 0;
-				totalWeight < FULL_RAW_WEIGHTING;
-				++weightedProfileOffset) {
-				totalWeight += weightedProfileOffset->rawWeighting;
-				if (totalWeight > FULL_RAW_WEIGHTING) {
-					EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
-					break;
-				}
-				count += addValuesFromSingleProfile(
-					results,
-					property,
-					weightedProfileOffset->offset,
-					weightedProfileOffset->rawWeighting,
-					exception);
-			}
-			COLLECTION_RELEASE(dataSet->profiles, &profileGroupItem);
+		if (!(nextWeightedProfileOffset && EXCEPTION_OKAY)) {
+			break;
 		}
+		totalWeight += nextWeightedProfileOffset->rawWeighting;
+		if (totalWeight <= FULL_RAW_WEIGHTING) {
+			count += addValuesFromSingleProfile(
+				results,
+				property,
+				nextWeightedProfileOffset->offset,
+				nextWeightedProfileOffset->rawWeighting,
+				exception);
+		} else {
+			EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
+		}
+		COLLECTION_RELEASE(dataSet->profileGroups, &profileGroupItem);
 	}
-
 	return count;
 }
 
@@ -1893,9 +1931,13 @@ static uint32_t getProfileOffset(
 
 	Item item;
 	DataReset(&item.data);
+	const CollectionKey resultKey = {
+		offsetIndex,
+		CollectionKeyType_Integer,
+	};
 	const uint32_t * const resultRef = (uint32_t*)profileOffsets->get(
 		profileOffsets,
-		offsetIndex,
+		&resultKey,
 		&item,
 		exception);
 	if (!(resultRef && EXCEPTION_OKAY)) {
@@ -2031,9 +2073,13 @@ static bool profileHasValidPropertyValue(
 
 	if (profileOffset != NULL_PROFILE_OFFSET) {
 		DataReset(&profileItem.data);
+		const CollectionKey profileKey = {
+			profileOffset,
+			CollectionKeyType_Profile,
+		};
 		profile = (Profile*)dataSet->profiles->get(
 			dataSet->profiles,
-			profileOffset,
+			&profileKey,
 			&profileItem,
 			exception);
 		// If profile is found
@@ -2097,25 +2143,31 @@ static bool resultGetHasValidPropertyValueOffset(
 							exception);
 					}
 				} else {
-					const offsetPercentage *weightedProfileOffset =
-						(offsetPercentage*)dataSet->profileGroups->get(
-							dataSet->profileGroups,
-							result->graphResult.offset,
+					const Collection * const profileGroups = dataSet->profileGroups;
+					for (uint32_t totalWeight = 0,
+						nextOffset = result->graphResult.offset;
+						(!hasValidOffset) && (totalWeight < FULL_RAW_WEIGHTING) && EXCEPTION_OKAY;
+						++nextOffset) {
+						const CollectionKey profileGroupKey = {
+							nextOffset,
+							&CollectionKeyType_OffsetPercentage,
+						};
+						const offsetPercentage* const nextWeightedProfileOffset = (const offsetPercentage*)profileGroups->get(
+							profileGroups,
+							&profileGroupKey,
 							&item,
 							exception);
-					if (weightedProfileOffset && EXCEPTION_OKAY) {
-						for (uint32_t totalWeight = 0;
-							!hasValidOffset && totalWeight < FULL_RAW_WEIGHTING;
-							++weightedProfileOffset) {
-							totalWeight += weightedProfileOffset->rawWeighting;
-							if (totalWeight > FULL_RAW_WEIGHTING) {
-								EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
-								break;
-							}
+						if (!(nextWeightedProfileOffset && EXCEPTION_OKAY)) {
+							break;
+						}
+						totalWeight += nextWeightedProfileOffset->rawWeighting;
+						if (totalWeight <= FULL_RAW_WEIGHTING) {
 							hasValidOffset = profileHasValidPropertyValue(
-								dataSet, weightedProfileOffset->offset, property, exception);
-							}
-						COLLECTION_RELEASE(dataSet->profiles, &item);
+								dataSet, nextWeightedProfileOffset->offset, property, exception);
+						} else {
+							EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
+						}
+						COLLECTION_RELEASE(profileGroups, &item);
 					}
 				}
 			}
@@ -2207,6 +2259,8 @@ const char* fiftyoneDegreesResultsIpiGetNoValueReasonMessage(
 	case FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_NULL_PROFILE:
 		return "The results contained a null profile for the component which "
 			"the required property belongs to.";
+	case FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_INVALID_PROPERTY:
+		return "The requested property does not exist, or is not a required property";
 	case FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_UNKNOWN:
 	default:
 		return "The reason for missing values is unknown.";
@@ -2281,9 +2335,13 @@ static void fiftyoneDegreesResultsIpiGetValuesStringInternal(
 			return;
 		}
 		DataReset(&propertyItem.data);
+		const CollectionKey propertyKey = {
+			propertyIndex,
+			CollectionKeyType_Property,
+		};
 		property = (Property*)dataSet->properties->get(
 				dataSet->properties,
-				propertyIndex,
+				&propertyKey,
 				&propertyItem,
 				exception);
 		if (property != NULL && EXCEPTION_OKAY) {

@@ -44,8 +44,8 @@ ValueMetaData* ValueMetaDataCollectionBaseIpi::getByKey(
 	ValueMetaDataKey key) const {
 	EXCEPTION_CREATE;
 	Item propertyItem, valueItem;
-	Value *value;
-	Property *property;
+	const Value *value;
+	const Property *property;
 	ValueMetaData *result = nullptr;
 	DataReset(&propertyItem.data);
 	property = PropertyGetByName(

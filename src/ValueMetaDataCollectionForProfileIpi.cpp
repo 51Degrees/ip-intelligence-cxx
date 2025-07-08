@@ -54,7 +54,7 @@ ValueMetaData* ValueMetaDataCollectionForProfileIpi::getByIndex(
 	uint32_t index) const {
 	EXCEPTION_CREATE;
 	ValueMetaData *result = nullptr;
-	Value *value;
+	const Value *value;
 	Item item;
 	DataReset(&item.data);
 	uint32_t valueIndex = ((uint32_t*)(getProfile() + 1))[index];
@@ -76,10 +76,10 @@ bool ValueMetaDataCollectionForProfileIpi::valueFilter(
 	fiftyoneDegreesCollectionItem *valueItem) {
 	EXCEPTION_CREATE;
 	Item nameItem;
-	StoredBinaryValue *valueContent;
-	Value *value;
+	const StoredBinaryValue *valueContent;
+	const Value *value;
 	FilterResult *result = (FilterResult*)state;
-	value = (Value*)valueItem->data.ptr;
+	value = (const Value*)valueItem->data.ptr;
 	PropertyValueType const storedValueType = PropertyGetStoredTypeByIndex(
 		result->dataSet->propertyTypes,
 		value->propertyIndex,
@@ -120,7 +120,7 @@ ValueMetaData* ValueMetaDataCollectionForProfileIpi::getByKey(
 	ValueMetaDataKey key) const {
 	EXCEPTION_CREATE;
 	Item propertyItem;
-	Property *property;
+	const Property *property;
 	uint32_t count;
 	ValueMetaData *result = nullptr;
 	FilterResult state;

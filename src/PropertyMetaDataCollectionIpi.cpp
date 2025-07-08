@@ -64,7 +64,7 @@ PropertyMetaData* PropertyMetaDataCollectionIpi::getByIndex(
 PropertyMetaData* PropertyMetaDataCollectionIpi::getByKey(string name) const {
 	EXCEPTION_CREATE;
 	Item item;
-	Property *property;
+	const Property *property;
 	PropertyMetaData *result = nullptr;
 	DataReset(&item.data);
 	property = PropertyGetByName(

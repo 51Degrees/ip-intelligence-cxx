@@ -50,7 +50,7 @@ static string getDynamicString(
 	EXCEPTION_CREATE;
 	string result;
 	Item item;
-	StoredBinaryValue *binaryValue;
+	const StoredBinaryValue *binaryValue;
 	DataReset(&item.data);
 	binaryValue = StoredBinaryValueGet(
 		stringsCollection,
@@ -79,7 +79,7 @@ static string getDynamicString(
 
 ValueMetaData* ValueMetaDataBuilderIpi::build(
 	fiftyoneDegreesDataSetIpi *dataSet,
-	fiftyoneDegreesValue *value) {
+	const fiftyoneDegreesValue *value) {
 	EXCEPTION_CREATE;
 	ValueMetaData *result = nullptr;
 	Item item;
