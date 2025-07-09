@@ -193,6 +193,5 @@ var group___fifty_one_degrees_ip_intelligence_api =
     [ "fiftyoneDegreesIpiDefaultConfig", "group___fifty_one_degrees_ip_intelligence_api.html#ga26112262d38672fbdee288e1c0b39d87", null ],
     [ "fiftyoneDegreesIpiHighPerformanceConfig", "group___fifty_one_degrees_ip_intelligence_api.html#gae7adb2804367bcaabc90dc8c7b91704d", null ],
     [ "fiftyoneDegreesIpiInMemoryConfig", "group___fifty_one_degrees_ip_intelligence_api.html#gae5692797c19b4f19229db3c4bca90b94", null ],
-    [ "fiftyoneDegreesIpiLowMemoryConfig", "group___fifty_one_degrees_ip_intelligence_api.html#gaf314e413634a408603d98c2cc5ee5aa5", null ],
-    [ "fiftyoneDegreesIpiSingleLoadedConfig", "group___fifty_one_degrees_ip_intelligence_api.html#gac16b79a82c18148e644d066d8000d9cb", null ]
+    [ "fiftyoneDegreesIpiLowMemoryConfig", "group___fifty_one_degrees_ip_intelligence_api.html#gaf314e413634a408603d98c2cc5ee5aa5", null ]
 ];

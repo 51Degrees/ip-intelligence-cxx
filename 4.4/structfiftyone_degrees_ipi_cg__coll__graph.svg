@@ -117,8 +117,7 @@
 <title>Node6&#45;&gt;Node6</title>
 <path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M554.87,-97.4C556.18,-102.31 562.73,-106 574.5,-106 593.34,-106 598.79,-96.57 590.84,-87.76"/>
 <polygon fill="#9a32cd" stroke="#9a32cd" points="558.24,-98.35 558.16,-87.76 551.62,-96.09 558.24,-98.35"/>
-<text text-anchor="middle" x="574.5" y="-131" font-family="Helvetica,sans-Serif" font-size="10.00"> next</text>
-<text text-anchor="middle" x="574.5" y="-120" font-family="Helvetica,sans-Serif" font-size="10.00">freeCollection</text>
+<text text-anchor="middle" x="574.5" y="-120" font-family="Helvetica,sans-Serif" font-size="10.00"> freeCollection</text>
 <text text-anchor="middle" x="574.5" y="-109" font-family="Helvetica,sans-Serif" font-size="10.00">get</text>
 </g>
 <!-- Node7 -->

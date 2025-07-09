@@ -19,8 +19,8 @@
 <area shape="rect" id="node18" href="$structfiftyone_degrees_ipi_cg_result.html" title="The evaluation result from graph collection." alt="" coords="601,532,799,559"/>
 <area shape="rect" id="node19" href="$structfiftyone_degrees_ipi_list.html" title="The structure which represents the list of values returned for the required property from the results..." alt="" coords="1011,633,1175,660"/>
 <area shape="rect" id="node20" href="$structfiftyone_degrees_profile_percentage.html" title="The structure to hold a pair of result item and its percentage When getting values for a property fro..." alt="" coords="581,633,819,660"/>
-<area shape="rect" id="node21" href="$structfiftyone_degrees_collection_item.html" title="Used to store a handle to the underlying item that could be used to release the item when it&#39;s finish..." alt="" coords="243,669,463,696"/>
-<area shape="rect" id="node22" href="$structfiftyone_degrees_collection.html" title="All the shared methods and fields required by file, memory and cached collections." alt="" coords="605,752,795,779"/>
-<area shape="rect" id="node23" href="$structfiftyone_degrees_data.html" title="Data structure used for reusing memory which may have been allocated in a previous operation." alt="" coords="5,669,161,696"/>
+<area shape="rect" id="node21" href="$structfiftyone_degrees_collection_item.html" title="Used to store a handle to the underlying item that could be used to release the item when it&#39;s finish..." alt="" coords="243,663,463,689"/>
+<area shape="rect" id="node22" href="$structfiftyone_degrees_collection.html" title="All the shared methods and fields required by file, memory and cached collections." alt="" coords="605,737,795,764"/>
+<area shape="rect" id="node23" href="$structfiftyone_degrees_data.html" title="Data structure used for reusing memory which may have been allocated in a previous operation." alt="" coords="5,663,161,689"/>
 <area shape="rect" id="node24" href="$structfiftyone_degrees_results_base.html" title="Base results structure which any processing results should extend." alt="" coords="990,684,1195,711"/>
 </map>

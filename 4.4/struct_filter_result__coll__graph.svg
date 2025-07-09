@@ -37,33 +37,33 @@
 <g id="node3" class="node">
 <title>Node3</title>
 <g id="a_node3"><a xlink:href="structfiftyone_degrees_list.html" target="_top" xlink:title="List structure which contains a list of collection items.">
-<polygon fill="none" stroke="black" points="704,-249 704,-268 815,-268 815,-249 704,-249"/>
-<text text-anchor="middle" x="759.5" y="-256" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesList</text>
+<polygon fill="none" stroke="black" points="704,-251 704,-270 815,-270 815,-251 704,-251"/>
+<text text-anchor="middle" x="759.5" y="-258" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesList</text>
 </a>
 </g>
 </g>
 <!-- Node3&#45;&gt;Node2 -->
 <g id="edge2" class="edge">
 <title>Node3&#45;&gt;Node2</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M805.81,-246.45C876.74,-228.67 1018.57,-197.5 1141,-197.5 1141,-197.5 1141,-197.5 1939.5,-197.5 2078.51,-197.5 2007.57,-372.58 2122,-451.5 2127.6,-455.36 2133.95,-458.44 2140.5,-460.9"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="804.7,-243.12 795.87,-248.97 806.42,-249.9 804.7,-243.12"/>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M804.68,-248.34C875.2,-230.03 1017.83,-197.5 1141,-197.5 1141,-197.5 1141,-197.5 1939.5,-197.5 2078.51,-197.5 2007.57,-372.58 2122,-451.5 2127.6,-455.36 2133.95,-458.44 2140.5,-460.9"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="803.59,-245.01 794.81,-250.93 805.37,-251.78 803.59,-245.01"/>
 <text text-anchor="middle" x="1496.5" y="-200.5" font-family="Helvetica,sans-Serif" font-size="10.00"> componentsList</text>
 </g>
 <!-- Node4 -->
 <g id="node4" class="node">
 <title>Node4</title>
 <g id="a_node4"><a xlink:href="structfiftyone_degrees_collection_item.html" target="_top" xlink:title="Used to store a handle to the underlying item that could be used to release the item when it&#39;s finish...">
-<polygon fill="none" stroke="black" points="185,-426 185,-445 350,-445 350,-426 185,-426"/>
-<text text-anchor="middle" x="267.5" y="-433" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesCollectionItem</text>
+<polygon fill="none" stroke="black" points="185,-427 185,-446 350,-446 350,-427 185,-427"/>
+<text text-anchor="middle" x="267.5" y="-434" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesCollectionItem</text>
 </a>
 </g>
 </g>
 <!-- Node4&#45;&gt;Node3 -->
 <g id="edge3" class="edge">
 <title>Node4&#45;&gt;Node3</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M302.11,-422.16C345.39,-405.09 423.01,-374.82 490,-350.5 576.61,-319.05 679.96,-284.46 729.37,-268.09"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="300.66,-418.97 292.65,-425.9 303.23,-425.49 300.66,-418.97"/>
-<text text-anchor="middle" x="423.5" y="-396.5" font-family="Helvetica,sans-Serif" font-size="10.00"> items</text>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M302.48,-423.22C345.84,-406.37 423.24,-376.59 490,-352.5 576.91,-321.14 680.54,-286.37 729.78,-270"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="301.04,-420.03 292.99,-426.92 303.58,-426.55 301.04,-420.03"/>
+<text text-anchor="middle" x="423.5" y="-397.5" font-family="Helvetica,sans-Serif" font-size="10.00"> items</text>
 </g>
 <!-- Node5 -->
 <g id="node5" class="node">
@@ -77,25 +77,25 @@
 <!-- Node4&#45;&gt;Node5 -->
 <g id="edge5" class="edge">
 <title>Node4&#45;&gt;Node5</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M360.47,-442.26C395.42,-445.07 435.59,-448.59 472,-452.5 560.25,-461.97 582.16,-465.79 670,-478.5 679.55,-479.88 689.66,-481.41 699.5,-482.95"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="360.52,-438.75 350.28,-441.45 359.97,-445.73 360.52,-438.75"/>
-<text text-anchor="middle" x="423.5" y="-455.5" font-family="Helvetica,sans-Serif" font-size="10.00"> release</text>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M360.47,-443.26C395.42,-446.07 435.59,-449.59 472,-453.5 560.25,-462.97 582.09,-467.27 670,-479.5 677.84,-480.59 686.08,-481.76 694.23,-482.94"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="360.52,-439.75 350.28,-442.45 359.97,-446.73 360.52,-439.75"/>
+<text text-anchor="middle" x="423.5" y="-456.5" font-family="Helvetica,sans-Serif" font-size="10.00"> release</text>
 </g>
 <!-- Node30 -->
 <g id="node30" class="node">
 <title>Node30</title>
 <g id="a_node30"><a xlink:href="structfiftyone_degrees_property_available.html" target="_top" xlink:title="Used to access the property item quickly without the need to search.">
-<polygon fill="none" stroke="black" points="490,-403 490,-422 670,-422 670,-403 490,-403"/>
-<text text-anchor="middle" x="580" y="-410" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesPropertyAvailable</text>
+<polygon fill="none" stroke="black" points="490,-404 490,-423 670,-423 670,-404 490,-404"/>
+<text text-anchor="middle" x="580" y="-411" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesPropertyAvailable</text>
 </a>
 </g>
 </g>
 <!-- Node4&#45;&gt;Node30 -->
 <g id="edge40" class="edge">
 <title>Node4&#45;&gt;Node30</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M333.85,-424.47C347.42,-422.52 361.65,-420.73 375,-419.5 412.58,-416.04 454.2,-414.25 489.99,-413.34"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="333.01,-421.06 323.63,-425.99 334.03,-427.98 333.01,-421.06"/>
-<text text-anchor="middle" x="423.5" y="-422.5" font-family="Helvetica,sans-Serif" font-size="10.00"> name</text>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M333.85,-425.47C347.42,-423.52 361.65,-421.73 375,-420.5 412.58,-417.04 454.2,-415.25 489.99,-414.34"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="333.01,-422.06 323.63,-426.99 334.03,-428.98 333.01,-422.06"/>
+<text text-anchor="middle" x="423.5" y="-423.5" font-family="Helvetica,sans-Serif" font-size="10.00"> name</text>
 </g>
 <!-- Node5&#45;&gt;Node2 -->
 <g id="edge22" class="edge">
@@ -117,17 +117,16 @@
 <!-- Node5&#45;&gt;Node4 -->
 <g id="edge4" class="edge">
 <title>Node5&#45;&gt;Node4</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M677.69,-492.53C599.64,-491.32 478.37,-486.15 375,-467.5 346.88,-462.43 315.68,-452.52 294.36,-445.07"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="677.89,-496.03 687.94,-492.67 677.99,-489.03 677.89,-496.03"/>
-<text text-anchor="middle" x="423.5" y="-483.5" font-family="Helvetica,sans-Serif" font-size="10.00"> collection</text>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M677.7,-492.8C599.64,-491.83 478.38,-487.01 375,-468.5 346.87,-463.46 315.67,-453.56 294.35,-446.09"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="677.91,-496.3 687.94,-492.91 677.98,-489.3 677.91,-496.3"/>
+<text text-anchor="middle" x="423.5" y="-484.5" font-family="Helvetica,sans-Serif" font-size="10.00"> collection</text>
 </g>
 <!-- Node5&#45;&gt;Node5 -->
 <g id="edge6" class="edge">
 <title>Node5&#45;&gt;Node5</title>
 <path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M726.14,-510.39C726.63,-516.04 737.75,-520.5 759.5,-520.5 791.14,-520.5 800.28,-511.07 786.93,-502.26"/>
 <polygon fill="#9a32cd" stroke="#9a32cd" points="729.01,-512.4 732.07,-502.26 723.35,-508.28 729.01,-512.4"/>
-<text text-anchor="middle" x="759.5" y="-545.5" font-family="Helvetica,sans-Serif" font-size="10.00"> next</text>
-<text text-anchor="middle" x="759.5" y="-534.5" font-family="Helvetica,sans-Serif" font-size="10.00">freeCollection</text>
+<text text-anchor="middle" x="759.5" y="-534.5" font-family="Helvetica,sans-Serif" font-size="10.00"> freeCollection</text>
 <text text-anchor="middle" x="759.5" y="-523.5" font-family="Helvetica,sans-Serif" font-size="10.00">get</text>
 </g>
 <!-- Node14 -->
@@ -153,17 +152,17 @@
 <g id="node6" class="node">
 <title>Node6</title>
 <g id="a_node6"><a xlink:href="structfiftyone_degrees_data.html" target="_top" xlink:title="Data structure used for reusing memory which may have been allocated in a previous operation.">
-<polygon fill="none" stroke="black" points="0,-426 0,-445 117,-445 117,-426 0,-426"/>
-<text text-anchor="middle" x="58.5" y="-433" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesData</text>
+<polygon fill="none" stroke="black" points="0,-427 0,-446 117,-446 117,-427 0,-427"/>
+<text text-anchor="middle" x="58.5" y="-434" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesData</text>
 </a>
 </g>
 </g>
 <!-- Node6&#45;&gt;Node4 -->
 <g id="edge7" class="edge">
 <title>Node6&#45;&gt;Node4</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M127.19,-435.5C145.58,-435.5 165.7,-435.5 184.78,-435.5"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="127.16,-432 117.16,-435.5 127.16,-439 127.16,-432"/>
-<text text-anchor="middle" x="147.5" y="-438.5" font-family="Helvetica,sans-Serif" font-size="10.00"> data</text>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M127.19,-436.5C145.58,-436.5 165.7,-436.5 184.78,-436.5"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="127.16,-433 117.16,-436.5 127.16,-440 127.16,-433"/>
+<text text-anchor="middle" x="147.5" y="-439.5" font-family="Helvetica,sans-Serif" font-size="10.00"> data</text>
 </g>
 <!-- Node7 -->
 <g id="node7" class="node">
@@ -537,17 +536,17 @@
 <g id="node26" class="node">
 <title>Node26</title>
 <g id="a_node26"><a xlink:href="unionfiftyone_degrees_pool_head.html" target="_top" xlink:title="The head of the stack used for pop and push operations.">
-<polygon fill="none" stroke="black" points="510,-360 510,-379 650,-379 650,-360 510,-360"/>
-<text text-anchor="middle" x="580" y="-367" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesPoolHead</text>
+<polygon fill="none" stroke="black" points="510,-362 510,-381 650,-381 650,-362 510,-362"/>
+<text text-anchor="middle" x="580" y="-369" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesPoolHead</text>
 </a>
 </g>
 </g>
 <!-- Node26&#45;&gt;Node25 -->
 <g id="edge33" class="edge">
 <title>Node26&#45;&gt;Node25</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M634.17,-357.67C705.79,-341.73 831.87,-313.67 897.72,-299.02"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="633.01,-354.34 624.01,-359.93 634.53,-361.17 633.01,-354.34"/>
-<text text-anchor="middle" x="759.5" y="-347.5" font-family="Helvetica,sans-Serif" font-size="10.00"> head</text>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M633.12,-359.61C704.96,-343.23 832.97,-314.03 898.82,-299.01"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="631.91,-356.3 622.94,-361.93 633.47,-363.12 631.91,-356.3"/>
+<text text-anchor="middle" x="759.5" y="-348.5" font-family="Helvetica,sans-Serif" font-size="10.00"> head</text>
 </g>
 <!-- Node27&#45;&gt;Node25 -->
 <g id="edge34" class="edge">
@@ -592,43 +591,43 @@
 <!-- Node30&#45;&gt;Node29 -->
 <g id="edge38" class="edge">
 <title>Node30&#45;&gt;Node29</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M680.62,-410.28C734.65,-409.08 800.82,-407.61 852.88,-406.45"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="680.25,-406.79 670.33,-410.51 680.4,-413.79 680.25,-406.79"/>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M680.23,-410.7C682.85,-410.63 685.44,-410.57 688,-410.5 742.79,-409.08 804.28,-407.62 852.86,-406.49"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="679.94,-407.21 670.04,-410.97 680.13,-414.21 679.94,-407.21"/>
 <text text-anchor="middle" x="759.5" y="-413.5" font-family="Helvetica,sans-Serif" font-size="10.00"> available</text>
 </g>
 <!-- Node33 -->
 <g id="node33" class="node">
 <title>Node33</title>
 <g id="a_node33"><a xlink:href="structfiftyone_degrees_property_available_array.html" target="_top" xlink:title="Array of items of type fiftyoneDegreesPropertyAvailable used to easily access and track the size of t...">
-<polygon fill="none" stroke="black" points="1052,-435.5 1052,-465.5 1232,-465.5 1232,-435.5 1052,-435.5"/>
-<text text-anchor="start" x="1060" y="-453.5" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesPropertyAvailable</text>
-<text text-anchor="middle" x="1142" y="-442.5" font-family="Helvetica,sans-Serif" font-size="10.00">Array</text>
+<polygon fill="none" stroke="black" points="1052,-431.5 1052,-461.5 1232,-461.5 1232,-431.5 1052,-431.5"/>
+<text text-anchor="start" x="1060" y="-449.5" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesPropertyAvailable</text>
+<text text-anchor="middle" x="1142" y="-438.5" font-family="Helvetica,sans-Serif" font-size="10.00">Array</text>
 </a>
 </g>
 </g>
 <!-- Node30&#45;&gt;Node33 -->
 <g id="edge43" class="edge">
 <title>Node30&#45;&gt;Node33</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M680.22,-420.91C682.84,-421.11 685.44,-421.31 688,-421.5 814.34,-430.86 960.63,-439.9 1052,-445.33"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="680.27,-417.41 670.03,-420.12 679.73,-424.39 680.27,-417.41"/>
-<text text-anchor="middle" x="759.5" y="-434.5" font-family="Helvetica,sans-Serif" font-size="10.00"> items</text>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M680.22,-420.99C682.84,-421.16 685.44,-421.33 688,-421.5 814.15,-429.7 960.18,-437.44 1051.58,-442.08"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="680.24,-417.48 670.03,-420.29 679.77,-424.46 680.24,-417.48"/>
+<text text-anchor="middle" x="759.5" y="-433.5" font-family="Helvetica,sans-Serif" font-size="10.00"> items</text>
 </g>
 <!-- Node31 -->
 <g id="node31" class="node">
 <title>Node31</title>
 <g id="a_node31"><a xlink:href="structfiftyone_degrees_evidence_property_index_array.html" target="_top" xlink:title="Array of items of type fiftyoneDegreesEvidencePropertyIndex used to easily access and track the size ...">
-<polygon fill="none" stroke="black" points="178,-282.5 178,-312.5 357,-312.5 357,-282.5 178,-282.5"/>
-<text text-anchor="start" x="186" y="-300.5" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesEvidenceProperty</text>
-<text text-anchor="middle" x="267.5" y="-289.5" font-family="Helvetica,sans-Serif" font-size="10.00">IndexArray</text>
+<polygon fill="none" stroke="black" points="178,-284.5 178,-314.5 357,-314.5 357,-284.5 178,-284.5"/>
+<text text-anchor="start" x="186" y="-302.5" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesEvidenceProperty</text>
+<text text-anchor="middle" x="267.5" y="-291.5" font-family="Helvetica,sans-Serif" font-size="10.00">IndexArray</text>
 </a>
 </g>
 </g>
 <!-- Node31&#45;&gt;Node30 -->
 <g id="edge39" class="edge">
 <title>Node31&#45;&gt;Node30</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M325.21,-280.09C370.08,-270.1 431.69,-265.29 472,-298.5 503.48,-324.44 462.12,-358.72 490,-388.5 495.8,-394.69 503.01,-399.35 510.8,-402.84"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="324.26,-276.72 315.34,-282.44 325.87,-283.53 324.26,-276.72"/>
-<text text-anchor="middle" x="423.5" y="-301.5" font-family="Helvetica,sans-Serif" font-size="10.00"> evidenceProperties</text>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M325.21,-282.09C370.08,-272.1 431.69,-267.29 472,-300.5 503.48,-326.44 461.97,-360.87 490,-390.5 495.37,-396.18 501.95,-400.53 509.07,-403.85"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="324.26,-278.72 315.34,-284.44 325.87,-285.53 324.26,-278.72"/>
+<text text-anchor="middle" x="423.5" y="-303.5" font-family="Helvetica,sans-Serif" font-size="10.00"> evidenceProperties</text>
 </g>
 <!-- Node32 -->
 <g id="node32" class="node">
@@ -650,9 +649,9 @@
 <!-- Node33&#45;&gt;Node19 -->
 <g id="edge42" class="edge">
 <title>Node33&#45;&gt;Node19</title>
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M1242.1,-444.62C1324.19,-439.35 1443.84,-430.71 1548,-419.5 1562.3,-417.96 1577.63,-416.01 1592.12,-414.04"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="1241.78,-441.14 1232.03,-445.27 1242.23,-448.12 1241.78,-441.14"/>
-<text text-anchor="middle" x="1338.5" y="-447.5" font-family="Helvetica,sans-Serif" font-size="10.00"> available</text>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M1242.13,-442.08C1324.24,-437.9 1443.91,-430.59 1548,-419.5 1562.4,-417.97 1577.84,-416.01 1592.41,-414.02"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="1241.87,-438.59 1232.06,-442.59 1242.22,-445.58 1241.87,-438.59"/>
+<text text-anchor="middle" x="1338.5" y="-445.5" font-family="Helvetica,sans-Serif" font-size="10.00"> available</text>
 </g>
 <!-- Node34 -->
 <g id="node34" class="node">

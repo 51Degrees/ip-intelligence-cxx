@@ -21,10 +21,10 @@
 <!-- Node2 -->
 <g id="node2" class="node">
 <title>Node2</title>
-<g id="a_node2"><a xlink:href="structfiftyone_degrees_collection_config.html" target="_top" xlink:title="Collection configuration structure which defines how the collection should be created by the create m...">
+<g id="a_node2"><a xlink:href="structfiftyone_degrees_collection_header.html" target="_top" xlink:title="Collection header structure which defines the size and location of the collection data.">
 <polygon fill="none" stroke="black" points="0,-78.5 0,-108.5 143,-108.5 143,-78.5 0,-78.5"/>
 <text text-anchor="start" x="8" y="-96.5" font-family="Helvetica,sans-Serif" font-size="10.00">fiftyoneDegreesCollection</text>
-<text text-anchor="middle" x="71.5" y="-85.5" font-family="Helvetica,sans-Serif" font-size="10.00">Config</text>
+<text text-anchor="middle" x="71.5" y="-85.5" font-family="Helvetica,sans-Serif" font-size="10.00">Header</text>
 </a>
 </g>
 </g>
@@ -33,7 +33,7 @@
 <title>Node2&#45;&gt;Node1</title>
 <path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M71.5,-68.09C71.5,-55.76 71.5,-41.22 71.5,-30.73"/>
 <polygon fill="#9a32cd" stroke="#9a32cd" points="68,-68.2 71.5,-78.2 75,-68.21 68,-68.2"/>
-<text text-anchor="middle" x="88" y="-52" font-family="Helvetica,sans-Serif" font-size="10.00"> config</text>
+<text text-anchor="middle" x="90" y="-52" font-family="Helvetica,sans-Serif" font-size="10.00"> header</text>
 </g>
 </g>
 </svg>
