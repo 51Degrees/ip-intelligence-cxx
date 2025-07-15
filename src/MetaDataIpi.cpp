@@ -67,8 +67,10 @@ MetaDataIpi::getValuesForProperty(
 Collection<ValueMetaDataKey, ValueMetaData>*
 MetaDataIpi::getValuesForProfile(
 	ProfileMetaData *profile) const {
+	const shared_ptr<fiftyoneDegreesResourceManager> managerRef = manager;
+	fiftyoneDegreesResourceManager* const managerPtr = managerRef.get();
 	return new ValueMetaDataCollectionForProfileIpi(
-		manager.get(),
+		managerPtr,
 		profile);
 }
 
