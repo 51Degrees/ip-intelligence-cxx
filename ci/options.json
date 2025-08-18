@@ -29,9 +29,23 @@
     "RunPerformance": true
   },
   {
-    "Image": "macos-latest",
-    "Name": "Mac_x64_Debug",
+    "Image": "ubuntu-24.04-arm",
+    "Name": "Ubuntu_arm64_Debug",
     "Configuration": "Debug",
-    "Arch": "x64"
+    "Arch": "arm64"
+  },
+  {
+    "Image": "ubuntu-24.04-arm",
+    "Name": "Ubuntu_arm64_Release",
+    "Configuration": "Release",
+    "Arch": "arm64",
+    "PackageRequirement": true,
+    "RunPerformance": true
+  },
+  {
+    "Image": "macos-latest",
+    "Name": "Mac_arm64_Debug",
+    "Configuration": "Debug",
+    "Arch": "arm64"
   }
 ]
