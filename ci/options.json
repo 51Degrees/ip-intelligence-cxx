@@ -38,9 +38,7 @@
     "Image": "ubuntu-24.04-arm",
     "Name": "Ubuntu_arm64_Release",
     "Configuration": "Release",
-    "Arch": "arm64",
-    "PackageRequirement": true,
-    "RunPerformance": true
+    "Arch": "arm64"
   },
   {
     "Image": "macos-latest",
