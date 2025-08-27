@@ -48,7 +48,7 @@
  *
  * This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/tree/main/examples/C/IpIntelligence/Performance.c).
  *
- * @include{doc} example-require-datafile.txt
+ * @include{doc} example-require-datafile-ipi.txt
  */
 
 // the default number of threads if one is not provided.
