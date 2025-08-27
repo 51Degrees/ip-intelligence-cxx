@@ -39,7 +39,7 @@ IP intelligence. This feature can be used to get information such as
 the category that a property belons to or the possible values a property
 can have.
 
-This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/tree/main/examples/C/IpIntelligencePP/MetaData.cpp).
+This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/tree/main/examples/CPP/IpIntelligence/MetaData.cpp).
 
 @include{doc} example-require-datafile-ipi.txt
 
