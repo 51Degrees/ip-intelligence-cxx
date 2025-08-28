@@ -42,10 +42,6 @@
  * reduces detection time compared with requesting properties from multiple components. If you
  * don't specify any properties to detect, then all properties are detected.
  *
- * Please review [performance options](https://51degrees.com/documentation/_ip_intelligence__features__performance_options.html)
- * and [hash dataset options](https://51degrees.com/documentation/_ip_intelligence__hash.html#DeviceDetection_Hash_DataSetProduction_Performance)
- * for more information about adjusting performance.
- *
  * This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/tree/main/examples/C/IpIntelligence/Performance.c).
  *
  * @include{doc} example-require-datafile-ipi.txt
