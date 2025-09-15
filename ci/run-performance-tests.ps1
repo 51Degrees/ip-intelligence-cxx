@@ -44,7 +44,7 @@ try {
     }
 
     $OutputFile = [IO.Path]::Combine($RepoPath, "summary.json")
-    $DataFile = [IO.Path]::Combine($RepoPath, "ip-intelligence-data", "51Degrees-LiteV41.ipi")
+    $DataFile = [IO.Path]::Combine($RepoPath, "ip-intelligence-data", "51Degrees-EnterpriseIpiV41.ipi")
     if (!(Test-Path -Path $DataFile -PathType Leaf)) {
         Write-Error "DataFile not found at '$DataFile'"
     }

@@ -128,7 +128,7 @@ Failed to reload '0' times.
 
 static const char *dataDir = "ip-intelligence-data";
 
-static const char *dataFileName = "51Degrees-LiteV41.ipi";
+static const char *dataFileName = "51Degrees-EnterpriseIpiV41.ipi";
 
 static const char *ipAddressFileName = "evidence.yml";
 
