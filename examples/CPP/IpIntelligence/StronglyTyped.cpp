@@ -52,7 +52,7 @@ using namespace FiftyoneDegrees;
 
 string fileName = "51Degrees-V4.1.ipi";
 string propertiesString = "IpRangeStart,IpRangeEnd,"
-	"RegisteredCountry,CityName,AccuracyRadius";
+	"RegisteredCountry,CityName,AccuracyRadiusMin";
 Common::RequiredPropertiesConfig *properties =
 	new Common::RequiredPropertiesConfig(&propertiesString);
 IpIntelligence::ConfigIpi *config =
@@ -92,9 +92,9 @@ IpIntelligence::ResultsIpi *results = engine->process(evidence);
 5. Extract the value of a property as a weighted pair of floats from the results.
 ```
 Value<vector<WeightedValue<pair<float, float>>>> value = 
-	results->getValuesAsWeightedCoordinateList("AccuracyRadius");
+	results->getValuesAsWeightedCoordinateList("AccuracyRadiusMin");
 for (WeightedValue<pair<float, float>> w : value.getValue()) {
-	cout << "   AccuracyRadius: " <<
+	cout << "   AccuracyRadiusMin: " <<
 		w.getValue().first <<
 		"," <<
 		w.getValue().second << "\n";
@@ -116,10 +116,10 @@ Expected output:
 ```
 ...
 Ipv4 Address: 185.28.167.77
-   AccuracyRadius: 53.5763,-2.32811
+   AccuracyRadiusMin: 53.5763,-2.32811
 
 Ipv6 Address: 2001:4860:4860::8888
-   AccuracyRadius: 0,0
+   AccuracyRadiusMin: 0,0
 ...
 ```
 

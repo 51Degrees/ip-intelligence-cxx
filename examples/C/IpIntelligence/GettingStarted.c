@@ -41,7 +41,7 @@ initialised with.
 const char* fileName = argv[1];
 fiftyoneDegreesPropertiesRequired properties =
 	fiftyoneDegreesPropertiesDefault;
-properties.string = "IpRangeStart,IpRangeEnd,RegisteredCountry,AccuracyRadius";
+properties.string = "IpRangeStart,IpRangeEnd,RegisteredCountry,AccuracyRadiusMin";
 ```
 
 2. Instantiate the 51Degrees data set within a resource manager from the
@@ -101,7 +101,7 @@ Expected output:
 Ipv4 Address: 185.28.167.77
 IpRangeStart: "185.28.167.0":1
 IpRangeEnd: "185.28.167.127":1
-AccuracyRadius: "147033":1
+AccuracyRadiusMin: "147033":1
 RegisteredCountry: "GB":1
 RegisteredName: "CUSTOMERS-Subnet9":1
 Longitude: "5.789971617786187":1
@@ -124,7 +124,7 @@ Areas: "POLYGON((6.839197973570971 43.240760521256142,6.800744651631215 43.22702
 Ipv6 Address: fdaa:bbcc:ddee:0:995f:d63a:f2a1:f189
 IpRangeStart: "fc00:0000:0000:0000:0000:0000:0000:0000":1
 IpRangeEnd: "fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff":1
-AccuracyRadius: "-1":1
+AccuracyRadiusMin: "-1":1
 RegisteredCountry: "Unknown":1
 RegisteredName: "IANA-V6-ULA":1
 Longitude: "0":1
@@ -183,7 +183,7 @@ static void printPropertyValueFromResults(ResultsIpi *results) {
 	if (results != NULL && results->count > 0) {
 		printf("- IpRangeStart: %s\n", getPropertyValueAsString(results, "IpRangeStart"));
 		printf("- IpRangeEnd: %s\n", getPropertyValueAsString(results, "IpRangeEnd"));
-		printf("- AccuracyRadius: %s\n", getPropertyValueAsString(results, "AccuracyRadius"));
+		printf("- AccuracyRadiusMin: %s\n", getPropertyValueAsString(results, "AccuracyRadiusMin"));
 		printf("- RegisteredCountry: %s\n", getPropertyValueAsString(results, "RegisteredCountry"));
 		printf("- RegisteredName: %s\n", getPropertyValueAsString(results, "RegisteredName"));
 		printf("- Longitude: %s\n", getPropertyValueAsString(results, "Longitude"));
@@ -280,7 +280,7 @@ void fiftyoneDegreesIpiGettingStarted(
 
 	// Set the properties to be returned for each ip
 	PropertiesRequired properties = PropertiesDefault;
-	properties.string = "IpRangeStart,IpRangeEnd,AccuracyRadius,RegisteredCountry,RegisteredName,Longitude,Latitude,Areas";
+	properties.string = "IpRangeStart,IpRangeEnd,AccuracyRadiusMin,RegisteredCountry,RegisteredName,Longitude,Latitude,Areas";
 
 	StatusCode status = IpiInitManagerFromFile(
 		&manager,

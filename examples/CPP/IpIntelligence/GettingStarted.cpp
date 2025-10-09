@@ -52,7 +52,7 @@ using namespace FiftyoneDegrees;
 
 string fileName = "51Degrees-V4.1.ipi";
 string propertiesString = "IpRangeStart,IpRangeEnd,"
-	"RegisteredCountry,CityName,AccuracyRadius";
+	"RegisteredCountry,CityName,AccuracyRadiusMin";
 Common::RequiredPropertiesConfig *properties =
 	new Common::RequiredPropertiesConfig(&propertiesString);
 IpIntelligence::ConfigIpi *config =
@@ -144,13 +144,14 @@ namespace FiftyoneDegrees {
 				 */
 				static void printResults(const std::unique_ptr<ResultsIpi> &results) {
 					const std::vector props {
-						"RegisteredName",
-						"RegisteredCountry",
-						"IpRangeStart",
-						"IpRangeEnd",
-						"Latitude",
-						"Longitude",
-						"Areas",
+						// "RegisteredName",
+						// "RegisteredCountry",
+						// "IpRangeStart",
+						// "IpRangeEnd",
+						// "Latitude",
+						// "Longitude",
+						// "Areas",
+						"AccuracyRadiusMin",
 					};
 					for (auto const &nextProp : props) {
 						Value<vector<WeightedValue<string>>> value

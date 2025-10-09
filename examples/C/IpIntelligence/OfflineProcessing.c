@@ -43,7 +43,7 @@ const char* fileName = argv[1];
 fiftyoneDegreesPropertiesRequired properties =
 	fiftyoneDegreesPropertiesDefault;
 properties.string = "IpRangeStart,IpRangeEnd,"
-		"RegisteredCountry,AccuracyRadius";
+		"RegisteredCountry,AccuracyRadiusMin";
 ```
 
 2. Instantiate the 51Degrees data set within a resource manager from the
@@ -106,7 +106,7 @@ Output Written to [Full Path]/ip-intelligence-data/20000 IP Addresses.processed.
 ```
 Expected content of output file:
 ```
-"IP Address"|"AccuracyRadius"|"RegisteredCountry"|"IpRangeEnd"|"IpRangeStart"
+"IP Address"|"AccuracyRadiusMin"|"RegisteredCountry"|"IpRangeEnd"|"IpRangeStart"
 "::f33e:25e3:c5bd:e182:e584"|"0.000000,0.000000":"1.000000"|"ZZ":"1.000000"|...
 "0fa0:3a4::2626"|"0.000000,0.000000":"1.000000"|"ZZ":"1.000000"|"2001:023f:...
 ...
@@ -385,7 +385,7 @@ int main(int argc, char* argv[]) {
 #endif
 
 	// Start the offline processing.
-	// TODO: Revert to "IpRangeStart,IpRangeEnd,RegisteredCountry,AccuracyRadius"
+	// TODO: Revert to "IpRangeStart,IpRangeEnd,RegisteredCountry,AccuracyRadiusMin"
 	fiftyoneDegreesOfflineProcessingRun(
 		dataFilePath,
 		ipAddressFilePath,
