@@ -214,8 +214,12 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiDefaultConfig = {
 	FIFTYONE_DEGREES_IPI_CONFIG_BALANCED
 };
 
+// For tests, disable temp file creation to avoid disk space issues
+// Otherwise use temp files as intended for BalancedTemp configuration
+#ifndef FIFTYONE_DEGREES_CONFIG_FORCE_NO_TEMP_FILE
 #undef FIFTYONE_DEGREES_CONFIG_USE_TEMP_FILE
 #define FIFTYONE_DEGREES_CONFIG_USE_TEMP_FILE true
+#endif
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiBalancedTempConfig = {
 	FIFTYONE_DEGREES_IPI_CONFIG_BALANCED
 };

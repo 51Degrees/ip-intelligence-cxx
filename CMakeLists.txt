@@ -45,6 +45,28 @@ target_link_libraries(fiftyone-ip-intelligence-cxx
 	fiftyone-ip-intelligence-c
 	fiftyone-common-cxx)
 
+if (BUILD_TESTING)
+	message("-- fiftyone-ip-intelligence-c(xx)-test adding test-specific targets")
+	# Create test-specific library variants with temp files disabled to avoid disk space issues in CI
+	add_library(fiftyone-ip-intelligence-c-test ${IPIC_SRC} ${IPIC_H})
+	if (MSVC)
+		target_link_libraries(fiftyone-ip-intelligence-c-test fiftyone-common-c)
+		target_compile_options(fiftyone-ip-intelligence-c-test PRIVATE "/D_CRT_SECURE_NO_WARNINGS")
+	else()
+		target_link_libraries(fiftyone-ip-intelligence-c-test fiftyone-common-c m)
+	endif()
+	target_compile_definitions(fiftyone-ip-intelligence-c-test PRIVATE FIFTYONE_DEGREES_CONFIG_FORCE_NO_TEMP_FILE)
+
+	add_library(fiftyone-ip-intelligence-cxx-test ${IPICPP_SRC} ${IPICPP_H})
+	target_link_libraries(fiftyone-ip-intelligence-cxx-test
+		fiftyone-ip-intelligence-c-test
+		fiftyone-common-cxx)
+	target_compile_definitions(fiftyone-ip-intelligence-cxx-test PRIVATE FIFTYONE_DEGREES_CONFIG_FORCE_NO_TEMP_FILE)
+
+	set_target_properties(fiftyone-ip-intelligence-c-test fiftyone-ip-intelligence-cxx-test
+		PROPERTIES FOLDER "IP Intelligence")
+endif()
+
 if (TESTCOVERAGE_ENABLED)
 	message("-- fiftyone-ip-intelligence-c(xx)-cov adding targets with code coverage")
 	add_library(fiftyone-ip-intelligence-c-cov ${IPIC_SRC} ${IPIC_H})
@@ -55,13 +77,17 @@ if (TESTCOVERAGE_ENABLED)
 		target_link_libraries(fiftyone-ip-intelligence-c-cov fiftyone-common-c-cov m)
 	endif()
 	target_compile_options(fiftyone-ip-intelligence-c-cov PRIVATE "--coverage")
-	
+	# Disable temp file creation when building tests to avoid disk space issues
+	target_compile_definitions(fiftyone-ip-intelligence-c-cov PRIVATE FIFTYONE_DEGREES_CONFIG_FORCE_NO_TEMP_FILE)
+
 	add_library(fiftyone-ip-intelligence-cxx-cov ${IPICPP_SRC} ${IPICPP_H})
 	target_link_libraries(fiftyone-ip-intelligence-cxx-cov
 		fiftyone-ip-intelligence-c-cov
 		fiftyone-common-cxx-cov)
 	target_compile_options(fiftyone-ip-intelligence-cxx-cov PRIVATE "--coverage")
-	
+	# Disable temp file creation when building tests to avoid disk space issues
+	target_compile_definitions(fiftyone-ip-intelligence-cxx-cov PRIVATE FIFTYONE_DEGREES_CONFIG_FORCE_NO_TEMP_FILE)
+
 	set_target_properties(fiftyone-ip-intelligence-c-cov fiftyone-ip-intelligence-cxx-cov
 		PROPERTIES FOLDER "IP Intelligence")
 endif()
@@ -144,7 +170,7 @@ if(BUILD_TESTING)
 		target_link_libraries(IpiTests fiftyone-ip-intelligence-cxx-cov gtest_main)
 		target_link_options(IpiTests PRIVATE "-fprofile-arcs" "-ftest-coverage")
 	else()
-		target_link_libraries(IpiTests fiftyone-ip-intelligence-cxx gtest_main)
+		target_link_libraries(IpiTests fiftyone-ip-intelligence-cxx-test gtest_main)
 	endif()
 	
 	gtest_discover_tests(IpiTests DISCOVERY_MODE PRE_TEST)

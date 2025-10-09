@@ -8,7 +8,7 @@ param(
 )
 
 # Enable parallel test execution to speed up CI (836 tests)
-# Use -j 2 to balance speed vs memory usage (InMemory tests load 2.3GB data files)
+# Temp file creation is disabled at compile time to prevent disk space issues
 $env:CTEST_PARALLEL_LEVEL = 2
 
 ./cxx/run-unit-tests.ps1 `
