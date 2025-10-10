@@ -39,11 +39,5 @@
     "Name": "Ubuntu_arm64_Release",
     "Configuration": "Release",
     "Arch": "arm64"
-  },
-  {
-    "Image": "macos-latest",
-    "Name": "Mac_arm64_Debug",
-    "Configuration": "Debug",
-    "Arch": "arm64"
   }
 ]
