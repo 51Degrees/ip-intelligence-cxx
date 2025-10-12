@@ -54,7 +54,7 @@ using namespace FiftyoneDegrees;
 
 string fileName = "51Degrees-V4.1.ipi";
 string propertiesString = "IpRangeStart,IpRangeEnd,"
-	"RegisteredCountry,CityName,AccuracyRadius";
+	"RegisteredCountry,CityName,AccuracyRadiusMin";
 Common::RequiredPropertiesConfig *properties =
 	new Common::RequiredPropertiesConfig(&propertiesString);
 IpIntelligence::ConfigIpi *config =
@@ -149,7 +149,9 @@ namespace FiftyoneDegrees {
 						}
 						auto const propName = property->getName();
 						auto const propDesc = property->getDescription();
-						cout << propName << " - " << propDesc << "\n";
+						auto const propCat = property->getCategory();
+						auto const propType = property->getType();
+						cout << propName << " - " << propDesc << " [cat = " << propCat << ", type = " << propType << "]\n";
 						auto const defaultValue = std::unique_ptr<ValueMetaData>(
 							engine->getMetaData()->getDefaultValueForProperty(property.get()));
 						if (defaultValue) {

@@ -35,7 +35,7 @@ ExampleBase::ExampleBase(::byte *data, FileOffset length, const std::shared_ptr<
 	this->config = config;
 	
 	// Set the properties to be returned for each Ip Address.
-	string propertiesString = "IpRangeStart,IpRangeEnd,RegisteredCountry,AccuracyRadius,Longitude,Latitude";
+	string propertiesString = "IpRangeStart,IpRangeEnd,RegisteredCountry,AccuracyRadiusMin,Longitude,Latitude";
 	properties = std::make_unique<RequiredPropertiesConfig>(propertiesString);
 	
 	// Initialise the engine for IP intelligence.
@@ -46,7 +46,7 @@ ExampleBase::ExampleBase(const string& dataFilePath, const std::shared_ptr<Fifty
 	this->config = config;
 	
 	// Set the properties to be returned for each Ip Address.
-	string propertiesString = "IpRangeStart,IpRangeEnd,AccuracyRadius,RegisteredCountry,RegisteredName,Longitude,Latitude,Areas";
+	string propertiesString = "IpRangeStart,IpRangeEnd,AccuracyRadiusMin,RegisteredCountry,RegisteredName,Longitude,Latitude,Areas";
 	properties = std::make_unique<RequiredPropertiesConfig>(propertiesString);
 
 	// Initialise the engine for ip intelligence.
