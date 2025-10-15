@@ -159,6 +159,22 @@ private:
 		string value);
 };
 
+// ============================================================================
+// TEST MACRO STRATEGY:
+// MetaDataReload, Reload, and Size tests depend on CONFIG PROFILE but not on
+// PROPERTY COMBINATION. Each config (InMemory, Balanced, LowMemory, etc.) needs
+// to be tested, but only with ONE property combination, not all 11.
+//
+// Current wasteful approach:
+//   - 6 configs × 11 properties × 3 slow tests = 198 test runs
+// Optimized approach:
+//   - 6 configs × 1 property × 3 slow tests = 18 test runs
+//
+// Use ENGINE_IP_INTELLIGENCE_TESTS for the FIRST property combination of each
+// config profile. Use ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD for all other
+// property combinations (they still test the config but skip the slow tests).
+// ============================================================================
+
 #define ENGINE_IP_INTELLIGENCE_TESTS(e,t,c,p) \
 class ENGINE_CLASS_NAME(e,t,c,p) : public ENGINE_CLASS_NAME_BASE(e,t) { \
 public: \
@@ -183,6 +199,35 @@ TEST_F(ENGINE_CLASS_NAME(e,t,c,p), AvailableProperties) { availableProperties();
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), MetaDataReload) { metaDataReload(); } \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), Reload) { reload(); } \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), Size) { size(); } \
+TEST_F(ENGINE_CLASS_NAME(e,t,c,p), Random) { \
+	randomWithIpAddress(50); \
+	randomWithEvidence(50); } \
+TEST_F(ENGINE_CLASS_NAME(e,t,c,p), MultiThreadRandom) { \
+	uint16_t c = config->getConcurrency(); \
+	multiThreadRandom(c == 0 ? 4 : c); } /* Use 4 threads if no concurrency */
+
+// Variant WITHOUT slow tests (for additional property combinations of the same config)
+#define ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e,t,c,p) \
+class ENGINE_CLASS_NAME(e,t,c,p) : public ENGINE_CLASS_NAME_BASE(e,t) { \
+public: \
+	 ENGINE_CLASS_NAME(e,t,c,p)() : ENGINE_CLASS_NAME_BASE(e,t)( \
+		new Config##e(ENGINE_CLASS_NAME_CONFIG_POINTER(e,c)), \
+		new RequiredPropertiesConfig(p##Pointer), \
+		_dataFolderName, \
+		_##e##FileNames, \
+		_##e##FileNamesLength, \
+		_ipAddressesFileName) {} \
+	void SetUp() { ENGINE_CLASS_NAME_BASE(e,t)::SetUp(); } \
+	void TearDown() { ENGINE_CLASS_NAME_BASE(e,t)::TearDown(); } \
+}; \
+TEST_F(ENGINE_CLASS_NAME(e,t,c,p), Attributes) { \
+	testType(_##e##Product); \
+	testPublishedDate(); \
+	testUpdateDate(); \
+	properties(); } \
+TEST_F(ENGINE_CLASS_NAME(e,t,c,p), Verify) { verify(); } \
+TEST_F(ENGINE_CLASS_NAME(e,t,c,p), MetaData) { metaData(); } \
+TEST_F(ENGINE_CLASS_NAME(e,t,c,p), AvailableProperties) { availableProperties(); } \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), Random) { \
 	randomWithIpAddress(50); \
 	randomWithEvidence(50); } \
@@ -223,68 +268,68 @@ EXTERN_ENGINE_CONFIG(e, Balanced) \
 EXTERN_ENGINE_CONFIG(e, BalancedTemp) \
 EXTERN_ENGINE_CONFIG(e, InMemory) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, OnePropertyString) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, OnePropertyString) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, OnePropertyString) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, OnePropertyString) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, OnePropertyString) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, TwoPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, TwoPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, TwoPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, TwoPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, TwoPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, DuplicatePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, DuplicatePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, DuplicatePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, DuplicatePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, DuplicatePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, MixedPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, MixedPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, MixedPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, MixedPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, MixedPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, OnePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, OnePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, OnePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, OnePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, OnePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, TwoPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, TwoPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, TwoPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, TwoPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, TwoPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, DuplicatePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, DuplicatePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, DuplicatePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, DuplicatePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, DuplicatePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, MixedPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, MixedPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, MixedPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, MixedPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, MixedPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, AllEdgePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, OnePropertyString) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, TwoPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, DuplicatePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, MixedPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, OnePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, TwoPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, DuplicatePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, MixedPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, AllEdgePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, HighPerformance, TwoPropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, HighPerformance, DuplicatePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, HighPerformance, MixedPropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, HighPerformance, AllEdgePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, HighPerformance, OnePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, HighPerformance, TwoPropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, HighPerformance, DuplicatePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, HighPerformance, MixedPropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, HighPerformance, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, HighPerformance, Null) \
+ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, OnePropertyString) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, LowMemory, TwoPropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, LowMemory, DuplicatePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, LowMemory, MixedPropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, LowMemory, AllEdgePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, LowMemory, OnePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, LowMemory, TwoPropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, LowMemory, DuplicatePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, LowMemory, MixedPropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, LowMemory, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, LowMemory, Null) \
+ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, OnePropertyString) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Balanced, TwoPropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Balanced, DuplicatePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Balanced, MixedPropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Balanced, AllEdgePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Balanced, OnePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Balanced, TwoPropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Balanced, DuplicatePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Balanced, MixedPropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Balanced, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Balanced, Null) \
+ENGINE_IP_INTELLIGENCE_TESTS(e, File, BalancedTemp, OnePropertyString) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, BalancedTemp, TwoPropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, BalancedTemp, DuplicatePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, BalancedTemp, MixedPropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, BalancedTemp, AllEdgePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, BalancedTemp, OnePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, BalancedTemp, TwoPropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, BalancedTemp, DuplicatePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, BalancedTemp, MixedPropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, BalancedTemp, AllEdgePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS(e, File, InMemory, OnePropertyString) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, InMemory, TwoPropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, InMemory, DuplicatePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, InMemory, MixedPropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, InMemory, AllEdgePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, InMemory, OnePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, InMemory, TwoPropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, InMemory, DuplicatePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, InMemory, MixedPropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, InMemory, AllEdgePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, OnePropertyString) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Null, TwoPropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Null, DuplicatePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Null, MixedPropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Null, AllEdgePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Null, OnePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Null, TwoPropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Null, DuplicatePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Null, MixedPropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, File, Null, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, File, Null, Null) \
 ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, InMemory, AllEdgePropertyStrings) \
 ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, File, LowMemory, AllEdgePropertyArray) \
@@ -303,25 +348,25 @@ EXTERN_ENGINE_CONFIG(e, Balanced) \
 EXTERN_ENGINE_CONFIG(e, BalancedTemp) \
 EXTERN_ENGINE_CONFIG(e, InMemory) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, InMemory, OnePropertyString) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, InMemory, TwoPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, InMemory, DuplicatePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, InMemory, MixedPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, InMemory, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, InMemory, OnePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, InMemory, TwoPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, InMemory, DuplicatePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, InMemory, MixedPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, InMemory, AllEdgePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, InMemory, TwoPropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, InMemory, DuplicatePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, InMemory, MixedPropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, InMemory, AllEdgePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, InMemory, OnePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, InMemory, TwoPropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, InMemory, DuplicatePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, InMemory, MixedPropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, InMemory, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, Null, OnePropertyString) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, Null, TwoPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, Null, DuplicatePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, Null, MixedPropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, Null, AllEdgePropertyStrings) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, Null, OnePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, Null, TwoPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, Null, DuplicatePropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, Null, MixedPropertyArray) \
-ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, Null, AllEdgePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, Null, TwoPropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, Null, DuplicatePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, Null, MixedPropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, Null, AllEdgePropertyStrings) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, Null, OnePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, Null, TwoPropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, Null, DuplicatePropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, Null, MixedPropertyArray) \
+ENGINE_IP_INTELLIGENCE_TESTS_NO_RELOAD(e, Memory, Null, AllEdgePropertyArray) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, InMemory, Null) \
 ENGINE_IP_INTELLIGENCE_TESTS(e, Memory, Null, Null) \
 ENGINE_IP_INTELLIGENCE_CityName_TESTS(e, Memory, InMemory, AllEdgePropertyStrings) \
