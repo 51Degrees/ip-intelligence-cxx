@@ -25,6 +25,25 @@
 
 #include <stdint.h>
 
-static const uint8_t fiftyoneDegreesDefaultWktDecimalPlaces = 16;
+/**
+ * @def FIFTYONE_DEGREES_WKT_DECIMAL_PLACES
+ * Defines the number of decimal places to use when formatting WKT
+ * (Well-Known Text) coordinate values. This can be overridden at compile time
+ * by defining this macro before including this header or via compiler flags.
+ * Range: 0-15 (limited by FIFTYONE_DEGREES_MAX_DOUBLE_DECIMAL_PLACES)
+ *
+ * Example: `-DFIFTYONE_DEGREES_WKT_DECIMAL_PLACES=4`
+ *
+ * Full command:
+ * ```
+ * cmake . -DCMAKE_C_FLAGS="-DFIFTYONE_DEGREES_WKT_DECIMAL_PLACES=4" \
+ * -DCMAKE_CXX_FLAGS="-DFIFTYONE_DEGREES_WKT_DECIMAL_PLACES=4"
+ * ```
+ */
+#ifndef FIFTYONE_DEGREES_WKT_DECIMAL_PLACES
+#define FIFTYONE_DEGREES_WKT_DECIMAL_PLACES 3
+#endif
+
+static const uint8_t fiftyoneDegreesDefaultWktDecimalPlaces = FIFTYONE_DEGREES_WKT_DECIMAL_PLACES;
 
 #endif //FIFTYONE_DEGREES_CONSTANTSIPI_H
