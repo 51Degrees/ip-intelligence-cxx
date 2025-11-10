@@ -63,7 +63,6 @@ IpIntelligence::ResultsIpi::~ResultsIpi() {
 void 
 IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<string> &values) {
     EXCEPTION_CREATE;
-	uint32_t i;
 	const ProfilePercentage *valuesItems;
 
     // We should not have any undefined data type in the data file
@@ -98,7 +97,7 @@ IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<
 
     stringstream stream;
 	// Add the values in their original form to the result.
-	for (i = 0; i < results->values.count; i++) {
+	for (uint32_t i = 0, n = results->values.count; i < n; i++) {
         // Clear the string stream
         stream.str("");
 	    const StoredBinaryValue * const binaryValue = (StoredBinaryValue *)valuesItems[i].item.data.ptr;
@@ -109,8 +108,11 @@ IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<
 	        MAX_DOUBLE_DECIMAL_PLACES,
 	        exception);
         if (EXCEPTION_OKAY) {
-            stream << ":";
-            stream << (float)valuesItems[i].rawWeighting / 65535.f;
+            const uint16_t w = valuesItems[i].rawWeighting;
+            if (n > 1 || w != 65535) {
+                stream << ":";
+                stream << static_cast<float>(w) / 65535.f;
+            }
             values.push_back(stream.str());
         } else {
             break;
