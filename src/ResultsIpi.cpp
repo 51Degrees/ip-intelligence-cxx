@@ -242,60 +242,6 @@ IpIntelligence::ResultsIpi::getValueAsIpAddress(const string *propertyName) {
         ResultsBase::getRequiredPropertyIndex(propertyName->c_str()));
 }
 
-/*
- * Override the default getValueAsBool function.
- * Since for each property, we will always get a list of profile percentage pairs,
- * it is not appropriate to process the value as boolean here.
- * Thus always return #FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES
- */
-Common::Value<bool> 
-IpIntelligence::ResultsIpi::getValueAsBool(int requiredPropertyIndex) {
-#	ifdef _MSC_VER
-    UNREFERENCED_PARAMETER(requiredPropertyIndex);
-#	endif
-    Common::Value<bool> result;
-    result.setNoValueReason(
-        FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
-        nullptr);
-    return result;
-}
-
-/*
- * Override the default getValueAsInteger function.
- * Since for each property, we will always get a list of profile percentage pairs,
- * it is not appropriate to process the value as integer here.
- * Thus always return #FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES
- */
-Common::Value<int>
-IpIntelligence::ResultsIpi::getValueAsInteger(int requiredPropertyIndex) {
-#	ifdef _MSC_VER
-    UNREFERENCED_PARAMETER(requiredPropertyIndex);
-#	endif
-    Common::Value<int> result;
-    result.setNoValueReason(
-        FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
-        nullptr);
-    return result;
-}
-
-/*
- * Override the default getValueAsDouble function.
- * Since for each property, we will always get a list of profile percentage pairs,
- * it is not appropriate to process the value as double here.
- * Thus always return #FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES
- */
-Common::Value<double> 
-IpIntelligence::ResultsIpi::getValueAsDouble(int requiredPropertyIndex) {
-#	ifdef _MSC_VER
-    UNREFERENCED_PARAMETER(requiredPropertyIndex);
-#	endif
-    Common::Value<double> result;
-    result.setNoValueReason(
-        FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
-        nullptr);
-    return result;
-}
-
 Common::Value<vector<WeightedValue<bool>>>
 IpIntelligence::ResultsIpi::getValuesAsWeightedBoolList(
     int requiredPropertyIndex) {
