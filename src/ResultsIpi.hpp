@@ -393,27 +393,6 @@ namespace FiftyoneDegrees {
 			Common::Value<IpIntelligence::IpAddress> getValueAsIpAddress(
 				int requiredPropertyIndex);
 
-			/**
-			 * Override the get boolean representation of the value associated
-			 * with the required property name.
-			 * This now always returns a no value. The reason is always too many results.
-			 */
-			Common::Value<bool> getValueAsBool(int requiredPropertyIndex) override;
-
-			/**
-			 * Override the get integer representation of the value associated
-			 * with the required property name.
-			 * This now always returns a no value. The reason is always too many results.
-			 */
-			Common::Value<int> getValueAsInteger(int requiredPropertyIndex) override;
-
-			/**
-			 * Override the get double representation of the value associated
-			 * with the required property name.
-			 * This now always returns a no value. The reason is always too many results.
-			 */
-			Common::Value<double> getValueAsDouble(int requiredPropertyIndex) override;
-
 		protected:
 			void getValuesInternal(
 				int requiredPropertyIndex,
