@@ -33,8 +33,7 @@ jobs:
       build-test-timeout-minutes: 240
     secrets:
       token: ${{ secrets.ACCESS_TOKEN }}
-      DeviceDetection: ${{ secrets.DEVICE_DETECTION_KEY }}
-      DeviceDetectionUrl: ${{ secrets.IPI_DATA_FILE_URL }}
+      IpIntelligenceUrl: ${{ secrets.IPI_DATA_FILE_URL }}
 
   Publish:
     if: ${{ !cancelled() }}
@@ -49,5 +48,4 @@ jobs:
       cache-assets: true
     secrets:
       token: ${{ secrets.ACCESS_TOKEN }}
-      DeviceDetection: ${{ secrets.DEVICE_DETECTION_KEY }}
-      DeviceDetectionUrl: ${{ secrets.IPI_DATA_FILE_URL }}
+      IpIntelligenceUrl: ${{ secrets.IPI_DATA_FILE_URL }}
