@@ -184,6 +184,38 @@ namespace FiftyoneDegrees {
 				getValuesAsWeightedUTF8StringList(const string &propertyName);
 
 			/**
+			 * Get a single string representations of the
+			 * value associated with the required property index. If the index
+			 * is not valid an empty vector is returned.
+			 * @param requiredPropertyIndex in the required properties
+			 * @return a vector of weighted string values for the property
+			 */
+			Common::Value<std::vector<uint8_t>>
+				getValueAsUTF8String(int requiredPropertyIndex);
+
+			/**
+			 * Get a single string representations of the
+			 * values associated with the required property name. If the name
+			 * is not valid an empty vector is returned.
+			 * @param propertyName pointer to a string containing the property
+			 * name
+			 * @return a vector of weighted byte vector values for the property
+			 */
+			Common::Value<std::vector<uint8_t>>
+				getValueAsUTF8String(const char *propertyName);
+
+			/**
+			 * Get a single string representations of the
+			 * values associated with the required property name. If the name
+			* is not valid an empty vector is returned.
+			 * @param propertyName pointer to a string containing the property
+			 * name
+			 * @return a vector of weighted byte vector values for the property
+			 */
+			Common::Value<std::vector<uint8_t>>
+				getValueAsUTF8String(const string &propertyName);
+
+			/**
 			 * Get a vector with all weighted string representations of the 
 			 * values associated with the required property name. If the name
 			 * is not valid an empty vector is returned.
