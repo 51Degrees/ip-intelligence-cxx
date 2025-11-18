@@ -161,6 +161,8 @@ string PropertyMetaDataBuilderIpi::getPropertyType(
 		return string("single");
 	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB:
 		return string("wkb");
+	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WKB_R:
+		return string("wkbr");
 	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_BOOLEAN:
 		return string("bool");
     case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_DOUBLE:
@@ -176,6 +178,23 @@ string PropertyMetaDataBuilderIpi::getPropertyType(
 			return string("string[]");
 		}
 		return string("string");
+	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WEIGHTED_STRING:
+		return string("weightedstring");
+	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WEIGHTED_INT:
+		return string("weightedint");
+	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WEIGHTED_SINGLE:
+		return string("weightedsingle");
+	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WEIGHTED_DOUBLE:
+		return string("weighteddouble");
+	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WEIGHTED_BOOL:
+		return string("weightedbool");
+	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WEIGHTED_BYTE:
+		return string("weightedbyte");
+	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WEIGHTED_IP_ADDRESS:
+		return string("weightedipaddress");
+	case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WEIGHTED_WKB_R:
+		return string("weightedwkbr");
+
 	default:
 		return string("string");
 	}

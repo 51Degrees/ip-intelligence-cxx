@@ -217,9 +217,15 @@ void EngineIpIntelligenceTests::validateIndex(
 		EXPECT_NO_THROW(*resultsIpi->getValueAsString(index)) << "String value "
 			"for property '" << resultsIpi->getPropertyName(index) << "' at "
 			"index '" << index << "' can't throw exception";
-		EXPECT_THROW(*resultsIpi->getValueAsBool(index), TooManyValuesException);
-		EXPECT_THROW(*resultsIpi->getValueAsInteger(index), TooManyValuesException);
-		EXPECT_THROW(*resultsIpi->getValueAsDouble(index), TooManyValuesException);
+		EXPECT_NO_THROW(*resultsIpi->getValueAsBool(index)) << "Bool value "
+			"for property '" << resultsIpi->getPropertyName(index) << "' at "
+			"index '" << index << "' can't throw exception";
+		EXPECT_NO_THROW(*resultsIpi->getValueAsInteger(index)) << "Integer value "
+			"for property '" << resultsIpi->getPropertyName(index) << "' at "
+			"index '" << index << "' can't throw exception";
+		EXPECT_NO_THROW(*resultsIpi->getValueAsDouble(index)) << "Double value "
+			"for property '" << resultsIpi->getPropertyName(index) << "' at "
+			"index '" << index << "' can't throw exception";
 	}
 }
 
@@ -253,9 +259,12 @@ void EngineIpIntelligenceTests::validateName(
 				"for property '" << *name << "' can't throw exception";
 			EXPECT_NO_THROW(*resultsIpi->getValueAsString(name)) << "String value "
 				"for property '" << *name << "' can't throw exception";
-			EXPECT_THROW(*resultsIpi->ResultsBase::getValueAsBool(name), TooManyValuesException);
-			EXPECT_THROW(*resultsIpi->ResultsBase::getValueAsInteger(name), TooManyValuesException);
-			EXPECT_THROW(*resultsIpi->ResultsBase::getValueAsDouble(name), TooManyValuesException);
+			EXPECT_NO_THROW(*resultsIpi->getValueAsBool(name)) << "Bool value "
+				"for property '" << *name << "' can't throw exception";
+			EXPECT_NO_THROW(*resultsIpi->getValueAsInteger(name)) << "Integer value "
+				"for property '" << *name << "' can't throw exception";
+			EXPECT_NO_THROW(*resultsIpi->getValueAsDouble(name)) << "Double value "
+				"for property '" << *name << "' can't throw exception";
 		}
 		else {
 			// There are no values returned. This is only allowed when:

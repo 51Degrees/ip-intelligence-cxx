@@ -63,7 +63,6 @@ IpIntelligence::ResultsIpi::~ResultsIpi() {
 void 
 IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<string> &values) {
     EXCEPTION_CREATE;
-	uint32_t i;
 	const ProfilePercentage *valuesItems;
 
     // We should not have any undefined data type in the data file
@@ -98,7 +97,7 @@ IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<
 
     stringstream stream;
 	// Add the values in their original form to the result.
-	for (i = 0; i < results->values.count; i++) {
+	for (uint32_t i = 0, n = results->values.count; i < n; i++) {
         // Clear the string stream
         stream.str("");
 	    const StoredBinaryValue * const binaryValue = (StoredBinaryValue *)valuesItems[i].item.data.ptr;
@@ -109,8 +108,11 @@ IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<
 	        MAX_DOUBLE_DECIMAL_PLACES,
 	        exception);
         if (EXCEPTION_OKAY) {
-            stream << ":";
-            stream << (float)valuesItems[i].rawWeighting / 65535.f;
+            const uint16_t w = valuesItems[i].rawWeighting;
+            if (n > 1 || w != 65535) {
+                stream << ":";
+                stream << static_cast<float>(w) / 65535.f;
+            }
             values.push_back(stream.str());
         } else {
             break;
@@ -238,60 +240,6 @@ Common::Value<IpIntelligence::IpAddress>
 IpIntelligence::ResultsIpi::getValueAsIpAddress(const string *propertyName) {
     return getValueAsIpAddress(
         ResultsBase::getRequiredPropertyIndex(propertyName->c_str()));
-}
-
-/*
- * Override the default getValueAsBool function.
- * Since for each property, we will always get a list of profile percentage pairs,
- * it is not appropriate to process the value as boolean here.
- * Thus always return #FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES
- */
-Common::Value<bool> 
-IpIntelligence::ResultsIpi::getValueAsBool(int requiredPropertyIndex) {
-#	ifdef _MSC_VER
-    UNREFERENCED_PARAMETER(requiredPropertyIndex);
-#	endif
-    Common::Value<bool> result;
-    result.setNoValueReason(
-        FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
-        nullptr);
-    return result;
-}
-
-/*
- * Override the default getValueAsInteger function.
- * Since for each property, we will always get a list of profile percentage pairs,
- * it is not appropriate to process the value as integer here.
- * Thus always return #FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES
- */
-Common::Value<int>
-IpIntelligence::ResultsIpi::getValueAsInteger(int requiredPropertyIndex) {
-#	ifdef _MSC_VER
-    UNREFERENCED_PARAMETER(requiredPropertyIndex);
-#	endif
-    Common::Value<int> result;
-    result.setNoValueReason(
-        FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
-        nullptr);
-    return result;
-}
-
-/*
- * Override the default getValueAsDouble function.
- * Since for each property, we will always get a list of profile percentage pairs,
- * it is not appropriate to process the value as double here.
- * Thus always return #FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES
- */
-Common::Value<double> 
-IpIntelligence::ResultsIpi::getValueAsDouble(int requiredPropertyIndex) {
-#	ifdef _MSC_VER
-    UNREFERENCED_PARAMETER(requiredPropertyIndex);
-#	endif
-    Common::Value<double> result;
-    result.setNoValueReason(
-        FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
-        nullptr);
-    return result;
 }
 
 Common::Value<vector<WeightedValue<bool>>>
@@ -502,7 +450,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedUTF8StringList(
     std::vector<uint8_t> byteVector;
     iterateWeightedValues(
         requiredPropertyIndex,
-        [this, &result](const fiftyoneDegreesResultsNoValueReason reason, const char * const reasonStr) {
+        [&result](const fiftyoneDegreesResultsNoValueReason reason, const char * const reasonStr) {
             result.setNoValueReason(reason, reasonStr);
         },
         [&values](const uint32_t count) {
@@ -547,6 +495,91 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedUTF8StringList(
         },
         [&result, &values] {
             result.setValue(values);
+        });
+    return result;
+}
+
+Common::Value<std::vector<uint8_t>>
+IpIntelligence::ResultsIpi::getValueAsUTF8String(const string &propertyName) {
+    return getValueAsUTF8String(
+        ResultsBase::getRequiredPropertyIndex(propertyName.c_str()));
+}
+
+Common::Value<std::vector<uint8_t>>
+IpIntelligence::ResultsIpi::getValueAsUTF8String(
+    const char *propertyName) {
+    return getValueAsUTF8String(
+        ResultsBase::getRequiredPropertyIndex(propertyName));
+}
+
+Common::Value<std::vector<uint8_t>>
+IpIntelligence::ResultsIpi::getValueAsUTF8String(
+    int requiredPropertyIndex) {
+
+    Common::Value<std::vector<uint8_t>> result;
+    stringstream stream;
+    std::vector<uint8_t> byteVector;
+    uint32_t itemsCount = 0;
+    iterateWeightedValues(
+        requiredPropertyIndex,
+        [&result](const fiftyoneDegreesResultsNoValueReason reason, const char * const reasonStr) {
+            result.setNoValueReason(reason, reasonStr);
+        },
+        [&itemsCount](const uint32_t count) {
+            itemsCount = count;
+        },
+        [&itemsCount, &stream, &byteVector](
+            const StoredBinaryValue * const binaryValue,
+            const PropertyValueType storedValueType,
+            const uint16_t rawWeighting,
+            Exception * const exception) {
+            if (itemsCount != 1) {
+                return;
+            }
+            if (storedValueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING) {
+                const String * const rawString = reinterpret_cast<const String *>(binaryValue);
+                byteVector.reserve(rawString->size);
+                if (rawString->size) {
+                    const uint8_t * const firstByte = reinterpret_cast<const uint8_t *>(&rawString->value);
+                    const uint8_t * pastLastByte = firstByte + rawString->size;
+                    // strip NUL-terminator
+                    if (!*(pastLastByte - 1)) {
+                        --pastLastByte;
+                    }
+                    byteVector.assign(firstByte, pastLastByte);
+                }
+            } else {
+                // Clear stream before the construction
+                stream.str("");
+                writeStoredBinaryValueToStringStream(
+                    binaryValue,
+                    storedValueType,
+                    stream,
+                    DefaultWktDecimalPlaces,
+                    exception);
+                EXCEPTION_THROW;
+                const std::string valueAsString = stream.str();
+                byteVector.reserve(valueAsString.size());
+                const uint8_t * const firstByte = reinterpret_cast<const uint8_t *>(valueAsString.c_str());
+                byteVector.assign(firstByte, firstByte + valueAsString.size());
+            }
+        },
+        [&result, &byteVector, &itemsCount] {
+            switch (itemsCount) {
+                case 0:
+                    result.setNoValueReason(
+                        FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_NO_RESULTS,
+                        nullptr);
+                    break;
+                case 1:
+                    result.setValue(byteVector);
+                    break;
+                default:
+                    result.setNoValueReason(
+                        FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_TOO_MANY_VALUES,
+                        nullptr);
+                    break;
+            }
         });
     return result;
 }

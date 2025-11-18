@@ -40,6 +40,7 @@
 %template(WeightedIntListValueSwig) Value<std::vector<WeightedValue<int>>>;
 %template(WeightedDoubleListValueSwig) Value<std::vector<WeightedValue<double>>>;
 %template(IpAddressValueSwig) Value<IpAddress>;
+%template(UTF8StringValueSwig) Value<std::vector<uint8_t>>;
 
 %nodefaultctor ResultsIpi;
 
@@ -57,6 +58,11 @@ public:
     Value<std::vector<WeightedValue<std::vector<uint8_t>>>> getValuesAsWeightedUTF8StringList(
         const std::string &propertyName);
     Value<std::vector<WeightedValue<std::vector<uint8_t>>>> getValuesAsWeightedUTF8StringList(
+        int requiredPropertyIndex);
+
+    Value<std::vector<uint8_t>> getValueAsUTF8String(
+        const std::string &propertyName);
+    Value<std::vector<uint8_t>> getValueAsUTF8String(
         int requiredPropertyIndex);
 
     Value<std::vector<WeightedValue<std::string>>> getValuesAsWeightedWKTStringList(
