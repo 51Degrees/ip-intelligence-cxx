@@ -4,7 +4,6 @@
 [submodule "src/common-cxx"]
 	path = src/common-cxx
 	url = ../common-cxx
-	branch = version/4.5
 [submodule "src/ip-graph-cxx"]
 	path = src/ip-graph-cxx
 	url = ../ip-graph-cxx
