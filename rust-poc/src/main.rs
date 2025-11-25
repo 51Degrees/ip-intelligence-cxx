@@ -60,7 +60,11 @@ fn main() {
                 // Display properties
                 for property in &properties {
                     match results.get_value(property) {
-                        Ok(val) => println!("  - {}: {}", property, val),
+                        Ok(val) => {
+                            // Remove confidence score (":1") from the value
+                            let clean_val = val.split(':').next().unwrap_or(&val);
+                            println!("  - {}: {}", property, clean_val);
+                        },
                         Err(_) => println!("  - {}: N/A", property),
                     }
                 }
