@@ -105,7 +105,7 @@ IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<
 	        binaryValue,
 	        storedValueType,
 	        stream,
-	        MAX_DOUBLE_DECIMAL_PLACES,
+	        DefaultWktDecimalPlaces,
 	        exception);
         if (EXCEPTION_OKAY) {
             const uint16_t w = valuesItems[i].rawWeighting;
