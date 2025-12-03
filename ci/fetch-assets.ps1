@@ -1,12 +1,11 @@
 param (
-    [Parameter(Mandatory)][string]$RepoName,
-    [string]$IpIntelligenceUrl
+    [Parameter(Mandatory)][string]$IpIntelligenceUrl
 )
 $ErrorActionPreference = "Stop"
 
-$ipIntelligenceData = "$RepoName/ip-intelligence-data"
+$ipIntelligenceData = "$PSScriptRoot/../ip-intelligence-data"
 
-./steps/fetch-assets.ps1 -IpIntelligenceUrl $IpIntelligenceUrl -Assets '51Degrees-EnterpriseIpiV41.ipi'
+./steps/fetch-assets.ps1 -IpIntelligenceUrl:$IpIntelligenceUrl -Assets '51Degrees-EnterpriseIpiV41.ipi'
 New-Item -ItemType SymbolicLink -Force -Target "$PWD/assets/51Degrees-EnterpriseIpiV41.ipi" -Path "$ipIntelligenceData/51Degrees-LiteV41.ipi" # Use Enterprise as Lite
 New-Item -ItemType SymbolicLink -Force -Target "$PWD/assets/51Degrees-EnterpriseIpiV41.ipi" -Path "$ipIntelligenceData/51Degrees-EnterpriseIpiV41.ipi"
 
