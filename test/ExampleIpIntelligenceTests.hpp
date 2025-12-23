@@ -23,9 +23,18 @@
 #ifndef FIFTYONE_DEGREES_EXAMPLE_IP_INTELLIGENCE_TESTS_HPP
 #define FIFTYONE_DEGREES_EXAMPLE_IP_INTELLIGENCE_TESTS_HPP
 
+#include <cstdlib>
+#include <string>
 #include "../src/common-cxx/file.h"
 #include "../src/common-cxx/tests/ExampleTests.hpp"
+#include "../src/ipi.h"
 #include "Constants.hpp"
+
+// Helper to skip temp file tests on CI
+inline bool shouldSkipTempFileTestOnCI(fiftyoneDegreesConfigIpi config) {
+    const char* ci = std::getenv("CI");
+    return ci != nullptr && std::string(ci) == "true" && config.b.useTempFile;
+}
 
 class ExampleIpIntelligenceTest : public ExampleTests {
 public:
@@ -47,28 +56,41 @@ protected:
 
 #define EXAMPLE_TESTS(c)                                        \
     TEST_F(c, Default) {                                             \
+        if (shouldSkipTempFileTestOnCI(fiftyoneDegreesIpiDefaultConfig)) { \
+            GTEST_SKIP() << "Skipping temp file test on CI"; }       \
         if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) {     \
             run(fiftyoneDegreesIpiDefaultConfig);                      \
         }                                                              \
     }                                                                \
     TEST_F(c, BalancedTemp) {                                        \
+        if (shouldSkipTempFileTestOnCI(fiftyoneDegreesIpiBalancedTempConfig)) { \
+            GTEST_SKIP() << "Skipping temp file test on CI"; }       \
         if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) {     \
             run(fiftyoneDegreesIpiBalancedTempConfig);                 \
         }                                                              \
     }                                                                \
     TEST_F(c, Balanced) {                                            \
+        if (shouldSkipTempFileTestOnCI(fiftyoneDegreesIpiBalancedConfig)) { \
+            GTEST_SKIP() << "Skipping temp file test on CI"; }       \
         if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) {     \
             run(fiftyoneDegreesIpiBalancedConfig);                     \
         }                                                              \
     }                                                                \
     TEST_F(c, LowMemory) {                                           \
+        if (shouldSkipTempFileTestOnCI(fiftyoneDegreesIpiLowMemoryConfig)) { \
+            GTEST_SKIP() << "Skipping temp file test on CI"; }       \
         if (fiftyoneDegreesCollectionGetIsMemoryOnly() == false) {     \
             run(fiftyoneDegreesIpiLowMemoryConfig);                    \
         }                                                              \
     }                                                                \
     TEST_F(c, HighPerformance) {                                     \
+        if (shouldSkipTempFileTestOnCI(fiftyoneDegreesIpiHighPerformanceConfig)) { \
+            GTEST_SKIP() << "Skipping temp file test on CI"; }       \
         run(fiftyoneDegreesIpiHighPerformanceConfig);                \
     }                                                                \
-    TEST_F(c, InMemory) { run(fiftyoneDegreesIpiInMemoryConfig); }
+    TEST_F(c, InMemory) {                                            \
+        if (shouldSkipTempFileTestOnCI(fiftyoneDegreesIpiInMemoryConfig)) { \
+            GTEST_SKIP() << "Skipping temp file test on CI"; }       \
+        run(fiftyoneDegreesIpiInMemoryConfig); }
 
 #endif

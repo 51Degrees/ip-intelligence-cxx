@@ -24,8 +24,19 @@
 #define FIFTYONE_DEGREES_ENGINE_IP_INTELLIGENCE_TEST_HPP
 
 #include <string>
+#include <cstdlib>
 #include "Constants.hpp"
 #include "../src/common-cxx/tests/EngineTests.hpp"
+
+// Helper to check if running on CI and config uses temp file (skip to save disk space)
+#define SKIP_TEMP_FILE_TESTS_ON_CI() \
+	do { \
+		const char* ci = std::getenv("CI"); \
+		if (ci != nullptr && std::string(ci) == "true" && \
+			config != nullptr && config->getConfig().b.useTempFile) { \
+			GTEST_SKIP() << "Skipping temp file test on CI (large temp file)"; \
+		} \
+	} while(0)
 #include "../src/EngineIpi.hpp"
 #include "../src/common-cxx/textfile.h"
 
@@ -185,7 +196,7 @@ public: \
 		_##e##FileNames, \
 		_##e##FileNamesLength, \
 		_ipAddressesFileName) {} \
-	void SetUp() { ENGINE_CLASS_NAME_BASE(e,t)::SetUp(); } \
+	void SetUp() { SKIP_TEMP_FILE_TESTS_ON_CI(); ENGINE_CLASS_NAME_BASE(e,t)::SetUp(); } \
 	void TearDown() { ENGINE_CLASS_NAME_BASE(e,t)::TearDown(); } \
 }; \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), Attributes) { \
@@ -217,7 +228,7 @@ public: \
 		_##e##FileNames, \
 		_##e##FileNamesLength, \
 		_ipAddressesFileName) {} \
-	void SetUp() { ENGINE_CLASS_NAME_BASE(e,t)::SetUp(); } \
+	void SetUp() { SKIP_TEMP_FILE_TESTS_ON_CI(); ENGINE_CLASS_NAME_BASE(e,t)::SetUp(); } \
 	void TearDown() { ENGINE_CLASS_NAME_BASE(e,t)::TearDown(); } \
 }; \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), Attributes) { \
