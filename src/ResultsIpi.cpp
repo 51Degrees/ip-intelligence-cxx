@@ -28,6 +28,10 @@
 
 using namespace FiftyoneDegrees;
 using namespace FiftyoneDegrees::Common;
+
+// Thread-local storage for performance optimization
+thread_local std::stringstream FiftyoneDegrees::IpIntelligence::ResultsIpi::tlsReusableStream;
+thread_local std::vector<uint8_t> FiftyoneDegrees::IpIntelligence::ResultsIpi::tlsReusableByteVector;
 using namespace FiftyoneDegrees::IpIntelligence;
 
 #define RESULT(r,i) ((ResultIpi*)r->b.items + i)
@@ -446,8 +450,6 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedUTF8StringList(
 
     vector<WeightedValue<std::vector<uint8_t>>> values;
     Common::Value<vector<WeightedValue<std::vector<uint8_t>>>> result;
-    stringstream stream;
-    std::vector<uint8_t> byteVector;
     iterateWeightedValues(
         requiredPropertyIndex,
         [&result](const fiftyoneDegreesResultsNoValueReason reason, const char * const reasonStr) {
@@ -460,41 +462,62 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedUTF8StringList(
             const StoredBinaryValue * const binaryValue,
             const PropertyValueType storedValueType,
             const uint16_t rawWeighting,
-            Exception * const exception) {
-            WeightedValue<std::vector<uint8_t>> weightedByteVector;
-            if (storedValueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING) {
-                const String * const rawString = reinterpret_cast<const String *>(binaryValue);
-                byteVector.reserve(rawString->size);
-                if (rawString->size) {
-                    const uint8_t * const firstByte = reinterpret_cast<const uint8_t *>(&rawString->value);
-                    const uint8_t * pastLastByte = firstByte + rawString->size;
-                    // strip NUL-terminator
-                    if (!*(pastLastByte - 1)) {
-                        --pastLastByte;
+            Exception* const exception) {
+
+                // Clear buffer. Preserve capacity for performance
+                tlsReusableByteVector.clear();
+
+                if (storedValueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING) {
+                    const String* const rawString = reinterpret_cast<const String*>(binaryValue);
+                    if (rawString->size) {
+                        // Increase capacity if capacity reached.
+                        if (tlsReusableByteVector.capacity() < rawString->size) {
+                            tlsReusableByteVector.reserve(rawString->size * 3 / 2);
+                        }
+                        const uint8_t* const firstByte = reinterpret_cast<const uint8_t*>(&rawString->value);
+                        const uint8_t* pastLastByte = firstByte + rawString->size;
+                        // strip NUL-terminator
+                        if (!*(pastLastByte - 1)) {
+                            --pastLastByte;
+                        }
+                        tlsReusableByteVector.assign(firstByte, pastLastByte);
                     }
-                    byteVector.assign(firstByte, pastLastByte);
                 }
-            } else {
-                // Clear stream before the construction
-                stream.str("");
-                writeStoredBinaryValueToStringStream(
-                    binaryValue,
-                    storedValueType,
-                    stream,
-                    DefaultWktDecimalPlaces,
-                    exception);
-                EXCEPTION_THROW;
-                const std::string valueAsString = stream.str();
-                byteVector.reserve(valueAsString.size());
-                const uint8_t * const firstByte = reinterpret_cast<const uint8_t *>(valueAsString.c_str());
-                byteVector.assign(firstByte, firstByte + valueAsString.size());
-            }
-            weightedByteVector.setValue(byteVector);
-            weightedByteVector.setRawWeight(rawWeighting);
-            values.push_back(weightedByteVector);
+                else {
+                    // Reuse thread-local string stream.
+                    // Clear state but keep the buffer
+                    tlsReusableStream.str("");
+                    tlsReusableStream.clear();
+
+                    writeStoredBinaryValueToStringStream(
+                        binaryValue,
+                        storedValueType,
+                        tlsReusableStream,
+                        DefaultWktDecimalPlaces,
+                        exception);
+                    EXCEPTION_THROW;
+
+                    const std::string valueAsString = tlsReusableStream.str();
+
+                    // Ensure sufficient capacity for byte vector
+                    if (tlsReusableByteVector.capacity() < valueAsString.size()) {
+                        tlsReusableByteVector.reserve(valueAsString.size() * 3 / 2);
+                    }
+
+                    const uint8_t* const firstByte = reinterpret_cast<const uint8_t*>(valueAsString.c_str());
+                    tlsReusableByteVector.assign(firstByte, firstByte + valueAsString.size());
+                }
+
+                // Use emplace_back for efficient construction and move semantics
+                values.emplace_back();
+                values.back().setValue(std::move(tlsReusableByteVector));
+                values.back().setRawWeight(rawWeighting);
+
+                // Reset for next iteration (keeps capacity)
+                tlsReusableByteVector.clear();
         },
         [&result, &values] {
-            result.setValue(values);
+            result.setValue(std::move(values));
         });
     return result;
 }
