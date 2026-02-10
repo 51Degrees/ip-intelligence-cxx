@@ -458,8 +458,8 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedUTF8StringList(
         [&values](const uint32_t count) {
             values.reserve(count);
         },
-        [&values, &stream, &byteVector](
-            const StoredBinaryValue * const binaryValue,
+        [this, &values](
+            const StoredBinaryValue* const binaryValue,
             const PropertyValueType storedValueType,
             const uint16_t rawWeighting,
             Exception* const exception) {
