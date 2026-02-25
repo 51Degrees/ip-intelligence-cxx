@@ -48,11 +48,13 @@ The `strings` collection's `get` method is decorated so that when the key type i
 
 **Rationale:** Resolution is a collection-level responsibility. Callers of `StoredBinaryValueGet` should not need to know that the stored data contains sub-references. The decorator resolves them before the data leaves the collection layer. The zero-copy design avoids unnecessary allocations in memory mode — the only overhead is the small envelope struct and the pointer array.
 
-### Decision 2: Single Compound Value in Results
+### Decision 2: Single Compound Value in Results (Singular Profiles Only)
 
-The `addWeightedValue` callback (the renamed `addValueWithPercentage`) treats a stored WEIGHTED_STRING as a single value — one `WeightedItem` entry in the results list with one profile-level weight. The compound nature (multiple strings with sub-weights) is interpreted by the C++ accessor layer (`getValuesAsWeightedStringList` and friends). This keeps the two axes of weighting — profile-level (from profile groups) and value-level (from stored data) — cleanly separated.
+The `addWeightedValue` callback (the renamed `addValueWithPercentage`) treats a stored WEIGHTED_STRING as a single value — one `WeightedItem` entry in the results list. The compound nature (multiple strings with sub-weights) is interpreted by the C++ accessor layer (`getValuesAsWeightedStringList` and friends).
 
-**Rationale:** The stored weighted string is a single property value within a single profile. It should not be expanded into multiple profile-level result items. The sub-weights are an internal structure of the value, not a result of multi-profile matching.
+**Constraint:** `WEIGHTED_STRING` stored values must only appear in **singular profiles** — profiles that are not part of a profile group. This means the profile-level weight (`rawWeighting`) is always 65535 (100%) and there is no need to combine two axes of weighting. The C++ accessor should assert this invariant (`rawWeighting == 65535`) and use the sub-value weights directly.
+
+**Rationale:** Combining profile-group weighting with sub-value weighting would produce a "weighted weighted string list" — a confusing double-weighting model that no consumer API is designed for. By constraining WEIGHTED_STRING to singular profiles, the sub-value weights are the only weights and map directly to the output `WeightedValue<string>` entries.
 
 ### Decision 3: Rename Profile-Specific Types to Generic Names and Lift to common-cxx
 
@@ -505,6 +507,11 @@ The C++ accessors need to handle this compound structure:
 
 ```cpp
 if (storedValueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WEIGHTED_STRING) {
+    // WEIGHTED_STRING is only valid for singular profiles (not profile groups).
+    // Assert the profile-level weight is full (65535 = 100%).
+    assert(weightedItem->rawWeighting == 65535 &&
+           "WEIGHTED_STRING must only appear in singular profiles");
+
     // The decorator returned a StoredListOfStrings, not a StoredBinaryValue
     const StoredListOfStrings *list =
         (const StoredListOfStrings *)weightedItem->item.data.ptr;
@@ -514,28 +521,16 @@ if (storedValueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WEIGHTED_STRING) {
     for (uint16_t j = 0; j < rawWeights->count; j++) {
         const String *str =
             (const String *)list->stringItems[j].data.ptr;
-        uint16_t subWeight = rawWeights->items[j].weight;
 
         WeightedValue<string> wv;
         wv.setValue(string(&str->value, str->size - 1));
-
-        // Combine profile-level weight with sub-value weight
-        uint16_t combinedWeight = (uint16_t)(
-            ((uint32_t)weightedItem->rawWeighting * (uint32_t)subWeight)
-            / 65535);
-        wv.setRawWeight(combinedWeight);
+        wv.setRawWeight(rawWeights->items[j].weight);  // sub-value weight only
         values.push_back(wv);
     }
 }
 ```
 
-**Weight combination:** When a WEIGHTED_STRING property is in a profile that is part of a profile group, the profile-level weight (`rawWeighting` from the `WeightedItem`) is combined multiplicatively with each sub-value weight:
-
-```
-combinedWeight = profileWeight * subWeight / 65535
-```
-
-When the profile is singular (not part of a group), `profileWeight == 65535` (full weight), so `combinedWeight == subWeight` — the sub-weights pass through unchanged.
+**No weight combination:** `WEIGHTED_STRING` stored values only appear in singular profiles where `rawWeighting == 65535` (100%). The sub-value weights from the stored data are used directly — no multiplication needed.
 
 **In `getValuesInternal` (string formatting):** When `storedValueType == WEIGHTED_STRING`, format the compound value as a pipe-delimited list of weighted strings:
 
@@ -714,27 +709,22 @@ if (values.hasValue()) {
      └────────────┘  └────────────┘  └─────────────┘
 ```
 
-**Two axes of weighting:**
+**Weighting models (mutually exclusive — never combined):**
 
 ```
-Profile Groups (profile-level weight):
+Profile Groups (profile-level weight) — for simple storedValueTypes:
   Profile A (60%) ──► value "foo" in profile A
   Profile B (40%) ──► value "bar" in profile B
   → WeightedItem list: [("foo", 0.6), ("bar", 0.4)]
 
-Stored WEIGHTED_STRING (sub-value weight):
-  Single Profile ──► stored value: [("English", 0.7), ("French", 0.3)]
-  → ONE WeightedItem containing the compound materialized value
+Stored WEIGHTED_STRING (sub-value weight) — singular profiles only:
+  Single Profile (100%) ──► stored value: [("English", 0.7), ("French", 0.3)]
+  → ONE WeightedItem (rawWeighting=65535) containing the resolved value
   → C++ accessor expands to: [("English", 0.7), ("French", 0.3)]
 
-Combined (profile group + stored WEIGHTED_STRING):
-  Profile A (60%) ──► stored: [("English", 0.7), ("French", 0.3)]
-  Profile B (40%) ──► stored: [("Spanish", 1.0)]
-  → WeightedItem list: [(materialized_A, 0.6), (materialized_B, 0.4)]
-  → C++ accessor expands to:
-       ("English",  0.6 * 0.7 = 0.42)
-       ("French",   0.6 * 0.3 = 0.18)
-       ("Spanish",  0.4 * 1.0 = 0.40)
+⛔ Profile group + WEIGHTED_STRING is NOT supported.
+   WEIGHTED_STRING must only appear in singular profiles.
+   The assert(rawWeighting == 65535) enforces this invariant.
 ```
 
 ## Package Cascade
@@ -802,7 +792,7 @@ The decorator allocates only the **envelope** — not the string data:
 
 - Unit tests in `ip-intelligence-cxx` for the decorator: verify `StoredListOfStrings` contains correct string pointers and weights for known test data
 - Test the decorator with varying counts (0, 1, many items) and verify all `stringItems[i].data.ptr` point to valid `String` structs
-- Test weight combination: profile weight * sub-weight / 65535 with edge cases (both weights = 65535, one = 0, etc.)
+- Test that the assert fires (in debug builds) if `rawWeighting != 65535` for a `WEIGHTED_STRING` stored value — verifies the singular-profile-only invariant
 - Verify `getValueAsString` (C-level) returns correct pipe-delimited weighted string format
 - Verify `getValuesAsWeightedStringList` (C++ level) returns correct vector with combined weights
 - Verify memory cleanup (no leaks) for all collection modes (memory, file, cache) — ensure decorator release cascades to all sub-items and frees the envelope
