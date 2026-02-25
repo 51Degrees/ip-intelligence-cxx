@@ -54,27 +54,31 @@ The `addWeightedValue` callback (the renamed `addValueWithPercentage`) treats a 
 
 **Rationale:** The stored weighted string is a single property value within a single profile. It should not be expanded into multiple profile-level result items. The sub-weights are an internal structure of the value, not a result of multi-profile matching.
 
-### Decision 3: Rename Profile-Specific Types to Generic Names
+### Decision 3: Rename Profile-Specific Types to Generic Names and Lift to common-cxx
 
-The existing `ProfilePercentage` and `IpiList` types were originally named for profile-level weighting from profile groups. These are generic containers for weighted collection items and should be named accordingly.
+The existing `ProfilePercentage` and `IpiList` types were originally named for profile-level weighting from profile groups. These are generic containers for weighted collection items and should be named accordingly. Since they are general-purpose data structures (a collection item + a weight, and a resizable list of those), they belong in **common-cxx**, not ip-intelligence-cxx. This also enables the collection decorator (which lives in common-cxx) to work with these types directly.
+
+### Decision 4: Collection Decorator Lives in common-cxx
+
+The zero-copy `WEIGHTED_STRING` resolution decorator is a **collection-level** concern — it wraps a `Collection` and intercepts `get` calls based on `CollectionKeyType`. It has no dependency on IPI-specific types. Moving it to `collection.c`/`collection.h` in common-cxx keeps the collection abstraction self-contained. ip-intelligence-cxx merely calls the creation function after initializing its strings collection.
 
 ## Type Renames
 
-| Current Name | New Name | Scope |
-|---|---|---|
-| `fiftyoneDegreesProfilePercentage` | `fiftyoneDegreesWeightedItem` | Public API (ipi.h) |
-| `fiftyone_degrees_profile_percentage_t` | `fiftyone_degrees_weighted_item_t` | Struct tag |
-| `fiftyoneDegreesIpiList` | `fiftyoneDegreesWeightedItemList` | Public API (ipi.h) |
-| `fiftyone_degrees_ipi_list_t` | `fiftyone_degrees_weighted_item_list_t` | Struct tag |
-| `addValueWithPercentage` | `addWeightedValue` | Static in ipi.c |
-| `stateWithPercentage` | `stateWithWeighting` | Static in ipi.c |
-| `profilePercentageItem` (local vars) | `weightedItem` | Local variables |
-| `ProfilePercentage` (MAP_TYPE) | `WeightedItem` | fiftyone.h |
-| `ResultsIpiGetValues` return type | `const fiftyoneDegreesWeightedItem*` | Public API |
+| Current Name | New Name | New Location | Scope |
+|---|---|---|---|
+| `fiftyoneDegreesProfilePercentage` | `fiftyoneDegreesWeightedItem` | **common-cxx** (`collection.h` or new `weightedItem.h`) | Public API |
+| `fiftyone_degrees_profile_percentage_t` | `fiftyone_degrees_weighted_item_t` | common-cxx | Struct tag |
+| `fiftyoneDegreesIpiList` | `fiftyoneDegreesWeightedItemList` | **common-cxx** (`collection.h` or new `weightedItem.h`) | Public API |
+| `fiftyone_degrees_ipi_list_t` | `fiftyone_degrees_weighted_item_list_t` | common-cxx | Struct tag |
+| `addValueWithPercentage` | `addWeightedValue` | ip-intelligence-cxx (stays in ipi.c) | Static in ipi.c |
+| `stateWithPercentage` | `stateWithWeighting` | ip-intelligence-cxx (stays in ipi.c) | Static in ipi.c |
+| `profilePercentageItem` (local vars) | `weightedItem` | ip-intelligence-cxx | Local variables |
+| `ProfilePercentage` (MAP_TYPE) | `WeightedItem` | ip-intelligence-cxx (fiftyone.h) | MAP_TYPE macro |
+| `ResultsIpiGetValues` return type | `const fiftyoneDegreesWeightedItem*` | ip-intelligence-cxx | Public API |
 
 **`rawWeighting`** is kept as-is — it is already generic enough.
 
-Updated struct definition:
+Updated struct definition (now in common-cxx):
 
 ```c
 /**
@@ -88,15 +92,28 @@ typedef struct fiftyone_degrees_weighted_item_t {
     fiftyoneDegreesCollectionItem item;
     uint16_t rawWeighting;
 } fiftyoneDegreesWeightedItem;
+
+/**
+ * A resizable list of weighted items.
+ */
+typedef struct fiftyone_degrees_weighted_item_list_t {
+    fiftyoneDegreesWeightedItem *items;  /**< Array of weighted items */
+    uint32_t count;                       /**< Number of items in use */
+    uint32_t capacity;                    /**< Allocated capacity */
+} fiftyoneDegreesWeightedItemList;
 ```
 
 **Files affected by rename:**
-- `ipi.h` — type definitions, `FIFTYONE_DEGREES_RESULTS_IPI_MEMBERS` macro, `ResultsIpiGetValues` signature
-- `ipi.c` — all internal usage (~20 references)
-- `ResultsIpi.cpp` — C++ layer consuming the C types (~10 references)
-- `ipi_weighted_results.c` — weighted value construction (~3 references)
-- `fiftyone.h` — `MAP_TYPE` macro
-- `ResultsIpi.i` — SWIG interface (if it references the C type directly)
+- **common-cxx** (new home):
+  - `collection.h` or new `weightedItem.h` — type definitions for `WeightedItem` and `WeightedItemList`
+  - `collection.c` or new `weightedItem.c` — list management functions (init, release, extend, add)
+- **ip-intelligence-cxx** (consumer, update references):
+  - `ipi.h` — remove old type definitions, include new common-cxx header, update `FIFTYONE_DEGREES_RESULTS_IPI_MEMBERS` macro
+  - `ipi.c` — update all internal usage (~20 references), rename static functions
+  - `ResultsIpi.cpp` — update C++ layer (~10 references)
+  - `ipi_weighted_results.c` — update weighted value construction (~3 references)
+  - `fiftyone.h` — update `MAP_TYPE` macro
+  - `ResultsIpi.i` — SWIG interface (if it references the C type directly)
 
 ## Implementation Plan
 
@@ -210,11 +227,34 @@ for (uint16_t i = 0; i < rawWeights->count; i++) {
 COLLECTION_RELEASE(decoratedCollection, &topResult);
 ```
 
-### Step 3: Collection Decorator for Zero-Copy Resolution (ip-intelligence-cxx)
+### Step 3: Collection Decorator for Zero-Copy Resolution (common-cxx)
 
-This is the core of the implementation. After the `strings` collection is created in `initWithMemory` (line 886) and `readDataSetFromFile` (line 1004), wrap it with a decorator that resolves `WEIGHTED_STRING` values into `StoredListOfStrings` without copying string data.
+This is the core of the implementation. The decorator lives in **common-cxx** (`collection.c` / `collection.h`) since it is a general-purpose collection wrapper with no IPI-specific dependencies. It intercepts `get` calls for `WEIGHTED_STRING` key types and resolves string offsets into individually-loaded `CollectionItem`s.
 
-**New decorator structure in `ipi.c`:**
+**New public API in `collection.h`:**
+
+```c
+/**
+ * Creates a decorator collection that wraps the given inner collection
+ * and intercepts get calls for WEIGHTED_STRING key types. For those
+ * keys, the decorator loads the raw weighted string blob, resolves
+ * each string offset against the inner collection, and returns a
+ * StoredListOfStrings envelope via the output item.
+ *
+ * For all other key types, requests pass through to the inner
+ * collection unchanged.
+ *
+ * @param innerStrings the collection to wrap
+ * @return the decorator collection, or NULL on allocation failure.
+ *         The caller owns the returned collection and must free it
+ *         via collection->freeCollection (which also frees the inner).
+ */
+EXTERNAL fiftyoneDegreesCollection*
+fiftyoneDegreesCollectionCreateWeightedStringDecorator(
+    fiftyoneDegreesCollection *innerStrings);
+```
+
+**Decorator state (internal to `collection.c`):**
 
 ```c
 typedef struct weighted_string_decorator_state_t {
@@ -222,7 +262,7 @@ typedef struct weighted_string_decorator_state_t {
 } WeightedStringDecoratorState;
 ```
 
-**Decorator get method:**
+**Decorator get method (in `collection.c`):**
 
 ```c
 static void* getWithWeightedStringResolution(
@@ -309,7 +349,7 @@ static void* getWithWeightedStringResolution(
 }
 ```
 
-**Decorator release method:**
+**Decorator release method (in `collection.c`):**
 
 The release must unwind in reverse order: release each resolved string item, then release the raw weightings item, then free the allocated arrays and struct.
 
@@ -346,7 +386,7 @@ static void releaseWeightedStringDecorator(Item *item) {
 }
 ```
 
-**Decorator free method (called when dataset is freed):**
+**Decorator free method (in `collection.c`):**
 
 ```c
 static void freeWeightedStringDecorator(Collection *collection) {
@@ -359,10 +399,11 @@ static void freeWeightedStringDecorator(Collection *collection) {
 }
 ```
 
-**Decorator creation (called after strings collection is created):**
+**Public creation function (in `collection.c`):**
 
 ```c
-static fiftyoneDegreesCollection* createWeightedStringDecorator(
+fiftyoneDegreesCollection*
+fiftyoneDegreesCollectionCreateWeightedStringDecorator(
     fiftyoneDegreesCollection *innerStrings) {
 
     // Allocate the decorator collection + state in one block
@@ -389,16 +430,6 @@ static fiftyoneDegreesCollection* createWeightedStringDecorator(
 }
 ```
 
-**Integration point in `initWithMemory` and `readDataSetFromFile`:**
-
-```c
-// After: COLLECTION_CREATE_MEMORY(strings)  (or COLLECTION_CREATE_FILE)
-dataSet->strings = createWeightedStringDecorator(dataSet->strings);
-if (dataSet->strings == NULL) {
-    return INSUFFICIENT_MEMORY;
-}
-```
-
 **Key design points:**
 
 - **Zero-copy in memory mode:** The inner collection's `getMemoryVariable` returns pointers into mapped memory (no allocation). The decorator does NOT copy any string data. Each `stringItems[i].data.ptr` points directly into the memory-mapped region. The raw `weightingsItem.data.ptr` also points into mapped memory. The only allocations are the `StoredListOfStrings` struct (fixed size) and the `stringItems` array (`count * sizeof(CollectionItem)`).
@@ -406,12 +437,65 @@ if (dataSet->strings == NULL) {
 - **Transparent to all callers:** `StoredBinaryValueGet` calls `collection->get` which goes through the decorator. Non-WEIGHTED_STRING requests pass through unchanged.
 - **Custom release dispatch:** `item->collection` is set to the decorator collection, so `COLLECTION_RELEASE(c, &item)` calls the decorator's release. The decorator then releases each sub-item back to the inner collection.
 - **Lifetime contract:** The `StoredListOfStrings` and all its sub-items remain valid until `COLLECTION_RELEASE` is called on the top-level item. Consumers must not hold pointers to individual strings beyond that point.
+- **No IPI dependencies:** The decorator only depends on common-cxx types (`Collection`, `CollectionItem`, `CollectionKey`, `CollectionKeyType`, `StoredWeightedStringRaw`, `StoredListOfStrings`). It can be reused by any product that needs `WEIGHTED_STRING` support, not just IPI.
 
-### Step 4: Rename ProfilePercentage / IpiList (ip-intelligence-cxx)
+### Step 4: Lift WeightedItem / WeightedItemList Types to common-cxx
 
-Rename types as described in the [Type Renames](#type-renames) section above. This is a preparatory refactor with no behavioral changes.
+Move the `WeightedItem` and `WeightedItemList` type definitions and their list management functions (`init`, `release`, `extend`, `add`) from `ipi.h`/`ipi.c` to common-cxx. These are generic data structures (a `CollectionItem` + weight, and a resizable array of those) with no IPI-specific logic.
 
-### Step 5: C++ ResultsIpi Accessor for Stored WEIGHTED_STRING (ip-intelligence-cxx)
+**New header in common-cxx** (e.g., `weightedItem.h` or added to `collection.h`):
+
+```c
+#include "collection.h"
+
+typedef struct fiftyone_degrees_weighted_item_t {
+    fiftyoneDegreesCollectionItem item;
+    uint16_t rawWeighting;
+} fiftyoneDegreesWeightedItem;
+
+typedef struct fiftyone_degrees_weighted_item_list_t {
+    fiftyoneDegreesWeightedItem *items;
+    uint32_t count;
+    uint32_t capacity;
+} fiftyoneDegreesWeightedItemList;
+
+EXTERNAL void fiftyoneDegreesWeightedItemListInit(
+    fiftyoneDegreesWeightedItemList *list,
+    uint32_t initialCapacity);
+
+EXTERNAL void fiftyoneDegreesWeightedItemListRelease(
+    fiftyoneDegreesWeightedItemList *list);
+
+EXTERNAL fiftyoneDegreesStatusCode fiftyoneDegreesWeightedItemListExtend(
+    fiftyoneDegreesWeightedItemList *list);
+
+EXTERNAL fiftyoneDegreesWeightedItem* fiftyoneDegreesWeightedItemListAdd(
+    fiftyoneDegreesWeightedItemList *list,
+    fiftyoneDegreesException *exception);
+```
+
+### Step 5: Update ip-intelligence-cxx to Use common-cxx Types
+
+**`ipi.h`:** Remove old `ProfilePercentage` and `IpiList` definitions. Include the new common-cxx header. Update `FIFTYONE_DEGREES_RESULTS_IPI_MEMBERS` macro and `ResultsIpiGetValues` to use `WeightedItem` / `WeightedItemList`.
+
+**`ipi.c`:** Rename all internal references (~20 occurrences). Rename static functions (`addValueWithPercentage` → `addWeightedValue`, `stateWithPercentage` → `stateWithWeighting`). Replace calls to old list functions with new common-cxx equivalents.
+
+### Step 6: Integrate Decorator in ip-intelligence-cxx
+
+**`ipi.c`** — After strings collection is created, call the common-cxx decorator creation function:
+
+```c
+// After: COLLECTION_CREATE_MEMORY(strings)  (or COLLECTION_CREATE_FILE)
+dataSet->strings =
+    fiftyoneDegreesCollectionCreateWeightedStringDecorator(dataSet->strings);
+if (dataSet->strings == NULL) {
+    return INSUFFICIENT_MEMORY;
+}
+```
+
+This is the **only** ip-intelligence-cxx code for the decorator — one function call at each init path.
+
+### Step 7: C++ ResultsIpi Accessor for Stored WEIGHTED_STRING (ip-intelligence-cxx)
 
 **`ResultsIpi.cpp`** — The `iterateWeightedValues` helper (line 370) iterates `WeightedItem` entries and passes each `StoredBinaryValue*` + `storedValueType` + `rawWeighting` to a callback. When `storedValueType == WEIGHTED_STRING`, the `item->data.ptr` now points to a `StoredListOfStrings` (not a `StoredBinaryValue`), because the decorator intercepts the get and returns the resolved envelope.
 
@@ -463,11 +547,11 @@ Or delegate to the `StringBuilderAddStringValue` function if a C-level formatter
 
 **In `getValuesAsWeightedBoolList`, `getValuesAsWeightedIntegerList`, etc.:** These should skip or return an error for `WEIGHTED_STRING` stored type, since the sub-values are strings, not bools/ints.
 
-### Step 6: String Builder Support (common-cxx / ip-intelligence-cxx)
+### Step 8: String Builder Support (common-cxx)
 
-**Note:** The `StringBuilderAddStringValue` function in common-cxx receives a `StoredBinaryValue*` pointer. For `WEIGHTED_STRING`, the pointer actually points to a `StoredListOfStrings` (returned by the decorator). The string builder must be aware of this type difference.
+Since `StoredListOfStrings` now lives in common-cxx, the string builder can handle `WEIGHTED_STRING` directly.
 
-**`storedBinaryValue.c` or `string_pp.cpp`** — Add handling in `StringBuilderAddStringValue` for `WEIGHTED_STRING`:
+**`storedBinaryValue.c`** — Add handling in `StringBuilderAddStringValue` for `WEIGHTED_STRING`:
 
 ```c
 case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WEIGHTED_STRING: {
@@ -488,11 +572,9 @@ case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WEIGHTED_STRING: {
 }
 ```
 
-**Design consideration:** Since `StoredListOfStrings` is defined in ip-intelligence-cxx (not common-cxx), the string builder support for `WEIGHTED_STRING` may need to live in ip-intelligence-cxx rather than common-cxx, or the struct definition may need to be promoted to common-cxx. Alternatively, the string formatting for this type could be handled entirely in the C++ `getValuesInternal` method in `ResultsIpi.cpp`.
-
 This enables the C-level `getValueAsString` to return a human-readable representation of stored weighted strings without going through the C++ layer.
 
-### Step 7: Debug/Logging Updates (ip-intelligence-cxx)
+### Step 9: Debug/Logging Updates (ip-intelligence-cxx)
 
 **`ipi.c`** — Add `"WeightedString"` case in the storedValueType name switch (~line 783):
 
@@ -503,7 +585,7 @@ case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WEIGHTED_STRING: {
 }
 ```
 
-### Step 8: SWIG Regeneration (ip-intelligence-cxx)
+### Step 10: SWIG Regeneration (ip-intelligence-cxx)
 
 Run `RebuildSwig` with cmake to regenerate SWIG wrappers for both C# and Java. The existing SWIG templates already export:
 
@@ -513,7 +595,7 @@ Run `RebuildSwig` with cmake to regenerate SWIG wrappers for both C# and Java. T
 
 No changes to the `.i` file are needed — the C++ `getValuesAsWeightedStringList()` returns `vector<WeightedValue<string>>` regardless of whether the weighted strings came from profile group aggregation or from a stored WEIGHTED_STRING value.
 
-### Step 9: .NET Layer (ip-intelligence-dotnet)
+### Step 11: .NET Layer (ip-intelligence-dotnet)
 
 **Repository:** `ip-intelligence-dotnet`
 
@@ -524,7 +606,7 @@ No changes to the `.i` file are needed — the C++ `getValuesAsWeightedStringLis
 5. **Rebuild native binaries** — Place rebuilt native libraries in `runtimes/{win-x64|linux-x64|osx-x64|osx-arm64}/native/`.
 6. **Version bump** — Bump version in `.csproj` files for `FiftyOne.IpIntelligence.Engine.OnPremise` and dependent packages.
 
-### Step 10: Java Layer (ip-intelligence-java)
+### Step 12: Java Layer (ip-intelligence-java)
 
 **Repository:** `ip-intelligence-java`
 
@@ -534,7 +616,7 @@ No changes to the `.i` file are needed — the C++ `getValuesAsWeightedStringLis
 4. **Rebuild JNI native library** — Bundle updated `.so`/`.dylib`/`.dll`.
 5. **Version bump** — Update version in `pom.xml` (parent and `ip-intelligence.engine.on-premise` module).
 
-### Step 11: Examples Updates
+### Step 13: Examples Updates
 
 **ip-intelligence-dotnet-examples:**
 
@@ -576,7 +658,7 @@ if (values.hasValue()) {
                              │
                     ┌────────▼─────────┐
                     │   DECORATOR      │
-  Step 3            │   (collection    │
+  Step 3 (common)   │   (collection    │
                     │    getter)       │
                     │                  │
                     │  if WEIGHTED_STRING:
@@ -600,7 +682,7 @@ if (values.hasValue()) {
                              │
                     ┌────────▼─────────┐
                     │  addWeightedValue │
-  Step 4            │  (ipi.c callback)│
+  Step 6            │  (ipi.c callback)│
   (no changes       │                  │
    needed)          │  stores ONE      │
                     │  WeightedItem    │
@@ -608,7 +690,7 @@ if (values.hasValue()) {
                     └────────┬─────────┘
                              │
                     ┌────────▼─────────┐
-  Step 5            │  C++ ResultsIpi  │
+  Step 7            │  C++ ResultsIpi  │
                     │  accessors       │
                     │                  │
                     │  if WEIGHTED_STRING:
@@ -658,12 +740,12 @@ Combined (profile group + stored WEIGHTED_STRING):
 ## Package Cascade
 
 ```
-common-cxx (Steps 1–2: CollectionKeyType + structs)
-  └─► ip-intelligence-cxx (Steps 3–8: decorator, rename, C++ accessors, SWIG)
-       ├─► ip-intelligence-dotnet (Step 9: submodule, SWIG copy, native rebuild, version bump)
-       │    └─► ip-intelligence-dotnet-examples (Step 11)
-       └─► ip-intelligence-java (Step 10: submodule, SWIG copy, native rebuild, version bump)
-            └─► ip-intelligence-java-examples (Step 11)
+common-cxx (Steps 1–4, 8: CollectionKeyType, structs, decorator, WeightedItem types, string builder)
+  └─► ip-intelligence-cxx (Steps 5–7, 9–10: consume types, integrate decorator, C++ accessors, SWIG)
+       ├─► ip-intelligence-dotnet (Step 11: submodule, SWIG copy, native rebuild, version bump)
+       │    └─► ip-intelligence-dotnet-examples (Step 13)
+       └─► ip-intelligence-java (Step 12: submodule, SWIG copy, native rebuild, version bump)
+            └─► ip-intelligence-java-examples (Step 13)
 ```
 
 ## Memory Management
@@ -708,7 +790,7 @@ The decorator allocates only the **envelope** — not the string data:
 
 - Existing data files without `WEIGHTED_STRING` stored values are unaffected — the decorator passes through all non-WEIGHTED_STRING requests unchanged.
 - The `CollectionKeyType_Unsupported` default case still catches any truly unknown types.
-- The type renames (`ProfilePercentage` → `WeightedItem`, `IpiList` → `WeightedItemList`) are source-breaking at the C level, but these types are internal to the IPI engine and not exposed to end users of .NET/Java packages. SWIG regeneration absorbs the rename.
+- The type renames (`ProfilePercentage` → `WeightedItem`, `IpiList` → `WeightedItemList`) are source-breaking at the C level and the types move from ip-intelligence-cxx to common-cxx. However, these types are internal to the IPI engine and not exposed to end users of .NET/Java packages. SWIG regeneration absorbs the rename. Other products consuming common-cxx gain access to these generic types for future use.
 - The C++ accessor `getValuesAsWeightedStringList` returns the same `vector<WeightedValue<string>>` type regardless of whether the strings came from profile-group aggregation or stored WEIGHTED_STRING. Consumers see no API change.
 
 ## Related PRs / Issues
@@ -731,16 +813,19 @@ The decorator allocates only the **envelope** — not the string data:
 
 | Repository | File | Change |
 |---|---|---|
-| common-cxx | `collectionKeyTypes.h` | Add `CollectionKeyType_WeightedString` + size function |
-| common-cxx | `collectionKeyTypes.c` | Add `WEIGHTED_STRING` case in switch |
-| common-cxx | `storedBinaryValue.h` | Add `StoredWeightedStringRaw` (on-disk format) and `StoredListOfStrings` (zero-copy resolved format) structs |
-| common-cxx | `storedBinaryValue.c` | No iteration helpers needed (zero-copy approach uses direct array indexing) |
-| common-cxx or ip-intelligence-cxx | `string_pp.cpp` / `storedBinaryValue.c` / `ResultsIpi.cpp` | Add `WEIGHTED_STRING` case in string formatting |
-| ip-intelligence-cxx | `ipi.h` | Rename `ProfilePercentage` → `WeightedItem`, `IpiList` → `WeightedItemList` |
-| ip-intelligence-cxx | `ipi.c` | Rename internals; add decorator creation + get/release/free methods; integrate decorator after strings collection init |
+| **common-cxx** | `collectionKeyTypes.h` | Add `CollectionKeyType_WeightedString` + size function |
+| **common-cxx** | `collectionKeyTypes.c` | Add `WEIGHTED_STRING` case in switch |
+| **common-cxx** | `storedBinaryValue.h` | Add `StoredWeightedStringRaw` (on-disk format) and `StoredListOfStrings` (zero-copy resolved format) structs |
+| **common-cxx** | `collection.h` | Add `fiftyoneDegreesCollectionCreateWeightedStringDecorator` declaration |
+| **common-cxx** | `collection.c` | Add decorator implementation (get/release/free/create) |
+| **common-cxx** | `weightedItem.h` (new) or `collection.h` | Add `WeightedItem` and `WeightedItemList` type definitions |
+| **common-cxx** | `weightedItem.c` (new) or `collection.c` | Add list management functions (init, release, extend, add) |
+| **common-cxx** | `storedBinaryValue.c` | Add `WEIGHTED_STRING` case in `StringBuilderAddStringValue` |
+| ip-intelligence-cxx | `ipi.h` | Remove old type defs, include common-cxx header, update macros/signatures |
+| ip-intelligence-cxx | `ipi.c` | Rename internals; call `CollectionCreateWeightedStringDecorator` after strings init |
 | ip-intelligence-cxx | `ipi.c` (debug) | Add `"WeightedString"` in type name switch |
-| ip-intelligence-cxx | `ResultsIpi.cpp` | Handle `WEIGHTED_STRING` in accessors: iterate materialized items, combine weights |
-| ip-intelligence-cxx | `ipi_weighted_results.c` | Rename `ProfilePercentage` references |
+| ip-intelligence-cxx | `ResultsIpi.cpp` | Handle `WEIGHTED_STRING` in accessors: iterate `StoredListOfStrings`, combine weights |
+| ip-intelligence-cxx | `ipi_weighted_results.c` | Update to use renamed `WeightedItem` types |
 | ip-intelligence-cxx | `fiftyone.h` | Update `MAP_TYPE` macro |
 | ip-intelligence-cxx | SWIG output | Regenerate via `RebuildSwig` |
 | ip-intelligence-dotnet | Submodule + SWIG + native binaries | Update, rebuild, version bump |
