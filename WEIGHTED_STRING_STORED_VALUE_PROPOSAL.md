@@ -17,7 +17,7 @@ Until now, all stored values in the `strings` collection (which stores all binar
 
 ### The Challenge
 
-A `WEIGHTED_STRING` stored value breaks this invariant: it is a byte array containing `uint32_t` offsets that point to other strings within the same `strings` collection. These sub-references must be **eagerly materialized** (resolved into actual string values) when the value is read from the collection.
+A `WEIGHTED_STRING` stored value breaks this invariant: it is a byte array containing `uint32_t` offsets that point to other strings within the same `strings` collection. These sub-references must be **eagerly resolved** (loaded as individual collection items) when the value is read from the collection, using a zero-copy approach that avoids duplicating string data in memory mode.
 
 This is distinct from the existing weighted values mechanism in profile groups. Profile groups produce weighted values by combining multiple profiles, each contributing one value per property, with profile-level weights. A stored WEIGHTED_STRING, by contrast, is a **single compound value** within a single profile that internally contains multiple string+weight pairs.
 
@@ -42,11 +42,11 @@ Total size: 2 + (count * 6) bytes
 
 ## Architecture Decisions
 
-### Decision 1: Materialization in the Collection Getter (Decorator)
+### Decision 1: Zero-Copy Resolution in the Collection Getter (Decorator)
 
-The `strings` collection's `get` method is decorated so that when the key type is `WEIGHTED_STRING`, the raw blob (containing offsets) is read, and each string offset is resolved against the same underlying `strings` collection. The returned item contains a materialized buffer with actual string content, not raw offsets. This is purely a data-reading concern and is transparent to all consumers.
+The `strings` collection's `get` method is decorated so that when the key type is `WEIGHTED_STRING`, the raw blob (containing offsets + weights) is loaded, and each string offset is resolved against the same underlying `strings` collection. The returned item contains a `StoredListOfStrings` envelope holding references to the raw weights item and an array of individually-loaded `String` items — **no string data is copied**. In memory mode, all pointers go directly into memory-mapped data. This is purely a data-reading concern and is transparent to all consumers.
 
-**Rationale:** Materialization is a collection-level responsibility. Callers of `StoredBinaryValueGet` should not need to know that the stored data contains sub-references. The decorator resolves them before the data leaves the collection layer.
+**Rationale:** Resolution is a collection-level responsibility. Callers of `StoredBinaryValueGet` should not need to know that the stored data contains sub-references. The decorator resolves them before the data leaves the collection layer. The zero-copy design avoids unnecessary allocations in memory mode — the only overhead is the small envelope struct and the pointer array.
 
 ### Decision 2: Single Compound Value in Results
 
@@ -138,9 +138,9 @@ This allows `StoredBinaryValueGet` to read the correct number of bytes from the 
 
 ### Step 2: Struct Definitions for Stored WEIGHTED_STRING (common-cxx)
 
-**`storedBinaryValue.h`** — Add packed structs for the on-disk format and the materialized format:
+**`storedBinaryValue.h`** — Add packed structs for the on-disk (raw) format and the zero-copy resolved format.
 
-**On-disk format (raw, before materialization):**
+**On-disk format (raw, as stored in the data file):**
 
 ```c
 #pragma pack(push, 1)
@@ -158,61 +158,61 @@ typedef struct fiftyone_degrees_stored_weighted_string_raw_t {
 #pragma pack(pop)
 ```
 
-**Materialized format (after decorator resolves offsets):**
+**Resolved format (after decorator resolves offsets — zero-copy):**
+
+Instead of copying string data into a materialized buffer, the decorator returns a `StoredListOfStrings` that holds references to individually-loaded `CollectionItem`s. In memory mode, the string items are just pointers into mapped memory — no string data is copied. The only allocation is the `StoredListOfStrings` struct itself plus the `stringItems` array.
 
 ```c
 #pragma pack(push, 1)
-typedef struct fiftyone_degrees_materialized_weighted_string_item_t {
-    uint16_t weight;        /**< Raw weight (0–65535) */
-    uint16_t stringSize;    /**< Size of string data including null terminator */
-    char stringValue;       /**< First byte of string data (variable length follows) */
-} fiftyoneDegreesStoredWeightedStringItem;
-#pragma pack(pop)
-
-#pragma pack(push, 1)
-typedef struct fiftyone_degrees_stored_weighted_string_t {
-    uint16_t count;         /**< Number of items */
-    /**< Items follow as variable-length entries, accessed via iteration helper */
-} fiftyoneDegreesStoredWeightedString;
+typedef struct fiftyone_degrees_stored_list_of_strings_t {
+    fiftyoneDegreesCollectionItem weightingsItem;  /**< Loaded StoredWeightedStringRaw item
+                                                        (raw offsets + weights from the
+                                                        inner strings collection) */
+    fiftyoneDegreesCollectionItem *stringItems;    /**< Array of count loaded String items,
+                                                        each resolved from the corresponding
+                                                        stringOffset in weightingsItem */
+} fiftyoneDegreesStoredListOfStrings;
 #pragma pack(pop)
 ```
 
-Add to the `StoredBinaryValue` union:
+The `StoredWeightedStringRaw` struct is **not** added to the `StoredBinaryValue` union — it is only used internally by the decorator to interpret the raw on-disk data. The decorator's output (`StoredListOfStrings`) is what callers see via `item->data.ptr`.
+
+**Usage pattern (by C++ accessor or any consumer):**
 
 ```c
-typedef union fiftyone_degrees_stored_binary_value_t {
-    fiftyoneDegreesString stringValue;
-    fiftyoneDegreesVarLengthByteArray byteArrayValue;
-    fiftyoneDegreesStoredWeightedString weightedStringValue;  /* NEW */
-    fiftyoneDegreesFloat floatValue;
-    int32_t intValue;
-    int16_t shortValue;
-    byte byteValue;
-} fiftyoneDegreesStoredBinaryValue;
+CollectionItem topResult;
+DataReset(&topResult.data);
+
+CollectionKey weightedValueKey = {
+    weightedValueOffset,
+    CollectionKeyType_WeightedString,
+};
+
+decoratedCollection->get(
+    decoratedCollection,
+    &weightedValueKey,
+    &topResult,
+    exception);
+
+StoredListOfStrings * const listOfStrings = (StoredListOfStrings *)topResult.data.ptr;
+StoredWeightedStringRaw * const rawWeights =
+    (StoredWeightedStringRaw *)listOfStrings->weightingsItem.data.ptr;
+
+// Iterate resolved strings + weights — no copies, just pointer chasing
+for (uint16_t i = 0; i < rawWeights->count; i++) {
+    String * const nextString =
+        (String *)listOfStrings->stringItems[i].data.ptr;
+    uint16_t const nextWeight = rawWeights->items[i].weight;
+    // use nextString->value and nextWeight ...
+}
+
+// Release when done — triggers decorator's custom release
+COLLECTION_RELEASE(decoratedCollection, &topResult);
 ```
 
-Provide an iteration helper to walk the variable-length materialized items:
+### Step 3: Collection Decorator for Zero-Copy Resolution (ip-intelligence-cxx)
 
-```c
-/**
- * Returns a pointer to the first materialized weighted string item
- * following the count field.
- */
-EXTERNAL const fiftyoneDegreesStoredWeightedStringItem*
-fiftyoneDegreesStoredWeightedStringGetFirst(
-    const fiftyoneDegreesStoredWeightedString *ws);
-
-/**
- * Advances to the next materialized weighted string item.
- */
-EXTERNAL const fiftyoneDegreesStoredWeightedStringItem*
-fiftyoneDegreesStoredWeightedStringGetNext(
-    const fiftyoneDegreesStoredWeightedStringItem *current);
-```
-
-### Step 3: Collection Decorator for Materialization (ip-intelligence-cxx)
-
-This is the core of the implementation. After the `strings` collection is created in `initWithMemory` (line 886) and `readDataSetFromFile` (line 1004), wrap it with a decorator that materializes `WEIGHTED_STRING` values.
+This is the core of the implementation. After the `strings` collection is created in `initWithMemory` (line 886) and `readDataSetFromFile` (line 1004), wrap it with a decorator that resolves `WEIGHTED_STRING` values into `StoredListOfStrings` without copying string data.
 
 **New decorator structure in `ipi.c`:**
 
@@ -225,7 +225,7 @@ typedef struct weighted_string_decorator_state_t {
 **Decorator get method:**
 
 ```c
-static void* getWithWeightedStringMaterialization(
+static void* getWithWeightedStringResolution(
     const Collection *collection,
     const CollectionKey *key,
     Item *item,
@@ -240,46 +240,122 @@ static void* getWithWeightedStringMaterialization(
         return state->inner->get(state->inner, key, item, exception);
     }
 
-    // Read the raw WEIGHTED_STRING blob from the inner collection
-    Item rawItem;
-    DataReset(&rawItem.data);
-    const StoredBinaryValue *raw = (const StoredBinaryValue *)
-        state->inner->get(state->inner, key, &rawItem, exception);
-    if (raw == NULL || EXCEPTION_FAILED) {
+    // 1. Allocate the StoredListOfStrings envelope
+    StoredListOfStrings *list =
+        (StoredListOfStrings *)Malloc(sizeof(StoredListOfStrings));
+    if (list == NULL) {
+        EXCEPTION_SET(INSUFFICIENT_MEMORY);
         return NULL;
     }
 
-    const uint16_t count = raw->weightedStringValue.count;
+    // 2. Load the raw weighted value blob (count + offset/weight pairs)
+    //    from the inner collection. In memory mode this is just a pointer
+    //    into mapped memory — no allocation.
+    DataReset(&list->weightingsItem.data);
+    state->inner->get(
+        state->inner, key, &list->weightingsItem, exception);
+    if (EXCEPTION_FAILED) {
+        Free(list);
+        return NULL;
+    }
 
-    // First pass: resolve all strings to calculate total buffer size
-    // Second pass: copy string data + weights into materialized buffer
-    // (Implementation details: allocate buffer, populate, set item->data.ptr
-    //  and item->handle for cleanup on release)
+    const StoredWeightedStringRaw *raw =
+        (const StoredWeightedStringRaw *)list->weightingsItem.data.ptr;
+    const uint16_t count = raw->count;
 
-    // For each item in raw->weightedStringValue.items[0..count-1]:
-    //   1. Read string from inner collection at items[i].stringOffset
-    //   2. Copy string content + weight into materialized buffer
-    //   3. Release the temporary string item
+    // 3. Allocate the array of CollectionItems for resolved strings
+    list->stringItems = (CollectionItem *)Malloc(
+        sizeof(CollectionItem) * count);
+    if (list->stringItems == NULL && count > 0) {
+        COLLECTION_RELEASE(state->inner, &list->weightingsItem);
+        Free(list);
+        EXCEPTION_SET(INSUFFICIENT_MEMORY);
+        return NULL;
+    }
 
-    // Release the raw blob
-    COLLECTION_RELEASE(state->inner, &rawItem);
+    // 4. Resolve each string offset via the inner collection.
+    //    In memory mode, each get returns a pointer into mapped memory.
+    //    No string data is copied.
+    for (uint16_t i = 0; i < count; i++) {
+        DataReset(&list->stringItems[i].data);
+        CollectionKey strKey = {
+            raw->items[i].stringOffset,
+            CollectionKeyType_String
+        };
+        state->inner->get(
+            state->inner, &strKey, &list->stringItems[i], exception);
+        if (EXCEPTION_FAILED) {
+            // Release already-resolved items on failure
+            for (uint16_t j = 0; j < i; j++) {
+                COLLECTION_RELEASE(state->inner, &list->stringItems[j]);
+            }
+            COLLECTION_RELEASE(state->inner, &list->weightingsItem);
+            Free(list->stringItems);
+            Free(list);
+            return NULL;
+        }
+    }
 
-    // Set item->data.ptr to materialized buffer
-    // Set item->handle to materialized buffer (for free on release)
-    // Set item->collection to this decorator collection
+    // 5. Set the output item to point to the StoredListOfStrings.
+    //    The collection pointer is set to THIS decorator so that
+    //    COLLECTION_RELEASE dispatches to our custom release method.
+    item->data.ptr = (byte *)list;
+    item->data.used = sizeof(StoredListOfStrings);
+    item->data.allocated = 0;  // we manage memory ourselves
+    item->handle = list;       // used by release to identify our items
+    item->collection = collection;  // points to decorator, NOT inner
+
     return item->data.ptr;
 }
 ```
 
 **Decorator release method:**
 
+The release must unwind in reverse order: release each resolved string item, then release the raw weightings item, then free the allocated arrays and struct.
+
 ```c
 static void releaseWeightedStringDecorator(Item *item) {
-    if (item->handle != NULL) {
-        Free(item->handle);  // Free the materialized buffer
-        DataReset(&item->data);
-        item->handle = NULL;
+    if (item->handle == NULL) return;
+
+    StoredListOfStrings *list = (StoredListOfStrings *)item->handle;
+
+    // Get the inner collection from one of the loaded items
+    // (the weightingsItem knows which collection it came from)
+    const Collection *inner = list->weightingsItem.collection;
+
+    // Get count from the raw data before releasing it
+    const StoredWeightedStringRaw *raw =
+        (const StoredWeightedStringRaw *)list->weightingsItem.data.ptr;
+    const uint16_t count = raw->count;
+
+    // Release each resolved string item back to the inner collection
+    for (uint16_t i = 0; i < count; i++) {
+        COLLECTION_RELEASE(inner, &list->stringItems[i]);
     }
+
+    // Release the raw weightings item back to the inner collection
+    COLLECTION_RELEASE(inner, &list->weightingsItem);
+
+    // Free the allocated envelope
+    Free(list->stringItems);
+    Free(list);
+
+    // Reset the output item
+    DataReset(&item->data);
+    item->handle = NULL;
+}
+```
+
+**Decorator free method (called when dataset is freed):**
+
+```c
+static void freeWeightedStringDecorator(Collection *collection) {
+    WeightedStringDecoratorState *state =
+        (WeightedStringDecoratorState *)collection->state;
+    // Free the inner collection first
+    state->inner->freeCollection(state->inner);
+    // Then free the decorator itself (state is allocated inline after it)
+    Free(collection);
 }
 ```
 
@@ -289,7 +365,7 @@ static void releaseWeightedStringDecorator(Item *item) {
 static fiftyoneDegreesCollection* createWeightedStringDecorator(
     fiftyoneDegreesCollection *innerStrings) {
 
-    // Allocate the decorator collection + state
+    // Allocate the decorator collection + state in one block
     Collection *decorator = (Collection *)Malloc(
         sizeof(Collection) + sizeof(WeightedStringDecoratorState));
     if (decorator == NULL) return NULL;
@@ -303,12 +379,11 @@ static fiftyoneDegreesCollection* createWeightedStringDecorator(
     decorator->elementSize = innerStrings->elementSize;
     decorator->size = innerStrings->size;
     decorator->state = state;
-    decorator->typeName = "CollectionWeightedStringDecorator";
 
     // Set decorator methods
-    decorator->get = getWithWeightedStringMaterialization;
+    decorator->get = getWithWeightedStringResolution;
     decorator->release = releaseWeightedStringDecorator;
-    decorator->freeCollection = freeWeightedStringDecorator; // frees inner too
+    decorator->freeCollection = freeWeightedStringDecorator;
 
     return decorator;
 }
@@ -326,10 +401,11 @@ if (dataSet->strings == NULL) {
 
 **Key design points:**
 
-- The decorator is transparent to all callers. `StoredBinaryValueGet` calls `collection->get` which goes through the decorator. Non-WEIGHTED_STRING requests pass through unchanged.
-- For memory-based collections, the inner `get` returns a pointer into mapped memory. The decorator allocates a new buffer for the materialized form. This is the only case where memory-mode strings collection items require allocation.
-- For file/cache-based collections, the inner `get` already allocates memory. The decorator replaces that allocation with its own materialized buffer and releases the inner allocation.
-- The decorator's `release` frees the materialized buffer. The inner collection's items (used temporarily for string resolution) are released immediately after copying.
+- **Zero-copy in memory mode:** The inner collection's `getMemoryVariable` returns pointers into mapped memory (no allocation). The decorator does NOT copy any string data. Each `stringItems[i].data.ptr` points directly into the memory-mapped region. The raw `weightingsItem.data.ptr` also points into mapped memory. The only allocations are the `StoredListOfStrings` struct (fixed size) and the `stringItems` array (`count * sizeof(CollectionItem)`).
+- **File/cache mode:** The inner collection allocates memory for each loaded item as usual. The decorator merely holds references to those allocations. On release, each item is released back to the inner collection which handles deallocation.
+- **Transparent to all callers:** `StoredBinaryValueGet` calls `collection->get` which goes through the decorator. Non-WEIGHTED_STRING requests pass through unchanged.
+- **Custom release dispatch:** `item->collection` is set to the decorator collection, so `COLLECTION_RELEASE(c, &item)` calls the decorator's release. The decorator then releases each sub-item back to the inner collection.
+- **Lifetime contract:** The `StoredListOfStrings` and all its sub-items remain valid until `COLLECTION_RELEASE` is called on the top-level item. Consumers must not hold pointers to individual strings beyond that point.
 
 ### Step 4: Rename ProfilePercentage / IpiList (ip-intelligence-cxx)
 
@@ -337,26 +413,34 @@ Rename types as described in the [Type Renames](#type-renames) section above. Th
 
 ### Step 5: C++ ResultsIpi Accessor for Stored WEIGHTED_STRING (ip-intelligence-cxx)
 
-**`ResultsIpi.cpp`** — The `iterateWeightedValues` helper (line 370) iterates `WeightedItem` entries and passes each `StoredBinaryValue*` + `storedValueType` + `rawWeighting` to a callback. When `storedValueType == WEIGHTED_STRING`, the `StoredBinaryValue*` now points to a materialized `StoredWeightedString`.
+**`ResultsIpi.cpp`** — The `iterateWeightedValues` helper (line 370) iterates `WeightedItem` entries and passes each `StoredBinaryValue*` + `storedValueType` + `rawWeighting` to a callback. When `storedValueType == WEIGHTED_STRING`, the `item->data.ptr` now points to a `StoredListOfStrings` (not a `StoredBinaryValue`), because the decorator intercepts the get and returns the resolved envelope.
 
 The C++ accessors need to handle this compound structure:
 
-**In `getValuesAsWeightedStringList`:** When `storedValueType == WEIGHTED_STRING`, instead of treating the `StoredBinaryValue` as a single string, iterate the materialized `StoredWeightedString` items:
+**In `getValuesAsWeightedStringList`:** When `storedValueType == WEIGHTED_STRING`, cast to `StoredListOfStrings` and iterate the resolved string items + raw weights:
 
 ```cpp
 if (storedValueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WEIGHTED_STRING) {
-    const StoredWeightedString *ws = &binaryValue->weightedStringValue;
-    const StoredWeightedStringItem *wsItem =
-        StoredWeightedStringGetFirst(ws);
-    for (uint16_t j = 0; j < ws->count; j++) {
+    // The decorator returned a StoredListOfStrings, not a StoredBinaryValue
+    const StoredListOfStrings *list =
+        (const StoredListOfStrings *)weightedItem->item.data.ptr;
+    const StoredWeightedStringRaw *rawWeights =
+        (const StoredWeightedStringRaw *)list->weightingsItem.data.ptr;
+
+    for (uint16_t j = 0; j < rawWeights->count; j++) {
+        const String *str =
+            (const String *)list->stringItems[j].data.ptr;
+        uint16_t subWeight = rawWeights->items[j].weight;
+
         WeightedValue<string> wv;
-        wv.setValue(string(&wsItem->stringValue, wsItem->stringSize - 1));
+        wv.setValue(string(&str->value, str->size - 1));
+
         // Combine profile-level weight with sub-value weight
         uint16_t combinedWeight = (uint16_t)(
-            ((uint32_t)rawWeighting * (uint32_t)wsItem->weight) / 65535);
+            ((uint32_t)weightedItem->rawWeighting * (uint32_t)subWeight)
+            / 65535);
         wv.setRawWeight(combinedWeight);
         values.push_back(wv);
-        wsItem = StoredWeightedStringGetNext(wsItem);
     }
 }
 ```
@@ -379,26 +463,32 @@ Or delegate to the `StringBuilderAddStringValue` function if a C-level formatter
 
 **In `getValuesAsWeightedBoolList`, `getValuesAsWeightedIntegerList`, etc.:** These should skip or return an error for `WEIGHTED_STRING` stored type, since the sub-values are strings, not bools/ints.
 
-### Step 6: String Builder Support (common-cxx)
+### Step 6: String Builder Support (common-cxx / ip-intelligence-cxx)
 
-**`storedBinaryValue.c` / `string_pp.cpp`** — Add handling in `StringBuilderAddStringValue` for `WEIGHTED_STRING`:
+**Note:** The `StringBuilderAddStringValue` function in common-cxx receives a `StoredBinaryValue*` pointer. For `WEIGHTED_STRING`, the pointer actually points to a `StoredListOfStrings` (returned by the decorator). The string builder must be aware of this type difference.
+
+**`storedBinaryValue.c` or `string_pp.cpp`** — Add handling in `StringBuilderAddStringValue` for `WEIGHTED_STRING`:
 
 ```c
 case FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_WEIGHTED_STRING: {
-    const StoredWeightedString *ws = &value->weightedStringValue;
-    const StoredWeightedStringItem *item =
-        StoredWeightedStringGetFirst(ws);
-    for (uint16_t i = 0; i < ws->count; i++) {
+    // The value pointer is actually a StoredListOfStrings*
+    const StoredListOfStrings *list = (const StoredListOfStrings *)value;
+    const StoredWeightedStringRaw *raw =
+        (const StoredWeightedStringRaw *)list->weightingsItem.data.ptr;
+    for (uint16_t i = 0; i < raw->count; i++) {
         if (i > 0) StringBuilderAddChar(builder, '|');
-        StringBuilderAddChars(builder, &item->stringValue, item->stringSize - 1);
+        const String *str =
+            (const String *)list->stringItems[i].data.ptr;
+        StringBuilderAddChars(builder, &str->value, str->size - 1);
         StringBuilderAddChar(builder, ':');
         StringBuilderAddFloat(builder,
-            (float)item->weight / 65535.0f, decimalPlaces);
-        item = StoredWeightedStringGetNext(item);
+            (float)raw->items[i].weight / 65535.0f, decimalPlaces);
     }
     break;
 }
 ```
+
+**Design consideration:** Since `StoredListOfStrings` is defined in ip-intelligence-cxx (not common-cxx), the string builder support for `WEIGHTED_STRING` may need to live in ip-intelligence-cxx rather than common-cxx, or the struct definition may need to be promoted to common-cxx. Alternatively, the string formatting for this type could be handled entirely in the C++ `getValuesInternal` method in `ResultsIpi.cpp`.
 
 This enables the C-level `getValueAsString` to return a human-readable representation of stored weighted strings without going through the C++ layer.
 
@@ -490,11 +580,14 @@ if (values.hasValue()) {
                     │    getter)       │
                     │                  │
                     │  if WEIGHTED_STRING:
-                    │   read raw blob  │
+                    │   load raw blob  │
+                    │   → weightingsItem│
                     │   resolve offsets │◄── inner strings collection
-                    │   → materialized │    (resolves each stringOffset)
-                    │     buffer       │
-                    │  else:           │
+                    │   → stringItems[]│    (resolves each stringOffset)
+                    │   return         │
+                    │   StoredListOf   │    Zero-copy in memory mode:
+                    │   Strings        │    all pointers into mapped
+                    │  else:           │    memory, no string copies
                     │   passthrough    │
                     └────────┬─────────┘
                              │
@@ -519,11 +612,14 @@ if (values.hasValue()) {
                     │  accessors       │
                     │                  │
                     │  if WEIGHTED_STRING:
-                    │   iterate materialized
-                    │   items, produce N│
-                    │   WeightedValue<string>
-                    │   with combined   │
-                    │   weights         │
+                    │   cast to StoredList│
+                    │   OfStrings, iterate│
+                    │   stringItems[] +  │
+                    │   rawWeights,      │
+                    │   produce N        │
+                    │   WeightedValue<   │
+                    │   string> with     │
+                    │   combined weights │
                     │  else:           │
                     │   existing logic  │
                     └────────┬─────────┘
@@ -572,20 +668,35 @@ common-cxx (Steps 1–2: CollectionKeyType + structs)
 
 ## Memory Management
 
-### Decorator Materialization Buffer
+### Zero-Copy Decorator Approach
 
-- The decorator allocates a buffer for the materialized form of each `WEIGHTED_STRING` value. This buffer contains the `count` field followed by variable-length `StoredWeightedStringItem` entries (each with weight, string size, and inline string data).
-- `item->handle` is set to the allocated buffer, and `item->collection` is set to the decorator collection.
-- The decorator's `release` method frees the buffer via `Free(item->handle)`.
-- Temporary `CollectionItem` instances used to resolve individual string offsets from the inner collection are released immediately after the string content is copied into the materialized buffer.
+The decorator allocates only the **envelope** — not the string data:
+
+| Allocation | Size | Lifetime |
+|---|---|---|
+| `StoredListOfStrings` struct | `sizeof(StoredListOfStrings)` = fixed (~40 bytes) | Until `COLLECTION_RELEASE` on the top-level item |
+| `stringItems` array | `count * sizeof(CollectionItem)` | Same as above |
+| String data (memory mode) | **0 — zero-copy** | Backed by memory-mapped region |
+| String data (file mode) | Allocated by inner collection's `getFile` | Released back to inner collection by decorator's release |
+
+- `item->handle` is set to the `StoredListOfStrings*`, and `item->collection` is set to the decorator collection.
+- The decorator's `release` method: releases each `stringItems[i]` and `weightingsItem` back to the inner collection, then frees `stringItems` array and the `StoredListOfStrings` struct.
 
 ### Memory-Mode Considerations
 
-- For memory-based collections, the inner `getMemoryVariable` returns a pointer into mapped memory (no allocation). The decorator is the only code path that allocates memory for strings collection items in memory mode. This is acceptable because WEIGHTED_STRING items are expected to be infrequent relative to total string lookups.
+- In memory mode, the inner collection's `get` returns pointers into memory-mapped data with no allocation. The resolved `stringItems[i].data.ptr` and `weightingsItem.data.ptr` are just pointers into the mapped region.
+- The **only** allocations in memory mode are the `StoredListOfStrings` struct and the `stringItems` array — both small, fixed-overhead structures.
+- In memory mode, releasing the inner items (`COLLECTION_RELEASE` on each `stringItems[i]` and `weightingsItem`) is a no-op since memory-mode items don't allocate.
+- This is a significant improvement over the materialization approach, which would have copied all string content into a new buffer even in memory mode.
+
+### File/Cache Mode Considerations
+
+- In file mode, the inner collection's `get` allocates memory for each loaded item. The decorator holds references to these allocations.
+- On release, `COLLECTION_RELEASE` on each sub-item returns the allocated memory to the inner collection (file mode frees it, cache mode returns it to the LRU cache).
 
 ### WeightedItem List Cleanup
 
-- `releaseWeightedItemList` (formerly `releaseIpiList`) calls `COLLECTION_RELEASE` on each item's collection. For items whose stored value was a WEIGHTED_STRING, this calls the decorator's release, which frees the materialized buffer. For all other items, it calls through to the inner collection's release (which is a no-op for memory mode, or frees allocated memory for file mode).
+- `releaseWeightedItemList` (formerly `releaseIpiList`) calls `COLLECTION_RELEASE` on each item's collection. For items whose stored value was a WEIGHTED_STRING, `item->collection` points to the decorator, so `COLLECTION_RELEASE` dispatches to the decorator's custom release method. The decorator then cascades release to all sub-items. For all other items, release goes directly to the inner collection as before.
 
 ## Thread Safety
 
@@ -607,12 +718,12 @@ common-cxx (Steps 1–2: CollectionKeyType + structs)
 
 ## Testing
 
-- Unit tests in `ip-intelligence-cxx` for the decorator: verify materialization produces correct string content and weights for known test data
-- Test iteration helpers (`GetFirst`, `GetNext`) on materialized buffers of varying sizes (0, 1, many items)
+- Unit tests in `ip-intelligence-cxx` for the decorator: verify `StoredListOfStrings` contains correct string pointers and weights for known test data
+- Test the decorator with varying counts (0, 1, many items) and verify all `stringItems[i].data.ptr` point to valid `String` structs
 - Test weight combination: profile weight * sub-weight / 65535 with edge cases (both weights = 65535, one = 0, etc.)
 - Verify `getValueAsString` (C-level) returns correct pipe-delimited weighted string format
 - Verify `getValuesAsWeightedStringList` (C++ level) returns correct vector with combined weights
-- Verify memory cleanup (no leaks) for all collection modes (memory, file, cache) using the decorator
+- Verify memory cleanup (no leaks) for all collection modes (memory, file, cache) — ensure decorator release cascades to all sub-items and frees the envelope
 - Integration tests in .NET and Java using an enterprise `.ipi` file containing WEIGHTED_STRING properties
 - Verify end-to-end: query a translated property → get weighted string list → values and weights match expected data
 
@@ -622,9 +733,9 @@ common-cxx (Steps 1–2: CollectionKeyType + structs)
 |---|---|---|
 | common-cxx | `collectionKeyTypes.h` | Add `CollectionKeyType_WeightedString` + size function |
 | common-cxx | `collectionKeyTypes.c` | Add `WEIGHTED_STRING` case in switch |
-| common-cxx | `storedBinaryValue.h` | Add raw + materialized structs, iteration helpers, add to union |
-| common-cxx | `storedBinaryValue.c` | Implement iteration helpers |
-| common-cxx | `string_pp.cpp` or `storedBinaryValue.c` | Add `WEIGHTED_STRING` case in `StringBuilderAddStringValue` |
+| common-cxx | `storedBinaryValue.h` | Add `StoredWeightedStringRaw` (on-disk format) and `StoredListOfStrings` (zero-copy resolved format) structs |
+| common-cxx | `storedBinaryValue.c` | No iteration helpers needed (zero-copy approach uses direct array indexing) |
+| common-cxx or ip-intelligence-cxx | `string_pp.cpp` / `storedBinaryValue.c` / `ResultsIpi.cpp` | Add `WEIGHTED_STRING` case in string formatting |
 | ip-intelligence-cxx | `ipi.h` | Rename `ProfilePercentage` → `WeightedItem`, `IpiList` → `WeightedItemList` |
 | ip-intelligence-cxx | `ipi.c` | Rename internals; add decorator creation + get/release/free methods; integrate decorator after strings collection init |
 | ip-intelligence-cxx | `ipi.c` (debug) | Add `"WeightedString"` in type name switch |
