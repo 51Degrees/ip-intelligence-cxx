@@ -4,7 +4,7 @@
 
 This document describes the implementation plan for reading **weighted values** in the IPI dataset on the C/C++ reader side. The approach follows the Pearl export-side design documented in `Pearl/WEIGHTED_VALUE_EXPORT_DESIGN.md`.
 
-The weight is stored in the **Value record** itself — the existing `urlOffset` field is repurposed as a dual-purpose `urlOffsetOrWeight` field. When the field is negative, it encodes a weight (stored as `-weight`). When non-negative, it is a URL offset (existing behavior). Weighted properties use the existing **list property** mechanism (`isList = true`), with each (value, weight) pair being a separate Value record.
+The weight is stored in the **Value record** itself — the existing `urlOffset` field is repurposed as a dual-purpose `urlOffsetOrWeight` field. When the upper two bytes match the mask pattern `0xFF00`, the lower two bytes encode the weight as a `uint16_t` (0–65535, representing 0.0–1.0). When the mask is not present, the field is a URL offset or the legacy `-1` sentinel (existing behavior). Weighted properties use the existing **list property** mechanism (`isList = true`), with each (value, weight) pair being a separate Value record.
 
 This is a much simpler design than the previous proposal (which used a compound blob in the strings collection with a collection decorator). No decorator, no compound stored values, no sub-references within the strings collection.
 
@@ -22,11 +22,54 @@ Properties in the IPI dataset have two type descriptors:
 The weight lives in the **Value record**, not in the strings collection:
 
 - The `urlOffset` field in the C `Value` struct becomes `urlOffsetOrWeight` (signed `int32_t`)
-- If `urlOffsetOrWeight >= 0` → it is a URL offset (existing behavior)
-- If `urlOffsetOrWeight < 0` → it is `-weight` (e.g., weight 500 is stored as -500)
+- The field uses a **masked encoding** to distinguish weights from URL offsets:
+  - If the upper 2 bytes equal `0xFF00` (i.e., `(value & 0xFFFF0000) == 0xFF000000`) → the lower 2 bytes are a `uint16_t` weight (0–65535, representing 0.0–1.0)
+  - Otherwise → it is a URL offset (existing behavior), including the legacy `-1` sentinel for "no URL"
+- **Why not simple negative numbers?** The value `-1` (`0xFFFFFFFF`) is already used as a sentinel meaning "no URL" in both device-detection-cxx and ip-intelligence-cxx (see `ValueMetaDataBuilderHash.cpp:51`, `ValueMetaDataBuilderIpi.cpp:116`). A simple "negative = weight" scheme would collide with this existing convention.
+- **Why `0xFF00` mask?** The pattern `0xFF00` in the upper 2 bytes (`0xFF00xxxx`) creates a distinct range that does not collide with `-1` (`0xFFFFFFFF`, which has `0xFFFF` in the upper bytes) nor with any valid non-negative URL offset. The `isMasked()` check reliably distinguishes all three cases.
+- **Working range:** Masked values span from `0xFF000000` (int32: -16777216, weight=0.0) to `0xFF00FFFF` (int32: -16711681, weight=1.0)
 - Weighted properties have `isList = true` — multiple Value records per profile per property
 - Each unique (value, weight) combination is a separate Value record in the Values collection
 - The string/int/float data in the strings collection remains **standard** — no compound blobs
+
+### Mask Encoding/Decoding Reference
+
+```c
+// Pack: encode a uint16_t weight into a masked int32_t
+int32_t packWeight(uint16_t weight) {
+    return (int32_t)((0xFF00 << 16) | weight);
+}
+
+// Unpack: extract uint16_t weight from a masked int32_t
+uint16_t unpackWeight(int32_t value) {
+    return (uint16_t)(value & 0xFFFF);
+}
+
+// Check: does this int32_t carry a masked weight?
+bool isMasked(int32_t value) {
+    return ((value & 0xFFFF0000) == 0xFF000000);
+}
+
+// Float conversion: weight float [0.0, 1.0] → uint16_t [0, 65535]
+uint16_t floatToUshort(float w) { return (uint16_t)roundf(w * UINT16_MAX); }
+
+// Reverse: uint16_t [0, 65535] → double [0.0, 1.0]
+double ushortToDouble(uint16_t w) { return (double)w / UINT16_MAX; }
+```
+
+**Examples:**
+| Float weight | uint16_t | Packed int32_t (hex) | Packed int32_t (decimal) |
+|---|---|---|---|
+| 0.00 | 0 | `0xFF000000` | -16777216 |
+| 0.15 | 9830 | `0xFF002666` | -16767386 |
+| 1.00 | 65535 | `0xFF00FFFF` | -16711681 |
+
+**Collision check:**
+| Value | Upper bytes | `isMasked()`? |
+|---|---|---|
+| Encoded weight (e.g. 0.15) | `0xFF00` | **true** |
+| `-1` (no URL sentinel) | `0xFFFF` | **false** |
+| `27` (valid URL offset) | `0x0000` | **false** |
 
 ### How It Works with List Properties
 
@@ -36,9 +79,9 @@ For a weighted property like "Country" on an IP profile:
 
 ```
 Values collection:
-  Value[100]: { propertyIndex=5, nameOffset→"US",  urlOffsetOrWeight=-42598 }
-  Value[101]: { propertyIndex=5, nameOffset→"GB",  urlOffsetOrWeight=-22937 }
-  Value[102]: { propertyIndex=5, nameOffset→"DE",  urlOffsetOrWeight=-465 }
+  Value[100]: { propertyIndex=5, nameOffset→"US",  urlOffsetOrWeight=0xFF00A666 (-16741786) }  // weight≈0.65
+  Value[101]: { propertyIndex=5, nameOffset→"GB",  urlOffsetOrWeight=0xFF005999 (-16761959) }  // weight≈0.35
+  Value[102]: { propertyIndex=5, nameOffset→"DE",  urlOffsetOrWeight=0xFF0001D1 (-16776751) }  // weight≈0.007
 
 Profile 42:
   valueIndices = [..., 100, 101, 102, ...]
@@ -69,10 +112,10 @@ Value records themselves are also shared across profiles. If two profiles both h
 [int16  propertyIndex]
 [int32  nameOffset]          → offset into strings collection (unchanged)
 [int32  descriptionOffset]   → offset into strings collection (unchanged)
-[int32  urlOffsetOrWeight]   → URL offset if >= 0, negative weight if < 0
+[int32  urlOffsetOrWeight]   → URL offset (or -1 for none), OR masked weight if upper 2 bytes == 0xFF00
 ```
 
-The last field becomes explicitly **signed** `int32_t`. Both are 4 bytes — binary compatible. When Pearl writes a weighted value, it writes `-weight` (negative `int32`). The C reader negates it back.
+The last field becomes explicitly **signed** `int32_t`. Both are 4 bytes — binary compatible. When Pearl writes a weighted value, it packs the weight using the `0xFF00` mask: `(int32_t)((0xFF00 << 16) | uint16_weight)`. The C reader detects the mask and extracts the lower 2 bytes.
 
 ## Architecture Decisions
 
@@ -84,7 +127,7 @@ The weight lives in the Value's `urlOffsetOrWeight` field. The strings collectio
 
 **Trade-offs:**
 - Cannot add a URL to a weighted value (acceptable)
-- More Value records: each weighted property may have ~65K value permutations where only the weight differs. But Value records are small (14 bytes) and shared across profiles.
+- More Value records: each weighted property may have up to 65536 weight levels per distinct value. But Value records are small (14 bytes) and shared across profiles.
 
 ### Decision 2: Leverage Existing List Property Mechanism
 
@@ -168,22 +211,30 @@ typedef struct fiftyoneDegrees_value_t {
     const int32_t descriptionOffset;   /**< The offset in the strings structure to the
                                            value description */
     const int32_t urlOffsetOrWeight;   /**< The offset in the strings structure to the
-                                           value URL if >= 0, or if < 0 the negative
-                                           weight (e.g., weight 500 stored as -500) */
+                                           value URL, or a masked weight if upper 2
+                                           bytes == 0xFF00. See ValueIsWeighted(). */
 } fiftyoneDegreesValue;
 #pragma pack(pop)
 ```
 
-**`value.h` / `value.c`** — Update `ValueGetUrl` to check sign:
+**`value.h` / `value.c`** — Update `ValueGetUrl` to check for mask:
 
 ```c
+// Internal helper: check if the value carries a masked weight
+#define VALUE_IS_MASKED(v) \
+    (((v)->urlOffsetOrWeight & 0xFFFF0000) == (int32_t)0xFF000000)
+
 EXTERNAL const fiftyoneDegreesString* fiftyoneDegreesValueGetUrl(
     const fiftyoneDegreesCollection *strings,
     const fiftyoneDegreesValue *value,
     fiftyoneDegreesCollectionItem *item,
     fiftyoneDegreesException *exception) {
-    // Weighted values have no URL
-    if (value->urlOffsetOrWeight < 0) {
+    // Weighted values (masked) have no URL
+    if (VALUE_IS_MASKED(value)) {
+        return NULL;
+    }
+    // Legacy -1 sentinel also means no URL
+    if (value->urlOffsetOrWeight == -1) {
         return NULL;
     }
     return fiftyoneDegreesStringGet(
@@ -198,15 +249,22 @@ EXTERNAL const fiftyoneDegreesString* fiftyoneDegreesValueGetUrl(
 
 ```c
 /**
- * Gets the weight from a Value record, or 0 if the value is not weighted.
+ * Gets the weight from a Value record as a uint16_t (0–65535),
+ * or 0 if the value is not weighted.
+ * The weight is stored in the lower 2 bytes of urlOffsetOrWeight
+ * when the upper 2 bytes match the 0xFF00 mask.
+ * To convert to a proportion: (double)weight / UINT16_MAX
  * @param value the value to get the weight from
- * @return the weight (0-65535 range), or 0 if not weighted
+ * @return the weight (0–65535 range), or 0 if not weighted
  */
-EXTERNAL int32_t fiftyoneDegreesValueGetWeight(
+EXTERNAL uint16_t fiftyoneDegreesValueGetWeight(
     const fiftyoneDegreesValue *value);
 
 /**
- * Returns true if the value carries a weight (urlOffsetOrWeight < 0).
+ * Returns true if the value carries a masked weight.
+ * A value is weighted when (urlOffsetOrWeight & 0xFFFF0000) == 0xFF000000.
+ * This is distinct from -1 (0xFFFFFFFF, "no URL" sentinel) and from
+ * valid non-negative URL offsets.
  */
 EXTERNAL bool fiftyoneDegreesValueIsWeighted(
     const fiftyoneDegreesValue *value);
@@ -215,16 +273,30 @@ EXTERNAL bool fiftyoneDegreesValueIsWeighted(
 Implementation:
 
 ```c
-int32_t fiftyoneDegreesValueGetWeight(
+uint16_t fiftyoneDegreesValueGetWeight(
     const fiftyoneDegreesValue *value) {
-    return value->urlOffsetOrWeight < 0 ? -value->urlOffsetOrWeight : 0;
+    if (VALUE_IS_MASKED(value)) {
+        return (uint16_t)(value->urlOffsetOrWeight & 0xFFFF);
+    }
+    return 0;
 }
 
 bool fiftyoneDegreesValueIsWeighted(
     const fiftyoneDegreesValue *value) {
-    return value->urlOffsetOrWeight < 0;
+    return VALUE_IS_MASKED(value);
 }
 ```
+
+**Reading the weight — step by step:**
+
+1. Read `urlOffsetOrWeight` as `int32_t` from the Value record
+2. Check if masked: `(urlOffsetOrWeight & 0xFFFF0000) == 0xFF000000`
+   - If `false` → not a weighted value (it's a URL offset or `-1` sentinel)
+   - If `true` → proceed to step 3
+3. Extract the `uint16_t` weight: `(uint16_t)(urlOffsetOrWeight & 0xFFFF)`
+4. Convert to proportion if needed: `(double)weight / UINT16_MAX`
+
+**Precision:** The uint16_t encoding gives 65536 discrete levels with a maximum error of ~1.5×10⁻⁵ (approx 0.0015%), which is more than sufficient for weight/probability data.
 
 ### Step 2: Lift WeightedItem / WeightedItemList Types to common-cxx
 
@@ -318,13 +390,13 @@ static bool addWeightedValue(void* state, Item* item) {
                 exception) != NULL && EXCEPTION_OKAY) {
                 weightedItem.item = valueItem;
 
-                // If the Value record carries a weight (urlOffsetOrWeight < 0),
-                // use it directly. This is the case for weighted list properties
+                // If the Value record carries a masked weight (upper 2 bytes
+                // == 0xFF00), extract the weight from the lower 2 bytes.
+                // This is the case for weighted list properties
                 // (WeightedString, WeightedInt, etc.) on singular profiles.
                 // Otherwise use the profile-level weight (profile group case).
                 if (ValueIsWeighted(value)) {
-                    weightedItem.rawWeighting =
-                        (uint16_t)(-value->urlOffsetOrWeight);
+                    weightedItem.rawWeighting = ValueGetWeight(value);
                 } else {
                     weightedItem.rawWeighting = weightState->rawWeighting;
                 }
@@ -409,9 +481,9 @@ Profile group case (Country property, non-weighted, profile group with 2 profile
 
 Weighted list case (Country property, WeightedString, singular profile):
   WeightedItemList = [
-    { item → "US" (StoredBinaryValue), rawWeighting = 42598 },   // from Value[100].urlOffsetOrWeight
-    { item → "GB" (StoredBinaryValue), rawWeighting = 22937 },   // from Value[101].urlOffsetOrWeight
-    { item → "DE" (StoredBinaryValue), rawWeighting = 465 },     // from Value[102].urlOffsetOrWeight
+    { item → "US" (StoredBinaryValue), rawWeighting = 42598 },   // from lower 2 bytes of Value[100].urlOffsetOrWeight (0xFF00A666)
+    { item → "GB" (StoredBinaryValue), rawWeighting = 22937 },   // from lower 2 bytes of Value[101].urlOffsetOrWeight (0xFF005999)
+    { item → "DE" (StoredBinaryValue), rawWeighting = 465 },     // from lower 2 bytes of Value[102].urlOffsetOrWeight (0xFF0001D1)
   ]
 ```
 
@@ -525,8 +597,9 @@ if (values.hasValue()) {
   Step 4            | (ipi.c callback) |
                     |                  |
                     | For each Value:  |
-                    |  if weighted:    |
-                    |   weight = negate|
+                    |  if masked:      |
+                    |   weight = lower |
+                    |   2 bytes of     |
                     |   urlOffsetOr    |
                     |   Weight         |
                     |  else:           |
@@ -570,10 +643,10 @@ Profile Groups (profile-level weight) — non-weighted storedValueTypes:
   Weight source: profile-level rawWeighting from stateWithWeighting
 
 Weighted Values (value-level weight) — weighted storedValueTypes:
-  Single Profile --> Value[100] "US" urlOffsetOrWeight=-42598
-                 --> Value[101] "GB" urlOffsetOrWeight=-22937
-                 --> Value[102] "DE" urlOffsetOrWeight=-465
-  Weight source: -value->urlOffsetOrWeight from Value record
+  Single Profile --> Value[100] "US" urlOffsetOrWeight=0xFF00A666 (masked, weight=42598)
+                 --> Value[101] "GB" urlOffsetOrWeight=0xFF005999 (masked, weight=22937)
+                 --> Value[102] "DE" urlOffsetOrWeight=0xFF0001D1 (masked, weight=465)
+  Weight source: lower 2 bytes of urlOffsetOrWeight (after mask check)
 
 Both produce the same output: a list of WeightedItem entries.
 The C++ accessor doesn't know or care where the weight came from.
@@ -614,8 +687,8 @@ No changes. The Value struct is read-only (const fields). Reading `urlOffsetOrWe
 
 ## Backward Compatibility
 
-- **Existing data files** without weighted values: `urlOffsetOrWeight` is always `>= 0` (it was `urlOffset`). `ValueGetUrl` returns the URL as before. `ValueIsWeighted` returns false. No behavioral change.
-- **New data files** with weighted values: `urlOffsetOrWeight < 0` for weighted values. `ValueGetUrl` returns NULL. `ValueGetWeight` returns the positive weight.
+- **Existing data files** without weighted values: `urlOffsetOrWeight` is either a non-negative URL offset or `-1` ("no URL" sentinel). Neither matches the `0xFF00` mask. `ValueGetUrl` returns the URL (or NULL for `-1`) as before. `ValueIsWeighted` returns false. No behavioral change.
+- **New data files** with weighted values: `urlOffsetOrWeight` has the `0xFF00` mask in the upper 2 bytes. `ValueGetUrl` returns NULL. `ValueGetWeight` returns the `uint16_t` weight from the lower 2 bytes.
 - The type renames (`ProfilePercentage` → `WeightedItem`, `IpiList` → `WeightedItemList`) are source-breaking at the C level, but these types are internal and absorbed by SWIG regeneration.
 - The C++ accessor `getValuesAsWeightedStringList` returns the same `vector<WeightedValue<string>>` type regardless of weight source. No API change for consumers.
 
@@ -623,7 +696,7 @@ No changes. The Value struct is read-only (const fields). Reading `urlOffsetOrWe
 
 | Aspect | Old (compound blob) | New (urlOffsetOrWeight) |
 |---|---|---|
-| Where weight lives | In strings collection blob | In Value record |
+| Where weight lives | In strings collection blob | In Value record (masked in urlOffsetOrWeight) |
 | Strings collection | Compound blob with sub-references | Standard values only |
 | Collection decorator | Required (complex) | Not needed |
 | New structs | StoredWeightedStringRaw, StoredListOfStrings | None |
@@ -640,8 +713,12 @@ No changes. The Value struct is read-only (const fields). Reading `urlOffsetOrWe
 
 ## Testing
 
-- **Value struct tests:** Verify `ValueIsWeighted` and `ValueGetWeight` for positive, negative, and zero `urlOffsetOrWeight` values
-- **ValueGetUrl tests:** Verify returns NULL for weighted values (`urlOffsetOrWeight < 0`) and correct URL for non-weighted values
+- **Value struct tests:** Verify `ValueIsWeighted` and `ValueGetWeight` for:
+  - Masked weighted values (e.g., `0xFF002666` → `isMasked=true`, weight=9830)
+  - `-1` sentinel (`0xFFFFFFFF` → `isMasked=false`, weight=0)
+  - Valid URL offsets (e.g., `27` → `isMasked=false`, weight=0)
+  - Edge cases: `0xFF000000` (weight=0), `0xFF00FFFF` (weight=65535)
+- **ValueGetUrl tests:** Verify returns NULL for masked weighted values, NULL for `-1` sentinel, and correct URL for valid non-negative offsets
 - **addWeightedValue callback tests:** Verify weight is extracted from Value record for weighted values, and from profile-level weight for non-weighted values
 - **Type mapping tests:** Verify `PropertyValueTypeGetUnderlyingType` correctly maps `WeightedString`→`String`, `WeightedInt`→`Int`, etc.
 - **List property iteration:** Verify that a profile with multiple weighted values for one property produces the correct number of `WeightedItem` entries
@@ -653,8 +730,8 @@ No changes. The Value struct is read-only (const fields). Reading `urlOffsetOrWe
 
 | Repository | File | Change |
 |---|---|---|
-| **common-cxx** | `value.h` | Rename `urlOffset` → `urlOffsetOrWeight` (int32_t), add `ValueGetWeight`/`ValueIsWeighted` |
-| **common-cxx** | `value.c` | Update `ValueGetUrl` to check sign; implement `ValueGetWeight`/`ValueIsWeighted` |
+| **common-cxx** | `value.h` | Rename `urlOffset` → `urlOffsetOrWeight` (int32_t), add `ValueGetWeight`/`ValueIsWeighted`, add `VALUE_IS_MASKED` macro |
+| **common-cxx** | `value.c` | Update `ValueGetUrl` to check mask and `-1` sentinel; implement `ValueGetWeight`/`ValueIsWeighted` using mask |
 | **common-cxx** | `propertyValueType.h` or `storedBinaryValue.c` | Add `PropertyValueTypeGetUnderlyingType` mapping |
 | **common-cxx** | `weightedItem.h` (new) | Add `WeightedItem` and `WeightedItemList` type definitions |
 | **common-cxx** | `weightedItem.c` (new) | Add list management functions (init, release, extend, add) |
