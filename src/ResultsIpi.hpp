@@ -471,7 +471,7 @@ namespace FiftyoneDegrees {
 				const std::function<void(
 					const fiftyoneDegreesStoredBinaryValue *binaryValue,
 					fiftyoneDegreesPropertyValueType storedValueType,
-					uint16_t rawWeighting,
+					uint32_t rawWeighting,
 					fiftyoneDegreesException *exception)>& onEachValue,
 				const std::function<void()>& onAfterValues);
 
