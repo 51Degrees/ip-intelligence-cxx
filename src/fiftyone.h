@@ -29,7 +29,8 @@
 #include "common-cxx/fiftyone.h"
 
 // Data types
-MAP_TYPE(ProfilePercentage)
+MAP_TYPE(WeightedItem)
+MAP_TYPE(WeightedItemList)
 MAP_TYPE(ResultIpi)
 MAP_TYPE(ResultsIpi)
 MAP_TYPE(ResultIpiArray)

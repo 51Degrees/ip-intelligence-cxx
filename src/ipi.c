@@ -96,10 +96,10 @@ typedef struct state_with_exception_t {
 	Exception* exception; /* Pointer to the exception structure */
 } stateWithException;
 
-typedef struct state_with_percentage_t {
+typedef struct state_with_weighting_t {
 	void* subState; /* Pointer to a data set or other information */
 	uint16_t rawWeighting;
-} stateWithPercentage;
+} stateWithWeighting;
 
 /**
  * Used to pass a state together with an unique header index which
@@ -1430,88 +1430,15 @@ FIFTYONE_DEGREES_DATASET_RELOAD(Ipi)
  */
 
 
-/**
- * Methods to manipulate the profile percentage list
- * This is mainly used in the values returned in the results
- * for particular property.
+/* 
+ * Note: WeightedItemList functions are now provided by common-cxx/weightedItem.h
+ * The local list functions have been removed in favor of:
+ * - WeightedItemListInit() 
+ * - WeightedItemListRelease()
+ * - WeightedItemListFree()
+ * - WeightedItemListExtend()
+ * - WeightedItemListAdd()
  */
-static fiftyoneDegreesIpiList* initIpiList(
-	fiftyoneDegreesIpiList* list,
-	uint32_t capacity,
-	const float loadFactor) {
-	list->items = (ProfilePercentage*)Malloc(capacity * sizeof(ProfilePercentage));
-	if (list->items == NULL) {
-		return NULL;
-	}
-	list->capacity = capacity;
-	list->count = 0;
-	list->loadFactor = loadFactor;
-	return list;
-}
-
-static void releaseIpiList(fiftyoneDegreesIpiList* list) {
-	uint32_t i;
-	for (i = 0; i < list->count; i++) {
-		COLLECTION_RELEASE(list->items[i].item.collection, &list->items[i].item);
-	}
-	list->count = 0;
-}
-
-static void freeIpiList(fiftyoneDegreesIpiList* list) {
-	releaseIpiList(list);
-	if (list->items != NULL) {
-		Free(list->items);
-	}
-	list->items = NULL;
-	list->capacity = 0;
-}
-
-/*
- * Extend the size of the current list.
- * This should ever be used by the addIpiListItem
- * @param list the current list
- * @param newCapacity which should be bigger
- * than the current capacity else now
- * change will be made
- */
-static void extendIpiList(
-	fiftyoneDegreesIpiList* list,
-	uint32_t newCapacity) {
-	// Allocate new list
-	if (newCapacity > list->capacity) {
-		const size_t newSize = newCapacity * sizeof(ProfilePercentage);
-		ProfilePercentage * const newItems = (ProfilePercentage*)Malloc(newSize);
-
-		if (newItems == NULL) {
-			return;
-		}
-
-		ProfilePercentage * const oldItems = list->items;
-		if (oldItems != NULL) {
-			const size_t oldSize = list->count * sizeof(ProfilePercentage);
-			memcpy(newItems, oldItems, oldSize);
-			Free(oldItems);
-		}
-		list->items = newItems;
-		list->capacity = newCapacity;
-	}
-}
-
-static void addIpiListItem(
-	fiftyoneDegreesIpiList* const list,
-	const fiftyoneDegreesProfilePercentage* const item) {
-	assert(list->count < list->capacity);
-	assert(item->item.collection != NULL);
-	list->items[list->count++] = *item;
-	// Check if the list has reached its load factor
-	if ((float)(list->count / list->capacity) > list->loadFactor) {
-		// Get new capacity
-		const uint32_t newCapacity =
-			(uint32_t)ceilf(list->capacity * IPI_LIST_RESIZE_FACTOR);
-
-		extendIpiList(list, newCapacity);
-	}
-}
 
 /**
  * Results methods
@@ -1539,7 +1466,7 @@ fiftyoneDegreesResultsIpi* fiftyoneDegreesResultsIpiCreate(
 
 		// Reset the property and values list ready for first use sized for 
 		// a single value to be returned.
-		initIpiList(&results->values, 1, IPI_LIST_DEFAULT_LOAD_FACTOR);
+		WeightedItemListInit(&results->values, 1, FIFTYONE_DEGREES_WEIGHTED_ITEM_LIST_DEFAULT_LOAD_FACTOR);
 		DataReset(&results->propertyItem.data);
 	}
 	else {
@@ -1556,12 +1483,12 @@ static void resultsIpiRelease(ResultsIpi* results) {
 			results->propertyItem.collection,
 			&results->propertyItem);
 	}
-	releaseIpiList(&results->values);
+	WeightedItemListRelease(&results->values);
 }
 
 void fiftyoneDegreesResultsIpiFree(fiftyoneDegreesResultsIpi* results) {
 	resultsIpiRelease(results);
-	freeIpiList(&results->values);
+	WeightedItemListFree(&results->values);
 	DataSetRelease((DataSetBase*)results->b.dataSet);
 	Free(results);
 }
@@ -1783,17 +1710,17 @@ void fiftyoneDegreesResultsIpiFromEvidence(
 	}
 }
 
-static bool addValueWithPercentage(void* state, Item* item) {
+static bool addWeightedValue(void* state, Item* item) {
 	Item valueItem;
-	ProfilePercentage profilePercentageItem;
+	WeightedItem weightedItem;
 	/**
-	 * The results values are a list of collection items and their percentage
-	 * The percentage cannot be passed along with Item as this is the profile
-	 * standard in common-cxx. Thus the percentage is passed along with the state
+	 * The results values are a list of collection items and their weighting.
+	 * The weighting cannot be passed along with Item as this is the profile
+	 * standard in common-cxx. Thus the weighting is passed along with the state.
 	 */
-	const stateWithPercentage* percentageState = (stateWithPercentage*)((stateWithException*)state)->state;
+	const stateWithWeighting* weightingState = (stateWithWeighting*)((stateWithException*)state)->state;
 	ResultsIpi* results =
-		(ResultsIpi*)percentageState->subState;
+		(ResultsIpi*)weightingState->subState;
 	Exception* exception = ((stateWithException*)state)->exception;
 	const DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 	const Value* value = (Value*)item->data.ptr;
@@ -1804,15 +1731,16 @@ static bool addValueWithPercentage(void* state, Item* item) {
 			exception);
 		if (EXCEPTION_OKAY) {
 			DataReset(&valueItem.data);
+			const uint16_t valueWeight = ValueGetWeight(value) ?: 0xFFFFU;
 			if (StoredBinaryValueGet(
 				dataSet->strings,
 				value->nameOffset,
 				storedValueType,
 				&valueItem,
 				exception) != NULL && EXCEPTION_OKAY) {
-				profilePercentageItem.item = valueItem;
-				profilePercentageItem.rawWeighting = percentageState->rawWeighting;
-				addIpiListItem(&results->values, &profilePercentageItem);
+				weightedItem.item = valueItem;
+				weightedItem.rawWeighting = ((uint32_t)weightingState->rawWeighting)*(uint32_t)valueWeight;
+				WeightedItemListAdd(&results->values, &weightedItem);
 			}
 		}
 	}
@@ -1831,10 +1759,10 @@ static uint32_t addValuesFromProfile(
 
 	// Set the state for the callbacks.
 	stateWithException state;
-	stateWithPercentage percentageState;
-	percentageState.subState = results;
-	percentageState.rawWeighting = rawWeighting;
-	state.state = &percentageState;
+	stateWithWeighting weightingState;
+	weightingState.subState = results;
+	weightingState.rawWeighting = rawWeighting;
+	state.state = &weightingState;
 	state.exception = exception;
 
 	// Iterate over the values associated with the property adding them
@@ -1846,7 +1774,7 @@ static uint32_t addValuesFromProfile(
 		profile,
 		property,
 		&state,
-		addValueWithPercentage,
+		addWeightedValue,
 		exception);
 	EXCEPTION_THROW;
 
@@ -2008,7 +1936,7 @@ static uint32_t addValuesFromResult(
 	return count;
 }
 
-static ProfilePercentage* getValuesFromResult(
+static WeightedItem* getValuesFromResult(
 	ResultsIpi* results,
 	ResultIpi* result,
 	Property* property,
@@ -2021,13 +1949,13 @@ static ProfilePercentage* getValuesFromResult(
 	return results->values.items;
 }
 
-const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
+const fiftyoneDegreesWeightedItem* fiftyoneDegreesResultsIpiGetValues(
 	fiftyoneDegreesResultsIpi* const results,
 	int const requiredPropertyIndex,
 	fiftyoneDegreesException* const exception) {
 	Property* property;
 	DataSetIpi* dataSet;
-	const ProfilePercentage* firstValue = NULL;
+	const WeightedItem* firstValue = NULL;
 
 	// Ensure any previous uses of the results to get values are released.
 	resultsIpiRelease(results);
@@ -2070,7 +1998,7 @@ const fiftyoneDegreesProfilePercentage* fiftyoneDegreesResultsIpiGetValues(
 	if (firstValue == NULL) {
 		// There are no values for the property requested. Reset the values 
 		// list to zero count.
-		releaseIpiList(&results->values);
+		WeightedItemListRelease(&results->values);
 	}
 	return firstValue;
 }
@@ -2292,7 +2220,7 @@ const char* fiftyoneDegreesResultsIpiGetNoValueReasonMessage(
 }
 
 static void pushValues(
-	const ProfilePercentage * const profilePercentage,
+	const WeightedItem * const weightedItem,
 	const uint32_t count,
 	StringBuilder * const builder,
 	const char * const separator,
@@ -2314,7 +2242,7 @@ static void pushValues(
 
 		// Get the string for the value index.
 		const StoredBinaryValue * const binaryValue =
-			(const StoredBinaryValue*)profilePercentage[i].item.data.ptr;
+			(const StoredBinaryValue*)weightedItem[i].item.data.ptr;
 
 		// Add the string to the output buffer recording the number
 		// of characters added.
@@ -2330,7 +2258,7 @@ static void pushValues(
 		StringBuilderAddChar(builder, ':');
 		StringBuilderAddDouble(
 			builder,
-			(float)profilePercentage[i].rawWeighting / 65535.f,
+			(double)weightedItem[i].rawWeighting / (double)FIFTYONE_DEGREES_WEIGHTED_ITEM_MAX_WEIGHT,
 			decimalPlaces);
 	}
 }
@@ -2341,7 +2269,7 @@ static void fiftyoneDegreesResultsIpiGetValuesStringInternal(
 	StringBuilder * const builder,
 	const char* separator,
 	fiftyoneDegreesException* exception) {
-	const ProfilePercentage *profilePercentage;
+	const WeightedItem *weightedItem;
 	Item propertyItem;
 	Property *property;
 	const DataSetIpi *dataSet = (DataSetIpi *)results->b.dataSet;
@@ -2370,13 +2298,13 @@ static void fiftyoneDegreesResultsIpiGetValuesStringInternal(
 				exception);
 		if (property != NULL && EXCEPTION_OKAY) {
 			if (requiredPropertyIndex >= 0) {
-				profilePercentage = fiftyoneDegreesResultsIpiGetValues(
+				weightedItem = fiftyoneDegreesResultsIpiGetValues(
 					results,
 					requiredPropertyIndex,
 					exception);
-				if (profilePercentage != NULL && EXCEPTION_OKAY) {
+				if (weightedItem != NULL && EXCEPTION_OKAY) {
 					pushValues(
-							profilePercentage,
+							weightedItem,
 							results->values.count,
 							builder,
 							separator,

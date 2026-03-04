@@ -22,6 +22,7 @@
 
 #ifndef FIFTYONE_DEGREES_WEIGHTED_VALUE_HPP
 #define FIFTYONE_DEGREES_WEIGHTED_VALUE_HPP
+#include "common-cxx/weightedItem.h"
 
 namespace FiftyoneDegrees {
 	namespace IpIntelligence {
@@ -42,7 +43,7 @@ namespace FiftyoneDegrees {
 				 * Construct a default instance with default value
 				 * and 0 weight
 				 */
-				WeightedValue<T>() {
+				WeightedValue() {
 					this->value = T();
 					this->rawWeight = 0;
 				};
@@ -52,7 +53,7 @@ namespace FiftyoneDegrees {
 				 * @param value the value of the instance
 				 * @param weight of the value
 				 */
-				WeightedValue<T>(T value, uint16_t weight) {
+				WeightedValue(T value, uint32_t weight) {
 					this->value = value;
 					this->rawWeight = weight;
 				};
@@ -67,6 +68,7 @@ namespace FiftyoneDegrees {
 				 * Get the value
 				 * @return the value
 				 */
+				[[nodiscard]]
 				T getValue() const { return value; };
 
 				/**
@@ -79,19 +81,21 @@ namespace FiftyoneDegrees {
 				 * Get the weight (0.0 ~ 1.0)
 				 * @return the weight
 				 */
-				float getWeight() const { return rawWeight / 65535.f; };
+				[[nodiscard]]
+				float getWeight() const { return rawWeight / (double)FIFTYONE_DEGREES_WEIGHTED_ITEM_MAX_WEIGHT; };
 
 				/**
 				 * Get the raw weight (1 ~ 65535)
 				 * @return the raw weight
 				 */
-				uint16_t getRawWeight() const { return rawWeight; };
+				[[nodiscard]]
+				uint32_t getRawWeight() const { return rawWeight; };
 
 				/**
 				 * Set the raw weight (1 ~ 65535)
 				 * @param w the raw weight to set
 				 */
-				void setRawWeight(uint16_t w) { rawWeight = w; };
+				void setRawWeight(uint32_t w) { rawWeight = w; };
 
 				/**
 				 * @}
@@ -100,7 +104,7 @@ namespace FiftyoneDegrees {
 				/** The value */
 				T value;
 				/** The weight of the value, (1 ~ 65535) */
-				uint16_t rawWeight;
+				uint32_t rawWeight;
 		};
 	}
 }

@@ -481,7 +481,7 @@ static const PropValuesConverter * PropValuesConverterFor(
  */
 typedef struct {
     PropValuesChunk * const chunk;                  /**< Pointer to the chunk to populate */
-    const ProfilePercentage * const valuesItems;    /**< Array of profile percentages */
+    const WeightedItem * const valuesItems;         /**< Array of weighted items */
     const uint32_t valuesCount;                     /**< Number of values */
     const PropertyValueType storedValueType;        /**< Type of the stored values */
     Exception * const exception;                    /**< Pointer to exception structure */
@@ -673,7 +673,7 @@ static void PropValuesChunkInit(
     }
 
     // Get a pointer to the first value item for the property.
-    const ProfilePercentage * const valuesItems = ResultsIpiGetValues(
+    const WeightedItem * const valuesItems = ResultsIpiGetValues(
         results,
         chunk->requiredPropertyIndex,
         exception);
