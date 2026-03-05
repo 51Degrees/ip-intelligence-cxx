@@ -1724,7 +1724,13 @@ static bool addWeightedValue(void* state, Item* item) {
 	Exception* exception = ((stateWithException*)state)->exception;
 	const DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 	const Value* value = (Value*)item->data.ptr;
-	if (value != NULL && results->values.count < results->values.capacity) {
+	if (value != NULL) {
+		if (results->values.count == results->values.capacity) {
+			WeightedItemListExtend(
+				&results->values,
+				results->values.capacity
+				* FIFTYONE_DEGREES_WEIGHTED_ITEM_LIST_RESIZE_FACTOR);
+		}
 		PropertyValueType const storedValueType = PropertyGetStoredTypeByIndex(
 			dataSet->propertyTypes,
 			value->propertyIndex,
