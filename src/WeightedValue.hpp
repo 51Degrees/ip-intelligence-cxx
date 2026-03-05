@@ -82,7 +82,11 @@ namespace FiftyoneDegrees {
 				 * @return the weight
 				 */
 				[[nodiscard]]
-				float getWeight() const { return rawWeight / (double)FIFTYONE_DEGREES_WEIGHTED_ITEM_MAX_WEIGHT; };
+				float getWeight() const {
+					return (float)(
+						rawWeight
+						/ (double)FIFTYONE_DEGREES_WEIGHTED_ITEM_MAX_WEIGHT);
+				};
 
 				/**
 				 * Get the raw weight (1 ~ 65535)

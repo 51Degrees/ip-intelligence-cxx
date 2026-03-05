@@ -172,8 +172,7 @@ typedef struct thread_state_t {
  */
 static unsigned long generateHash(unsigned char *value) {
 	unsigned long hashCode = 5381;
-	int i;
-	while ((i = *value++)) {
+	for (int i; (i = *value++) != 0; ) {
 		hashCode = ((hashCode << 5) + hashCode) + i;
 	}
 	return hashCode;

@@ -1737,7 +1737,8 @@ static bool addWeightedValue(void* state, Item* item) {
 			exception);
 		if (EXCEPTION_OKAY) {
 			DataReset(&valueItem.data);
-			const uint16_t valueWeight = ValueGetWeight(value) ?: 0xFFFFU;
+			const uint16_t valueRawWeight = ValueGetWeight(value);
+			const uint16_t valueWeight = valueRawWeight ? valueRawWeight : 0xFFFFU;
 			if (StoredBinaryValueGet(
 				dataSet->strings,
 				value->nameOffset,
