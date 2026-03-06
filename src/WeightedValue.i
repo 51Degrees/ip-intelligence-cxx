@@ -31,8 +31,8 @@ public:
     T getValue();
     void setValue(T v);
     float getWeight();
-    uint16_t getRawWeight();
-    void setRawWeight(uint16_t w);
+    uint32_t getRawWeight();
+    void setRawWeight(uint32_t w);
 };
 
 %template(UTF8StringSwig) std::vector<uint8_t>;
