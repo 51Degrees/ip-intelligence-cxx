@@ -149,12 +149,12 @@ static const char* dataDir = "ip-intelligence-data";
 static const char* dataFileName = "51Degrees-LiteV41.ipi";
 
 static void printCoordinateValues(ResultsIpi* results) {
-	uint32_t i;
-	const char* propertyName;
+	//uint32_t i;
+	//const char* propertyName;
 #	ifdef _MSC_VER
 	UNREFERENCED_PARAMETER(results);
-	UNREFERENCED_PARAMETER(i);
-	UNREFERENCED_PARAMETER(propertyName);
+	//UNREFERENCED_PARAMETER(i);
+	//UNREFERENCED_PARAMETER(propertyName);
 #	endif
 	// fiftyoneDegreesCoordinate coordinate;
 	// DataSetBase* dataSet = (DataSetBase*)results->b.dataSet;

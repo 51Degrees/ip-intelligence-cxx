@@ -46,7 +46,7 @@
 typedef struct fiftyone_degrees_weighted_value_header_t {
  fiftyoneDegreesPropertyValueType valueType; /**< The type of the property value */
  int requiredPropertyIndex;                  /**< Index of the required property */
- uint16_t rawWeighting;                      /**< Raw confidence weighting value */
+ uint32_t rawWeighting;                      /**< Raw confidence weighting value */
 } fiftyoneDegreesWeightedValueHeader;
 
 
