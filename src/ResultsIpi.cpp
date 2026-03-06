@@ -108,7 +108,7 @@ IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<
 	        DefaultWktDecimalPlaces,
 	        exception);
         if (EXCEPTION_OKAY) {
-            const uint16_t w = valuesItems[i].rawWeighting;
+            const uint32_t w = valuesItems[i].rawWeighting;
             if (n > 1 || w != FIFTYONE_DEGREES_WEIGHTED_ITEM_MAX_WEIGHT) {
                 stream << ":";
                 stream << static_cast<double>(w) / static_cast<double>(FIFTYONE_DEGREES_WEIGHTED_ITEM_MAX_WEIGHT);
@@ -459,7 +459,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedUTF8StringList(
         [&values, &stream, &byteVector](
             const StoredBinaryValue * const binaryValue,
             const PropertyValueType storedValueType,
-            const uint16_t rawWeighting,
+            const uint32_t rawWeighting,
             Exception * const exception) {
             WeightedValue<std::vector<uint8_t>> weightedByteVector;
             if (storedValueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING) {
@@ -531,8 +531,11 @@ IpIntelligence::ResultsIpi::getValueAsUTF8String(
         [&itemsCount, &stream, &byteVector](
             const StoredBinaryValue * const binaryValue,
             const PropertyValueType storedValueType,
-            const uint16_t rawWeighting,
+            const uint32_t rawWeighting,
             Exception * const exception) {
+#       	ifdef _MSC_VER
+            UNREFERENCED_PARAMETER(rawWeighting);
+#       	endif
             if (itemsCount != 1) {
                 return;
             }
