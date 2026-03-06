@@ -26,6 +26,10 @@
 
 %rename (WeightedValueSwig) WeightedValue;
 
+// Hide the uint32_t methods from SWIG
+%ignore WeightedValue::getRawWeight;
+%ignore WeightedValue::setRawWeight;
+
 template <class T> class WeightedValue {
 public:
     T getValue();
@@ -34,6 +38,16 @@ public:
     uint32_t getRawWeight();
     void setRawWeight(uint32_t w);
 };
+
+// Add uint16_t wrapper methods
+%extend WeightedValue {
+    uint16_t getShortRawWeight() { 
+        return (uint16_t)(self->getRawWeight() / 65535u); 
+    }
+    void setShortRawWeight(uint16_t w) { 
+        self->setRawWeight(((uint32_t)w) * (uint32_t)65535u); 
+    }
+}
 
 %template(UTF8StringSwig) std::vector<uint8_t>;
 
