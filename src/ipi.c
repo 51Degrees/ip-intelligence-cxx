@@ -621,7 +621,7 @@ static void initGetEvidencePropertyRelated(
 	}
 }
 
-uint32_t initGetEvidenceProperties(
+static uint32_t initGetEvidenceProperties(
 	void* state,
 	fiftyoneDegreesPropertyAvailable* availableProperty,
 	fiftyoneDegreesEvidenceProperties* evidenceProperties) {
