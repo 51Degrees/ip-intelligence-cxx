@@ -709,6 +709,7 @@ static void dumpProperties(
 	char buffer[4096];
 
 	const uint32_t valuesCount = CollectionGetCount(dataSet->values);
+	uint32_t skipped = 0;
 	for (uint32_t i = 0; (i < valuesCount) && EXCEPTION_OKAY; i++) {
 		DataReset(&valueItem.data);
 		const CollectionKey valueKey = {
@@ -723,6 +724,13 @@ static void dumpProperties(
 		if (!(nextValue && EXCEPTION_OKAY)) {
 			return;
 		}
+
+		if (!FIFTYONE_DEGREES_VALUE_IS_MASKED(nextValue)) {
+			skipped++;
+			COLLECTION_RELEASE(dataSet->values, &valueItem);
+			continue;
+		}
+
 		DataReset(&propTypeItem.data);
 		const CollectionKey typeRecordKey = {
 			nextValue->propertyIndex,
@@ -809,7 +817,7 @@ static void dumpProperties(
 				break;
 			}
 		}
-		printf("- [val. %lld - prop. %lld, %s] '%s' (%s, offset = %llu/0x%llx)\n",
+		printf("- [val. %lld - prop. %lld, %s] '%s' (%s, offset = %llu/0x%llx)",
 			(long long)i,
 			(long long)nextValue->propertyIndex,
 			&nextPropName->value,
@@ -817,11 +825,23 @@ static void dumpProperties(
 			propTypeText,
 			(unsigned long long)nextValue->nameOffset,
 			(unsigned long long)nextValue->nameOffset + (unsigned long long)dataSet->header.strings.startPosition);
+		if (FIFTYONE_DEGREES_VALUE_IS_MASKED(nextValue)) {
+			printf(", weight = %.2f%% (%lld)",
+				ValueGetWeight(nextValue) / 655.35f,
+				(long long)ValueGetWeight(nextValue));
+		}
+		printf(", raw UrlOffsetOrWeight = %ld/0x%lx\n",
+			(long)nextValue->urlOffsetOrWeight,
+			(long)nextValue->urlOffsetOrWeight);
 		COLLECTION_RELEASE(dataSet->values, &valueItem);
 		COLLECTION_RELEASE(dataSet->propertyTypes, &propTypeItem);
 		COLLECTION_RELEASE(dataSet->strings, &propNameItem);
 		COLLECTION_RELEASE(dataSet->strings, &propContentItem);
 	}
+	printf("- skipped unweighted: %lld / %lld (found: %lld)\n",
+		(long long)skipped,
+		(long long)valuesCount,
+		(long long)(valuesCount - skipped));
 }
 
 static void initDataSetPost(
