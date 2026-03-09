@@ -37,6 +37,25 @@
 			GTEST_SKIP() << "Skipping temp file test on CI (large temp file)"; \
 		} \
 	} while(0)
+
+// Skip MetaDataReload tests on CI for configs that load all data into memory
+// (HighPerformance, InMemory). The MetaDataReload test spawns a reloader thread
+// that creates a new full dataset copy every 500ms while worker threads iterate
+// metadata. With large enterprise IPI files and in-memory configs, multiple
+// concurrent dataset copies accumulate faster than they are released, causing
+// the CI runner to run out of memory and cancel the entire job.
+// LowMemory and Balanced configs use file-backed access and are not affected.
+#define SKIP_IN_MEMORY_RELOAD_TESTS_ON_CI() \
+	do { \
+		const char* ci = std::getenv("CI"); \
+		if (ci != nullptr && std::string(ci) == "true" && config != nullptr) { \
+			const auto &ipiConfig = config->getConfig(); \
+			if (ipiConfig.b.allInMemory || ipiConfig.strings.loaded) { \
+				GTEST_SKIP() << "Skipping MetaDataReload on CI for in-memory " \
+					"config (concurrent reloads cause OOM)"; \
+			} \
+		} \
+	} while(0)
 #include "../src/EngineIpi.hpp"
 #include "../src/common-cxx/textfile.h"
 
