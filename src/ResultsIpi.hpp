@@ -476,6 +476,10 @@ namespace FiftyoneDegrees {
 				const std::function<void()>& onAfterValues);
 
 			fiftyoneDegreesResultsIpi *results;
+
+			// Reusable buffers
+			static thread_local std::stringstream tlsReusableStream;
+			static thread_local std::vector<uint8_t> tlsReusableByteVector;
 		};
 	}
 }
