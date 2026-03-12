@@ -159,8 +159,7 @@ typedef struct thread_state_t {
  */
 static unsigned long generateHash(unsigned char* value) {
 	unsigned long hashCode = 5381;
-	int i;
-	while ((i = *value++)) {
+	for (int i; (i = *value++) != 0; ) {
 		hashCode = ((hashCode << 5) + hashCode) + i;
 	}
 	return hashCode;
@@ -172,7 +171,7 @@ static unsigned long generateHash(unsigned char* value) {
  */
 static unsigned long getHashCode(ResultsIpi* results) {
 	EXCEPTION_CREATE;
-	const ProfilePercentage* valueItem;
+	const WeightedItem* valueItem;
 	unsigned long hashCode = 0;
 	uint32_t requiredPropertyIndex;
 	const char* valueName;

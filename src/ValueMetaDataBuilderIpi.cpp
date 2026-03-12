@@ -97,6 +97,14 @@ ValueMetaData* ValueMetaDataBuilderIpi::build(
 		exception);
 	EXCEPTION_THROW;
 	if (property != nullptr) {
+		// Get URL only if not weighted (weighted values use urlOffsetOrWeight for weight)
+		string url;
+		if (!ValueIsWeighted(value) && value->urlOffsetOrWeight >= 0) {
+			url = getValue(
+				dataSet->strings,
+				value->urlOffsetOrWeight,
+				FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING); // URL is string
+		}
 		result = new ValueMetaData(
 			ValueMetaDataKey(
 				getValue(
@@ -113,12 +121,7 @@ ValueMetaData* ValueMetaDataBuilderIpi::build(
 				dataSet->strings,
 				value->descriptionOffset,
 				FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING), // description is string
-			value->urlOffset == -1 ?
-			"" :
-			getValue(
-				dataSet->strings,
-				value->urlOffset,
-				FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING)); // URL is string
+			url);
 		COLLECTION_RELEASE(dataSet->properties, &item);
 	}
 	return result;

@@ -69,6 +69,7 @@
 #include "common-cxx/results.h"
 #include "common-cxx/float.h"
 #include "common-cxx/stringBuilder.h"
+#include "common-cxx/weightedItem.h"
 #include "ip-graph-cxx/graph.h"
 
 /** Default value for the cache concurrency used in the default configuration. */
@@ -313,41 +314,16 @@ typedef struct fiftyone_degrees_dataset_ipi_t {
 
 
 /**
- * The structure to hold a pair of result item and its percentage
- * When getting values for a property from the result
- * the values will be a list of potential matching items
- * and their weights to indicate the proportion of this item
- * for the matched IP range in our data. This structure represents
- * an item in the list.
+ * Backward compatibility typedef for ProfilePercentage.
+ * @deprecated Use fiftyoneDegreesWeightedItem instead.
  */
-typedef struct fiftyone_degrees_profile_percentage_t {
-	fiftyoneDegreesCollectionItem item; /**< A collection item which contains the value */
-	uint16_t rawWeighting; /**< The proportion of the item in the returned values (out of 65535) */
-} fiftyoneDegreesProfilePercentage;
+typedef fiftyoneDegreesWeightedItem fiftyoneDegreesProfilePercentage;
 
 /**
- * When the load factor in the list is reached
- * the list will resize to this factor of the current capacity
+ * Backward compatibility typedef for IpiList.
+ * @deprecated Use fiftyoneDegreesWeightedItemList instead.
  */
-#define IPI_LIST_RESIZE_FACTOR 1.5f
-/**
- * Default load factor for IP intelligence list
- */
-#define IPI_LIST_DEFAULT_LOAD_FACTOR 0.7f
-
-/**
- * The structure which represents the list of values
- * returned for the required property from the results.
- * This is a dynamic list which will be resized when
- * the loadFactor is reached.
- */
-typedef struct fiftyone_degrees_ipi_list_t {
-	fiftyoneDegreesProfilePercentage *items; /**< List of items and their percentages */
-	uint32_t capacity; /**< The capacity of the list */
-	uint32_t count; /**< The current number of item in the list*/
-	float loadFactor; /**< The load factor to determine when the list
-							should be resized*/
-} fiftyoneDegreesIpiList;
+typedef fiftyoneDegreesWeightedItemList fiftyoneDegreesIpiList;
 
 /**
  * Singular IP address result returned by a detection process method.

@@ -63,7 +63,7 @@ IpIntelligence::ResultsIpi::~ResultsIpi() {
 void 
 IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<string> &values) {
     EXCEPTION_CREATE;
-	const ProfilePercentage *valuesItems;
+	const WeightedItem *valuesItems;
 
     // We should not have any undefined data type in the data file
     // If there is, the data file is not good to use so terminates.
@@ -108,10 +108,10 @@ IpIntelligence::ResultsIpi::getValuesInternal(int requiredPropertyIndex, vector<
 	        DefaultWktDecimalPlaces,
 	        exception);
         if (EXCEPTION_OKAY) {
-            const uint16_t w = valuesItems[i].rawWeighting;
-            if (n > 1 || w != 65535) {
+            const uint32_t w = valuesItems[i].rawWeighting;
+            if (n > 1 || w != FIFTYONE_DEGREES_WEIGHTED_ITEM_MAX_WEIGHT) {
                 stream << ":";
-                stream << static_cast<float>(w) / 65535.f;
+                stream << static_cast<double>(w) / static_cast<double>(FIFTYONE_DEGREES_WEIGHTED_ITEM_MAX_WEIGHT);
             }
             values.push_back(stream.str());
         } else {
@@ -156,7 +156,7 @@ IpIntelligence::ResultsIpi::getPropertyValueType(
 Common::Value<IpIntelligence::IpAddress>
 IpIntelligence::ResultsIpi::getValueAsIpAddress(int requiredPropertyIndex) {
     EXCEPTION_CREATE;
-    const ProfilePercentage *valuesItems;
+    const WeightedItem *valuesItems;
     Common::Value<IpAddress> result;
     if (!(hasValuesInternal(requiredPropertyIndex)))
     {
@@ -247,7 +247,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedBoolList(
     int requiredPropertyIndex) {
     EXCEPTION_CREATE;
     uint32_t i;
-    const ProfilePercentage *valuesItems;
+    const WeightedItem *valuesItems;
     Common::Value<vector<WeightedValue<bool>>> result;
     vector<WeightedValue<bool>> values;
     if (!(hasValuesInternal(requiredPropertyIndex)))
@@ -339,7 +339,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedStringList(
         [&values, &stream](
             const StoredBinaryValue * const binaryValue,
             const PropertyValueType storedValueType,
-            const uint16_t rawWeighting,
+            const uint32_t rawWeighting,
             Exception * const exception) {
             WeightedValue<string> weightedString;
             // Clear stream before the construction
@@ -370,7 +370,7 @@ void IpIntelligence::ResultsIpi::iterateWeightedValues(
     const std::function<void(
         const StoredBinaryValue *binaryValue,
         PropertyValueType storedValueType,
-        uint16_t rawWeighting,
+        uint32_t rawWeighting,
         Exception *exception)>& onEachValue,
     const std::function<void()>& onAfterValues) {
 
@@ -393,7 +393,7 @@ void IpIntelligence::ResultsIpi::iterateWeightedValues(
             exception);
         EXCEPTION_THROW;
         // Get a pointer to the first value item for the property.
-        const ProfilePercentage * const valuesItems = ResultsIpiGetValues(
+        const WeightedItem * const valuesItems = ResultsIpiGetValues(
             results,
             requiredPropertyIndex,
             exception);
@@ -459,7 +459,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedUTF8StringList(
         [&values, &stream, &byteVector](
             const StoredBinaryValue * const binaryValue,
             const PropertyValueType storedValueType,
-            const uint16_t rawWeighting,
+            const uint32_t rawWeighting,
             Exception * const exception) {
             WeightedValue<std::vector<uint8_t>> weightedByteVector;
             if (storedValueType == FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING) {
@@ -531,8 +531,11 @@ IpIntelligence::ResultsIpi::getValueAsUTF8String(
         [&itemsCount, &stream, &byteVector](
             const StoredBinaryValue * const binaryValue,
             const PropertyValueType storedValueType,
-            const uint16_t rawWeighting,
+            const uint32_t rawWeighting,
             Exception * const exception) {
+#       	ifdef _MSC_VER
+            UNREFERENCED_PARAMETER(rawWeighting);
+#       	endif
             if (itemsCount != 1) {
                 return;
             }
@@ -604,7 +607,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedWKTStringList(
     const byte decimalPlaces) {
     EXCEPTION_CREATE;
     uint32_t i;
-    const ProfilePercentage *valuesItems;
+    const WeightedItem *valuesItems;
     Common::Value<vector<WeightedValue<string>>> result;
     vector<WeightedValue<string>> values;
     if (!(hasValuesInternal(requiredPropertyIndex)))
@@ -687,7 +690,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedIntegerList(
     int requiredPropertyIndex) {
     EXCEPTION_CREATE;
     uint32_t i;
-    const ProfilePercentage *valuesItems;
+    const WeightedItem *valuesItems;
     Common::Value<vector<WeightedValue<int>>> result;
     vector<WeightedValue<int>> values;
     if (!(hasValuesInternal(requiredPropertyIndex)))
@@ -766,7 +769,7 @@ IpIntelligence::ResultsIpi::getValuesAsWeightedDoubleList(
     int requiredPropertyIndex) {
     EXCEPTION_CREATE;
     uint32_t i;
-    const ProfilePercentage *valuesItems;
+    const WeightedItem *valuesItems;
     Common::Value<vector<WeightedValue<double>>> result;
     vector<WeightedValue<double>> values;
     if (!(hasValuesInternal(requiredPropertyIndex)))
