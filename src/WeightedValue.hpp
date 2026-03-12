@@ -89,14 +89,14 @@ namespace FiftyoneDegrees {
 				};
 
 				/**
-				 * Get the raw weight (1 ~ 65535)
+				 * Get the raw weight (1 ~ 65535^2)
 				 * @return the raw weight
 				 */
 				[[nodiscard]]
 				uint32_t getRawWeight() const { return rawWeight; };
 
 				/**
-				 * Set the raw weight (1 ~ 65535)
+				 * Set the raw weight (1 ~ 65535^2)
 				 * @param w the raw weight to set
 				 */
 				void setRawWeight(uint32_t w) { rawWeight = w; };
@@ -107,7 +107,7 @@ namespace FiftyoneDegrees {
 			private:
 				/** The value */
 				T value;
-				/** The weight of the value, (1 ~ 65535) */
+				/** The weight of the value, (1 ~ 65535^2) */
 				uint32_t rawWeight;
 		};
 	}
