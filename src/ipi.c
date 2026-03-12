@@ -1741,7 +1741,7 @@ static bool addWeightedValue(void* state, Item* item) {
 	const stateWithWeighting* weightingState = (stateWithWeighting*)((stateWithException*)state)->state;
 	ResultsIpi* results =
 		(ResultsIpi*)weightingState->subState;
-	Exception* exception = ((stateWithException*)state)->exception;
+	Exception* const exception = ((stateWithException*)state)->exception;
 	const DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 	const Value* value = (Value*)item->data.ptr;
 	if (value != NULL) {
@@ -1749,7 +1749,12 @@ static bool addWeightedValue(void* state, Item* item) {
 			WeightedItemListExtend(
 				&results->values,
 				results->values.capacity
-				* FIFTYONE_DEGREES_WEIGHTED_ITEM_LIST_RESIZE_FACTOR);
+				* FIFTYONE_DEGREES_WEIGHTED_ITEM_LIST_RESIZE_FACTOR,
+				exception);
+			if (EXCEPTION_FAILED) {
+				COLLECTION_RELEASE(dataSet->values, item);
+				return false;
+			}
 		}
 		PropertyValueType const storedValueType = PropertyGetStoredTypeByIndex(
 			dataSet->propertyTypes,
@@ -1767,7 +1772,7 @@ static bool addWeightedValue(void* state, Item* item) {
 				exception) != NULL && EXCEPTION_OKAY) {
 				weightedItem.item = valueItem;
 				weightedItem.rawWeighting = ((uint32_t)weightingState->rawWeighting)*(uint32_t)valueWeight;
-				WeightedItemListAdd(&results->values, &weightedItem);
+				WeightedItemListAdd(&results->values, &weightedItem, exception);
 			}
 		}
 	}
