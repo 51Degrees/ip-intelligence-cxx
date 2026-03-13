@@ -1,5 +1,5 @@
 param (
-    [Parameter(Mandatory)][string]$IpIntelligenceUrl
+    [string]$IpIntelligenceUrl
 )
 $ErrorActionPreference = "Stop"
 
