@@ -69,7 +69,12 @@ ComponentMetaData* ComponentMetaDataBuilderIpi::build(
 					dataSet->strings,
 					component->nameOffset,
 					FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING), // name is string
+#ifdef FIFTYONE_DEGREES_REDUCED_FILE
+				// TODO is this needed anywhere?
+				0);
+#else
 				profile->profileId);
+#endif
 			COLLECTION_RELEASE(dataSet->profiles, &item);
 		}
 	}

@@ -51,7 +51,8 @@ namespace FiftyoneDegrees {
 			 */
 			static ProfileMetaData* build(
 				fiftyoneDegreesDataSetIpi *dataSet,
-				const fiftyoneDegreesProfile *profile);
+				const fiftyoneDegreesProfile *profile,
+				const uint32_t profileIndex);
 		};
 	}
 }

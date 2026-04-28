@@ -64,14 +64,25 @@ ProfileMetaData* ProfileMetaDataCollectionIpi::getByIndex(
 		exception);
 	EXCEPTION_THROW
 	if (profile != nullptr) {
-		result = ProfileMetaDataBuilderIpi::build(dataSet, profile);
+		result = ProfileMetaDataBuilderIpi::build(
+			dataSet,
+			profile,
+			index);
 		COLLECTION_RELEASE(item.collection, &item);
 	}
 	return result;
 }
 
 ProfileMetaData* ProfileMetaDataCollectionIpi::getByKey(uint32_t key) const {
+#ifdef _MSC_VER
+	UNREFERENCED_PARAMETER(key);
+#endif
 	EXCEPTION_CREATE;
+	EXCEPTION_SET(NOT_IMPLEMENTED);
+	EXCEPTION_THROW;
+	return nullptr;
+	// TODO does this need implementing?
+	/*EXCEPTION_CREATE;
 	Item item;
 	ProfileMetaData *result = nullptr;
 	Profile *profile;
@@ -87,7 +98,7 @@ ProfileMetaData* ProfileMetaDataCollectionIpi::getByKey(uint32_t key) const {
 		result = ProfileMetaDataBuilderIpi::build(dataSet, profile);
 		COLLECTION_RELEASE(item.collection, &item);
 	}
-	return result;
+	return result;*/
 }
 
 uint32_t ProfileMetaDataCollectionIpi::getSize() const {
