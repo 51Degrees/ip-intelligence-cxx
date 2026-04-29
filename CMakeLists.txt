@@ -10,6 +10,7 @@ set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 include(CMakeDependentOption)
 cmake_dependent_option(FIFTYONE_COMMON_CXX_BUILD_TESTING "" OFF "BUILD_TESTING" OFF)
 option(LargeDataFileSupport "LargeDataFileSupport" ON)
+option(ReducedFile "ReducedFile" ON)
 
 include(${CMAKE_CURRENT_LIST_DIR}/src/common-cxx/CMakeLists.txt NO_POLICY_SCOPE)
 
