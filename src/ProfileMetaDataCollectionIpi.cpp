@@ -46,59 +46,38 @@ ProfileMetaDataCollectionIpi::~ProfileMetaDataCollectionIpi() {
 ProfileMetaData* ProfileMetaDataCollectionIpi::getByIndex(
 	uint32_t index) const {
 	EXCEPTION_CREATE;
+	auto const profileOffsetValue = CollectionGetInteger32(
+		profileOffsets, index, exception);
+	EXCEPTION_THROW;
+	return getByKey(profileOffsetValue + 1);
+}
+
+ProfileMetaData* ProfileMetaDataCollectionIpi::getByKey(uint32_t key) const {
+	EXCEPTION_CREATE;
 	Item item;
 	ProfileMetaData *result = nullptr;
 	const Profile *profile;
 	DataReset(&item.data);
-	auto const profileOffsetValue = CollectionGetInteger32(
-		profileOffsets, index, exception);
-	EXCEPTION_THROW
+	// We use the offset as the unique key, as the profile is not stored, and
+	// is not unique accross datasets.
 	const CollectionKey profileKey = {
-		(uint32_t)profileOffsetValue,
+		(uint32_t)key - 1,
 		CollectionKeyType_Profile,
 	};
-	profile = (const Profile *)profiles->get(
+	profile = (const Profile*)profiles->get(
 		profiles,
 		&profileKey,
 		&item,
 		exception);
-	EXCEPTION_THROW
+	EXCEPTION_THROW;
 	if (profile != nullptr) {
 		result = ProfileMetaDataBuilderIpi::build(
 			dataSet,
 			profile,
-			index);
+			key);
 		COLLECTION_RELEASE(item.collection, &item);
 	}
 	return result;
-}
-
-ProfileMetaData* ProfileMetaDataCollectionIpi::getByKey(uint32_t key) const {
-#ifdef _MSC_VER
-	UNREFERENCED_PARAMETER(key);
-#endif
-	EXCEPTION_CREATE;
-	EXCEPTION_SET(NOT_IMPLEMENTED);
-	EXCEPTION_THROW;
-	return nullptr;
-	// TODO does this need implementing?
-	/*EXCEPTION_CREATE;
-	Item item;
-	ProfileMetaData *result = nullptr;
-	Profile *profile;
-	DataReset(&item.data);
-	profile = ProfileGetByProfileIdIndirect(
-		profileOffsets,
-		profiles,
-		key,
-		&item,
-		exception);
-	EXCEPTION_THROW;
-	if (profile != nullptr) {
-		result = ProfileMetaDataBuilderIpi::build(dataSet, profile);
-		COLLECTION_RELEASE(item.collection, &item);
-	}
-	return result;*/
 }
 
 uint32_t ProfileMetaDataCollectionIpi::getSize() const {

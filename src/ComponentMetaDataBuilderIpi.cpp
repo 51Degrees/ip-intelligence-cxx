@@ -32,51 +32,12 @@ using namespace FiftyoneDegrees::IpIntelligence;
 ComponentMetaData* ComponentMetaDataBuilderIpi::build(
 	fiftyoneDegreesDataSetIpi *dataSet,
 	fiftyoneDegreesComponent *component) {
-	EXCEPTION_CREATE;
-	ComponentMetaData *result = nullptr;
-	Item item;
-	Profile *profile;
-	DataReset(&item.data);
-
-	if (component->defaultProfileOffset == -1) {
-		// The component is a dynamic component
-		// so create it with profileId = 0
-		// This can then be check if a component
-		// is dynamic through metadata class
-		result = new ComponentMetaData(
-			component->componentId,
-			getValue(
-				dataSet->strings,
-				component->nameOffset,
-				FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING), // name is string
-			0);
-	}
-	else {
-		const CollectionKey profileKey = {
-			(uint32_t)component->defaultProfileOffset,
-			CollectionKeyType_Profile,
-		};
-		profile = (Profile*)dataSet->profiles->get(
-			dataSet->profiles, 
-			&profileKey,
-			&item,
-			exception);
-		EXCEPTION_THROW;
-		if (profile != nullptr) {
-			result = new ComponentMetaData(
-				component->componentId,
-				getValue(
-					dataSet->strings,
-					component->nameOffset,
-					FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING), // name is string
-#ifdef FIFTYONE_DEGREES_REDUCED_FILE
-				// TODO is this needed anywhere?
-				0);
-#else
-				profile->profileId);
-#endif
-			COLLECTION_RELEASE(dataSet->profiles, &item);
-		}
-	}
-	return result;
+	return new ComponentMetaData(
+		component->componentId,
+		getValue(
+			dataSet->strings,
+			component->nameOffset,
+			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING), // name is string
+		// TODO explain
+		component->defaultProfileOffset + 1);
 }

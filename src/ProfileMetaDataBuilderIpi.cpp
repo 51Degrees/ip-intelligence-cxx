@@ -30,10 +30,10 @@ using namespace FiftyoneDegrees::IpIntelligence;
 ProfileMetaData* ProfileMetaDataBuilderIpi::build(
 	fiftyoneDegreesDataSetIpi *dataSet,
 	const fiftyoneDegreesProfile *profile,
-	const uint32_t profileIndex) {
+	const uint32_t profileId) {
 	::byte componentId = ((Component*)dataSet->componentsList
 		.items[profile->componentIndex].data.ptr)->componentId;
 	return new ProfileMetaData(
-		profileIndex,
+		profileId,
 		componentId);
 }

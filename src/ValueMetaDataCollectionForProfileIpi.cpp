@@ -28,11 +28,7 @@ using namespace FiftyoneDegrees::IpIntelligence;
 struct FilterResult {
 	DataSetIpi *dataSet = nullptr;
 	string valueName;
-#ifdef FIFTYONE_DEGREES_REDUCED_FILE
 	Value value { 0, 0, 0 };
-#else
-	Value value { 0, 0, 0, 0 };
-#endif
 	bool found = false;
 };
 
