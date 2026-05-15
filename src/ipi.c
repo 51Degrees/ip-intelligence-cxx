@@ -2102,7 +2102,26 @@ bool fiftyoneDegreesResultsIpiGetHasValues(
 			return true;
 		}
 	}
+	const uint32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
+		dataSet->b.b.available,
+		requiredPropertyIndex);
 
+	if (propertyIndex >= 0) {
+		Property *property = PropertyGet(
+			dataSet->properties,
+			propertyIndex,
+			&results->propertyItem,
+			exception);
+		if (property != NULL && EXCEPTION_OKAY) {
+			if (property->defaultValueIndex != UINT32_MAX &&
+				property->isMandatory) {
+				// Although there is no values, the property is mandatory,
+				// and there is a defualt value which will be used. So
+				// return true.
+				return true;
+			}
+		}
+	}
 	return false;
 }
 
