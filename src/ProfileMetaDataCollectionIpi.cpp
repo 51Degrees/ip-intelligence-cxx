@@ -49,7 +49,7 @@ ProfileMetaData* ProfileMetaDataCollectionIpi::getByIndex(
 	auto const profileOffsetValue = CollectionGetInteger32(
 		profileOffsets, index, exception);
 	EXCEPTION_THROW;
-	return getByKey(profileOffsetValue + 1);
+	return getByKey(profileOffsetValue);
 }
 
 ProfileMetaData* ProfileMetaDataCollectionIpi::getByKey(uint32_t key) const {
@@ -58,24 +58,26 @@ ProfileMetaData* ProfileMetaDataCollectionIpi::getByKey(uint32_t key) const {
 	ProfileMetaData *result = nullptr;
 	const Profile *profile;
 	DataReset(&item.data);
-	// We use the offset as the unique key, as the profile is not stored, and
-	// is not unique accross datasets.
-	const CollectionKey profileKey = {
-		(uint32_t)key - 1,
-		CollectionKeyType_Profile,
-	};
-	profile = (const Profile*)profiles->get(
-		profiles,
-		&profileKey,
-		&item,
-		exception);
-	EXCEPTION_THROW;
-	if (profile != nullptr) {
-		result = ProfileMetaDataBuilderIpi::build(
-			dataSet,
-			profile,
-			key);
-		COLLECTION_RELEASE(item.collection, &item);
+	if (key != UINT32_MAX) {
+		// We use the offset as the unique key, as the profile is not stored, and
+		// is not unique accross datasets.
+		const CollectionKey profileKey = {
+			(uint32_t)key,
+			CollectionKeyType_Profile,
+		};
+		profile = (const Profile*)profiles->get(
+			profiles,
+			&profileKey,
+			&item,
+			exception);
+		EXCEPTION_THROW;
+		if (profile != nullptr) {
+			result = ProfileMetaDataBuilderIpi::build(
+				dataSet,
+				profile,
+				key);
+			COLLECTION_RELEASE(item.collection, &item);
+		}
 	}
 	return result;
 }

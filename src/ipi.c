@@ -1631,11 +1631,9 @@ static bool addWeightedValue(
 }
 
 static bool addWeightedValueWithState(void* state, Item* item) {
-	/**
-	 * The results values are a list of collection items and their weighting.
-	 * The weighting cannot be passed along with Item as this is the profile
-	 * standard in common-cxx. Thus the weighting is passed along with the state.
-	 */
+	// The results values are a list of collection items and their weighting.
+	// The weighting cannot be passed along with Item as this is the profile
+	// standard in common-cxx. Thus the weighting is passed along with the state.
 	const stateWithWeighting* weightingState = (stateWithWeighting*)((stateWithException*)state)->state;
 	ResultsIpi* results =
 		(ResultsIpi*)weightingState->subState;
@@ -1800,6 +1798,11 @@ static uint32_t getProfileOffset(
 	return result;
 }
 
+/**
+ * Achieves the same as getValuesFromResult, but gets the value from the
+ * default value in the property. This is used when there is no value in
+ * the profile, but the property is mandatory.
+ */
 static WeightedItem* getDefaultValue(
 	ResultsIpi* results,
 	Property* property,
@@ -1929,6 +1932,9 @@ const fiftyoneDegreesWeightedItem* fiftyoneDegreesResultsIpiGetValues(
 			if (results->values.count == 0 &&
 				property->defaultValueIndex != UINT32_MAX &&
 				property->isMandatory) {
+				// There are no values, but the default value from the property
+				// should be used, as there is a default value, and the property
+				// is marked mandatory.
 				firstValue = getDefaultValue(
 					results,
 					property,

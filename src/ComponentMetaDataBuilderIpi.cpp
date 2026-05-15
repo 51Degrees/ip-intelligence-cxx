@@ -38,6 +38,6 @@ ComponentMetaData* ComponentMetaDataBuilderIpi::build(
 			dataSet->strings,
 			component->nameOffset,
 			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING), // name is string
-		// TODO explain
-		component->defaultProfileOffset + 1);
+		// The key used for profiles is the offset, as there is no profile id.
+		component->defaultProfileOffset);
 }

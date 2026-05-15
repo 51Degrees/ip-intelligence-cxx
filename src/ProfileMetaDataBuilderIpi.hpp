@@ -48,11 +48,13 @@ namespace FiftyoneDegrees {
 			 * component
 			 * @param profile pointer to the underlying profile to create
 			 * the meta data from
+			 * @param profileOffset the offset of the profile in the profiles
+			 * collection. This acts as the unique key
 			 */
 			static ProfileMetaData* build(
 				fiftyoneDegreesDataSetIpi *dataSet,
 				const fiftyoneDegreesProfile *profile,
-				const uint32_t profileIndex);
+				const uint32_t profileOffset);
 		};
 	}
 }
