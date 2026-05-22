@@ -2122,7 +2122,7 @@ bool fiftyoneDegreesResultsIpiGetHasValues(
 			if (property->defaultValueIndex != UINT32_MAX &&
 				property->isMandatory) {
 				// Although there is no values, the property is mandatory,
-				// and there is a defualt value which will be used. So
+				// and there is a default value which will be used. So
 				// return true.
 				return true;
 			}
