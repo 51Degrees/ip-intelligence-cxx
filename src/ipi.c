@@ -392,6 +392,7 @@ static void resetDataSet(DataSetIpi* dataSet) {
 	dataSet->propertyTypes = NULL;
 	dataSet->strings = NULL;
 	dataSet->values = NULL;
+	dataSet->graphsArray = NULL;
 }
 
 static void freeDataSet(void* dataSetPtr) {
@@ -401,7 +402,9 @@ static void freeDataSet(void* dataSetPtr) {
 	DataSetFree(&dataSet->b.b);
 
 	// Free the resources associated with the graphs.
-	fiftyoneDegreesIpiGraphFree(dataSet->graphsArray);
+	if (dataSet->graphsArray) {
+		fiftyoneDegreesIpiGraphFree(dataSet->graphsArray);
+	}
 
 	// Free the memory used for the lists and collections.
 	ListFree(&dataSet->componentsList);
