@@ -120,6 +120,10 @@ protected:
 	 */
 	bool writeBufferToTempFile(char* filePath, size_t filePathSize) {
 #ifdef _WIN32
+#	ifdef _MSC_VER
+    	UNREFERENCED_PARAMETER(filePath);
+    	UNREFERENCED_PARAMETER(filePathSize);
+#	endif
 		// Windows: use tmpnam_s or GetTempFileName
 		char tempDir[MAX_PATH];
 		if (GetTempPathA(MAX_PATH, tempDir) == 0) {
