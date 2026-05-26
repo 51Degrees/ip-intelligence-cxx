@@ -140,7 +140,7 @@ static const uint16_t FULL_RAW_WEIGHTING = 0xFFFFU;
 
 /* The expected version of the data file */
 #define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MAJOR 4
-#define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MINOR 4
+#define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MINOR 5
 
 #undef FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY
 #define FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY true
@@ -392,6 +392,7 @@ static void resetDataSet(DataSetIpi* dataSet) {
 	dataSet->propertyTypes = NULL;
 	dataSet->strings = NULL;
 	dataSet->values = NULL;
+	dataSet->graphsArray = NULL;
 }
 
 static void freeDataSet(void* dataSetPtr) {
@@ -401,7 +402,9 @@ static void freeDataSet(void* dataSetPtr) {
 	DataSetFree(&dataSet->b.b);
 
 	// Free the resources associated with the graphs.
-	fiftyoneDegreesIpiGraphFree(dataSet->graphsArray);
+	if (dataSet->graphsArray) {
+		fiftyoneDegreesIpiGraphFree(dataSet->graphsArray);
+	}
 
 	// Free the memory used for the lists and collections.
 	ListFree(&dataSet->componentsList);
@@ -1585,18 +1588,13 @@ void fiftyoneDegreesResultsIpiFromEvidence(
 	}
 }
 
-static bool addWeightedValue(void* state, Item* item) {
+static bool addWeightedValue(
+	ResultsIpi* results,
+	Item* item,
+	uint16_t rawWeighting,
+	Exception* exception) {
 	Item valueItem;
 	WeightedItem weightedItem;
-	/**
-	 * The results values are a list of collection items and their weighting.
-	 * The weighting cannot be passed along with Item as this is the profile
-	 * standard in common-cxx. Thus the weighting is passed along with the state.
-	 */
-	const stateWithWeighting* weightingState = (stateWithWeighting*)((stateWithException*)state)->state;
-	ResultsIpi* results =
-		(ResultsIpi*)weightingState->subState;
-	Exception* const exception = ((stateWithException*)state)->exception;
 	const DataSetIpi* dataSet = (DataSetIpi*)results->b.dataSet;
 	const Value* value = (Value*)item->data.ptr;
 	if (value != NULL) {
@@ -1626,13 +1624,29 @@ static bool addWeightedValue(void* state, Item* item) {
 				&valueItem,
 				exception) != NULL && EXCEPTION_OKAY) {
 				weightedItem.item = valueItem;
-				weightedItem.rawWeighting = ((uint32_t)weightingState->rawWeighting)*(uint32_t)valueWeight;
+				weightedItem.rawWeighting = ((uint32_t)rawWeighting) * (uint32_t)valueWeight;
 				WeightedItemListAdd(&results->values, &weightedItem, exception);
 			}
 		}
 	}
 	COLLECTION_RELEASE(dataSet->values, item);
 	return EXCEPTION_OKAY;
+}
+
+static bool addWeightedValueWithState(void* state, Item* item) {
+	// The results values are a list of collection items and their weighting.
+	// The weighting cannot be passed along with Item as this is the profile
+	// standard in common-cxx. Thus the weighting is passed along with the state.
+	const stateWithWeighting* weightingState = (stateWithWeighting*)((stateWithException*)state)->state;
+	ResultsIpi* results =
+		(ResultsIpi*)weightingState->subState;
+	Exception* const exception = ((stateWithException*)state)->exception;
+
+	return addWeightedValue(
+		results,
+		item,
+		weightingState->rawWeighting,
+		exception);
 }
 
 static uint32_t addValuesFromProfile(
@@ -1661,7 +1675,7 @@ static uint32_t addValuesFromProfile(
 		profile,
 		property,
 		&state,
-		addWeightedValue,
+		addWeightedValueWithState,
 		exception);
 	EXCEPTION_THROW;
 
@@ -1787,6 +1801,44 @@ static uint32_t getProfileOffset(
 	return result;
 }
 
+/**
+ * Achieves the same as getValuesFromResult, but gets the value from the
+ * default value in the property. This is used when there is no value in
+ * the profile, but the property is mandatory.
+ */
+static WeightedItem* getDefaultValue(
+	ResultsIpi* results,
+	Property* property,
+	Exception* exception) {
+	const DataSetIpi* const dataSet = (DataSetIpi*)results->b.dataSet;
+	bool added = false;
+	Item valueItem;
+
+	DataReset(&valueItem.data);
+
+	// Get the value from the value index and call the callback. Do not 
+	// free the item as the calling function is responsible for this.
+	const CollectionKey valueKey = {
+		property->defaultValueIndex,
+		CollectionKeyType_Value,
+	};
+	if (dataSet->values->get(
+		dataSet->values,
+		&valueKey,
+		&valueItem,
+		exception) != NULL &&
+		EXCEPTION_OKAY) {
+		added = addWeightedValue(
+			results,
+			&valueItem,
+			FULL_RAW_WEIGHTING,
+			exception);
+		COLLECTION_RELEASE(dataSet->values, &valueItem);
+	}
+	return added ? results->values.items : NULL;
+}
+
+
 static uint32_t addValuesFromResult(
 	ResultsIpi* results,
 	ResultIpi* result,
@@ -1876,6 +1928,18 @@ const fiftyoneDegreesWeightedItem* fiftyoneDegreesResultsIpiGetValues(
 				firstValue = getValuesFromResult(
 					results,
 					&results->items[i],
+					property,
+					exception);
+			}
+
+			if (results->values.count == 0 &&
+				property->defaultValueIndex != UINT32_MAX &&
+				property->isMandatory) {
+				// There are no values, but the default value from the property
+				// should be used, as there is a default value, and the property
+				// is marked mandatory.
+				firstValue = getDefaultValue(
+					results,
 					property,
 					exception);
 			}
@@ -2047,7 +2111,26 @@ bool fiftyoneDegreesResultsIpiGetHasValues(
 			return true;
 		}
 	}
+	const uint32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
+		dataSet->b.b.available,
+		requiredPropertyIndex);
 
+	if (propertyIndex >= 0) {
+		Property *property = PropertyGet(
+			dataSet->properties,
+			propertyIndex,
+			&results->propertyItem,
+			exception);
+		if (property != NULL && EXCEPTION_OKAY) {
+			if (property->defaultValueIndex != UINT32_MAX &&
+				property->isMandatory) {
+				// Although there is no values, the property is mandatory,
+				// and there is a default value which will be used. So
+				// return true.
+				return true;
+			}
+		}
+	}
 	return false;
 }
 
@@ -2179,10 +2262,10 @@ static void fiftyoneDegreesResultsIpiGetValuesStringInternal(
 			CollectionKeyType_Property,
 		};
 		property = (Property*)dataSet->properties->get(
-				dataSet->properties,
-				&propertyKey,
-				&propertyItem,
-				exception);
+			dataSet->properties,
+			&propertyKey,
+			&propertyItem,
+			exception);
 		if (property != NULL && EXCEPTION_OKAY) {
 			if (requiredPropertyIndex >= 0) {
 				weightedItem = fiftyoneDegreesResultsIpiGetValues(
@@ -2191,13 +2274,13 @@ static void fiftyoneDegreesResultsIpiGetValuesStringInternal(
 					exception);
 				if (weightedItem != NULL && EXCEPTION_OKAY) {
 					pushValues(
-							weightedItem,
-							results->values.count,
-							builder,
-							separator,
-							storedValueType,
-							DefaultWktDecimalPlaces,
-							exception);
+						weightedItem,
+						results->values.count,
+						builder,
+						separator,
+						storedValueType,
+						DefaultWktDecimalPlaces,
+						exception);
 				}
 			}
 			COLLECTION_RELEASE(dataSet->properties, &propertyItem);

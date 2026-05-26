@@ -29,10 +29,13 @@ using namespace FiftyoneDegrees::IpIntelligence;
 
 ProfileMetaData* ProfileMetaDataBuilderIpi::build(
 	fiftyoneDegreesDataSetIpi *dataSet,
-	const fiftyoneDegreesProfile *profile) {
+	const fiftyoneDegreesProfile *profile,
+	const uint32_t profileOffset) {
 	::byte componentId = ((Component*)dataSet->componentsList
 		.items[profile->componentIndex].data.ptr)->componentId;
 	return new ProfileMetaData(
-		profile->profileId,
+		// Profile offset is used as the unique key, as the id is not written
+		// to the data file, and the id is not unique between data files either.
+		profileOffset,
 		componentId);
 }

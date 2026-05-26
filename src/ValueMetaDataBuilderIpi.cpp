@@ -115,12 +115,7 @@ ValueMetaData* ValueMetaDataBuilderIpi::build(
 					dataSet->strings,
 					value->nameOffset,
 					storedValueType)),
-			value->descriptionOffset == -1 ?
-			"" :
-			getValue(
-				dataSet->strings,
-				value->descriptionOffset,
-				FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING), // description is string
+			"",
 			url);
 		COLLECTION_RELEASE(dataSet->properties, &item);
 	}

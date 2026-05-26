@@ -28,7 +28,7 @@ using namespace FiftyoneDegrees::IpIntelligence;
 struct FilterResult {
 	DataSetIpi *dataSet = nullptr;
 	string valueName;
-	Value value {0, 0, 0, 0};
+	Value value { 0, 0, 0 };
 	bool found = false;
 };
 
@@ -37,10 +37,10 @@ ValueMetaDataCollectionForProfileIpi::ValueMetaDataCollectionForProfileIpi(
 	ProfileMetaData *profile) : ValueMetaDataCollectionBaseIpi(manager) {
 	EXCEPTION_CREATE;
 	DataReset(&profileItem.data);
-	ProfileGetByProfileIdIndirect(
+	ProfileGetByIndex(
 		dataSet->profileOffsets,
 		dataSet->profiles,
-		profile->getProfileId(),
+		profile->getKey(),
 		&profileItem,
 		exception);
 	EXCEPTION_THROW;
