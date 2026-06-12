@@ -23,6 +23,7 @@
 #include <string>
 #include <iostream>
 #include <thread>
+#include <cstdlib>
 #include "../../../src/EngineIpi.hpp"
 #include "ExampleBase.hpp"
 
@@ -181,8 +182,19 @@ int main(int argc, char* argv[]) {
 	fiftyoneDegreesStatusCode status = FIFTYONE_DEGREES_STATUS_SUCCESS;
 	char dataFilePath[FIFTYONE_DEGREES_FILE_MAX_PATH];
 	char ipAddressFilePath[FIFTYONE_DEGREES_FILE_MAX_PATH];
+	// An explicit data file path can be supplied in the 51DEGREES_IPI_PATH
+	// environment variable, otherwise the parent folder structure is searched.
+	const char* envDataFilePath = getenv("51DEGREES_IPI_PATH");
 	if (argc > 1) {
 		strcpy(dataFilePath, argv[1]);
+	}
+	else if (envDataFilePath != NULL && envDataFilePath[0] != '\0') {
+		if (strlen(envDataFilePath) >= sizeof(dataFilePath)) {
+			status = FIFTYONE_DEGREES_STATUS_INSUFFICIENT_MEMORY;
+		}
+		else {
+			strcpy(dataFilePath, envDataFilePath);
+		}
 	}
 	else {
 		status = fiftyoneDegreesFileGetPath(

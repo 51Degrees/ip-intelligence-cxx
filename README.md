@@ -14,6 +14,14 @@ In order to perform IP intelligence, you will need to obtain a 51Degrees data fi
 
 By default, the downloaded data file has to be placed in the 'ip-intelligence-data' sub-folder of this repo for the tests and examples to work.
 
+The examples resolve the location of the data file in the following order:
+
+1. A path supplied as a command line argument to the example.
+2. The `51DEGREES_IPI_PATH` environment variable containing an explicit path to the data file.
+3. A search of the parent folder structure for the expected file name in the 'ip-intelligence-data' folder, where the free 'Lite' data file is expected to be placed.
+
+Note that on Linux shells the `51DEGREES_IPI_PATH` variable name starts with a digit, so it must be set with the `env` command, for example `env 51DEGREES_IPI_PATH=/path/to/file.ipi ./GettingStarted`, rather than a plain `export`.
+
 ### Fetching sub-modules
 
 This repository has sub-modules that must be fetched.

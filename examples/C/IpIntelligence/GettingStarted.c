@@ -144,6 +144,7 @@ Areas: "POLYGON EMPTY":1
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "../../../src/ipi.h"
 #include "../../../src/fiftyone.h"
 #include "../../../src/ipi_weighted_results.h"
@@ -351,8 +352,19 @@ int main(int argc, char* argv[]) {
 	// ConfigIpi config = IpiLowMemoryConfig;
 	// ConfigIpi config = IpiBalancedConfig;
 	char dataFilePath[FILE_MAX_PATH];
+	// An explicit data file path can be supplied in the 51DEGREES_IPI_PATH
+	// environment variable, otherwise the parent folder structure is searched.
+	const char* envDataFilePath = getenv("51DEGREES_IPI_PATH");
 	if (argc > 1) {
 		strcpy(dataFilePath, argv[1]);
+	}
+	else if (envDataFilePath != NULL && envDataFilePath[0] != '\0') {
+		if (strlen(envDataFilePath) >= sizeof(dataFilePath)) {
+			status = INSUFFICIENT_MEMORY;
+		}
+		else {
+			strcpy(dataFilePath, envDataFilePath);
+		}
 	}
 	else {
 		status = FileGetPath(
