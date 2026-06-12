@@ -1,8 +1,8 @@
 # 51Degrees Ip Intelligence API
 
-![51Degrees](https://51degrees.com/img/logo.png?utm_source=github&utm_medium=repository&utm_campaign=c_open_source&utm_content=readme_main "Data rewards the curious") **IP Intelligence in C**
+![51Degrees](https://51degrees.com/img/logo.png?utm_source=github&utm_medium=readme&utm_campaign=ip-intelligence-cxx&utm_content=readme.md&utm_term=51degrees-ip-intelligence-api "Data rewards the curious") **IP Intelligence in C**
 
-[C Documentation](https://51degrees.com/ip-intelligence-cxx/4.1/modules.html) and the [C++ Documentation](https://51degrees.com/ip-intelligence-cxx/4.1/namespaces.html).
+[C Documentation](https://51degrees.com/ip-intelligence-cxx/4.1/modules.html?utm_source=github&utm_medium=readme&utm_campaign=ip-intelligence-cxx&utm_content=readme.md&utm_term=51degrees-ip-intelligence-api) and the [C++ Documentation](https://51degrees.com/ip-intelligence-cxx/4.1/namespaces.html?utm_source=github&utm_medium=readme&utm_campaign=ip-intelligence-cxx&utm_content=readme.md&utm_term=51degrees-ip-intelligence-api).
 
 The 51Degrees IP intelligence API is built on the 51Degrees [common API](https://github.com/51Degrees/common-cxx).
 
@@ -10,7 +10,7 @@ The 51Degrees IP intelligence API is built on the 51Degrees [common API](https:/
 
 ### Data file
 
-In order to perform IP intelligence, you will need to obtain a 51Degrees data file.  Lite data file can be obtained for free as specified in the [`ip-intelligence-data/README`](https://github.com/51Degrees/ip-intelligence-data/). To obtain an Enterprise data file please [contact us](https://51degrees.com/contact-us).
+In order to perform IP intelligence, you will need to obtain a 51Degrees data file.  Lite data file can be obtained for free as specified in the [`ip-intelligence-data/README`](https://github.com/51Degrees/ip-intelligence-data/). To obtain an Enterprise data file please [contact us](https://51degrees.com/contact-us?utm_source=github&utm_medium=readme&utm_campaign=ip-intelligence-cxx&utm_content=readme.md&utm_term=data-file).
 
 By default, the downloaded data file has to be placed in the 'ip-intelligence-data' sub-folder of this repo for the tests and examples to work.
 
