@@ -121,6 +121,8 @@ Expected content of output file:
 #endif
 #endif
 
+#include <stdlib.h>
+
 #include "../../Base/ExampleBase.h"
 #include "../../../src/ipi.h"
 #include "../../../src/common-cxx/textfile.h"
@@ -335,8 +337,19 @@ int main(int argc, char* argv[]) {
 	char dataFilePath[FILE_MAX_PATH];
 	char ipAddressFilePath[FILE_MAX_PATH];
 	char outputFilePath[FILE_MAX_PATH];
+	// An explicit data file path can be supplied in the 51DEGREES_IPI_PATH
+	// environment variable, otherwise the parent folder structure is searched.
+	const char* envDataFilePath = getenv("51DEGREES_IPI_PATH");
 	if (argc > 1) {
 		strcpy(dataFilePath, argv[1]);
+	}
+	else if (envDataFilePath != NULL && envDataFilePath[0] != '\0') {
+		if (strlen(envDataFilePath) >= sizeof(dataFilePath)) {
+			status = INSUFFICIENT_MEMORY;
+		}
+		else {
+			strcpy(dataFilePath, envDataFilePath);
+		}
 	}
 	else {
 		status = FileGetPath(

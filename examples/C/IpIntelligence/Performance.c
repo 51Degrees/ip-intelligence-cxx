@@ -21,6 +21,7 @@
  * ********************************************************************* */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
  // Include ExmapleBase.h before others as it includes Windows 'crtdbg.h'
@@ -823,6 +824,7 @@ int main(int argc, char* argv[]) {
 	uint16_t numberOfThreads = DEFAULT_NUMBER_OF_THREADS;
 	int iterations = DEFAULT_ITERATIONS;
 	char *outFile = NULL;
+	const char *envDataFilePath = getenv("51DEGREES_IPI_PATH");
 	dataFilePath[0] = '\0';
 	evidenceFilePath[0] = '\0';
 
@@ -870,6 +872,21 @@ int main(int argc, char* argv[]) {
 		else {
 			// Do nothing, this is a value.
 		}
+	}
+
+	// An explicit data file path can be supplied in the 51DEGREES_IPI_PATH
+	// environment variable, otherwise the parent folder structure is searched.
+	if (strlen(dataFilePath) == 0 &&
+		envDataFilePath != NULL && envDataFilePath[0] != '\0') {
+		if (strlen(envDataFilePath) >= sizeof(dataFilePath)) {
+			printf("The data file path in the 51DEGREES_IPI_PATH "
+				"environment variable is too long.\n");
+#ifndef TEST
+			fgetc(stdin);
+#endif
+			return 1;
+		}
+		strcpy(dataFilePath, envDataFilePath);
 	}
 
 	if (strlen(dataFilePath) == 0) {
