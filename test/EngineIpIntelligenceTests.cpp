@@ -217,15 +217,21 @@ void EngineIpIntelligenceTests::validateIndex(
 		EXPECT_NO_THROW(*resultsIpi->getValueAsString(index)) << "String value "
 			"for property '" << resultsIpi->getPropertyName(index) << "' at "
 			"index '" << index << "' can't throw exception";
-		EXPECT_NO_THROW(*resultsIpi->getValueAsBool(index)) << "Bool value "
-			"for property '" << resultsIpi->getPropertyName(index) << "' at "
-			"index '" << index << "' can't throw exception";
-		EXPECT_NO_THROW(*resultsIpi->getValueAsInteger(index)) << "Integer value "
-			"for property '" << resultsIpi->getPropertyName(index) << "' at "
-			"index '" << index << "' can't throw exception";
-		EXPECT_NO_THROW(*resultsIpi->getValueAsDouble(index)) << "Double value "
-			"for property '" << resultsIpi->getPropertyName(index) << "' at "
-			"index '" << index << "' can't throw exception";
+		// Scalar bool/integer/double conversions are only defined for a single
+		// value. Weighted properties (e.g. CountryCodesGeographical) can resolve
+		// to multiple values for some IPs - notably anycast addresses that span
+		// several countries - for which these getters throw TooManyValuesException.
+		if (values.getValue().size() == 1) {
+			EXPECT_NO_THROW(*resultsIpi->getValueAsBool(index)) << "Bool value "
+				"for property '" << resultsIpi->getPropertyName(index) << "' at "
+				"index '" << index << "' can't throw exception";
+			EXPECT_NO_THROW(*resultsIpi->getValueAsInteger(index)) << "Integer value "
+				"for property '" << resultsIpi->getPropertyName(index) << "' at "
+				"index '" << index << "' can't throw exception";
+			EXPECT_NO_THROW(*resultsIpi->getValueAsDouble(index)) << "Double value "
+				"for property '" << resultsIpi->getPropertyName(index) << "' at "
+				"index '" << index << "' can't throw exception";
+		}
 	}
 }
 
@@ -259,12 +265,19 @@ void EngineIpIntelligenceTests::validateName(
 				"for property '" << *name << "' can't throw exception";
 			EXPECT_NO_THROW(*resultsIpi->getValueAsString(name)) << "String value "
 				"for property '" << *name << "' can't throw exception";
-			EXPECT_NO_THROW(*resultsIpi->getValueAsBool(name)) << "Bool value "
-				"for property '" << *name << "' can't throw exception";
-			EXPECT_NO_THROW(*resultsIpi->getValueAsInteger(name)) << "Integer value "
-				"for property '" << *name << "' can't throw exception";
-			EXPECT_NO_THROW(*resultsIpi->getValueAsDouble(name)) << "Double value "
-				"for property '" << *name << "' can't throw exception";
+			// Scalar bool/integer/double conversions are only defined for a
+			// single value. Weighted properties (e.g. CountryCodesGeographical)
+			// can resolve to multiple values for some IPs - notably anycast
+			// addresses spanning several countries - for which these getters
+			// throw TooManyValuesException.
+			if (values.getValue().size() == 1) {
+				EXPECT_NO_THROW(*resultsIpi->getValueAsBool(name)) << "Bool value "
+					"for property '" << *name << "' can't throw exception";
+				EXPECT_NO_THROW(*resultsIpi->getValueAsInteger(name)) << "Integer value "
+					"for property '" << *name << "' can't throw exception";
+				EXPECT_NO_THROW(*resultsIpi->getValueAsDouble(name)) << "Double value "
+					"for property '" << *name << "' can't throw exception";
+			}
 		}
 		else {
 			// There are no values returned. This is only allowed when:
