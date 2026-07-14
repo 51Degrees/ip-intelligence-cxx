@@ -144,8 +144,13 @@ static const uint16_t FULL_RAW_WEIGHTING = 0xFFFFU;
 
 #undef FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY
 #define FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY true
+// The property value index (propertyValueIndex) is disabled in all the
+// preset configurations: measurements with the 4.5 Enterprise data file
+// (issue #96) showed it increases start up time and memory use considerably
+// without improving detection performance. Set propertyValueIndex to true in
+// a custom configuration to opt in.
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiInMemoryConfig = {
-	{FIFTYONE_DEGREES_CONFIG_DEFAULT_WITH_INDEX},
+	{FIFTYONE_DEGREES_CONFIG_DEFAULT_NO_INDEX},
 	{0,0,0}, // Strings
 	{0,0,0}, // Components
 	{0,0,0}, // Maps
@@ -163,7 +168,7 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiInMemoryConfig = {
 FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY_DEFAULT
 
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiHighPerformanceConfig = {
-	{ FIFTYONE_DEGREES_CONFIG_DEFAULT_WITH_INDEX },
+	{ FIFTYONE_DEGREES_CONFIG_DEFAULT_NO_INDEX },
 	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Strings
 	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Components
 	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Maps
@@ -193,7 +198,7 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiLowMemoryConfig = {
 };
 
 #define FIFTYONE_DEGREES_IPI_CONFIG_BALANCED \
-{ FIFTYONE_DEGREES_CONFIG_DEFAULT_WITH_INDEX }, \
+{ FIFTYONE_DEGREES_CONFIG_DEFAULT_NO_INDEX }, \
 { FIFTYONE_DEGREES_STRING_LOADED, FIFTYONE_DEGREES_STRING_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Strings */ \
 { true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Components */ \
 { true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Maps */ \
@@ -229,7 +234,7 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiBalancedTempConfig = {
 		true, /* reuseTempFile - ENABLED for better performance */
 		NULL, /* tempDirs */
 		0, /* tempDirCount */
-		true /* propertyValueIndex */
+		false /* propertyValueIndex */
 	},
 	{ FIFTYONE_DEGREES_STRING_LOADED, FIFTYONE_DEGREES_STRING_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Strings */
 	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Components */
@@ -529,6 +534,25 @@ static StatusCode initComponentsAvailable(
 	}
 
 	return SUCCESS;
+}
+
+// If the configuration requires a property value index then create it from
+// the profile offsets so that the first value for a profile and an available
+// property can be found without searching the values associated with the
+// profile. The data set operates correctly, if slower, without the index so
+// failure to create one is not treated as an error.
+static void initIndicesPropertyProfile(
+	DataSetIpi* dataSet,
+	Exception* exception) {
+	if (dataSet->config.b.propertyValueIndex == true) {
+		dataSet->b.b.indexPropertyProfile = IndicesPropertyProfileCreateFromOffsets(
+			dataSet->profiles,
+			dataSet->profileOffsets,
+			ProfileOffsetAsPureOffset,
+			dataSet->b.b.available,
+			dataSet->values,
+			exception);
+	}
 }
 
 static int findPropertyIndexByName(
@@ -1051,7 +1075,7 @@ static StatusCode initDataSetFromFile(
 		return status;
 	}
 
-	// Initialise the components available to flag which components have 
+	// Initialise the components available to flag which components have
 	// properties which are to be returned (i.e. available properties).
 	status = initComponentsAvailable(dataSet, exception);
 	if (status != SUCCESS || EXCEPTION_FAILED) {
@@ -1069,6 +1093,18 @@ static StatusCode initDataSetFromFile(
 		}
 		return status;
 	}
+
+	// If configured, create the index of property and profile first value
+	// indexes.
+	initIndicesPropertyProfile(dataSet, exception);
+	if (EXCEPTION_FAILED) {
+		// Delete the temp file if one has been created.
+		if (config->b.useTempFile == true) {
+			FileDelete(dataSet->b.b.fileName);
+		}
+		return status;
+	}
+
 	return status;
 }
 
@@ -1196,6 +1232,13 @@ static StatusCode initDataSetFromMemory(
 	// Initialise the components available to flag which components have
 	// properties which are to be returned (i.e. available properties).
 	status = initComponentsAvailable(dataSet, exception);
+	if (status != SUCCESS || EXCEPTION_FAILED) {
+		return status;
+	}
+
+	// If configured, create the index of property and profile first value
+	// indexes.
+	initIndicesPropertyProfile(dataSet, exception);
 
 	return status;
 }
@@ -1653,7 +1696,9 @@ static uint32_t addValuesFromProfile(
 	DataSetIpi* dataSet,
 	ResultsIpi* results,
 	Profile* profile,
+	uint32_t profileOffset,
 	Property* property,
+	uint32_t availablePropertyIndex,
 	uint16_t rawWeighting,
 	Exception* exception) {
 	uint32_t count;
@@ -1667,16 +1712,31 @@ static uint32_t addValuesFromProfile(
 	state.exception = exception;
 
 	// Iterate over the values associated with the property adding them
-	// to the list of values. Get the number of values available as 
+	// to the list of values. Get the number of values available as
 	// this will be used to increase the size of the list should there
-	// be insufficient space.
-	count = ProfileIterateValuesForProperty(
-		dataSet->values,
-		profile,
-		property,
-		&state,
-		addWeightedValueWithState,
-		exception);
+	// be insufficient space. Use the index of first value indexes if one
+	// was created when the data set was initialised.
+	if (dataSet->b.b.indexPropertyProfile != NULL) {
+		count = ProfileIterateValuesForPropertyWithIndexAndOffset(
+			dataSet->values,
+			dataSet->b.b.indexPropertyProfile,
+			availablePropertyIndex,
+			profileOffset,
+			profile,
+			property,
+			&state,
+			addWeightedValueWithState,
+			exception);
+	}
+	else {
+		count = ProfileIterateValuesForProperty(
+			dataSet->values,
+			profile,
+			property,
+			&state,
+			addWeightedValueWithState,
+			exception);
+	}
 	EXCEPTION_THROW;
 
 	// The count of values should always be lower or the same as the profile
@@ -1690,6 +1750,7 @@ static uint32_t addValuesFromProfile(
 static uint32_t addValuesFromSingleProfile(
 	ResultsIpi* results,
 	Property *property,
+	uint32_t availablePropertyIndex,
 	uint32_t profileOffset,
 	uint16_t rawWeighting,
 	Exception* exception) {
@@ -1716,7 +1777,9 @@ static uint32_t addValuesFromSingleProfile(
 				dataSet,
 				results,
 				profile,
+				profileOffset,
 				property,
+				availablePropertyIndex,
 				rawWeighting,
 				exception);
 			COLLECTION_RELEASE(dataSet->profiles, &profileItem);
@@ -1734,6 +1797,7 @@ static const CollectionKeyType CollectionKeyType_OffsetPercentage = {
 static uint32_t addValuesFromProfileGroup(
 	ResultsIpi * const results,
 	Property * const property,
+	const uint32_t availablePropertyIndex,
 	const uint32_t profileGroupOffset,
 	Exception * const exception) {
 	uint32_t count = 0;
@@ -1766,6 +1830,7 @@ static uint32_t addValuesFromProfileGroup(
 			count += addValuesFromSingleProfile(
 				results,
 				property,
+				availablePropertyIndex,
 				nextWeightedProfileOffset->offset,
 				nextWeightedProfileOffset->rawWeighting,
 				exception);
@@ -1843,6 +1908,7 @@ static uint32_t addValuesFromResult(
 	ResultsIpi* results,
 	ResultIpi* result,
 	Property* property,
+	uint32_t availablePropertyIndex,
 	Exception* exception) {
 	uint32_t count = 0;
 	const DataSetIpi* const dataSet = (DataSetIpi*)results->b.dataSet;
@@ -1859,6 +1925,7 @@ static uint32_t addValuesFromResult(
 					count += addValuesFromSingleProfile(
 						results,
 						property,
+						availablePropertyIndex,
 						profileOffsetValue,
 						FULL_RAW_WEIGHTING,
 						exception);
@@ -1867,6 +1934,7 @@ static uint32_t addValuesFromResult(
 				count += addValuesFromProfileGroup(
 					results,
 					property,
+					availablePropertyIndex,
 					result->graphResult.offset,
 					exception);
 			}
@@ -1879,10 +1947,11 @@ static WeightedItem* getValuesFromResult(
 	ResultsIpi* results,
 	ResultIpi* result,
 	Property* property,
+	uint32_t availablePropertyIndex,
 	Exception* exception) {
-	// There is a profile available for the property requested. 
+	// There is a profile available for the property requested.
 	// Use this to add the values to the results.
-	addValuesFromResult(results, result, property, exception);
+	addValuesFromResult(results, result, property, availablePropertyIndex, exception);
 
 	// Return the first value in the list of items.
 	return results->values.items;
@@ -1929,6 +1998,7 @@ const fiftyoneDegreesWeightedItem* fiftyoneDegreesResultsIpiGetValues(
 					results,
 					&results->items[i],
 					property,
+					(uint32_t)requiredPropertyIndex,
 					exception);
 			}
 
@@ -1969,6 +2039,7 @@ static bool profileHasValidPropertyValue(
 	const DataSetIpi * const dataSet,
 	const uint32_t profileOffset,
 	Property * const property,
+	const uint32_t availablePropertyIndex,
 	Exception * const exception) {
 	Item profileItem;
 	Profile *profile = NULL;
@@ -1987,13 +2058,29 @@ static bool profileHasValidPropertyValue(
 			exception);
 		// If profile is found
 		if (profile != NULL && EXCEPTION_OKAY) {
-			ProfileIterateValuesForProperty(
-				dataSet->values,
-				profile,
-				property,
-				&valueFound,
-				visitProfilePropertyValue,
-				exception);
+			// Use the index of first value indexes if one was created when
+			// the data set was initialised.
+			if (dataSet->b.b.indexPropertyProfile != NULL) {
+				ProfileIterateValuesForPropertyWithIndexAndOffset(
+					dataSet->values,
+					dataSet->b.b.indexPropertyProfile,
+					availablePropertyIndex,
+					profileOffset,
+					profile,
+					property,
+					&valueFound,
+					visitProfilePropertyValue,
+					exception);
+			}
+			else {
+				ProfileIterateValuesForProperty(
+					dataSet->values,
+					profile,
+					property,
+					&valueFound,
+					visitProfilePropertyValue,
+					exception);
+			}
 			COLLECTION_RELEASE(dataSet->profiles, &profileItem);
 		}
 	}
@@ -2043,6 +2130,7 @@ static bool resultGetHasValidPropertyValueOffset(
 							dataSet,
 							profileOffsetValue,
 							property,
+							(uint32_t)requiredPropertyIndex,
 							exception);
 					}
 				} else {
@@ -2066,7 +2154,11 @@ static bool resultGetHasValidPropertyValueOffset(
 						totalWeight += nextWeightedProfileOffset->rawWeighting;
 						if (totalWeight <= FULL_RAW_WEIGHTING) {
 							hasValidOffset = profileHasValidPropertyValue(
-								dataSet, nextWeightedProfileOffset->offset, property, exception);
+								dataSet,
+								nextWeightedProfileOffset->offset,
+								property,
+								(uint32_t)requiredPropertyIndex,
+								exception);
 						} else {
 							EXCEPTION_SET(FIFTYONE_DEGREES_STATUS_CORRUPT_DATA);
 						}
