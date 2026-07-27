@@ -145,7 +145,7 @@ static const uint16_t FULL_RAW_WEIGHTING = 0xFFFFU;
 #undef FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY
 #define FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY true
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiInMemoryConfig = {
-	{FIFTYONE_DEGREES_CONFIG_DEFAULT_WITH_INDEX},
+	{FIFTYONE_DEGREES_CONFIG_DEFAULT_NO_INDEX},
 	{0,0,0}, // Strings
 	{0,0,0}, // Components
 	{0,0,0}, // Maps
@@ -163,7 +163,7 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiInMemoryConfig = {
 FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY_DEFAULT
 
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiHighPerformanceConfig = {
-	{ FIFTYONE_DEGREES_CONFIG_DEFAULT_WITH_INDEX },
+	{ FIFTYONE_DEGREES_CONFIG_DEFAULT_NO_INDEX },
 	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Strings
 	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Components
 	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, // Maps
@@ -193,7 +193,7 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiLowMemoryConfig = {
 };
 
 #define FIFTYONE_DEGREES_IPI_CONFIG_BALANCED \
-{ FIFTYONE_DEGREES_CONFIG_DEFAULT_WITH_INDEX }, \
+{ FIFTYONE_DEGREES_CONFIG_DEFAULT_NO_INDEX }, \
 { FIFTYONE_DEGREES_STRING_LOADED, FIFTYONE_DEGREES_STRING_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Strings */ \
 { true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Components */ \
 { true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Maps */ \
@@ -229,7 +229,7 @@ fiftyoneDegreesConfigIpi fiftyoneDegreesIpiBalancedTempConfig = {
 		true, /* reuseTempFile - ENABLED for better performance */
 		NULL, /* tempDirs */
 		0, /* tempDirCount */
-		true /* propertyValueIndex */
+		false /* propertyValueIndex */
 	},
 	{ FIFTYONE_DEGREES_STRING_LOADED, FIFTYONE_DEGREES_STRING_CACHE_SIZE, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Strings */
 	{ true, 0, FIFTYONE_DEGREES_CACHE_CONCURRENCY }, /* Components */
