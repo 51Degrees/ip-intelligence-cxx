@@ -74,10 +74,6 @@ static const char* dataFileName = "51Degrees-LiteV41.ipi";
 // This file contains the 20,000 random IP formatted as header values.
 static const char* evidenceFileName = "evidence.yml";
 
-// The value of the evidence for User-Agent is not stored in the shared string
-// structure as these are almost always unique.
-static const char* userAgent = "user-agent";
-
 /**
  * Configuration to use when building the dataset for benchmarking.
  */
@@ -282,47 +278,25 @@ static void storeEvidence(KeyValuePair* pairs, uint16_t size, void* state) {
 			evidence->items[i].item.keyLength = 0;
 		}
 
-		// If the field is User-Agent or NULL then create new memory for the 
-		// string value, otherwise use shared strings.
-		if (evidence->items[i].item.key == NULL ||
-			strcmp(evidence->items[i].item.key, userAgent) == 0) {
-
-			// Copy the value to new memory at the original value, and then set
-			// the parsed value to point to the original value. This memory 
-			// will be freed after the test.
-			evidence->items[i].item.valueLength =
-				evidence->items[i].parsedLength =
-				strlen(pairs[i].value);
-			evidence->items[i].item.value = (const char*)Malloc(
-				sizeof(char) * (evidence->items[i].item.valueLength + 1));
-			ptr = strncpy(
-				(char*)evidence->items[i].item.value,
-				pairs[i].value,
-				evidence->items[i].item.valueLength);
-			if (ptr == NULL) {
-				EXCEPTION_THROW
-			}
-			*(ptr + evidence->items[i].item.valueLength) = '\0';
-			evidence->items[i].parsedValue = evidence->items[i].item.value;
+		// The evidence values here are IP addresses, which are all unique, so
+		// de-duplicating them through shared strings would only add a lookup
+		// per record and a structure holding one entry per record, with no
+		// memory saving. Always copy the value into its own memory, which is
+		// freed after the test.
+		evidence->items[i].item.valueLength =
+			evidence->items[i].parsedLength =
+			strlen(pairs[i].value);
+		evidence->items[i].item.value = (const char*)Malloc(
+			sizeof(char) * (evidence->items[i].item.valueLength + 1));
+		ptr = strncpy(
+			(char*)evidence->items[i].item.value,
+			pairs[i].value,
+			evidence->items[i].item.valueLength);
+		if (ptr == NULL) {
+			EXCEPTION_THROW
 		}
-		else {
-
-			// Set the parsed value to the shared string value and set the 
-			// original value to NULL to indicate there is no memory to be 
-			// freed after the performance test.
-			evidence->items[i].parsedValue = getOrAddSharedString(
-				perfState,
-				pairs[i].value);
-			if (evidence->items[i].parsedValue == NULL) {
-				EXCEPTION_THROW
-			}
-
-			// Set the length of the parsed value.
-			evidence->items[i].parsedLength = strlen(
-				(char*)evidence->items[i].parsedValue);
-
-			evidence->items[i].item.value = NULL;
-		}
+		*(ptr + evidence->items[i].item.valueLength) = '\0';
+		evidence->items[i].parsedValue = evidence->items[i].item.value;
 	}
 	evidence->count = size;
 
@@ -515,10 +489,6 @@ void executeBenchmark(
 		fiftyoneDegreesExampleGetConfigName(dataSetConfig),
 		config.allProperties ? "True" : "False");
 
-	// // Ensure that for performance tests the updating of the matched user-agent
-	// // is disabled to reduce processing overhead.
-	// dataSetConfig.b.updateMatchedUserAgent = false;
-
 	EXCEPTION_CREATE;
 
 	PropertiesRequired properties = PropertiesDefault;
@@ -572,9 +542,14 @@ void executeBenchmark(
 	fiftyoneDegreesExampleCheckDataFile(dataset);
 	DataSetIpiRelease(dataset);
 
-	// run the benchmarks twice, once to warm up any caches
-	fprintf(state->output, "Warming up\n");
-	runTests(state);
+	// Normally the benchmark is run twice, the first pass warming the caches.
+	// The memory-only build holds the whole dataset in memory with no caches to
+	// warm, so that warmup pass just doubles the work for no measurable benefit;
+	// skip it there and only warm up the standard build, whose caches benefit.
+	if (!CollectionGetIsMemoryOnly()) {
+		fprintf(state->output, "Warming up\n");
+		runTests(state);
+	}
 
 	fprintf(state->output, "Running\n");
 	state->elapsedMilliSeconds = runTests(state);
@@ -812,7 +787,7 @@ void printHelp() {
  * Only included if the example us being used from the console. Not included
  * when part of a test framework where the main method is not required.
  * @arg1 data file path
- * @arg2 User-Agent file path
+ * @arg2 IP addresses file path
  * @arg3 number of threads
  * @arg4 JSON output file
  */
