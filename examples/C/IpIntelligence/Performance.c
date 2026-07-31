@@ -30,7 +30,8 @@
 
 /**
  * @example IpIntelligence/Performance.c
- * The example illustrates a "clock-time" benchmark for assessing detection speed.
+ * The example illustrates a "clock-time" benchmark for assessing IP address
+ * lookup speed.
  *
  * Using a YAML formatted evidence file - "evidence.yml" - supplied with the
  * distribution or can be obtained from the [data repository on Github](https://github.com/51Degrees/ip-intelligence-data/blob/main/evidence.yml).
@@ -40,8 +41,8 @@
  * different configurations to illustrate the difference in performance.
  *
  * Requesting properties from a single component
- * reduces detection time compared with requesting properties from multiple components. If you
- * don't specify any properties to detect, then all properties are detected.
+ * reduces lookup time compared with requesting properties from multiple components. If you
+ * don't specify any properties, then all properties are returned.
  *
  * This example is available in full on [GitHub](https://github.com/51Degrees/ip-intelligence-cxx/tree/main/examples/C/IpIntelligence/Performance.c).
  *
@@ -316,7 +317,7 @@ static void storeEvidence(KeyValuePair* pairs, uint16_t size, void* state) {
 }
 
 /**
- * Run detections using the evidence on a single thread.
+ * Run IP address lookups using the evidence on a single thread.
  * @param state pointer to the thread state
  */
 void runPerformanceThread(void* state) {
@@ -351,7 +352,6 @@ void runPerformanceThread(void* state) {
 			continue;
 		}
 
-		// ResultsHashFromEvidence(results, evidence, exception);
 		ResultsIpiFromIpAddressString(
 			results,
 			(const char *)evidence->items[0].parsedValue,
@@ -359,12 +359,8 @@ void runPerformanceThread(void* state) {
 			exception);
 		EXCEPTION_THROW;
 
-		// Update the total iterations for the thread.
-		for (uint32_t i = 0; i < results->count; i++) {
-			thisState->iterations +=
-				// (unsigned long long)results->items[i].type.iterations;
-				1; // TODO: Remove from state??
-		}
+		// Update the total number of lookups performed by the thread.
+		thisState->iterations += results->count;
 
 		// Get the all properties from the results if this is part of the
 		// performance evaluation.
@@ -391,7 +387,7 @@ void runPerformanceThread(void* state) {
 	}
 }
 /**
- * Execute detections on specified number of threads.
+ * Execute IP address lookups on specified number of threads.
  * @param state continaing the dataset to use
  * @return elapsed millis
  */
@@ -433,7 +429,7 @@ double runTests(performanceState *state) {
 }
 
 /**
- * Report per thread and overall detection performance.
+ * Report per thread and overall lookup performance.
  * @param state contains benchmarking results for each thread
  */
 void doReport(performanceState *state) {
@@ -449,7 +445,7 @@ void doReport(performanceState *state) {
 	// output the results from the benchmark to the console
 	double millisPerTest = state->elapsedMilliSeconds / (double)state->evidenceCount;
 	fprintf(state->output,
-		"%d detections, Average ms per detection: %f, Detections per second: %.0lf\n",
+		"%d lookups, Average ms per lookup: %f, Lookups per second: %.0lf\n",
 		state->evidenceCount,
 		millisPerTest,
 		round(1000.0 / millisPerTest));
@@ -467,7 +463,7 @@ void doReport(performanceState *state) {
 	fprintf(state->output, "\n");
 
 	if (state->resultsOutput != NULL) {
-		fprintf(state->resultsOutput, "  \"DetectionsPerSecond\": %.2f,\n", round(1000.0 / millisPerTest));
+		fprintf(state->resultsOutput, "  \"LookupsPerSecond\": %.2f,\n", round(1000.0 / millisPerTest));
 		fprintf(state->resultsOutput, "  \"StartupMs\": %.0lf,\n", state->startUpMillis);
 	}
 }
@@ -495,10 +491,6 @@ void executeBenchmark(
 	if (config.allProperties == false) {
 		properties.string = "RegisteredName";
 	}
-
-	// // Multi graph operation is being deprecated. There is only one graph.
-	// dataSetConfig.usePerformanceGraph = false;
-	// dataSetConfig.usePredictiveGraph = true;
 
 	dataSetConfig.strings.concurrency = state->numberOfThreads;
 	dataSetConfig.components.concurrency = state->numberOfThreads;
@@ -700,10 +692,7 @@ void fiftyoneDegreesIpiPerformance(
 		i < (int)(sizeof(performanceConfigs) / sizeof(performanceConfig));
 		i++) {
 
-		// Set the special evidence processing to false to optimize 
-		// evaluation for core ip intelligence.
 		performanceConfig config = performanceConfigs[i];
-		//config.config->b.processSpecialEvidence = false;
 
 		if (CollectionGetIsMemoryOnly() == false ||
 			config.config->b.allInMemory == true) {

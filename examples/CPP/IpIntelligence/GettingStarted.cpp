@@ -83,7 +83,7 @@ evidence->operator[]("ipiv4.ip") = ipv4;
 ```
 
 4. Process the evidence using the engine to retrieve the values associated
-with the User-Agent for the selected properties.
+with the IP address for the selected properties.
 ```
 using namespace FiftyoneDegrees;
 

@@ -43,7 +43,7 @@ reference to access dataset.
 dataset from the data file that has been read into a continuous memory space.
 
 3. Retrieve a results instance from the data set and release it when done with
-detecting current IP address.
+looking up the current IP address.
 
 4. Use the reload functionality in a single threaded environment.
 

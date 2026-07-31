@@ -25,7 +25,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MemIpi", "Examples\C\MemIpi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Offline Processing", "Examples\C\Offline Processing\Offline Processing.vcxproj", "{789EA3F7-7EF3-467B-B401-F6F5D39A17F8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PerfIpi", "Examples\C\PerfHash\PerfHash.vcxproj", "{BD5F447C-E80D-4418-836F-F5DD9A2037AF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PerfIpi", "Examples\C\PerfIpi\PerfIpi.vcxproj", "{BD5F447C-E80D-4418-836F-F5DD9A2037AF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Reload From File", "Examples\C\Reload From File\Reload From File.vcxproj", "{28E45A8A-C3D7-46FC-B563-B6E353CCD970}"
 EndProject

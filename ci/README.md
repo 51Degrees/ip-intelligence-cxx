@@ -7,12 +7,8 @@ The following secrets are required:
     * Example: `github_pat_l0ng_r4nd0m_s7r1ng`
   
 The following secrets are required to run tests:
-* `DEVICE_DETECTION_KEY` - [license key](https://51degrees.com/pricing?utm_source=github&utm_medium=readme&utm_campaign=ip-intelligence-cxx&utm_content=ci-readme.md&utm_term=api-specific-ci-approach) for downloading assets (TAC hashes file and TAC CSV data file)
-    * Example: `V3RYL0NGR4ND0M57R1NG`
- 
-The following secrets are optional:
-* `DEVICE_DETECTION_URL` - URL for downloading the enterprise TAC hash file
-    * Default: `https://distributor.51degrees.com/api/v2/download?LicenseKeys=DEVICE_DETECTION_KEY&Type=HashV41&Download=True&Product=V4TAC`
+* `IPI_DATA_FILE_URL` - [URL](https://51degrees.com/pricing?utm_source=github&utm_medium=readme&utm_campaign=ip-intelligence-cxx&utm_content=ci-readme.md&utm_term=api-specific-ci-approach) for downloading the enterprise IP Intelligence data file (`51Degrees-EnterpriseIpiV41.ipi`)
+    * The workflows pass it to `ci/fetch-assets.ps1` as the `-IpIntelligenceUrl` parameter.
 
 ### Differences
 - There are no packages produced by this repository, so the only output from the `Nightly Publish Main` workflow is a new tag and release.
@@ -24,6 +20,5 @@ For additional build options in this repo see [common-ci/cxx](https://github.com
 
 ## Prerequisites
 
-In addition to the [common prerequisites](https://github.com/51Degrees/common-ci#prerequisites), the following environment variables are required:
-- DEVICE_DETECTION_KEY - License key to download a data file for testing
-- DEVICE_DETECTION_URL - Url to download the data file from (optional)
+In addition to the [common prerequisites](https://github.com/51Degrees/common-ci#prerequisites), the following is required to fetch the assets used by the tests:
+- `IPI_DATA_FILE_URL` - Url to download the IP Intelligence data file from
