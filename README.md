@@ -144,7 +144,7 @@ All the examples are available to run in the `VisualStudio/IpIntelligence.sln` s
 |Meta Data|This example shows how to interrogate the meta data associated with the contents of an IP Intelligence data file.|C++|
 |MemIpi|This example measures the memory usage of the IP Intelligence process.|C|
 |Offline Processing|This example shows how process data for later viewing using an IP Intelligence data file.|C|
-|PerfIpi|Command line performance evaluation program which takes a file of IP addresses and returns a performance score measured in detections per second per CPU core.|C|
+|PerfIpi|Command line performance evaluation program which takes a file of IP addresses and returns a performance score measured in lookups per second per CPU core.|C|
 |ProcIpi|Command line process which takes an IP address via stdin and return IP intelligence properties via stdout.|C|
 |Reload From File|This example illustrates how to reload the data file from the data file on disk without restarting the application.|C / C++|
 |Reload From Memory|This example illustrates how to reload the data file from a continuous memory space that the data file was read into without restarting the application.|C / C++|

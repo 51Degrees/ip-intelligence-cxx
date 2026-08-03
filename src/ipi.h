@@ -197,8 +197,9 @@ typedef struct fiftyone_degrees_ipi_dataset_header_t {
 	const int32_t copyrightOffset; /**< Offset of the copyright string in the 
 								   strings collection */
 	const int16_t age; /**< Age of the data set format */
-	const int32_t minUserAgentCount; /**< This is a place holder. Not
-									 applicable to IP Intelligence. */
+	const int32_t reserved; /**< Reserved. Retained so this structure matches
+							the data file header layout. Not used by IP
+							Intelligence. */
 	const int32_t nameOffset; /**< Offset of the data file name in the strings 
 							  collection */
 	const int32_t formatOffset; /**< Offset of the data file format in the 
@@ -326,7 +327,7 @@ typedef fiftyoneDegreesWeightedItem fiftyoneDegreesProfilePercentage;
 typedef fiftyoneDegreesWeightedItemList fiftyoneDegreesIpiList;
 
 /**
- * Singular IP address result returned by a detection process method.
+ * Singular IP address result returned by an IP address lookup method.
  */
 typedef struct fiftyone_degrees_result_ipi_t {
 	fiftyoneDegreesIpType type; /**< The version of the IP */
@@ -438,7 +439,7 @@ EXTERNAL_VAR fiftyoneDegreesConfigIpi fiftyoneDegreesIpiBalancedConfig;
 EXTERNAL_VAR fiftyoneDegreesConfigIpi fiftyoneDegreesIpiBalancedTempConfig;
 
 /**
- * Default detection configuration. This configures the data set to not create
+ * Default configuration. This configures the data set to not create
  * a temp file.
  */
 EXTERNAL_VAR fiftyoneDegreesConfigIpi fiftyoneDegreesIpiDefaultConfig;
@@ -495,7 +496,7 @@ EXTERNAL size_t fiftyoneDegreesIpiSizeManagerFromFile(
 /**
  * Initialises the resource manager with an IP intelligence data set resource populated
  * from the IP Intelligence data file referred to by fileName. Configures the data set
- * to operate using the configuration set in detection, collection and
+ * to operate using the configuration set in the config, collection and
  * properties.
  * @param manager the resource manager to manager the share data set resource
  * @param config configuration for the operation of the data set, or NULL if
@@ -545,7 +546,7 @@ EXTERNAL size_t fiftyoneDegreesIpiSizeManagerFromMemory(
 /**
  * Initialises the resource manager with a IP Intelligence data set resource populated
  * from the IP intelligence data set pointed to by the memory parameter. Configures the
- * data set to operate using the configuration set in detection and properties.
+ * data set to operate using the configuration set in the config and properties.
  * @param manager the resource manager to manager the share data set resource
  * @param config configuration for the operation of the data set, or NULL if
  * default configuration is required

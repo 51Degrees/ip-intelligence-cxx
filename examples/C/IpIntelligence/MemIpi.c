@@ -70,7 +70,7 @@ typedef struct t_memory_state {
 	int progress; // Number of IP Addresses to process for each = marker
 	const char* evidenceFilePath; // Filename for the IP Address file
 	int numberOfThreads; // Number of parallel threads
-	fiftyoneDegreesResourceManager* manager; // Manager resource for detection
+	fiftyoneDegreesResourceManager* manager; // Manager resource for lookups
 	volatile long runningThreads; // Number of active running threads
 	FIFTYONE_DEGREES_THREAD threads[THREAD_COUNT]; // Running threads
 } memoryState;
@@ -140,7 +140,7 @@ void reportProgress(memoryThreadState* state) {
 	// Update the user interface.
 	printLoadBar(state);
 
-	// If in real detection mode then print the id of the network profile found
+	// If in real lookup mode then print the id of the network profile found
 	// to prove it's actually doing something!
 	if (state->results != NULL) {
 		printf(" ");
@@ -234,7 +234,7 @@ static void runMemoryThread(void* mainState) {
 /**
  * Execute memory tests in parallel using a file of null terminated
  * IP Address strings as input. If calibrate is true then the file is read but
- * no detections are performed.
+ * no lookups are performed.
  */
 static void runMemoryTests(memoryState* state) {
 	int thread;

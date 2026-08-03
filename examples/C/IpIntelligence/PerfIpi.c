@@ -34,8 +34,8 @@ This example is available in full on [GitHub](https://github.com/51Degrees/ip-in
 @include{doc} example-how-to-run-ipi.txt
 
 In detail, the example performs two separate measurements. One
-does not do any actual detections and one does. The difference
-is then taken to calculate the actual performance of the detection
+does not do any actual lookups and one does. The difference
+is then taken to calculate the actual performance of the lookup
 work.
 
 Expected output:
@@ -49,7 +49,7 @@ Calibration pass 1 of 1:
 
         [========================================]
 
-Detection test pass 1 of 1:
+Lookup test pass 1 of 1:
 
         [========================================] 6416:1.000000|6417:1.000000|0:1.000000|0:1.000000|...
 
@@ -114,7 +114,7 @@ typedef struct t_performance_state {
 	bool calibration; // True if calibrating, otherwise false
 	const char* ipAddressFilePath; // Filename for the IP Address file
 	int numberOfThreads; // Number of parallel threads
-	fiftyoneDegreesResourceManager* manager; // Manager resource for detection
+	fiftyoneDegreesResourceManager* manager; // Manager resource for lookups
 	volatile long runningThreads; // Number of active running threads
 	FIFTYONE_DEGREES_THREAD threads[THREAD_COUNT]; // Running threads
 } performanceState;
@@ -184,7 +184,7 @@ static void reportProgress(performanceThreadState* state) {
 	// Update the user interface.
 	printLoadBar(state);
 
-	// If in real detection mode then print the name of the network profile found
+	// If in real lookup mode then print the name of the network profile found
 	// to prove it's actually doing something!
 	if (state->results != NULL) {
 		printf(" ");
@@ -300,7 +300,7 @@ static void runPerformanceThread(void* mainState) {
 /**
  * Execute performance tests in parallel using a file of null terminated
  * IP Address strings as input. If calibrate is true then the file is read but
- * no detections are performed.
+ * no lookups are performed.
  */
 static void runPerformanceTests(performanceState* state) {
 	int thread;
@@ -431,13 +431,13 @@ static void run(
 	// Set the state for the calibration.
 	state.numberOfThreads = THREAD_COUNT;
 
-	// Run the process without doing any detections to get a
+	// Run the process without doing any lookups to get a
 	// calibration time.
 	calibration = runTests(&state, PASSES, "Calibration");
 
 	// Process the data file doing the IP intelligence.
 	state.calibration = 0;
-	test = runTests(&state, PASSES, "Detection test");
+	test = runTests(&state, PASSES, "Lookup test");
 
 	// Work out the time to complete the IP intelligenc ignoring the time
 	// taken to read the data from the file system.

@@ -43,7 +43,7 @@ reference to access dataset.
 reload the dataset from the same location and with the same	set of properties.
 
 3. Retrieve a results instance from the data set and release it when done with
-detecting current IP Address.
+looking up the current IP address.
 
 4. Use the reload functionality in a single threaded environment.
 

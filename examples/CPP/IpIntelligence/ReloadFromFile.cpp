@@ -55,7 +55,7 @@ reference to process data.
 same location and with the same set of properties.
 
 3. Retrieve a results instance from the engine and release it when done with
-detecting current IP address.
+looking up the current IP address.
 	
 4. Use the reload functionality in a single threaded environment.
 

@@ -57,7 +57,7 @@
     <ProjectReference Include="..\Examples\C\Offline Processing\Offline Processing.vcxproj">
       <Project>{789ea3f7-7ef3-467b-b401-f6f5d39a17f8}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Examples\C\PerfHash\PerfHash.vcxproj">
+    <ProjectReference Include="..\Examples\C\PerfIpi\PerfIpi.vcxproj">
       <Project>{bd5f447c-e80d-4418-836f-f5dd9a2037af}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Examples\C\ProcIpi\ProcIpi.vcxproj">

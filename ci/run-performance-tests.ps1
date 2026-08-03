@@ -76,7 +76,7 @@ try {
     $Results = Get-Content $OutputFile | ConvertFrom-Json -AsHashtable
     Write-Output "{
         'HigherIsBetter': {
-            'DetectionsPerSecond': $($Results.InMemory.DetectionsPerSecond)
+            'LookupsPerSecond': $($Results.InMemory.LookupsPerSecond)
         },
         'LowerIsBetter': {
         }
