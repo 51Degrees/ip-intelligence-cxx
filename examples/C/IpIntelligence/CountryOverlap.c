@@ -80,7 +80,8 @@ The example requires an enterprise IP Intelligence data file that
 includes the weighted country code properties. It stops with a clear
 message, and a distinct exit code, when the data file does not include
 them, which is the case for the Lite data file. To obtain an enterprise
-data file please [contact us](https://51degrees.com/contact-us).
+data file see our
+[pricing](https://51degrees.com/pricing?utm_source=code&utm_medium=example&utm_campaign=ip-intelligence-cxx&utm_content=examples-c-ipintelligence-countryoverlap.c&utm_term=enterprise-data-file).
 
 Only IPv4 is swept. IPv6 addresses are too numerous to check one by one,
 although individual IPv6 addresses can be checked with the probe option.
@@ -878,8 +879,12 @@ static int getRequiredIndex(DataSetIpi* dataSet, const char* name) {
 			"The data file does not include the required property "
 			"'%s'. An enterprise IP Intelligence data file that "
 			"includes the weighted country code properties is "
-			"required. To obtain one please contact us: "
-			"https://51degrees.com/contact-us\n",
+			"required. To obtain one see "
+			"https://51degrees.com/pricing"
+			"?utm_source=code&utm_medium=example"
+			"&utm_campaign=ip-intelligence-cxx"
+			"&utm_content=examples-c-ipintelligence-countryoverlap.c"
+			"&utm_term=missing-property\n",
 			name);
 	}
 	return index;
@@ -1321,8 +1326,12 @@ int fiftyoneDegreesIpiCountryOverlap(
 			printf(
 				"The data file does not include the properties required "
 				"by this example (%s). An enterprise IP Intelligence "
-				"data file is required. To obtain one please contact "
-				"us: https://51degrees.com/contact-us\n",
+				"data file is required. To obtain one see "
+				"https://51degrees.com/pricing"
+				"?utm_source=code&utm_medium=example"
+				"&utm_campaign=ip-intelligence-cxx"
+				"&utm_content=examples-c-ipintelligence-countryoverlap.c"
+				"&utm_term=properties-missing\n",
 				countryOverlapProperties);
 			return COUNTRY_OVERLAP_PROPERTIES_MISSING;
 		}
@@ -1372,6 +1381,20 @@ int fiftyoneDegreesIpiCountryOverlap(
 		&shared, PROPERTY_COUNTRY_CODE) == false ||
 		addComponentForProperty(&shared, PROPERTY_CONNECTION) == false) {
 		printf("Could not determine the required components.\n");
+		DataSetIpiRelease(dataSet);
+		ResourceManagerFree(&manager);
+		return COUNTRY_OVERLAP_FAILED;
+	}
+
+	// The segment key packs each component's 32 bit graph offset into a
+	// 64 bit value, which is exact for up to two components. More would
+	// silently discard offsets and corrupt the segment detection, so stop
+	// rather than produce wrong counts.
+	if (shared.componentCount > 2) {
+		printf(
+			"The required properties span %d component graphs which "
+			"exceeds the two the segment key supports.\n",
+			shared.componentCount);
 		DataSetIpiRelease(dataSet);
 		ResourceManagerFree(&manager);
 		return COUNTRY_OVERLAP_FAILED;
