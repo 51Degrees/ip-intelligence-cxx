@@ -43,7 +43,10 @@ confidence and connection type:
   country the row counts the addresses that resolve entirely to the
   primary country. Otherwise they name another country in the area
   weighted country list, and the row counts the addresses that can
-  resolve to both the primary and the secondary country.
+  resolve to both the primary and the secondary country. Secondary
+  countries whose share of the weighting is at or below the minimum
+  percentage (default 1%) are ignored, including when deciding whether
+  an address resolves entirely to the primary country.
 - LocationConfidence, ConnectionType: the values of the properties with
   these names. See the
   [property dictionary](https://51degrees.com/developers/property-dictionary?utm_source=code&utm_medium=example&utm_campaign=ip-intelligence-cxx&utm_content=examples-c-ipintelligence-countryoverlap.c&utm_term=property-dictionary)
@@ -91,7 +94,7 @@ although individual IPv6 addresses can be checked with the probe option.
 ## Usage
 
 ```
-CountryOverlap <data file> [output csv] [threads] [chunks]
+CountryOverlap <data file> [output csv] [threads] [chunks] [min percent]
 CountryOverlap <data file> --probe <ip> [ip...]
 ```
 
@@ -101,6 +104,11 @@ CountryOverlap <data file> --probe <ip> [ip...]
 - chunks: number of /8 chunks of the IPv4 space to process starting at
   0.0.0.0, default 256 which is the whole space. Small values are useful
   for testing.
+- min percent: secondary countries whose share of the area weighting is
+  this percentage or lower are ignored, default 1. The geographic areas
+  can include countries with negligible weightings where the area shape
+  extends beyond the evidence, so the default focuses the output on
+  meaningful overlap. Set to 0 to include every listed country.
 - --probe: print the resolved values for the addresses provided so they
   can be compared against other 51Degrees APIs.
 */
@@ -155,14 +163,18 @@ counting distinct countries. */
 #define MAX_LIST_VALUES 64
 
 /** Number of shared countries remembered for each distinct location,
-kept in descending weighting order. Real areas rarely overlap more than
-a handful of countries. Locations with more shared countries than this
-are flagged and counted so truncation is visible in the output. */
-#define SHARED_STORE 16
+kept in descending weighting order. Matches the maximum number of list
+values compared, so every qualifying country can be stored. Locations
+with more shared countries than this are flagged and counted so
+truncation is visible in the output. */
+#define SHARED_STORE MAX_LIST_VALUES
 
-/** Number of top shared countries named for each country in the console
-summary. */
-#define TOP_SHARED 5
+/** Default minimum share of the area weighting a secondary country
+must exceed to be counted. The geographic areas can include countries
+with negligible weightings where the area shape extends beyond the
+evidence, so secondary countries at or below this percentage are
+ignored by default. Set to zero to include every listed country. */
+#define DEFAULT_MIN_SECONDARY_PERCENT 1.0
 
 /** Size of each thread's cache of resolved graph offsets. Power of two. */
 #define CACHE_SIZE (1u << 22)
@@ -266,6 +278,8 @@ typedef struct country_overlap_shared_state_t {
 	int reqIndexGeo;
 	int reqIndexPop;
 	int totalChunks; /**< Number of /8 chunks to process */
+	double minShare; /**< Minimum share of the weighting, as a fraction
+					 of 1, a secondary country must exceed to count */
 	volatile long nextChunk; /**< Next chunk to be claimed by a thread */
 	volatile long threadsDone;
 } SharedState;
@@ -359,14 +373,17 @@ static const char* countryCode(int index, char buffer[8]) {
 }
 
 /**
- * Counts the distinct string values for the required property index in
- * the weighted values collection.
+ * Counts the distinct countries for the required property index whose
+ * summed share of the list's total weighting exceeds minShare.
  */
-static int countDistinct(
+static int countDistinctAbove(
 	const WeightedValuesCollection* collection,
-	int requiredPropertyIndex) {
-	const char* seen[MAX_LIST_VALUES];
+	int requiredPropertyIndex,
+	double minShare) {
+	uint16_t indexes[MAX_LIST_VALUES];
+	double weights[MAX_LIST_VALUES];
 	int count = 0;
+	double total = 0;
 	for (uint32_t i = 0; i < collection->itemsCount; i++) {
 		const fiftyoneDegreesWeightedValueHeader* header =
 			collection->items[i];
@@ -375,17 +392,31 @@ static int countDistinct(
 			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING) {
 			continue;
 		}
-		const char* value =
-			((const fiftyoneDegreesWeightedString*)header)->value;
+		const double weight = (double)header->rawWeighting;
+		total += weight;
+		const uint16_t index = (uint16_t)countryIndex(
+			((const fiftyoneDegreesWeightedString*)header)->value);
 		bool found = false;
 		for (int s = 0; s < count && found == false; s++) {
-			found = strcmp(seen[s], value) == 0;
+			if (indexes[s] == index) {
+				weights[s] += weight;
+				found = true;
+			}
 		}
 		if (found == false && count < MAX_LIST_VALUES) {
-			seen[count++] = value;
+			indexes[count] = index;
+			weights[count] = weight;
+			count++;
 		}
 	}
-	return count;
+	const double threshold = total * minShare;
+	int above = 0;
+	for (int s = 0; s < count; s++) {
+		if (weights[s] > threshold) {
+			above++;
+		}
+	}
+	return above;
 }
 
 /**
@@ -416,16 +447,24 @@ static const char* highestWeighted(
 /**
  * Fills the shared country indexes of the resolved values with the
  * countries in the geographic weighted list other than the most probable
- * country, ordered with the highest weighted first.
+ * country, ordered with the highest weighted first. The weightings for
+ * each distinct country are summed first, and countries whose share of
+ * the list's total weighting does not exceed minShare are ignored,
+ * because the geographic areas can include countries with negligible
+ * weightings where the area shape extends beyond the evidence.
  */
 static void setSharedCountries(
 	Resolved* resolved,
 	const WeightedValuesCollection* collection,
-	int requiredPropertyIndex) {
-	uint16_t indexes[SHARED_STORE];
-	uint32_t weights[SHARED_STORE];
+	int requiredPropertyIndex,
+	double minShare) {
+	uint16_t indexes[MAX_LIST_VALUES];
+	double weights[MAX_LIST_VALUES];
+	bool used[MAX_LIST_VALUES];
 	int count = 0;
-	int qualifying = 0;
+	double total = 0;
+
+	// Sum the weighting for each distinct country in the list.
 	for (uint32_t i = 0; i < collection->itemsCount; i++) {
 		const fiftyoneDegreesWeightedValueHeader* header =
 			collection->items[i];
@@ -434,46 +473,54 @@ static void setSharedCountries(
 			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING) {
 			continue;
 		}
+		const double weight = (double)header->rawWeighting;
+		total += weight;
 		const uint16_t index = (uint16_t)countryIndex(
 			((const fiftyoneDegreesWeightedString*)header)->value);
-		if (index == resolved->countryIndex ||
-			index == COUNTRY_UNKNOWN) {
-			continue;
-		}
-		// Skip countries already present keeping the higher weighting.
-		bool present = false;
-		for (int s = 0; s < count && present == false; s++) {
-			present = indexes[s] == index;
-		}
-		if (present) {
-			continue;
-		}
-		qualifying++;
-		// Insert in descending weighting order.
-		int position = count < SHARED_STORE ? count : SHARED_STORE;
-		while (position > 0 &&
-			weights[position - 1] < header->rawWeighting) {
-			if (position < SHARED_STORE) {
-				indexes[position] = indexes[position - 1];
-				weights[position] = weights[position - 1];
-			}
-			position--;
-		}
-		if (position < SHARED_STORE) {
-			indexes[position] = index;
-			weights[position] = header->rawWeighting;
-			if (count < SHARED_STORE) {
-				count++;
+		bool found = false;
+		for (int s = 0; s < count && found == false; s++) {
+			if (indexes[s] == index) {
+				weights[s] += weight;
+				found = true;
 			}
 		}
+		if (found == false && count < MAX_LIST_VALUES) {
+			indexes[count] = index;
+			weights[count] = weight;
+			count++;
+		}
 	}
-	resolved->sharedCount = (uint8_t)count;
-	for (int s = 0; s < count; s++) {
-		resolved->shared[s] = indexes[s];
+
+	// Store the qualifying countries in descending weighting order.
+	const double threshold = total * minShare;
+	memset(used, 0, sizeof(used));
+	int stored = 0;
+	for (;;) {
+		int best = -1;
+		double bestWeight = 0;
+		for (int s = 0; s < count; s++) {
+			if (used[s] == false &&
+				indexes[s] != resolved->countryIndex &&
+				indexes[s] != COUNTRY_UNKNOWN &&
+				weights[s] > threshold &&
+				(best < 0 || weights[s] > bestWeight)) {
+				best = s;
+				bestWeight = weights[s];
+			}
+		}
+		if (best < 0) {
+			break;
+		}
+		used[best] = true;
+		if (stored < SHARED_STORE) {
+			resolved->shared[stored++] = (uint16_t)indexes[best];
+		}
+		else {
+			resolved->flags |= 4;
+			break;
+		}
 	}
-	if (qualifying > SHARED_STORE) {
-		resolved->flags |= 4;
-	}
+	resolved->sharedCount = (uint8_t)stored;
 }
 
 /**
@@ -538,13 +585,23 @@ static Resolved resolveAddress(ThreadState* state, uint32_t address) {
 	resolved.connectionIndex = (uint8_t)valueIndex(
 		&state->connection,
 		connection != NULL ? connection : "Unknown");
-	if (countDistinct(&collection, shared->reqIndexGeo) > 1) {
+	setSharedCountries(
+		&resolved,
+		&collection,
+		shared->reqIndexGeo,
+		shared->minShare);
+	// The address is multi country when at least one qualifying
+	// secondary country exists, so the classification always agrees
+	// with the pair rows in the CSV.
+	if (resolved.sharedCount > 0) {
 		resolved.flags |= 1;
 	}
-	if (countDistinct(&collection, shared->reqIndexPop) > 1) {
+	if (countDistinctAbove(
+		&collection,
+		shared->reqIndexPop,
+		shared->minShare) > 1) {
 		resolved.flags |= 2;
 	}
-	setSharedCountries(&resolved, &collection, shared->reqIndexGeo);
 	if (resolved.flags & 4) {
 		state->truncations++;
 	}
@@ -1066,11 +1123,12 @@ static void printTop(
 			(unsigned long long)bestOverlapping,
 			100.0 * bestShare);
 		if (sharedBlocks != NULL) {
-			// Name the top shared countries for the country across all
-			// the confidence values and connection types.
+			// Name every shared country for the country across all
+			// the confidence values and connection types, highest
+			// shared address counts first.
 			bool used[COUNTRY_SLOTS];
 			memset(used, 0, sizeof(used));
-			for (int top = 0; top < TOP_SHARED; top++) {
+			for (int top = 0; ; top++) {
 				int best = -1;
 				uint64_t bestCount = 0;
 				for (int s = 0; s < COUNTRY_SLOTS; s++) {
@@ -1198,6 +1256,9 @@ static void printSummary(
  * @param threadCount number of worker threads.
  * @param totalChunks number of /8 chunks of the IPv4 address space to
  * process starting at 0.0.0.0, up to 256 for the whole space.
+ * @param minSecondaryPercent secondary countries whose share of the
+ * area weighting is this percentage or lower are ignored. Zero
+ * includes every listed country.
  * @return COUNTRY_OVERLAP_OK on success,
  * COUNTRY_OVERLAP_PROPERTIES_MISSING when the data file does not include
  * the required properties, or COUNTRY_OVERLAP_FAILED on any other
@@ -1208,9 +1269,12 @@ int fiftyoneDegreesIpiCountryOverlap(
 	fiftyoneDegreesConfigIpi* configProvided,
 	const char* outputPath,
 	int threadCount,
-	int totalChunks) {
+	int totalChunks,
+	double minSecondaryPercent) {
 	if (threadCount < 1) threadCount = 1;
 	if (totalChunks < 1 || totalChunks > 256) totalChunks = 256;
+	if (minSecondaryPercent < 0) minSecondaryPercent = 0;
+	if (minSecondaryPercent > 100) minSecondaryPercent = 100;
 
 	ResourceManager manager;
 	EXCEPTION_CREATE;
@@ -1347,6 +1411,7 @@ int fiftyoneDegreesIpiCountryOverlap(
 	shared.manager = &manager;
 	shared.dataSet = dataSet;
 	shared.totalChunks = totalChunks;
+	shared.minShare = minSecondaryPercent / 100.0;
 	shared.reqIndexCountryCode = getRequiredIndex(
 		dataSet, PROPERTY_COUNTRY_CODE);
 	shared.reqIndexCountry = getRequiredIndex(dataSet, PROPERTY_COUNTRY);
@@ -1394,10 +1459,13 @@ int fiftyoneDegreesIpiCountryOverlap(
 
 	printf(
 		"Sweeping %d /8 chunks of the IPv4 address space with %d "
-		"threads evaluating %d component graphs per address.\n",
+		"threads evaluating %d component graphs per address. Secondary "
+		"countries with a weighting share of %g%% or lower are "
+		"ignored.\n",
 		totalChunks,
 		threadCount,
-		shared.componentCount);
+		shared.componentCount,
+		minSecondaryPercent);
 
 	// Create the thread states and start the workers.
 	ThreadState* states = (ThreadState*)Malloc(
@@ -1705,8 +1773,8 @@ static void probeAddress(
 		}
 	}
 	printf("] geoDistinct=%d popDistinct=%d\n",
-		countDistinct(&collection, shared->reqIndexGeo),
-		countDistinct(&collection, shared->reqIndexPop));
+		countDistinctAbove(&collection, shared->reqIndexGeo, 0),
+		countDistinctAbove(&collection, shared->reqIndexPop, 0));
 	WeightedValuesCollectionRelease(&collection);
 }
 
@@ -1810,13 +1878,16 @@ int main(int argc, char* argv[]) {
 		"country-overlap.csv";
 	const int threadCount = argc > 3 ? atoi(argv[3]) : 10;
 	const int totalChunks = argc > 4 ? atoi(argv[4]) : 256;
+	const double minSecondaryPercent = argc > 5 ?
+		atof(argv[5]) : DEFAULT_MIN_SECONDARY_PERCENT;
 
 	return fiftyoneDegreesIpiCountryOverlap(
 		dataFilePath,
 		NULL,
 		outputPath,
 		threadCount,
-		totalChunks);
+		totalChunks,
+		minSecondaryPercent);
 }
 
 #endif

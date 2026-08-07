@@ -53,7 +53,8 @@ public:
             &config,
             testOutputPath,
             2,
-            2);
+            2,
+            1.0);
 
         std::string output = testing::internal::GetCapturedStdout();
 
