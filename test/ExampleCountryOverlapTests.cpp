@@ -54,7 +54,7 @@ public:
             testOutputPath,
             2,
             2,
-            1.0);
+            DEFAULT_MIN_SECONDARY_PERCENT);
 
         std::string output = testing::internal::GetCapturedStdout();
 

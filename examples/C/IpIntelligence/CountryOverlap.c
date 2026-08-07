@@ -45,7 +45,7 @@ confidence and connection type:
   weighted country list, and the row counts the addresses that can
   resolve to both the primary and the secondary country. Secondary
   countries whose share of the weighting is at or below the minimum
-  percentage (default 1%) are ignored, including when deciding whether
+  percentage (default 2%) are ignored, including when deciding whether
   an address resolves entirely to the primary country.
 - LocationConfidence, ConnectionType: the values of the properties with
   these names. See the
@@ -105,7 +105,7 @@ CountryOverlap <data file> --probe <ip> [ip...]
   0.0.0.0, default 256 which is the whole space. Small values are useful
   for testing.
 - min percent: secondary countries whose share of the area weighting is
-  this percentage or lower are ignored, default 1. The geographic areas
+  this percentage or lower are ignored, default 2. The geographic areas
   can include countries with negligible weightings where the area shape
   extends beyond the evidence, so the default focuses the output on
   meaningful overlap. Set to 0 to include every listed country.
@@ -174,7 +174,7 @@ must exceed to be counted. The geographic areas can include countries
 with negligible weightings where the area shape extends beyond the
 evidence, so secondary countries at or below this percentage are
 ignored by default. Set to zero to include every listed country. */
-#define DEFAULT_MIN_SECONDARY_PERCENT 1.0
+#define DEFAULT_MIN_SECONDARY_PERCENT 2.0
 
 /** Size of each thread's cache of resolved graph offsets. Power of two. */
 #define CACHE_SIZE (1u << 22)
