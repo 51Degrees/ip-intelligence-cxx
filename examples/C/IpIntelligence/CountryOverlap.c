@@ -1743,36 +1743,44 @@ static void probeAddress(
 	const char* conn = highestWeighted(
 		&collection, shared->reqIndexConnection);
 	printf(
-		"%s cc=%s lc=%s ct=%s geo=[",
+		"%s cc=%s lc=%s ct=%s",
 		ip,
 		code != NULL ? code : "Unknown",
 		conf != NULL ? conf : "Unknown",
 		conn != NULL ? conn : "Unknown");
+	// Both weighted country lists are printed so the area weighted and
+	// population weighted views can be compared for the same address.
 	// Weights are displayed as each value's share of the total weight
 	// for the property, which is stable across the raw weighting scales
 	// used by different versions of the API.
-	double totalWeight = 0;
-	for (uint32_t i = 0; i < collection.itemsCount; i++) {
-		const fiftyoneDegreesWeightedValueHeader* header =
-			collection.items[i];
-		if (header->requiredPropertyIndex == shared->reqIndexGeo) {
-			totalWeight += (double)header->rawWeighting;
+	const int lists[2] = { shared->reqIndexGeo, shared->reqIndexPop };
+	const char* labels[2] = { " geo=[", " pop=[" };
+	for (int list = 0; list < 2; list++) {
+		printf("%s", labels[list]);
+		double totalWeight = 0;
+		for (uint32_t i = 0; i < collection.itemsCount; i++) {
+			const fiftyoneDegreesWeightedValueHeader* header =
+				collection.items[i];
+			if (header->requiredPropertyIndex == lists[list]) {
+				totalWeight += (double)header->rawWeighting;
+			}
 		}
-	}
-	for (uint32_t i = 0; i < collection.itemsCount; i++) {
-		const fiftyoneDegreesWeightedValueHeader* header =
-			collection.items[i];
-		if (header->requiredPropertyIndex == shared->reqIndexGeo &&
-			header->valueType ==
-			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING &&
-			totalWeight > 0) {
-			printf(
-				"%s:%.3f|",
-				((const fiftyoneDegreesWeightedString*)header)->value,
-				(double)header->rawWeighting / totalWeight);
+		for (uint32_t i = 0; i < collection.itemsCount; i++) {
+			const fiftyoneDegreesWeightedValueHeader* header =
+				collection.items[i];
+			if (header->requiredPropertyIndex == lists[list] &&
+				header->valueType ==
+				FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING &&
+				totalWeight > 0) {
+				printf(
+					"%s:%.3f|",
+					((const fiftyoneDegreesWeightedString*)header)->value,
+					(double)header->rawWeighting / totalWeight);
+			}
 		}
+		printf("]");
 	}
-	printf("] geoDistinct=%d popDistinct=%d\n",
+	printf(" geoDistinct=%d popDistinct=%d\n",
 		countDistinctAbove(&collection, shared->reqIndexGeo, 0),
 		countDistinctAbove(&collection, shared->reqIndexPop, 0));
 	WeightedValuesCollectionRelease(&collection);
