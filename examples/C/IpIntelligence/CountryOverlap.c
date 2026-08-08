@@ -41,12 +41,12 @@ confidence and connection type:
   probable country for the addresses counted by the row.
 - SecondaryCountryCode, SecondaryCountry: when these equal the primary
   country the row counts the addresses that resolve entirely to the
-  primary country. Otherwise they name another country in the area
-  weighted country list, and the row counts the addresses that can
-  resolve to both the primary and the secondary country. Secondary
-  countries whose share of the weighting is at or below the minimum
-  percentage (default 2%) are ignored, including when deciding whether
-  an address resolves entirely to the primary country.
+  primary country. Otherwise they name another country in the
+  population weighted country list, and the row counts the addresses
+  that can resolve to both the primary and the secondary country.
+  Secondary countries whose share of the weighting is at or below the
+  minimum percentage (default 2%) are ignored, including when deciding
+  whether an address resolves entirely to the primary country.
 - LocationConfidence, ConnectionType: the values of the properties with
   these names. See the
   [property dictionary](https://51degrees.com/developers/property-dictionary?utm_source=code&utm_medium=example&utm_campaign=ip-intelligence-cxx&utm_content=examples-c-ipintelligence-countryoverlap.c&utm_term=property-dictionary)
@@ -60,6 +60,19 @@ confidence and connection type:
 An address whose area overlaps several countries appears in one row for
 each secondary country, so the proportions for a primary country do not
 sum to 1.
+
+## Which weighted country list is used
+
+The data provides two weighted country lists for the area associated
+with an address. CountryCodesGeographical weights each country by its
+share of the area, and CountryCodesPopulation weights each country by
+its share of the people living within the area. This example uses the
+population list, because the decisions it informs, such as whether a
+viewer is inside a licensed territory, are about people rather than
+land. A largely empty border region contributes little to a licensing
+decision even when it covers a lot of ground. The area weighted split
+is still tracked internally for comparison, and probe mode prints both
+lists for a single address.
 
 ## How it works
 
@@ -195,8 +208,9 @@ typedef struct country_overlap_resolved_t {
 	uint16_t countryIndex; /**< Index into the country dimension */
 	uint8_t confidenceIndex; /**< Index into the confidence dimension */
 	uint8_t connectionIndex; /**< Index into the connection dimension */
-	uint8_t flags; /**< Bit 0 geographic multi, bit 1 population multi,
-				   bit 2 shared list truncated at SHARED_STORE */
+	uint8_t flags; /**< Bit 0 multiple countries, bit 1 the area spans
+				   multiple countries, bit 2 shared list truncated at
+				   SHARED_STORE */
 	uint8_t sharedCount; /**< Number of entries in shared */
 	uint16_t shared[SHARED_STORE]; /**< Country indexes that share the
 								   area, highest weighted first */
@@ -206,10 +220,12 @@ typedef struct country_overlap_resolved_t {
 typedef struct country_overlap_cell_t {
 	uint64_t segments; /**< Number of contiguous segments of addresses */
 	uint64_t addresses;
-	uint64_t singleGeo;
-	uint64_t multiGeo;
-	uint64_t singlePop;
-	uint64_t multiPop;
+	uint64_t single; /**< Addresses whose people are all in the primary
+					 country */
+	uint64_t multi; /**< Addresses that also relate to other countries */
+	uint64_t singleArea; /**< The same split using the area weighted
+						 list, tracked for comparison */
+	uint64_t multiArea;
 } Cell;
 
 /** Cells for all the combinations of the three dimensions. */
@@ -585,10 +601,15 @@ static Resolved resolveAddress(ThreadState* state, uint32_t address) {
 	resolved.connectionIndex = (uint8_t)valueIndex(
 		&state->connection,
 		connection != NULL ? connection : "Unknown");
+	// The population weighted list is used because the decisions this
+	// analysis informs, such as whether a viewer is inside a licensed
+	// territory, are about people rather than land. A country's share
+	// of the people living within the area is therefore the meaningful
+	// measure, not its share of the area itself.
 	setSharedCountries(
 		&resolved,
 		&collection,
-		shared->reqIndexGeo,
+		shared->reqIndexPop,
 		shared->minShare);
 	// The address is multi country when at least one qualifying
 	// secondary country exists, so the classification always agrees
@@ -598,7 +619,7 @@ static Resolved resolveAddress(ThreadState* state, uint32_t address) {
 	}
 	if (countDistinctAbove(
 		&collection,
-		shared->reqIndexPop,
+		shared->reqIndexGeo,
 		shared->minShare) > 1) {
 		resolved.flags |= 2;
 	}
@@ -679,16 +700,16 @@ static void addSegment(
 	cell->segments++;
 	cell->addresses += addresses;
 	if (resolved->flags & 1) {
-		cell->multiGeo += addresses;
+		cell->multi += addresses;
 	}
 	else {
-		cell->singleGeo += addresses;
+		cell->single += addresses;
 	}
 	if (resolved->flags & 2) {
-		cell->multiPop += addresses;
+		cell->multiArea += addresses;
 	}
 	else {
-		cell->singlePop += addresses;
+		cell->singleArea += addresses;
 	}
 	if (resolved->sharedCount > 0) {
 		uint64_t* block = sharedBlockGet(
@@ -1005,9 +1026,9 @@ static void writeCombinedCsv(
 					primaryName,
 					confidence->names[f],
 					connection->names[n],
-					(unsigned long long)cell->singleGeo,
+					(unsigned long long)cell->single,
 					total > 0 ?
-					(double)cell->singleGeo / total : 0);
+					(double)cell->single / total : 0);
 				// One row per secondary country in descending order of
 				// the addresses that can resolve to the combination.
 				const uint64_t* block = sharedBlocks->blocks[f][n];
@@ -1096,7 +1117,7 @@ static void printTop(
 						continue;
 					}
 					addresses += cells[c][f][n].addresses;
-					overlapping += cells[c][f][n].multiGeo;
+					overlapping += cells[c][f][n].multi;
 				}
 			}
 			if (addresses < 1000000) {
@@ -1181,7 +1202,7 @@ static void printSummary(
 		for (int f = 0; f < confidence->count; f++) {
 			for (int n = 0; n < connection->count; n++) {
 				total += cells[c][f][n].addresses;
-				multi += cells[c][f][n].multiGeo;
+				multi += cells[c][f][n].multi;
 			}
 		}
 	}
@@ -1202,7 +1223,7 @@ static void printSummary(
 		for (int c = 0; c < COUNTRY_UNKNOWN; c++) {
 			for (int f = 0; f < confidence->count; f++) {
 				typeTotal += cells[c][f][n].addresses;
-				typeMulti += cells[c][f][n].multiGeo;
+				typeMulti += cells[c][f][n].multi;
 			}
 		}
 		if (typeTotal == 0) {
@@ -1565,10 +1586,10 @@ int fiftyoneDegreesIpiCountryOverlap(
 							state->connection.names[n])];
 					target->segments += cell->segments;
 					target->addresses += cell->addresses;
-					target->singleGeo += cell->singleGeo;
-					target->multiGeo += cell->multiGeo;
-					target->singlePop += cell->singlePop;
-					target->multiPop += cell->multiPop;
+					target->single += cell->single;
+					target->multi += cell->multi;
+					target->singleArea += cell->singleArea;
+					target->multiArea += cell->multiArea;
 				}
 			}
 		}
