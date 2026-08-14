@@ -146,10 +146,13 @@ static const uint16_t FULL_RAW_WEIGHTING = 0xFFFFU;
 /*
  * The minor version from which the profiles collection stores offsets, and
  * the collection length in the header, in 8 byte units rather than bytes.
- * Profile records in such files are aligned to 8 byte boundaries by the
- * exporter so that the 32 bit stored offsets can address profile data up to
- * 32GB. Only supported when compiled with large data file support, as the
- * arithmetic to convert stored offsets to byte positions requires 64 bits.
+ * Profile records in such files are aligned by the exporter to 8 byte
+ * boundaries relative to the start of the collection, which is what the
+ * stored offsets are relative to, so that the 32 bit stored offsets can
+ * address profile data up to 32GB. The start of the collection itself need
+ * not be aligned. Only supported when compiled with large data file support,
+ * as the arithmetic to convert stored offsets to byte positions requires 64
+ * bits.
  */
 #define FIFTYONE_DEGREES_IPI_SHIFTED_PROFILES_VERSION_MINOR 6
 /* The number of bits to shift a stored profile offset left to get bytes */
