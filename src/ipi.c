@@ -155,8 +155,12 @@ static const uint16_t FULL_RAW_WEIGHTING = 0xFFFFU;
  * bits.
  */
 #define FIFTYONE_DEGREES_IPI_SHIFTED_PROFILES_VERSION_MINOR 6
-/* The number of bits to shift a stored profile offset left to get bytes */
-#define FIFTYONE_DEGREES_IPI_PROFILES_OFFSET_SHIFT 3
+/*
+ * The largest profiles offset shift the header can declare. A shift of 8
+ * would give 256 byte units addressing 1TB, well beyond any expected file,
+ * so larger values indicate a corrupt header.
+ */
+#define FIFTYONE_DEGREES_IPI_MAX_PROFILES_OFFSET_SHIFT 8
 #endif
 
 #undef FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY
@@ -722,9 +726,15 @@ static StatusCode checkVersion(DataSetIpi* dataSet) {
 #ifdef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
 	// Files with shifted profile offsets can only be read when compiled
 	// with large data file support, as converting the stored offsets to
-	// byte positions requires 64 bit arithmetic.
+	// byte positions requires 64 bit arithmetic. The shift is declared
+	// in the header and validated here rather than assumed.
 	if (dataSet->header.versionMinor ==
 		FIFTYONE_DEGREES_IPI_SHIFTED_PROFILES_VERSION_MINOR) {
+		if (dataSet->header.profilesOffsetShift < 0 ||
+			dataSet->header.profilesOffsetShift >
+			FIFTYONE_DEGREES_IPI_MAX_PROFILES_OFFSET_SHIFT) {
+			return CORRUPT_DATA;
+		}
 		return SUCCESS;
 	}
 #endif
@@ -733,14 +743,14 @@ static StatusCode checkVersion(DataSetIpi* dataSet) {
 
 /**
  * Gets the number of bits to shift a stored profile offset left to convert
- * it to a byte position within the profiles collection. Zero for files
- * where profile offsets are byte positions.
+ * it to a byte position within the profiles collection. Declared by the
+ * data file in the header, and zero for files where profile offsets are
+ * byte positions, including all files before version 4.6 where the field
+ * was reserved and always zero.
  */
 #ifdef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
 static byte getProfilesOffsetShift(const DataSetIpi* dataSet) {
-	return dataSet->header.versionMinor >=
-		FIFTYONE_DEGREES_IPI_SHIFTED_PROFILES_VERSION_MINOR ?
-		FIFTYONE_DEGREES_IPI_PROFILES_OFFSET_SHIFT : 0;
+	return (byte)dataSet->header.profilesOffsetShift;
 }
 #endif
 
