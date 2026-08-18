@@ -644,6 +644,101 @@ typedef struct {
  * @param tempData Temporary data structure for string conversion operations
  * @param exception Pointer to an exception structure for error handling
  */
+/**
+ * @brief Populates the chunk with a value derived from the evaluation graph
+ * when the property value is not stored in the data file.
+ *
+ * The IpRangeStart and IpRangeEnd property values are not stored in the
+ * profiles. They are derived from the path recorded in the graph evaluation
+ * result. When the required property is one of these the chunk is populated
+ * with a single weighted string containing the derived IP address.
+ *
+ * @param chunk Pointer to the chunk to initialize
+ * @param results Pointer to the IP Intelligence results
+ * @param exception Pointer to an exception structure for error handling
+ * @return true if the property is derived from the graph and therefore
+ * handled by this method, otherwise false.
+ */
+static bool PropValuesChunkInitFromGraph(
+    PropValuesChunk * const chunk,
+    ResultsIpi * const results,
+    Exception * const exception) {
+
+    const DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
+    const char * const name = STRING(PropertiesGetNameFromRequiredIndex(
+        dataSet->b.b.available,
+        chunk->requiredPropertyIndex));
+    if (name == NULL) {
+        return false;
+    }
+    const bool isStart = strcmp(name, "IpRangeStart") == 0;
+    if (isStart == false && strcmp(name, "IpRangeEnd") != 0) {
+        return false;
+    }
+
+    // The property is derived from the graph so the chunk is always
+    // considered handled from this point, even if no value can be derived.
+    if (results->count == 0) {
+        return true;
+    }
+
+    // Only a single result is expected for an IP address evaluation.
+    const fiftyoneDegreesIpiCgResult * const graphResult =
+        &results->items[0].graphResult;
+    byte rawIp[FIFTYONE_DEGREES_IPV6_LENGTH];
+    const int ipLength = isStart ?
+        fiftyoneDegreesIpiGraphGetStartIp(
+            graphResult,
+            rawIp,
+            sizeof(rawIp),
+            exception) :
+        fiftyoneDegreesIpiGraphGetEndIp(
+            graphResult,
+            rawIp,
+            sizeof(rawIp),
+            exception);
+    if (ipLength == 0 || EXCEPTION_FAILED) {
+        return true;
+    }
+
+    // Convert the IP address bytes to a string.
+    char ipString[64];
+    StringBuilder builder = { ipString, sizeof(ipString) };
+    StringBuilderInit(&builder);
+    byte arrayBytes[sizeof(int16_t) + FIFTYONE_DEGREES_IPV6_LENGTH];
+    fiftyoneDegreesVarLengthByteArray * const array =
+        (fiftyoneDegreesVarLengthByteArray*)arrayBytes;
+    array->size = (int16_t)ipLength;
+    memcpy(&array->firstByte, rawIp, ipLength);
+    StringBuilderAddIpAddress(
+        &builder,
+        array,
+        ipLength == FIFTYONE_DEGREES_IPV4_LENGTH ?
+            FIFTYONE_DEGREES_IP_TYPE_IPV4 :
+            FIFTYONE_DEGREES_IP_TYPE_IPV6,
+        exception);
+    StringBuilderComplete(&builder);
+    if (EXCEPTION_FAILED || builder.full) {
+        return true;
+    }
+
+    // Populate the chunk with a single weighted string holding the full
+    // weighting.
+    chunk->count = 1;
+    chunk->converter = &PropValuesConverter_String;
+    DataMalloc(&chunk->data, sizeof(WeightedString));
+    chunk->data.used = chunk->data.allocated;
+    WeightedString * const wString = (WeightedString*)chunk->data.ptr;
+    InitString(&wString->header, NULL);
+    wString->header.requiredPropertyIndex = chunk->requiredPropertyIndex;
+    wString->header.rawWeighting = 0xFFFFU;
+    wString->header.valueType = FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING;
+    DataMalloc(&wString->stringData, builder.added + 1);
+    memcpy(wString->stringData.ptr, ipString, builder.added + 1);
+    wString->value = (char*)wString->stringData.ptr;
+    return true;
+}
+
 static void PropValuesChunkInit(
     PropValuesChunk * const chunk,
     ResultsIpi * const results,
@@ -652,6 +747,13 @@ static void PropValuesChunkInit(
     Exception * const exception) {
 
     const DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
+
+    // Where the property value is derived from the graph rather than being
+    // stored in a profile there is nothing more to do.
+    if (PropValuesChunkInitFromGraph(chunk, results, exception)) {
+        return;
+    }
+
     const uint32_t propertyIndex = PropertiesGetPropertyIndexFromRequiredIndex(
         dataSet->b.b.available,
         chunk->requiredPropertyIndex);
