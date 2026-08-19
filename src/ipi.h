@@ -337,6 +337,14 @@ typedef struct fiftyone_degrees_result_ipi_t {
 												 graph evaluation */
 	fiftyoneDegreesIpAddress targetIpAddress; /**< The target IP address
 											  to find a matching range for */
+	byte rangeStartValue[sizeof(int16_t) +
+		FIFTYONE_DEGREES_IPV6_LENGTH]; /**< IpRangeStart value derived from
+									   the graph result in stored binary
+									   value form */
+	byte rangeEndValue[sizeof(int16_t) +
+		FIFTYONE_DEGREES_IPV6_LENGTH]; /**< IpRangeEnd value derived from
+									   the graph result in stored binary
+									   value form */
 } fiftyoneDegreesResultIpi;
 
 /**

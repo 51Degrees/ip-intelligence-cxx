@@ -1958,6 +1958,95 @@ static WeightedItem* getValuesFromResult(
 	return results->values.items;
 }
 
+/**
+ * Values derived from the graph result are held in the result structure
+ * rather than a collection, so releasing them is a no operation.
+ */
+static void releaseDerivedValue(fiftyoneDegreesCollectionItem* item) {
+#	ifdef _MSC_VER
+	UNREFERENCED_PARAMETER(item);
+#	endif
+}
+
+/**
+ * Collection assigned to derived value items so the standard release of the
+ * results values list operates on them safely.
+ */
+static const Collection derivedValueCollection = {
+	NULL, /* get */
+	releaseDerivedValue,
+	NULL, /* freeCollection */
+	NULL, /* state */
+};
+
+/**
+ * Adds the value for a property derived from the graph result path to the
+ * results values list. IpRangeStart and IpRangeEnd are not stored in
+ * profiles. The value bytes are derived into the result structure and
+ * referenced by the values list like any other stored binary value.
+ * @param results to add the derived values to
+ * @param isStart true for IpRangeStart, false for IpRangeEnd
+ * @param exception pointer to an exception data structure
+ * @return the first value in the list of items, or NULL if no value could
+ * be derived.
+ */
+static const WeightedItem* getDerivedRangeValues(
+	ResultsIpi* const results,
+	const bool isStart,
+	Exception* const exception) {
+	for (uint32_t i = 0; i < results->count && EXCEPTION_OKAY; i++) {
+		ResultIpi* const result = &results->items[i];
+		if (result->graphResult.rawOffset == NULL_PROFILE_OFFSET ||
+			result->graphResult.pathLength == 0) {
+			continue;
+		}
+
+		// Derive the IP address bytes into the stored binary value form
+		// held by the result.
+		byte* const buffer = isStart ?
+			result->rangeStartValue :
+			result->rangeEndValue;
+		fiftyoneDegreesVarLengthByteArray* const value =
+			(fiftyoneDegreesVarLengthByteArray*)buffer;
+		const int length = isStart ?
+			fiftyoneDegreesIpiGraphGetStartIp(
+				&result->graphResult,
+				&value->firstByte,
+				FIFTYONE_DEGREES_IPV6_LENGTH,
+				exception) :
+			fiftyoneDegreesIpiGraphGetEndIp(
+				&result->graphResult,
+				&value->firstByte,
+				FIFTYONE_DEGREES_IPV6_LENGTH,
+				exception);
+		if (length == 0 || EXCEPTION_FAILED) {
+			continue;
+		}
+		value->size = (int16_t)length;
+
+		// Add the derived value to the results with full weighting.
+		if (results->values.count == results->values.capacity) {
+			WeightedItemListExtend(
+				&results->values,
+				results->values.capacity
+				* FIFTYONE_DEGREES_WEIGHTED_ITEM_LIST_RESIZE_FACTOR,
+				exception);
+			if (EXCEPTION_FAILED) {
+				return NULL;
+			}
+		}
+		WeightedItem weightedItem;
+		DataReset(&weightedItem.item.data);
+		weightedItem.item.data.ptr = buffer;
+		weightedItem.item.data.used = sizeof(int16_t) + (uint32_t)length;
+		weightedItem.item.handle = NULL;
+		weightedItem.item.collection = &derivedValueCollection;
+		weightedItem.rawWeighting = FIFTYONE_DEGREES_WEIGHTED_ITEM_MAX_WEIGHT;
+		WeightedItemListAdd(&results->values, &weightedItem, exception);
+	}
+	return results->values.count > 0 ? results->values.items : NULL;
+}
+
 const fiftyoneDegreesWeightedItem* fiftyoneDegreesResultsIpiGetValues(
 	fiftyoneDegreesResultsIpi* const results,
 	int const requiredPropertyIndex,
@@ -1993,25 +2082,44 @@ const fiftyoneDegreesWeightedItem* fiftyoneDegreesResultsIpiGetValues(
 				results->propertyItem.collection = dataSet->properties;
 			}
 
-			// There will only be one result
-			for (uint32_t i = 0; i < results->count && EXCEPTION_OKAY; i++) {
-				firstValue = getValuesFromResult(
+			const char* const propertyName = STRING(
+				PropertiesGetNameFromRequiredIndex(
+					dataSet->b.b.available,
+					requiredPropertyIndex));
+			const bool isRangeStart = propertyName != NULL &&
+				strcmp(propertyName, "IpRangeStart") == 0;
+			if (isRangeStart || (propertyName != NULL &&
+				strcmp(propertyName, "IpRangeEnd") == 0)) {
+				// The values for these properties are not stored in the
+				// profiles. They are derived from the graph result path.
+				firstValue = getDerivedRangeValues(
 					results,
-					&results->items[i],
-					property,
+					isRangeStart,
 					exception);
 			}
+			else {
+				// There will only be one result
+				for (uint32_t i = 0;
+					i < results->count && EXCEPTION_OKAY;
+					i++) {
+					firstValue = getValuesFromResult(
+						results,
+						&results->items[i],
+						property,
+						exception);
+				}
 
-			if (results->values.count == 0 &&
-				property->defaultValueIndex != UINT32_MAX &&
-				property->isMandatory) {
-				// There are no values, but the default value from the property
-				// should be used, as there is a default value, and the property
-				// is marked mandatory.
-				firstValue = getDefaultValue(
-					results,
-					property,
-					exception);
+				if (results->values.count == 0 &&
+					property->defaultValueIndex != UINT32_MAX &&
+					property->isMandatory) {
+					// There are no values, but the default value from the
+					// property should be used, as there is a default value,
+					// and the property is marked mandatory.
+					firstValue = getDefaultValue(
+						results,
+						property,
+						exception);
+				}
 			}
 		}
 	}
