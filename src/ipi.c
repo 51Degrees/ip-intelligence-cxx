@@ -142,6 +142,27 @@ static const uint16_t FULL_RAW_WEIGHTING = 0xFFFFU;
 #define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MAJOR 4
 #define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MINOR 5
 
+#ifdef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
+/*
+ * The minor version from which the profiles collection stores offsets, and
+ * the collection length in the header, in 8 byte units rather than bytes.
+ * Profile records in such files are aligned by the exporter to 8 byte
+ * boundaries relative to the start of the collection, which is what the
+ * stored offsets are relative to, so that the 32 bit stored offsets can
+ * address profile data up to 32GB. The start of the collection itself need
+ * not be aligned. Only supported when compiled with large data file support,
+ * as the arithmetic to convert stored offsets to byte positions requires 64
+ * bits.
+ */
+#define FIFTYONE_DEGREES_IPI_SHIFTED_PROFILES_VERSION_MINOR 6
+/*
+ * The largest profiles offset shift the header can declare. A shift of 8
+ * would give 256 byte units addressing 1TB, well beyond any expected file,
+ * so larger values indicate a corrupt header.
+ */
+#define FIFTYONE_DEGREES_IPI_MAX_PROFILES_OFFSET_SHIFT 8
+#endif
+
 #undef FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY
 #define FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY true
 fiftyoneDegreesConfigIpi fiftyoneDegreesIpiInMemoryConfig = {
@@ -694,14 +715,44 @@ static StatusCode readHeaderFromMemory(
 }
 
 static StatusCode checkVersion(DataSetIpi* dataSet) {
-	if (!(dataSet->header.versionMajor ==
-		FIFTYONE_DEGREES_IPI_TARGET_VERSION_MAJOR &&
-		dataSet->header.versionMinor ==
-		FIFTYONE_DEGREES_IPI_TARGET_VERSION_MINOR)) {
+	if (dataSet->header.versionMajor !=
+		FIFTYONE_DEGREES_IPI_TARGET_VERSION_MAJOR) {
 		return INCORRECT_VERSION;
 	}
-	return SUCCESS;
+	if (dataSet->header.versionMinor ==
+		FIFTYONE_DEGREES_IPI_TARGET_VERSION_MINOR) {
+		return SUCCESS;
+	}
+#ifdef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
+	// Files with shifted profile offsets can only be read when compiled
+	// with large data file support, as converting the stored offsets to
+	// byte positions requires 64 bit arithmetic. The shift is declared
+	// in the header and validated here rather than assumed.
+	if (dataSet->header.versionMinor ==
+		FIFTYONE_DEGREES_IPI_SHIFTED_PROFILES_VERSION_MINOR) {
+		if (dataSet->header.profilesOffsetShift < 0 ||
+			dataSet->header.profilesOffsetShift >
+			FIFTYONE_DEGREES_IPI_MAX_PROFILES_OFFSET_SHIFT) {
+			return CORRUPT_DATA;
+		}
+		return SUCCESS;
+	}
+#endif
+	return INCORRECT_VERSION;
 }
+
+/**
+ * Gets the number of bits to shift a stored profile offset left to convert
+ * it to a byte position within the profiles collection. Declared by the
+ * data file in the header, and zero for files where profile offsets are
+ * byte positions, including all files before version 4.6 where the field
+ * was reserved and always zero.
+ */
+#ifdef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
+static byte getProfilesOffsetShift(const DataSetIpi* dataSet) {
+	return (byte)dataSet->header.profilesOffsetShift;
+}
+#endif
 
 static void initDataSetPost(
 	DataSetIpi* dataSet,
@@ -776,7 +827,19 @@ static StatusCode initWithMemory(
 
 	const uint32_t profileCount = dataSet->header.profiles.count;
 	*(uint32_t*)(&dataSet->header.profiles.count) = 0;
+#ifdef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
+	// The profiles collection may store offsets in 8 byte units depending
+	// on the data file version. No other collection uses shifted offsets.
+	dataSet->profiles = fiftyoneDegreesCollectionCreateFromMemoryWithOffsetShift(
+		reader,
+		dataSet->header.profiles,
+		getProfilesOffsetShift(dataSet));
+	if (dataSet->profiles == NULL) {
+		return INVALID_COLLECTION_CONFIG;
+	}
+#else
 	COLLECTION_CREATE_MEMORY(profiles)
+#endif
 	*(uint32_t*)(&dataSet->header.profiles.count) = profileCount;
 
 	COLLECTION_CREATE_MEMORY(graphs);
@@ -894,7 +957,22 @@ static StatusCode readDataSetFromFile(
 
 	const uint32_t profileCount = dataSet->header.profiles.count;
 	*(uint32_t*)(&dataSet->header.profiles.count) = 0;
+#ifdef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
+	// The profiles collection may store offsets in 8 byte units depending
+	// on the data file version. No other collection uses shifted offsets.
+	dataSet->profiles = fiftyoneDegreesCollectionCreateFromFileWithOffsetShift(
+		file,
+		&dataSet->b.b.filePool,
+		&dataSet->config.profiles,
+		dataSet->header.profiles,
+		fiftyoneDegreesProfileReadFromFile,
+		getProfilesOffsetShift(dataSet));
+	if (dataSet->profiles == NULL) {
+		return INVALID_COLLECTION_CONFIG;
+	}
+#else
 	COLLECTION_CREATE_FILE(profiles, fiftyoneDegreesProfileReadFromFile);
+#endif
 	*(uint32_t*)(&dataSet->header.profiles.count) = profileCount;
 
 	COLLECTION_CREATE_FILE(graphs, CollectionReadFileFixed);
