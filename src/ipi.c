@@ -2108,6 +2108,15 @@ static bool resultGetHasValidPropertyValueOffset(
 				dataSet->b.b.available,
 				requiredPropertyIndex));
 		if (propertyName != NULL && EXCEPTION_OKAY) {
+			// The IpRangeStart and IpRangeEnd property values are not stored
+			// in the profiles. They are derived from the path recorded in the
+			// graph evaluation result, so a value is available whenever a
+			// result with a path is present.
+			if (strcmp(propertyName, "IpRangeStart") == 0 ||
+				strcmp(propertyName, "IpRangeEnd") == 0) {
+				return result->graphResult.rawOffset != NULL_PROFILE_OFFSET &&
+					result->graphResult.pathLength > 0;
+			}
 			// We will only execute this step if successfully obtained the
 			// profile groups offset from the previous step
 			if (result->graphResult.rawOffset != NULL_PROFILE_OFFSET) {
