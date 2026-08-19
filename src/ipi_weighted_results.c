@@ -645,12 +645,11 @@ typedef struct {
  * @param exception Pointer to an exception structure for error handling
  */
 /**
- * @brief Populates the chunk with a value derived from the evaluation graph
- * when the property value is not stored in the data file.
+ * @brief Populates the chunk when the property value is derived from the
+ * evaluation graph rather than stored in the data file.
  *
- * The IpRangeStart and IpRangeEnd property values are not stored in the
- * profiles. They are derived from the path recorded in the graph evaluation
- * result. When the required property is one of these the chunk is populated
+ * IpRangeStart and IpRangeEnd values are derived from the path recorded in
+ * the graph evaluation result. For these properties the chunk is populated
  * with a single weighted string containing the derived IP address.
  *
  * @param chunk Pointer to the chunk to initialize
@@ -676,13 +675,13 @@ static bool PropValuesChunkInitFromGraph(
         return false;
     }
 
-    // The property is derived from the graph so the chunk is always
-    // considered handled from this point, even if no value can be derived.
+    /* The property is derived from the graph so the chunk is handled from
+     * this point, even if no value can be derived. */
     if (results->count == 0) {
         return true;
     }
 
-    // Only a single result is expected for an IP address evaluation.
+    /* Only a single result is expected for an IP address evaluation. */
     const fiftyoneDegreesIpiCgResult * const graphResult =
         &results->items[0].graphResult;
     byte rawIp[FIFTYONE_DEGREES_IPV6_LENGTH];
@@ -701,7 +700,7 @@ static bool PropValuesChunkInitFromGraph(
         return true;
     }
 
-    // Convert the IP address bytes to a string.
+    /* Convert the IP address bytes to a string. */
     char ipString[64];
     StringBuilder builder = { ipString, sizeof(ipString) };
     StringBuilderInit(&builder);
@@ -722,8 +721,7 @@ static bool PropValuesChunkInitFromGraph(
         return true;
     }
 
-    // Populate the chunk with a single weighted string holding the full
-    // weighting.
+    /* Populate the chunk with a single full weighting string. */
     chunk->count = 1;
     chunk->converter = &PropValuesConverter_String;
     DataMalloc(&chunk->data, sizeof(WeightedString));
@@ -748,8 +746,8 @@ static void PropValuesChunkInit(
 
     const DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
 
-    // Where the property value is derived from the graph rather than being
-    // stored in a profile there is nothing more to do.
+    /* Where the property value is derived from the graph there is nothing
+     * more to do. */
     if (PropValuesChunkInitFromGraph(chunk, results, exception)) {
         return;
     }

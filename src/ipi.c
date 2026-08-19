@@ -138,25 +138,23 @@ static const uint16_t FULL_RAW_WEIGHTING = 0xFFFFU;
  * PRESET IP INTELLIGENCE CONFIGURATIONS
  */
 
-/*
+/**
  * The expected version of the data file. Version 4.6 files store profile
- * offsets, and the profiles collection length in the header, in units
- * declared by the header's profilesOffsetShift field rather than bytes.
- * Profile records in such files are aligned by the exporter to unit
- * boundaries relative to the start of the collection, which is what the
- * stored offsets are relative to, so that the 32 bit stored offsets can
- * address profile data beyond 4GB. The start of the collection itself need
- * not be aligned. Version 4.6 files also no longer store the IpRangeStart
- * and IpRangeEnd property values, which are derived from the evaluation
- * graph, so earlier versions are not supported.
+ * offsets, and the profiles collection length in the header, in the unit
+ * declared by the header's profilesOffsetShift field, with profile records
+ * aligned to unit boundaries relative to the start of the collection. The
+ * 32 bit stored offsets can then address profile data beyond 4GB. Version
+ * 4.6 files also no longer store the IpRangeStart and IpRangeEnd property
+ * values, which are derived from the evaluation graph, so earlier versions
+ * are not supported.
  */
 #define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MAJOR 4
 #define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MINOR 6
 
-/*
+/**
  * The largest profiles offset shift the header can declare. A shift of 8
- * would give 256 byte units addressing 1TB, well beyond any expected file,
- * so larger values indicate a corrupt header.
+ * gives 256 byte units addressing 1TB, well beyond any expected file, so
+ * larger values indicate a corrupt header.
  */
 #define FIFTYONE_DEGREES_IPI_MAX_PROFILES_OFFSET_SHIFT 8
 
@@ -719,17 +717,16 @@ static StatusCode checkVersion(DataSetIpi* dataSet) {
 		return INCORRECT_VERSION;
 	}
 
-	// The shift used to convert stored profile offsets to byte positions is
-	// declared in the header and validated here rather than assumed.
+	/* The shift used to convert stored profile offsets to byte positions is
+	 * declared in the header and validated rather than assumed. */
 	if (dataSet->header.profilesOffsetShift < 0 ||
 		dataSet->header.profilesOffsetShift >
 		FIFTYONE_DEGREES_IPI_MAX_PROFILES_OFFSET_SHIFT) {
 		return CORRUPT_DATA;
 	}
 #ifndef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
-	// Files with shifted profile offsets can only be read when compiled
-	// with large data file support, as converting the stored offsets to
-	// byte positions requires 64 bit arithmetic.
+	/* Converting shifted offsets to byte positions requires the 64 bit
+	 * arithmetic of large data file support. */
 	if (dataSet->header.profilesOffsetShift != 0) {
 		return INCORRECT_VERSION;
 	}
@@ -738,11 +735,10 @@ static StatusCode checkVersion(DataSetIpi* dataSet) {
 }
 
 /**
- * Gets the number of bits to shift a stored profile offset left to convert
- * it to a byte position within the profiles collection. Declared by the
- * data file in the header, and zero for files where profile offsets are
- * byte positions, including all files before version 4.6 where the field
- * was reserved and always zero.
+ * @return the number of bits to shift a stored profile offset left to
+ * convert it to a byte position within the profiles collection. Declared by
+ * the data file in the header, and zero where profile offsets are byte
+ * positions.
  */
 #ifdef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
 static byte getProfilesOffsetShift(const DataSetIpi* dataSet) {
@@ -824,8 +820,8 @@ static StatusCode initWithMemory(
 	const uint32_t profileCount = dataSet->header.profiles.count;
 	*(uint32_t*)(&dataSet->header.profiles.count) = 0;
 #ifdef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
-	// The profiles collection may store offsets in 8 byte units depending
-	// on the data file version. No other collection uses shifted offsets.
+	/* The profiles collection stores offsets in the unit declared by the
+	 * header. No other collection uses shifted offsets. */
 	dataSet->profiles = fiftyoneDegreesCollectionCreateFromMemoryWithOffsetShift(
 		reader,
 		dataSet->header.profiles,
@@ -954,8 +950,8 @@ static StatusCode readDataSetFromFile(
 	const uint32_t profileCount = dataSet->header.profiles.count;
 	*(uint32_t*)(&dataSet->header.profiles.count) = 0;
 #ifdef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
-	// The profiles collection may store offsets in 8 byte units depending
-	// on the data file version. No other collection uses shifted offsets.
+	/* The profiles collection stores offsets in the unit declared by the
+	 * header. No other collection uses shifted offsets. */
 	dataSet->profiles = fiftyoneDegreesCollectionCreateFromFileWithOffsetShift(
 		file,
 		&dataSet->b.b.filePool,
@@ -2104,10 +2100,9 @@ static bool resultGetHasValidPropertyValueOffset(
 				dataSet->b.b.available,
 				requiredPropertyIndex));
 		if (propertyName != NULL && EXCEPTION_OKAY) {
-			// The IpRangeStart and IpRangeEnd property values are not stored
-			// in the profiles. They are derived from the path recorded in the
-			// graph evaluation result, so a value is available whenever a
-			// result with a path is present.
+			/* IpRangeStart and IpRangeEnd are derived from the path in the
+			 * graph result rather than stored values, so a value is
+			 * available whenever a result with a path is present. */
 			if (strcmp(propertyName, "IpRangeStart") == 0 ||
 				strcmp(propertyName, "IpRangeEnd") == 0) {
 				return result->graphResult.rawOffset != NULL_PROFILE_OFFSET &&

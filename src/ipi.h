@@ -199,12 +199,9 @@ typedef struct fiftyone_degrees_ipi_dataset_header_t {
 	const int16_t age; /**< Age of the data set format */
 	const int32_t profilesOffsetShift; /**< Number of bits to shift a stored
 							profile offset, or the profiles collection length,
-							left to convert it to bytes. Zero in files where
-							profile offsets are byte positions, including all
-							files before version 4.6, as this field was
-							previously reserved and always written as zero.
-							Occupies the reserved field retained so this
-							structure matches the data file header layout. */
+							left to convert it to bytes. Zero where profile
+							offsets are byte positions. Occupies a previously
+							reserved field always written as zero. */
 	const int32_t nameOffset; /**< Offset of the data file name in the strings 
 							  collection */
 	const int32_t formatOffset; /**< Offset of the data file format in the 
