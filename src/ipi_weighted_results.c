@@ -123,8 +123,8 @@ static void PropValuesInit(PropValues * const values, const uint32_t count) {
     values->items = (PropValuesChunk *)values->data.ptr;
     for (uint32_t i = 0, n = values->count; i < n; i++) {
         DataReset(&values->items[i].data);
-        /* A chunk might not be populated, so the count and converter must
-         * not hold uninitialized values when the items are moved. */
+        // A chunk might not be populated, so the count and converter must
+        // not hold uninitialized values when the items are moved.
         values->items[i].count = 0;
         values->items[i].converter = NULL;
     }
@@ -679,13 +679,13 @@ static bool PropValuesChunkInitFromGraph(
         return false;
     }
 
-    /* The property is derived from the graph so the chunk is handled from
-     * this point, even if no value can be derived. */
+    // The property is derived from the graph so the chunk is handled from
+    // this point, even if no value can be derived.
     if (results->count == 0) {
         return true;
     }
 
-    /* Only a single result is expected for an IP address evaluation. */
+    // Only a single result is expected for an IP address evaluation.
     const fiftyoneDegreesIpiCgResult * const graphResult =
         &results->items[0].graphResult;
     byte rawIp[FIFTYONE_DEGREES_IPV6_LENGTH];
@@ -704,7 +704,7 @@ static bool PropValuesChunkInitFromGraph(
         return true;
     }
 
-    /* Convert the IP address bytes to a string. */
+    // Convert the IP address bytes to a string.
     char ipString[64];
     StringBuilder builder = { ipString, sizeof(ipString) };
     StringBuilderInit(&builder);
@@ -725,7 +725,7 @@ static bool PropValuesChunkInitFromGraph(
         return true;
     }
 
-    /* Populate the chunk with a single full weighting string. */
+    // Populate the chunk with a single full weighting string.
     chunk->count = 1;
     chunk->converter = &PropValuesConverter_String;
     DataMalloc(&chunk->data, sizeof(WeightedString));
@@ -750,8 +750,8 @@ static void PropValuesChunkInit(
 
     const DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
 
-    /* Where the property value is derived from the graph there is nothing
-     * more to do. */
+    // Where the property value is derived from the graph there is nothing
+    // more to do.
     if (PropValuesChunkInitFromGraph(chunk, results, exception)) {
         return;
     }

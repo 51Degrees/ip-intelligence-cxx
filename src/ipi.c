@@ -717,16 +717,16 @@ static StatusCode checkVersion(DataSetIpi* dataSet) {
 		return INCORRECT_VERSION;
 	}
 
-	/* The shift used to convert stored profile offsets to byte positions is
-	 * declared in the header and validated rather than assumed. */
+	// The shift used to convert stored profile offsets to byte positions is
+	// declared in the header and validated rather than assumed.
 	if (dataSet->header.profilesOffsetShift < 0 ||
 		dataSet->header.profilesOffsetShift >
 		FIFTYONE_DEGREES_IPI_MAX_PROFILES_OFFSET_SHIFT) {
 		return CORRUPT_DATA;
 	}
 #ifndef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
-	/* Converting shifted offsets to byte positions requires the 64 bit
-	 * arithmetic of large data file support. */
+	// Converting shifted offsets to byte positions requires the 64 bit
+	// arithmetic of large data file support.
 	if (dataSet->header.profilesOffsetShift != 0) {
 		return INCORRECT_VERSION;
 	}
@@ -820,8 +820,8 @@ static StatusCode initWithMemory(
 	const uint32_t profileCount = dataSet->header.profiles.count;
 	*(uint32_t*)(&dataSet->header.profiles.count) = 0;
 #ifdef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
-	/* The profiles collection stores offsets in the unit declared by the
-	 * header. No other collection uses shifted offsets. */
+	// The profiles collection stores offsets in the unit declared by the
+	// header. No other collection uses shifted offsets.
 	dataSet->profiles = fiftyoneDegreesCollectionCreateFromMemoryWithOffsetShift(
 		reader,
 		dataSet->header.profiles,
@@ -950,8 +950,8 @@ static StatusCode readDataSetFromFile(
 	const uint32_t profileCount = dataSet->header.profiles.count;
 	*(uint32_t*)(&dataSet->header.profiles.count) = 0;
 #ifdef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
-	/* The profiles collection stores offsets in the unit declared by the
-	 * header. No other collection uses shifted offsets. */
+	// The profiles collection stores offsets in the unit declared by the
+	// header. No other collection uses shifted offsets.
 	dataSet->profiles = fiftyoneDegreesCollectionCreateFromFileWithOffsetShift(
 		file,
 		&dataSet->b.b.filePool,
@@ -2100,9 +2100,9 @@ static bool resultGetHasValidPropertyValueOffset(
 				dataSet->b.b.available,
 				requiredPropertyIndex));
 		if (propertyName != NULL && EXCEPTION_OKAY) {
-			/* IpRangeStart and IpRangeEnd are derived from the path in the
-			 * graph result rather than stored values, so a value is
-			 * available whenever a result with a path is present. */
+			// IpRangeStart and IpRangeEnd are derived from the path in the
+			// graph result rather than stored values, so a value is
+			// available whenever a result with a path is present.
 			if (strcmp(propertyName, "IpRangeStart") == 0 ||
 				strcmp(propertyName, "IpRangeEnd") == 0) {
 				return result->graphResult.rawOffset != NULL_PROFILE_OFFSET &&
