@@ -398,21 +398,39 @@ void EngineIpIntelligenceTests::verifyTargetIpAddressForString(
 	auto const engineIpi = (EngineIpi*)getEngine();
 	auto const results = std::unique_ptr<ResultsIpi>(
 		engineIpi->process(ipAddress));
-	if (results->results->count == 0) {
-		// The input resolved nothing, so there is no address to echo. This
-		// covers unparsable, empty and null input as well as a data set
-		// with no available component.
-		EXPECT_FALSE(results->getTargetIpAddress().hasValue()) <<
-			"A target IP address was returned where there are no results "
-			"for IP address: "
-			<< (ipAddress == nullptr ? "(null)" : ipAddress);
-		return;
-	}
+	// A parseable address always produces one result per available
+	// component, so there is always an address to echo back.
+	ASSERT_GT(results->results->count, 0u) << "No result was produced for "
+		"IP address: " << ipAddress;
 	expectTargetIpAddress(results.get(), ipAddress);
+}
+
+void EngineIpIntelligenceTests::verifyNoTargetIpAddressForString(
+	const char *ipAddress) {
+	auto const engineIpi = (EngineIpi*)getEngine();
+	auto const results = std::unique_ptr<ResultsIpi>(
+		engineIpi->process(ipAddress));
+	const char * const reported =
+		ipAddress == nullptr ? "(null)" : ipAddress;
+	ASSERT_EQ(0u, results->results->count) << "A result was produced for "
+		"an input which cannot be parsed: " << reported;
+	EXPECT_FALSE(results->getTargetIpAddress().hasValue()) <<
+		"A target IP address was returned for an input which cannot be "
+		"parsed: " << reported;
 }
 
 void EngineIpIntelligenceTests::verifyTargetIpAddressFromEvidence() {
 	auto const engineIpi = (EngineIpi*)getEngine();
+
+	// Resolving from evidence needs the data set to declare the header.
+	// Assert that rather than skipping quietly, so that the checks below
+	// cannot start passing without testing anything.
+	const vector<string> * const engineKeys = engineIpi->getKeys();
+	ASSERT_NE(
+		find(engineKeys->begin(), engineKeys->end(),
+			string("query.client-ip-51d")),
+		engineKeys->end()) << "The data set does not declare the "
+		"client-ip-51d header, so the evidence cannot be resolved.";
 
 	// The query prefix is walked before the server prefix, so the query value
 	// is the one the lookup resolves.
@@ -421,18 +439,18 @@ void EngineIpIntelligenceTests::verifyTargetIpAddressFromEvidence() {
 	mixedEvidence["server.client-ip-51d"] = ipv6Address;
 	auto results = std::unique_ptr<ResultsIpi>(
 		engineIpi->process(&mixedEvidence));
-	if (results->results->count > 0) {
-		expectTargetIpAddress(results.get(), ipv4Address);
-	}
+	ASSERT_GT(results->results->count, 0u) << "No result was produced from "
+		"evidence holding a valid client IP address.";
+	expectTargetIpAddress(results.get(), ipv4Address);
 
 	// With only the server prefix present that value is resolved instead.
 	EvidenceIpi serverEvidence;
 	serverEvidence["server.client-ip-51d"] = ipv6Address;
 	results = std::unique_ptr<ResultsIpi>(
 		engineIpi->process(&serverEvidence));
-	if (results->results->count > 0) {
-		expectTargetIpAddress(results.get(), ipv6Address);
-	}
+	ASSERT_GT(results->results->count, 0u) << "No result was produced from "
+		"server prefixed evidence holding a valid client IP address.";
+	expectTargetIpAddress(results.get(), ipv6Address);
 
 	// Evidence holding no usable IP address resolves nothing.
 	EvidenceIpi emptyEvidence;
@@ -449,10 +467,10 @@ void EngineIpIntelligenceTests::verifyTargetIpAddress() {
 	verifyTargetIpAddressForString(upperBoundIpv4Address);
 	verifyTargetIpAddressForString(lowerBoundIpv6Address);
 	verifyTargetIpAddressForString(upperBoundIpv6Address);
-	verifyTargetIpAddressForString(badIpv4Address);
-	verifyTargetIpAddressForString(badIpv6Address);
-	verifyTargetIpAddressForString("");
-	verifyTargetIpAddressForString(nullptr);
+	verifyNoTargetIpAddressForString(badIpv4Address);
+	verifyNoTargetIpAddressForString(badIpv6Address);
+	verifyNoTargetIpAddressForString("");
+	verifyNoTargetIpAddressForString(nullptr);
 	verifyTargetIpAddressFromEvidence();
 }
 

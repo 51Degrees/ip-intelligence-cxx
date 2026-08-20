@@ -178,6 +178,7 @@ protected:
 	void verifyWithIpAddressString(const char *ipAddress);
 	void verifyWithEvidence(EvidenceIpi *evidence);
 	void verifyTargetIpAddressForString(const char *ipAddress);
+	void verifyNoTargetIpAddressForString(const char *ipAddress);
 	void verifyTargetIpAddressFromEvidence();
 	void expectTargetIpAddress(
 		IpIntelligence::ResultsIpi *results,

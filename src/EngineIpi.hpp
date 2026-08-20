@@ -240,17 +240,32 @@ namespace FiftyoneDegrees {
 			 */
 			void initHttpHeaderKeys(fiftyoneDegreesHeaders *uniqueHeaders) override;
 
+			/**
+			 * Derive the evidence keys for a set of unique headers without
+			 * touching the engine's own key list, so that a refresh can
+			 * compare the result against the keys already in use.
+			 * @param uniqueHeaders to get the keys from
+			 * @return the evidence keys for the headers, in header order
+			 */
+			vector<string> buildHttpHeaderKeys(
+				fiftyoneDegreesHeaders *uniqueHeaders) const;
+
 		private:
 			void initMetaData();
 
 			/**
 			 * Rebuild the evidence keys from the unique headers of the data
-			 * set currently held by the resource manager. Called when the
-			 * engine is constructed and after every successful refresh, so
-			 * that getKeys() always describes the data set in use rather than
-			 * the one the engine was originally built from. The list returned
-			 * by getKeys() is rebuilt in place, so a caller must not hold the
-			 * pointer across a refresh.
+			 * set currently held by the resource manager. Called after every
+			 * successful refresh, so that getKeys() describes the data set in
+			 * use rather than the one the engine was built from.
+			 *
+			 * The new list is built before anything is modified and installed
+			 * with a single swap, and the keys are left untouched when the
+			 * reloaded data set declares the same headers. A refresh which
+			 * does change the headers still mutates the list returned by
+			 * getKeys(), which is not synchronised against concurrent
+			 * readers, so a caller must not hold that pointer across a
+			 * refresh.
 			 */
 			void reloadKeys() const;
 

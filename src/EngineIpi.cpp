@@ -90,18 +90,36 @@ EngineIpi::EngineIpi(
 }
 
 void EngineIpi::init() {
-	reloadKeys();
+	DataSetIpi *dataSet = DataSetIpiGet(manager.get());
+	initHttpHeaderKeys(dataSet->b.b.uniqueHeaders);
 	initMetaData();
+	DataSetIpiRelease(dataSet);
 }
 
 void EngineIpi::reloadKeys() const {
 	DataSetIpi *dataSet = DataSetIpiGet(manager.get());
-	// refreshData is const by contract, but the engine instance itself is
-	// never const, so the key list can be rebuilt in place.
-	EngineIpi * const engine = const_cast<EngineIpi *>(this);
-	engine->keys.clear();
-	engine->initHttpHeaderKeys(dataSet->b.b.uniqueHeaders);
+	vector<string> refreshedKeys;
+	try {
+		refreshedKeys = buildHttpHeaderKeys(dataSet->b.b.uniqueHeaders);
+	}
+	catch (...) {
+		// Release the reference before unwinding, and leave the engine with
+		// the keys it already had rather than none at all.
+		DataSetIpiRelease(dataSet);
+		throw;
+	}
 	DataSetIpiRelease(dataSet);
+
+	// Callers hold the pointer returned by getKeys(), so the list is only
+	// disturbed when the reloaded data set genuinely declares different
+	// headers. A live update to a file with the same headers, which is the
+	// usual case, leaves it untouched.
+	if (refreshedKeys == keys) {
+		return;
+	}
+	// refreshData is const by contract. The swap installs the rebuilt list
+	// in one step, so the keys are never observed empty or half built.
+	const_cast<EngineIpi *>(this)->keys.swap(refreshedKeys);
 }
 
 void* EngineIpi::copyData(void * const data, const FileOffset length) const {
@@ -305,15 +323,33 @@ Common::ResultsBase* EngineIpi::processBase(
 	return new ResultsIpi(results, manager);
 }
 
-void EngineIpi::initHttpHeaderKeys(fiftyoneDegreesHeaders *uniqueHeaders) {
-	uint32_t i, p;
-	const char *prefixes[] = { "query.", "server." };
-	for (i = 0; i < (uniqueHeaders ? uniqueHeaders->count : 0); i++) {
-		for (p = 0; p < sizeof(prefixes) / sizeof(const char*); p++) {
-			string key = string(prefixes[p]);
-			key.append(uniqueHeaders->items[i].name);
-			addKey(key);
+vector<string> EngineIpi::buildHttpHeaderKeys(
+	fiftyoneDegreesHeaders *uniqueHeaders) const {
+	static const char * const prefixes[] = { "query.", "server." };
+	static const size_t prefixesCount =
+		sizeof(prefixes) / sizeof(const char*);
+	const uint32_t headersCount = uniqueHeaders ? uniqueHeaders->count : 0;
+	vector<string> headerKeys;
+	headerKeys.reserve((size_t)headersCount * prefixesCount);
+	for (uint32_t headerIndex = 0; headerIndex < headersCount; headerIndex++) {
+		for (size_t prefixIndex = 0; prefixIndex < prefixesCount; prefixIndex++) {
+			string key = string(prefixes[prefixIndex]);
+			key.append(uniqueHeaders->items[headerIndex].name);
+			if (find(headerKeys.begin(), headerKeys.end(), key)
+				== headerKeys.end()) {
+				headerKeys.push_back(key);
+			}
 		}
+	}
+	return headerKeys;
+}
+
+void EngineIpi::initHttpHeaderKeys(fiftyoneDegreesHeaders *uniqueHeaders) {
+	const vector<string> headerKeys = buildHttpHeaderKeys(uniqueHeaders);
+	for (vector<string>::const_iterator key = headerKeys.begin();
+		key != headerKeys.end();
+		++key) {
+		addKey(*key);
 	}
 }
 
