@@ -89,4 +89,6 @@ public:
         const std::string &propertyName);
     Value<IpAddress> getValueAsIpAddress(
         int requiredPropertyIndex);
+
+    Value<IpAddress> getTargetIpAddress();
 };

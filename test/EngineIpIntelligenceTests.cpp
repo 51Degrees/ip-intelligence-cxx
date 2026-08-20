@@ -369,6 +369,93 @@ void EngineIpIntelligenceTests::verifyMixedPrefixesEvidence() {
 		"at the lower bound where it should be.";
 }
 
+void EngineIpIntelligenceTests::expectTargetIpAddress(
+	ResultsIpi *results,
+	const char *expectedIpAddress) {
+	const Common::Value<IpIntelligence::IpAddress> target =
+		results->getTargetIpAddress();
+	ASSERT_TRUE(target.hasValue()) << "The resolved target IP address should "
+		"be available whenever the lookup produced results for IP address: "
+		<< expectedIpAddress;
+	const IpIntelligence::IpAddress expected(expectedIpAddress);
+	EXPECT_EQ(expected.getType(), target.getValue().getType()) <<
+		"The resolved target IP address is not of the same type as the input "
+		"IP address: " << expectedIpAddress;
+	const size_t length =
+		expected.getType() == FIFTYONE_DEGREES_IP_TYPE_IPV4
+			? FIFTYONE_DEGREES_IPV4_LENGTH
+			: FIFTYONE_DEGREES_IPV6_LENGTH;
+	EXPECT_EQ(0,
+		memcmp(
+			expected.getIpAddress(),
+			target.getValue().getIpAddress(),
+			length)) << "The resolved target IP address does not match the "
+		"input IP address: " << expectedIpAddress;
+}
+
+void EngineIpIntelligenceTests::verifyTargetIpAddressForString(
+	const char *ipAddress) {
+	auto const engineIpi = (EngineIpi*)getEngine();
+	auto const results = std::unique_ptr<ResultsIpi>(
+		engineIpi->process(ipAddress));
+	if (results->results->count == 0) {
+		// The input resolved nothing, so there is no address to echo. This
+		// covers unparsable, empty and null input as well as a data set
+		// with no available component.
+		EXPECT_FALSE(results->getTargetIpAddress().hasValue()) <<
+			"A target IP address was returned where there are no results "
+			"for IP address: "
+			<< (ipAddress == nullptr ? "(null)" : ipAddress);
+		return;
+	}
+	expectTargetIpAddress(results.get(), ipAddress);
+}
+
+void EngineIpIntelligenceTests::verifyTargetIpAddressFromEvidence() {
+	auto const engineIpi = (EngineIpi*)getEngine();
+
+	// The query prefix is walked before the server prefix, so the query value
+	// is the one the lookup resolves.
+	EvidenceIpi mixedEvidence;
+	mixedEvidence["query.client-ip-51d"] = ipv4Address;
+	mixedEvidence["server.client-ip-51d"] = ipv6Address;
+	auto results = std::unique_ptr<ResultsIpi>(
+		engineIpi->process(&mixedEvidence));
+	if (results->results->count > 0) {
+		expectTargetIpAddress(results.get(), ipv4Address);
+	}
+
+	// With only the server prefix present that value is resolved instead.
+	EvidenceIpi serverEvidence;
+	serverEvidence["server.client-ip-51d"] = ipv6Address;
+	results = std::unique_ptr<ResultsIpi>(
+		engineIpi->process(&serverEvidence));
+	if (results->results->count > 0) {
+		expectTargetIpAddress(results.get(), ipv6Address);
+	}
+
+	// Evidence holding no usable IP address resolves nothing.
+	EvidenceIpi emptyEvidence;
+	results = std::unique_ptr<ResultsIpi>(
+		engineIpi->process(&emptyEvidence));
+	EXPECT_FALSE(results->getTargetIpAddress().hasValue()) <<
+		"A target IP address was returned for empty evidence.";
+}
+
+void EngineIpIntelligenceTests::verifyTargetIpAddress() {
+	verifyTargetIpAddressForString(ipv4Address);
+	verifyTargetIpAddressForString(ipv6Address);
+	verifyTargetIpAddressForString(lowerBoundIpv4Address);
+	verifyTargetIpAddressForString(upperBoundIpv4Address);
+	verifyTargetIpAddressForString(lowerBoundIpv6Address);
+	verifyTargetIpAddressForString(upperBoundIpv6Address);
+	verifyTargetIpAddressForString(badIpv4Address);
+	verifyTargetIpAddressForString(badIpv6Address);
+	verifyTargetIpAddressForString("");
+	verifyTargetIpAddressForString(nullptr);
+	verifyTargetIpAddressFromEvidence();
+}
+
 void EngineIpIntelligenceTests::verifyWithEvidence() {
 	EvidenceIpi queryEvidence, serverEvidence;
 	queryEvidence["query.client-ip-51d"] = ipv4Address;
@@ -472,6 +559,7 @@ void EngineIpIntelligenceTests::verify() {
 	verifyWithNullIpAddress();
 	verifyWithNullEvidence();
 	verifyWithInvalidInput();
+	verifyTargetIpAddress();
 }
 
 bool EngineIpIntelligenceTests::validateIpAddressInternal(
@@ -685,6 +773,17 @@ void EngineIpIntelligenceTests::multiThreadRandom(uint16_t concurrency) {
  	}
  }
  
+void EngineIpIntelligenceTests::compareKeys(
+	const vector<string> &keysBeforeRefresh,
+	const vector<string> &keysAfterRefresh) {
+	EXPECT_FALSE(keysAfterRefresh.empty()) <<
+		"The evidence keys were not rebuilt after the data set was "
+		"reloaded.";
+	EXPECT_EQ(keysBeforeRefresh, keysAfterRefresh) <<
+		"Reloading the same data file should leave the evidence keys "
+		"unchanged.";
+}
+
 bool EngineIpIntelligenceTests::fileReadToByteArray() {
 	fiftyoneDegreesStatusCode status = fiftyoneDegreesFileReadToByteArray(
 		fullName,
@@ -696,7 +795,9 @@ void EngineIpIntelligenceTests::reloadFile() {
 	EngineIpi *engineIpi = (EngineIpi*)getEngine();
 	ResultsIpi *results1 = engineIpi->process(
 		ipv4Address);
+	const vector<string> keysBeforeRefresh = *engineIpi->getKeys();
 	engineIpi->refreshData();
+	compareKeys(keysBeforeRefresh, *engineIpi->getKeys());
 	ResultsIpi *results2 = engineIpi->process(
 		ipv4Address);
 	compareResults(results1, results2);
@@ -716,7 +817,9 @@ void EngineIpIntelligenceTests::reloadMemory() {
 		"not be loaded into memory from '" << fullName << "'";
 	EXPECT_NE(newData.current, nullptr) << "New data could "
 		"not be loaded into memory from '" << fullName << "'";
+	const vector<string> keysBeforeRefresh = *engineIpi->getKeys();
 	engineIpi->refreshData(newData.current, newData.length);
+	compareKeys(keysBeforeRefresh, *engineIpi->getKeys());
 	ResultsIpi *results2 = engineIpi->process(
 		ipv4Address);
 	compareResults(results1, results2);

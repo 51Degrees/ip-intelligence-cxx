@@ -90,9 +90,17 @@ EngineIpi::EngineIpi(
 }
 
 void EngineIpi::init() {
-	DataSetIpi *dataSet = DataSetIpiGet(manager.get());
-	initHttpHeaderKeys(dataSet->b.b.uniqueHeaders);
+	reloadKeys();
 	initMetaData();
+}
+
+void EngineIpi::reloadKeys() const {
+	DataSetIpi *dataSet = DataSetIpiGet(manager.get());
+	// refreshData is const by contract, but the engine instance itself is
+	// never const, so the key list can be rebuilt in place.
+	EngineIpi * const engine = const_cast<EngineIpi *>(this);
+	engine->keys.clear();
+	engine->initHttpHeaderKeys(dataSet->b.b.uniqueHeaders);
 	DataSetIpiRelease(dataSet);
 }
 
@@ -185,6 +193,9 @@ void EngineIpi::refreshData() const {
 		throw StatusCodeException(status);
 	}
 	EXCEPTION_THROW;
+	// The new data set may declare different client IP headers, so the
+	// evidence keys have to be derived from it rather than kept.
+	reloadKeys();
 }
 
 void EngineIpi::refreshData(const char *fileName) const {
@@ -197,6 +208,9 @@ void EngineIpi::refreshData(const char *fileName) const {
 		throw StatusCodeException(status);
 	}
 	EXCEPTION_THROW;
+	// The new data set may declare different client IP headers, so the
+	// evidence keys have to be derived from it rather than kept.
+	reloadKeys();
 }
 
 void EngineIpi::refreshData(void *data, fiftyoneDegreesFileOffset length) const {
@@ -211,6 +225,9 @@ void EngineIpi::refreshData(void *data, fiftyoneDegreesFileOffset length) const 
 		throw StatusCodeException(status);
 	}
 	EXCEPTION_THROW;
+	// The new data set may declare different client IP headers, so the
+	// evidence keys have to be derived from it rather than kept.
+	reloadKeys();
 }
 
 void EngineIpi::refreshData(

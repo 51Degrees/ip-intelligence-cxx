@@ -243,6 +243,17 @@ namespace FiftyoneDegrees {
 		private:
 			void initMetaData();
 
+			/**
+			 * Rebuild the evidence keys from the unique headers of the data
+			 * set currently held by the resource manager. Called when the
+			 * engine is constructed and after every successful refresh, so
+			 * that getKeys() always describes the data set in use rather than
+			 * the one the engine was originally built from. The list returned
+			 * by getKeys() is rebuilt in place, so a caller must not hold the
+			 * pointer across a refresh.
+			 */
+			void reloadKeys() const;
+
 			void init();
 
 			void* copyData(void *data, fiftyoneDegreesFileOffset length) const;
