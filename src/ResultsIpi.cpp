@@ -242,6 +242,33 @@ IpIntelligence::ResultsIpi::getValueAsIpAddress(const string *propertyName) {
         ResultsBase::getRequiredPropertyIndex(propertyName->c_str()));
 }
 
+Common::Value<IpIntelligence::IpAddress>
+IpIntelligence::ResultsIpi::getTargetIpAddress() {
+    Common::Value<IpAddress> result;
+    // Every result in the array is built from the same input address, so
+    // the first one carries the address that the lookup resolved.
+    const ResultIpi * const firstResult =
+        (results != nullptr && results->count > 0)
+            ? &results->items[0]
+            : nullptr;
+    const IpType targetType = (firstResult != nullptr)
+        ? static_cast<IpType>(firstResult->targetIpAddress.type)
+        : IP_TYPE_INVALID;
+    if (targetType == IP_TYPE_INVALID) {
+        const fiftyoneDegreesResultsNoValueReason reason =
+            FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_NO_RESULTS;
+        result.setNoValueReason(
+            reason,
+            getNoValueMessageInternal(reason));
+    }
+    else {
+        result.setValue(IpAddress(
+            firstResult->targetIpAddress.value,
+            targetType));
+    }
+    return result;
+}
+
 Common::Value<vector<WeightedValue<bool>>>
 IpIntelligence::ResultsIpi::getValuesAsWeightedBoolList(
     int requiredPropertyIndex) {

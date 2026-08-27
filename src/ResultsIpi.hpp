@@ -425,6 +425,20 @@ namespace FiftyoneDegrees {
 			Common::Value<IpIntelligence::IpAddress> getValueAsIpAddress(
 				int requiredPropertyIndex);
 
+			/**
+			 * Get the IP address which the lookup actually resolved from the
+			 * input. When the results were built from evidence this is the
+			 * value of the header that the native selection order picked, so
+			 * a caller can echo the client IP consistently with the location
+			 * properties beside it without mirroring that order itself. When
+			 * the results were built from an IP address or an IP address
+			 * string it is that address. If no result was produced, for
+			 * example because the evidence held no usable IP address, then
+			 * hasValue returns false with NoValueReason and its message.
+			 * @return the target IP address the lookup resolved
+			 */
+			Common::Value<IpIntelligence::IpAddress> getTargetIpAddress();
+
 		protected:
 			void getValuesInternal(
 				int requiredPropertyIndex,

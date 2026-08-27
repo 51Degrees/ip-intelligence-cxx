@@ -147,6 +147,7 @@ public:
 	void validateQuick(ResultsBase *results) override;
 	void verifyWithEvidence();
 	void verifyMixedPrefixesEvidence();
+	void verifyTargetIpAddress();
 	void verifyWithIpv4Address();
 	void verifyWithIpv6Address();
 	void verifyWithBadIpv4Address();
@@ -170,9 +171,18 @@ public:
 protected:
 	vector<string> ipAddresses;
 	void compareResults(IpIntelligence::ResultsIpi *a, IpIntelligence::ResultsIpi *b);
+	void compareKeys(
+		const vector<string> &keysBeforeRefresh,
+		const vector<string> &keysAfterRefresh);
 	bool fileReadToByteArray();
 	void verifyWithIpAddressString(const char *ipAddress);
 	void verifyWithEvidence(EvidenceIpi *evidence);
+	void verifyTargetIpAddressForString(const char *ipAddress);
+	void verifyNoTargetIpAddressForString(const char *ipAddress);
+	void verifyTargetIpAddressFromEvidence();
+	void expectTargetIpAddress(
+		IpIntelligence::ResultsIpi *results,
+		const char *expectedIpAddress);
 	void verifyComponentMetaDataDefaultProfile(
 		MetaData *metaData,
 		ComponentMetaData *component) 
