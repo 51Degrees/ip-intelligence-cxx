@@ -851,4 +851,96 @@ void EngineIpIntelligenceTests::reloadMemory() {
 	data = newData;
 }
 
+/*
+ * Fills the buffer with a data set header carrying version 1.0 so any
+ * attempt to initialise a data set from it must fail with the
+ * INCORRECT_VERSION status after the replacement data set has been
+ * allocated and, for a file reload, its file handles opened.
+ */
+static void fillWithInvalidVersion(unsigned char *buffer, size_t length) {
+	int32_t versionMajor = 1;
+	int32_t versionMinor = 0;
+	memset(buffer, 0, length);
+	memcpy(buffer, &versionMajor, sizeof(int32_t));
+	memcpy(buffer + sizeof(int32_t), &versionMinor, sizeof(int32_t));
+}
+
+/*
+ * Checks that after a failed reload the engine still answers queries
+ * with the data set that was active before the reload was attempted.
+ */
+void EngineIpIntelligenceTests::compareResultsAfterFailedReload(
+	ResultsIpi *a,
+	ResultsIpi *b) {
+	EXPECT_EQ(a->results->b.dataSet, b->results->b.dataSet) <<
+		"The failed reload did not leave the original data set active.";
+	EXPECT_EQ(a->getAvailableProperties(), b->getAvailableProperties()) <<
+		"Number of properties available does not match.";
+}
+
+void EngineIpIntelligenceTests::reloadFileFailure() {
+	EngineIpi *engineIpi = (EngineIpi*)getEngine();
+	ResultsIpi *results1 = engineIpi->process(
+		ipv4Address);
+
+	// Write a file which must fail to load to a temporary path.
+	unsigned char invalidData[sizeof(fiftyoneDegreesDataSetIpiHeader) + 64];
+	fillWithInvalidVersion(invalidData, sizeof(invalidData));
+	const char *invalidFileName = "invalid-version-reload.tmp";
+	fiftyoneDegreesStatusCode status = fiftyoneDegreesFileWrite(
+		invalidFileName,
+		invalidData,
+		sizeof(invalidData));
+	ASSERT_EQ(status, FIFTYONE_DEGREES_STATUS_SUCCESS) << "The invalid "
+		"data file could not be written to '" << invalidFileName << "'";
+
+	// The reload must report the failure to the caller.
+	EXPECT_THROW(
+		engineIpi->refreshData(invalidFileName),
+		StatusCodeException) << "Reloading from an invalid data file "
+		"must fail.";
+
+	ResultsIpi *results2 = engineIpi->process(
+		ipv4Address);
+	compareResultsAfterFailedReload(results1, results2);
+	delete results1;
+	delete results2;
+
+	// Deleting the file also checks the failed reload closed the file
+	// handles it opened, as an open handle stops the delete on Windows.
+	// The memory check in TearDown asserts the replacement data set the
+	// failed reload allocated was freed.
+	EXPECT_EQ(
+		fiftyoneDegreesFileDelete(invalidFileName),
+		FIFTYONE_DEGREES_STATUS_SUCCESS) << "The invalid data file could "
+		"not be deleted, so the failed reload may still hold a handle "
+		"to it.";
+}
+
+void EngineIpIntelligenceTests::reloadMemoryFailure() {
+	EngineIpi *engineIpi = (EngineIpi*)getEngine();
+	ResultsIpi *results1 = engineIpi->process(
+		ipv4Address);
+
+	// A buffer which must fail to load as a data set.
+	unsigned char invalidData[sizeof(fiftyoneDegreesDataSetIpiHeader) + 64];
+	fillWithInvalidVersion(invalidData, sizeof(invalidData));
+
+	// The reload must report the failure to the caller. The memory check
+	// in TearDown asserts the replacement data set the failed reload
+	// allocated was freed.
+	EXPECT_THROW(
+		engineIpi->refreshData(
+			invalidData,
+			(fiftyoneDegreesFileOffset)sizeof(invalidData)),
+		StatusCodeException) << "Reloading from an invalid data buffer "
+		"must fail.";
+
+	ResultsIpi *results2 = engineIpi->process(
+		ipv4Address);
+	compareResultsAfterFailedReload(results1, results2);
+	delete results1;
+	delete results2;
+}
+
 ENGINE_TEST_CONFIGS(Ipi)

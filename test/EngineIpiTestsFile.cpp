@@ -49,6 +49,9 @@ public:
 	void reload() { 
 		reloadFile();
 	}
+	void reloadFailure() {
+		reloadFileFailure();
+	}
 	void metaDataReload() {
 		SKIP_IN_MEMORY_RELOAD_TESTS_ON_CI();
 		verifyMetaDataReload(engine);
