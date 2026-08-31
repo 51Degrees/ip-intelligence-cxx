@@ -12,15 +12,18 @@ $ExcludeRegex = ".*Example.*"
 if ($IsWindows) {
     # Every ctest entry is a separate process that reads the 2.3GB data file
     # before the test body runs, and Windows pays roughly twice what Linux does
-    # for it. The tests below reload or measure the data file on top of that,
-    # so they dominate the Windows job (~13 of its ~76 minutes) while adding
-    # nothing that the three Ubuntu jobs do not already cover.
+    # for it. That read, not the test bodies, is what makes this job slow: an
+    # EngineIpiTestsMemory test costs ~16s whether it asserts one property or
+    # all of them. The three Ubuntu jobs still run everything below.
     #
     # EngineIpiTestsMemory*.Reload is the exception: it is skipped on Linux
-    # (see EngineIpiTestsMemory.cpp), so Windows is its only coverage. Keep the
-    # NullNull case and drop the other three.
+    # (see EngineIpiTestsMemory.cpp), so Windows is its only coverage. Keep it
+    # for the NullNull suite.
     $LongRunningOnWindows = @(
-        'EngineIpiTestsMemory(InMemoryNull|InMemoryOnePropertyString|NullOnePropertyString)\.Reload'
+        # Memory suites that only vary the required-properties filter. The two
+        # Null ones are kept and exercise the same init-from-memory path.
+        'EngineIpiTestsMemory(InMemory|Null)(One|Two|Duplicate|Mixed|AllEdge)Property'
+        'EngineIpiTestsMemoryInMemoryNull\.Reload'
         'EngineIpiTestsMemory.*\.(MetaDataReload|Size)'
         'EngineIpiTestsFile.*\.(Reload|MetaDataReload|Size)'
     )
