@@ -517,6 +517,10 @@ static void PropValuesChunkPopulate(
     for (uint32_t i = 0; i < context->valuesCount; i++) {
         WeightedValueHeader * const header = (WeightedValueHeader *)(
             converter->itemSize * i + chunkDataPtr);
+        // The save loop below stops at the first exception, so the type must
+        // be set here or the items it never reaches are released as whatever
+        // type the uninitialized memory happens to hold.
+        header->valueType = converter->valueType;
         converter->itemInitFunc(header, converterState);
     }
     for (uint32_t i = 0; (i < context->valuesCount) && EXCEPTION_OKAY; i++) {
