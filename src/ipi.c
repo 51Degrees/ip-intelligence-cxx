@@ -861,23 +861,21 @@ static StatusCode initInMemory(
 	Exception* exception) {
 	MemoryReader reader;
 
-	// Read the data from the source file into memory using the reader to 
+	// The data set is freed by the caller on failure rather than here, so
+	// that the caller can still read the file name from it to delete a temp
+	// file, and so the file path frees it too.
+	//
+	// Read the data from the source file into memory using the reader to
 	// store the pointer to the first and last bytes.
 	StatusCode status = DataSetInitInMemory(
 		&dataSet->b.b,
 		&reader);
 	if (status != SUCCESS) {
-		freeDataSet(dataSet);
 		return status;
 	}
 
 	// Use the memory reader to initialize the IP Intelligence data set.
-	status = initWithMemory(dataSet, &reader, exception);
-	if (status != SUCCESS || EXCEPTION_FAILED) {
-		freeDataSet(dataSet);
-		return status;
-	}
-	return status;
+	return initWithMemory(dataSet, &reader, exception);
 }
 
 static void initDataSet(DataSetIpi* dataSet, ConfigIpi** config) {
@@ -1162,6 +1160,11 @@ fiftyoneDegreesStatusCode fiftyoneDegreesIpiInitManagerFromFile(
 		fileName,
 		exception);
 	if (status != SUCCESS || EXCEPTION_FAILED) {
+		// Nothing below has taken ownership of the data set, so it is freed
+		// here on every failure. Without this the file path leaks it along
+		// with the file pool's open handles, which is the path every data
+		// file of an earlier version now takes.
+		freeDataSet(dataSet);
 		return status;
 	}
 	ResourceManagerInit(manager, dataSet, &dataSet->b.b.handle, freeDataSet);
