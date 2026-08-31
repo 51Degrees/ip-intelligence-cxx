@@ -197,9 +197,11 @@ typedef struct fiftyone_degrees_ipi_dataset_header_t {
 	const int32_t copyrightOffset; /**< Offset of the copyright string in the 
 								   strings collection */
 	const int16_t age; /**< Age of the data set format */
-	const int32_t reserved; /**< Reserved. Retained so this structure matches
-							the data file header layout. Not used by IP
-							Intelligence. */
+	const int32_t profilesOffsetShift; /**< Number of bits to shift a stored
+							profile offset, or the profiles collection length,
+							left to convert it to bytes. Zero where profile
+							offsets are byte positions. Occupies a previously
+							reserved field always written as zero. */
 	const int32_t nameOffset; /**< Offset of the data file name in the strings 
 							  collection */
 	const int32_t formatOffset; /**< Offset of the data file format in the 
