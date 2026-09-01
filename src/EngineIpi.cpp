@@ -234,6 +234,20 @@ void EngineIpi::refreshData(const char *fileName) const {
 void EngineIpi::refreshData(void *data, fiftyoneDegreesFileOffset length) const {
 	EXCEPTION_CREATE;
 	void *dataCopy = copyData(data, length);
+
+	// The copy belongs to the engine rather than to the caller, so the data
+	// set the reload creates has to take responsibility for freeing it. The
+	// reload reads its configuration from the data set in use, which is
+	// where the memory constructor's flag has to be set for a reload. Where
+	// the engine was created from a file the flag is still false, and
+	// without this the copy is never freed by anything.
+	DataSetIpi *dataSet = DataSetIpiGet(manager.get());
+	// The data set's copy of the configuration is const because it is only
+	// written while the data set is initialised, which is also the only
+	// place this flag is read, so the cast is safe here.
+	((fiftyoneDegreesConfigIpi*)&dataSet->config)->b.freeData = true;
+	DataSetIpiRelease(dataSet);
+
 	StatusCode status = IpiReloadManagerFromMemory(
 		manager.get(),
 		dataCopy,
