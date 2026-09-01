@@ -165,12 +165,17 @@ public:
 	void multiThreadRandom(uint16_t concurrency);
 	void reloadMemory();
 	void reloadFile();
+	void reloadMemoryFailure();
+	void reloadFileFailure();
 	EngineBase *getEngine() override;
 	EngineIpi *engine;
 	IpIntelligence::ConfigIpi *config;
 protected:
 	vector<string> ipAddresses;
 	void compareResults(IpIntelligence::ResultsIpi *a, IpIntelligence::ResultsIpi *b);
+	void compareResultsAfterFailedReload(
+		IpIntelligence::ResultsIpi *a,
+		IpIntelligence::ResultsIpi *b);
 	void compareKeys(
 		const vector<string> &keysBeforeRefresh,
 		const vector<string> &keysAfterRefresh);
@@ -238,6 +243,7 @@ TEST_F(ENGINE_CLASS_NAME(e,t,c,p), MetaData) { metaData(); } \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), AvailableProperties) { availableProperties(); } \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), MetaDataReload) { metaDataReload(); } \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), Reload) { reload(); } \
+TEST_F(ENGINE_CLASS_NAME(e,t,c,p), ReloadFailure) { reloadFailure(); } \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), Size) { size(); } \
 TEST_F(ENGINE_CLASS_NAME(e,t,c,p), Random) { \
 	randomWithIpAddress(50); \

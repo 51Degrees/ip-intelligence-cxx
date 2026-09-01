@@ -66,6 +66,11 @@ public:
 		reloadMemory();
 #endif
 	}
+	void reloadFailure() {
+		// The invalid buffer is small, so unlike reload() this test does
+		// not need a second copy of the data file and runs everywhere.
+		reloadMemoryFailure();
+	}
 	void metaDataReload() {}
 	void size() {
 		FIFTYONE_DEGREES_EXCEPTION_CREATE;
