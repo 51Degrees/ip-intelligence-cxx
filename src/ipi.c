@@ -138,9 +138,26 @@ static const uint16_t FULL_RAW_WEIGHTING = 0xFFFFU;
  * PRESET IP INTELLIGENCE CONFIGURATIONS
  */
 
-/* The expected version of the data file */
+/**
+ * The expected version of the data file. Version 4.6 files store profile
+ * offsets, and the profiles collection length in the header, in the unit
+ * declared by the header's profilesOffsetShift field, with profile records
+ * aligned to unit boundaries relative to the start of the collection. The
+ * 32 bit stored offsets can then address profile data beyond 4GB. All
+ * property values, including IpRangeStart and IpRangeEnd, are stored in
+ * profiles exactly as in version 4.5. Version 4.6 is otherwise identical
+ * to 4.5, but the API and the data file move together as a single version
+ * transition, so earlier versions are not supported.
+ */
 #define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MAJOR 4
-#define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MINOR 5
+#define FIFTYONE_DEGREES_IPI_TARGET_VERSION_MINOR 6
+
+/**
+ * The largest profiles offset shift the header can declare. A shift of 8
+ * gives 256 byte units addressing 1TB, well beyond any expected file, so
+ * larger values indicate a corrupt header.
+ */
+#define FIFTYONE_DEGREES_IPI_MAX_PROFILES_OFFSET_SHIFT 8
 
 #undef FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY
 #define FIFTYONE_DEGREES_CONFIG_ALL_IN_MEMORY true
@@ -700,8 +717,35 @@ static StatusCode checkVersion(DataSetIpi* dataSet) {
 		FIFTYONE_DEGREES_IPI_TARGET_VERSION_MINOR)) {
 		return INCORRECT_VERSION;
 	}
+
+	// The shift used to convert stored profile offsets to byte positions is
+	// declared in the header and validated rather than assumed.
+	if (dataSet->header.profilesOffsetShift < 0 ||
+		dataSet->header.profilesOffsetShift >
+		FIFTYONE_DEGREES_IPI_MAX_PROFILES_OFFSET_SHIFT) {
+		return CORRUPT_DATA;
+	}
+#ifndef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
+	// Converting shifted offsets to byte positions requires the 64 bit
+	// arithmetic of large data file support.
+	if (dataSet->header.profilesOffsetShift != 0) {
+		return INCORRECT_VERSION;
+	}
+#endif
 	return SUCCESS;
 }
+
+/**
+ * @return the number of bits to shift a stored profile offset left to
+ * convert it to a byte position within the profiles collection. Declared by
+ * the data file in the header, and zero where profile offsets are byte
+ * positions.
+ */
+#ifdef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
+static byte getProfilesOffsetShift(const DataSetIpi* dataSet) {
+	return (byte)dataSet->header.profilesOffsetShift;
+}
+#endif
 
 static void initDataSetPost(
 	DataSetIpi* dataSet,
@@ -776,7 +820,19 @@ static StatusCode initWithMemory(
 
 	const uint32_t profileCount = dataSet->header.profiles.count;
 	*(uint32_t*)(&dataSet->header.profiles.count) = 0;
+#ifdef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
+	// The profiles collection stores offsets in the unit declared by the
+	// header. No other collection uses shifted offsets.
+	dataSet->profiles = fiftyoneDegreesCollectionCreateFromMemoryWithOffsetShift(
+		reader,
+		dataSet->header.profiles,
+		getProfilesOffsetShift(dataSet));
+	if (dataSet->profiles == NULL) {
+		return INVALID_COLLECTION_CONFIG;
+	}
+#else
 	COLLECTION_CREATE_MEMORY(profiles)
+#endif
 	*(uint32_t*)(&dataSet->header.profiles.count) = profileCount;
 
 	COLLECTION_CREATE_MEMORY(graphs);
@@ -805,23 +861,21 @@ static StatusCode initInMemory(
 	Exception* exception) {
 	MemoryReader reader;
 
-	// Read the data from the source file into memory using the reader to 
+	// The data set is freed by the caller on failure rather than here, so
+	// that the caller can still read the file name from it to delete a temp
+	// file, and so the file path frees it too.
+	//
+	// Read the data from the source file into memory using the reader to
 	// store the pointer to the first and last bytes.
 	StatusCode status = DataSetInitInMemory(
 		&dataSet->b.b,
 		&reader);
 	if (status != SUCCESS) {
-		freeDataSet(dataSet);
 		return status;
 	}
 
 	// Use the memory reader to initialize the IP Intelligence data set.
-	status = initWithMemory(dataSet, &reader, exception);
-	if (status != SUCCESS || EXCEPTION_FAILED) {
-		freeDataSet(dataSet);
-		return status;
-	}
-	return status;
+	return initWithMemory(dataSet, &reader, exception);
 }
 
 static void initDataSet(DataSetIpi* dataSet, ConfigIpi** config) {
@@ -894,7 +948,22 @@ static StatusCode readDataSetFromFile(
 
 	const uint32_t profileCount = dataSet->header.profiles.count;
 	*(uint32_t*)(&dataSet->header.profiles.count) = 0;
+#ifdef FIFTYONE_DEGREES_LARGE_DATA_FILE_SUPPORT
+	// The profiles collection stores offsets in the unit declared by the
+	// header. No other collection uses shifted offsets.
+	dataSet->profiles = fiftyoneDegreesCollectionCreateFromFileWithOffsetShift(
+		file,
+		&dataSet->b.b.filePool,
+		&dataSet->config.profiles,
+		dataSet->header.profiles,
+		fiftyoneDegreesProfileReadFromFile,
+		getProfilesOffsetShift(dataSet));
+	if (dataSet->profiles == NULL) {
+		return INVALID_COLLECTION_CONFIG;
+	}
+#else
 	COLLECTION_CREATE_FILE(profiles, fiftyoneDegreesProfileReadFromFile);
+#endif
 	*(uint32_t*)(&dataSet->header.profiles.count) = profileCount;
 
 	COLLECTION_CREATE_FILE(graphs, CollectionReadFileFixed);
@@ -1091,6 +1160,11 @@ fiftyoneDegreesStatusCode fiftyoneDegreesIpiInitManagerFromFile(
 		fileName,
 		exception);
 	if (status != SUCCESS || EXCEPTION_FAILED) {
+		// Nothing below has taken ownership of the data set, so it is freed
+		// here on every failure. Without this the file path leaks it along
+		// with the file pool's open handles, which is the path every data
+		// file of an earlier version now takes.
+		freeDataSet(dataSet);
 		return status;
 	}
 	ResourceManagerInit(manager, dataSet, &dataSet->b.b.handle, freeDataSet);
