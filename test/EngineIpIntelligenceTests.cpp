@@ -34,6 +34,7 @@
 #include "EngineIpIntelligenceTests.hpp"
 #include "../src/EngineIpi.hpp"
 #include "../src/common-cxx/file.h"
+#include "../src/common-cxx/memory.h"
 
 using namespace FiftyoneDegrees::Common;
 using namespace FiftyoneDegrees::IpIntelligence;
@@ -894,11 +895,20 @@ void EngineIpIntelligenceTests::reloadFileFailure() {
 	ASSERT_EQ(status, FIFTYONE_DEGREES_STATUS_SUCCESS) << "The invalid "
 		"data file could not be written to '" << invalidFileName << "'";
 
-	// The reload must report the failure to the caller.
+	// The reload must report the failure to the caller, and must leave
+	// nothing allocated behind it. The engine test suites restore the
+	// standard allocators in SetUp, so the suite's own memory check never
+	// sees anything. Tracking is turned on around the failed reload alone,
+	// where everything allocated is also freed within the window, so the
+	// leak is caught on every platform rather than only where the C runtime
+	// provides its own check.
+	fiftyoneDegreesSetUpMemoryTracking();
 	EXPECT_THROW(
 		engineIpi->refreshData(invalidFileName),
 		StatusCodeException) << "Reloading from an invalid data file "
 		"must fail.";
+	EXPECT_EQ((size_t)0, fiftyoneDegreesUnsetMemoryTracking()) << "The "
+		"failed reload from a file did not free everything it allocated.";
 
 	ResultsIpi *results2 = engineIpi->process(
 		ipv4Address);
@@ -926,15 +936,19 @@ void EngineIpIntelligenceTests::reloadMemoryFailure() {
 	unsigned char invalidData[sizeof(fiftyoneDegreesDataSetIpiHeader) + 64];
 	fillWithInvalidVersion(invalidData, sizeof(invalidData));
 
-	// The reload must report the failure to the caller. The memory check
-	// in TearDown asserts the replacement data set the failed reload
-	// allocated was freed.
+	// The reload must report the failure to the caller, and must leave
+	// nothing allocated behind it, the copy the engine takes of the buffer
+	// included. See reloadFileFailure for why the check brackets the
+	// reload rather than relying on the suite's own memory check.
+	fiftyoneDegreesSetUpMemoryTracking();
 	EXPECT_THROW(
 		engineIpi->refreshData(
 			invalidData,
 			(fiftyoneDegreesFileOffset)sizeof(invalidData)),
 		StatusCodeException) << "Reloading from an invalid data buffer "
 		"must fail.";
+	EXPECT_EQ((size_t)0, fiftyoneDegreesUnsetMemoryTracking()) << "The "
+		"failed reload from memory did not free everything it allocated.";
 
 	ResultsIpi *results2 = engineIpi->process(
 		ipv4Address);
