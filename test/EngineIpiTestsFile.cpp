@@ -51,6 +51,11 @@ public:
 	}
 	void reloadFailure() {
 		reloadFileFailure();
+		// An engine built from a file can still be reloaded from a buffer,
+		// and the copy the engine takes of that buffer is its own to free.
+		// The invalid buffer is small, so this costs nothing next to a
+		// reload from a real data file.
+		reloadMemoryFailure();
 	}
 	void metaDataReload() {
 		SKIP_IN_MEMORY_RELOAD_TESTS_ON_CI();
