@@ -148,7 +148,9 @@ if(BUILD_TESTING)
 		target_link_libraries(IpiTests fiftyone-ip-intelligence-cxx gtest_main)
 	endif()
 	
-	gtest_discover_tests(IpiTests DISCOVERY_MODE PRE_TEST)
+	# DISCOVERY_TIMEOUT must stay outside PROPERTIES; anything after that keyword is
+	# parsed as a test property. The 5 second default is too tight for Windows CI.
+	gtest_discover_tests(IpiTests DISCOVERY_TIMEOUT 600 DISCOVERY_MODE PRE_TEST)
 
 	set_target_properties(IpiTests PROPERTIES FOLDER "Tests")
 
