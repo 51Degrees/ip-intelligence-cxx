@@ -104,3 +104,24 @@ public:
 
     Value<IpAddress> getTargetIpAddress();
 };
+
+%extend ResultsIpi {
+    int copyValueAsUTF8String(
+        int requiredPropertyIndex,
+        unsigned char copy[],
+        int length) {
+        Value<std::vector<uint8_t>> value =
+            $self->getValueAsUTF8String(requiredPropertyIndex);
+        if (!value.hasValue()) {
+            return -1;
+        }
+        std::vector<uint8_t> bytes = value.getValue();
+        int required = (int)bytes.size();
+        if (copy != nullptr && length >= required) {
+            for (int i = 0; i < required; i++) {
+                copy[i] = bytes[i];
+            }
+        }
+        return required;
+    }
+}
