@@ -24,6 +24,18 @@
 %include std_pair.i
 %include std_vector.i
 
+%extend std::vector<uint8_t> {
+    int copyToArray(unsigned char copy[], int length) {
+        if (copy == nullptr || length <= 0) {
+            return 0;
+        }
+        int count = length < (int)$self->size() ? length : (int)$self->size();
+        for (int i = 0; i < count; i++) {
+            copy[i] = (*$self)[i];
+        }
+        return count;
+    }
+}
 %include "common-cxx/ResultsBase.i"
 %include "WeightedValue.i"
 %include "common-cxx/IpAddress.i"
