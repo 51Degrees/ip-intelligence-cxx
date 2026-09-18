@@ -71,8 +71,8 @@ population list, because the decisions it informs, such as whether a
 viewer is inside a licensed territory, are about people rather than
 land. A largely empty border region contributes little to a licensing
 decision even when it covers a lot of ground. The area weighted split
-is still tracked internally for comparison, and probe mode prints both
-lists for a single address.
+is reported in the console summary for comparison, and probe mode
+prints both lists for a single address.
 
 ## How it works
 
@@ -113,17 +113,23 @@ CountryOverlap <data file> --probe <ip> [ip...]
 
 - data file: path to an enterprise .ipi data file.
 - output csv: path for the CSV, default country-overlap.csv.
-- threads: number of worker threads, default 10.
+- threads: number of worker threads, default 10. Each thread holds its
+  own cache of resolved locations of about 600 MB, so 10 threads need
+  about 6 GB in addition to the memory used by the data file. Choose
+  fewer threads on machines with less memory. When a cache cannot be
+  allocated at full size a smaller one is used, which is slower but
+  produces the same results.
 - chunks: number of /8 chunks of the IPv4 space to process starting at
   0.0.0.0, default 256 which is the whole space. Small values are useful
   for testing.
-- min percent: secondary countries whose share of the area weighting is
-  this percentage or lower are ignored, default 2. The geographic areas
-  can include countries with negligible weightings where the area shape
-  extends beyond the evidence, so the default focuses the output on
-  meaningful overlap. Set to 0 to include every listed country.
+- min percent: secondary countries whose share of the population
+  weighting is this percentage or lower are ignored, default 2. The
+  areas can include countries with negligible weightings where the area
+  shape extends beyond the evidence, so the default focuses the output
+  on meaningful overlap. Set to 0 to include every listed country.
 - --probe: print the resolved values for the addresses provided so they
-  can be compared against other 51Degrees APIs.
+  can be compared against other 51Degrees APIs. At least one address is
+  required.
 */
 
 #ifdef _MSC_VER
@@ -177,40 +183,79 @@ counting distinct countries. */
 
 /** Number of shared countries remembered for each distinct location,
 kept in descending weighting order. Matches the maximum number of list
-values compared, so every qualifying country can be stored. Locations
-with more shared countries than this are flagged and counted so
-truncation is visible in the output. */
+values compared, so every qualifying country can be stored. Lists with
+more distinct countries than this are flagged and counted so truncation
+is visible in the output. */
 #define SHARED_STORE MAX_LIST_VALUES
 
-/** Default minimum share of the area weighting a secondary country
-must exceed to be counted. The geographic areas can include countries
-with negligible weightings where the area shape extends beyond the
-evidence, so secondary countries at or below this percentage are
-ignored by default. Set to zero to include every listed country. */
+/** Default minimum share of the population weighting a secondary
+country must exceed to be counted. The areas can include countries with
+negligible weightings where the area shape extends beyond the evidence,
+so secondary countries at or below this percentage are ignored by
+default. Set to zero to include every listed country. */
 #define DEFAULT_MIN_SECONDARY_PERCENT 2.0
 
-/** Size of each thread's cache of resolved graph offsets. Power of two. */
-#define CACHE_SIZE (1u << 22)
+/** Number of address bits covered by a chunk, the unit of work claimed
+by a thread. The default of 24 makes each chunk a /8. The tests define
+a smaller value before including this file so that they can sweep a
+small part of the address space in seconds. */
+#ifndef COUNTRY_OVERLAP_CHUNK_BITS
+#define COUNTRY_OVERLAP_CHUNK_BITS 24
+#endif
+#define CHUNK_SIZE ((uint64_t)1 << COUNTRY_OVERLAP_CHUNK_BITS)
+#define MAX_CHUNKS (1 << (32 - COUNTRY_OVERLAP_CHUNK_BITS))
 
-/** Key used for failed evaluations. */
-#define FAILED_KEY UINT64_MAX
+/** Number of bits in the size of each thread's cache of resolved graph
+offsets. The default of 22 gives 4,194,304 entries, about 600 MB per
+thread, which keeps the cache well below full for the distinct
+locations a thread meets in a full sweep. The tests define a smaller
+value before including this file because they sweep far fewer
+addresses. */
+#ifndef COUNTRY_OVERLAP_CACHE_BITS
+#define COUNTRY_OVERLAP_CACHE_BITS 22
+#endif
+#define CACHE_SIZE (1u << COUNTRY_OVERLAP_CACHE_BITS)
+
+/** Smallest cache tried when the full size cannot be allocated. Below
+this almost every resolution misses the cache and the sweep slows to
+the point where reporting an error is more useful. */
+#define MIN_CACHE_BITS 12
+#if COUNTRY_OVERLAP_CACHE_BITS < MIN_CACHE_BITS
+#error COUNTRY_OVERLAP_CACHE_BITS must be at least MIN_CACHE_BITS
+#endif
 
 /** Number of random addresses compared against the normal lookup process
 after the sweep to validate the graph based method. */
 #define SPOT_CHECKS 20
 
-/** Total number of IPv4 addresses as a double for progress reporting. */
-#define TOTAL_IPV4 4294967296.0
+/** Resolved flag: at least one secondary country qualifies in the
+population weighted list. */
+#define RESOLVED_MULTI_COUNTRY 1
+/** Resolved flag: at least one secondary country qualifies in the area
+weighted list. Reported for comparison only. */
+#define RESOLVED_MULTI_COUNTRY_AREA 2
+/** Resolved flag: the population weighted list had more distinct
+countries than MAX_LIST_VALUES, so the lowest weighted were dropped. */
+#define RESOLVED_TRUNCATED 4
+
+/**
+ * Graph offsets for every component the required properties belong to.
+ * Values are only reused between addresses when all the offsets match,
+ * so every component that any property read by the analysis depends on
+ * must be included. Unused entries are zero so keys compare with memcmp.
+ */
+typedef struct country_overlap_segment_key_t {
+	uint32_t offsets[MAX_COMPONENTS];
+} SegmentKey;
 
 /** Resolved values for a combination of graph offsets. */
 typedef struct country_overlap_resolved_t {
-	uint64_t key; /**< Combined graph offsets plus one, zero when empty */
+	SegmentKey key; /**< Graph offsets the values were resolved for */
+	bool occupied; /**< True when the cache entry holds values */
 	uint16_t countryIndex; /**< Index into the country dimension */
 	uint8_t confidenceIndex; /**< Index into the confidence dimension */
 	uint8_t connectionIndex; /**< Index into the connection dimension */
-	uint8_t flags; /**< Bit 0 multiple countries, bit 1 the area spans
-				   multiple countries, bit 2 shared list truncated at
-				   SHARED_STORE */
+	uint8_t flags; /**< Combination of the RESOLVED_ flags */
 	uint8_t sharedCount; /**< Number of entries in shared */
 	uint16_t shared[SHARED_STORE]; /**< Country indexes that share the
 								   area, highest weighted first */
@@ -224,7 +269,8 @@ typedef struct country_overlap_cell_t {
 					 country */
 	uint64_t multi; /**< Addresses that also relate to other countries */
 	uint64_t singleArea; /**< The same split using the area weighted
-						 list, tracked for comparison */
+						 list, reported in the summary for
+						 comparison */
 	uint64_t multiArea;
 } Cell;
 
@@ -293,7 +339,7 @@ typedef struct country_overlap_shared_state_t {
 	int reqIndexConnection;
 	int reqIndexGeo;
 	int reqIndexPop;
-	int totalChunks; /**< Number of /8 chunks to process */
+	int endChunk; /**< Chunk after the last one to process */
 	double minShare; /**< Minimum share of the weighting, as a fraction
 					 of 1, a secondary country must exceed to count */
 	volatile long nextChunk; /**< Next chunk to be claimed by a thread */
@@ -305,6 +351,8 @@ typedef struct country_overlap_thread_state_t {
 	SharedState* shared;
 	ResultsIpi* results;
 	Resolved* cache;
+	uint32_t cacheMask; /**< Entries in cache minus one, a power of two
+						less one so it can mask a hash into a slot */
 	Matrix cells;
 	SharedBlocks sharedBlocks;
 	char* countryNames[COUNTRY_SLOTS];
@@ -314,8 +362,8 @@ typedef struct country_overlap_thread_state_t {
 	uint64_t evaluations;
 	uint64_t resolutions;
 	uint64_t failures;
-	uint64_t truncations; /**< Distinct locations whose shared country
-						  list exceeded SHARED_STORE */
+	uint64_t truncations; /**< Distinct locations whose population list
+						  had more distinct countries than SHARED_STORE */
 } ThreadState;
 
 static void countryOverlapReportStatus(
@@ -388,18 +436,29 @@ static const char* countryCode(int index, char buffer[8]) {
 	return buffer;
 }
 
+/** Summed weighting of each distinct country in a weighted list. */
+typedef struct country_overlap_country_weights_t {
+	uint16_t indexes[MAX_LIST_VALUES]; /**< Country slot of each entry */
+	double weights[MAX_LIST_VALUES]; /**< Summed weighting of each entry */
+	int count; /**< Number of distinct countries held */
+	double total; /**< Total weighting of the whole list, including any
+				  countries that did not fit */
+	bool truncated; /**< True when the list had more distinct countries
+					than MAX_LIST_VALUES */
+} CountryWeights;
+
 /**
- * Counts the distinct countries for the required property index whose
- * summed share of the list's total weighting exceeds minShare.
+ * Sums the weighting for each distinct country in the list for the
+ * required property index. A country can appear more than once in a
+ * list, so the entries are summed before any comparison with the
+ * minimum share. The single place the lists are read, so the population
+ * and area classifications always apply the same rules.
  */
-static int countDistinctAbove(
+static void sumCountryWeights(
+	CountryWeights* result,
 	const WeightedValuesCollection* collection,
-	int requiredPropertyIndex,
-	double minShare) {
-	uint16_t indexes[MAX_LIST_VALUES];
-	double weights[MAX_LIST_VALUES];
-	int count = 0;
-	double total = 0;
+	int requiredPropertyIndex) {
+	memset(result, 0, sizeof(CountryWeights));
 	for (uint32_t i = 0; i < collection->itemsCount; i++) {
 		const fiftyoneDegreesWeightedValueHeader* header =
 			collection->items[i];
@@ -409,30 +468,45 @@ static int countDistinctAbove(
 			continue;
 		}
 		const double weight = (double)header->rawWeighting;
-		total += weight;
+		result->total += weight;
 		const uint16_t index = (uint16_t)countryIndex(
 			((const fiftyoneDegreesWeightedString*)header)->value);
 		bool found = false;
-		for (int s = 0; s < count && found == false; s++) {
-			if (indexes[s] == index) {
-				weights[s] += weight;
+		for (int s = 0; s < result->count && found == false; s++) {
+			if (result->indexes[s] == index) {
+				result->weights[s] += weight;
 				found = true;
 			}
 		}
-		if (found == false && count < MAX_LIST_VALUES) {
-			indexes[count] = index;
-			weights[count] = weight;
-			count++;
+		if (found == false) {
+			if (result->count < MAX_LIST_VALUES) {
+				result->indexes[result->count] = index;
+				result->weights[result->count] = weight;
+				result->count++;
+			}
+			else {
+				// Recorded so the output can say the pair counts for
+				// this location exclude its lowest weighted countries.
+				result->truncated = true;
+			}
 		}
 	}
-	const double threshold = total * minShare;
-	int above = 0;
-	for (int s = 0; s < count; s++) {
-		if (weights[s] > threshold) {
-			above++;
-		}
-	}
-	return above;
+}
+
+/**
+ * Returns true when the entry is a secondary country that counts towards
+ * the overlap. The primary country and entries that are not a valid
+ * country code are never secondary, and neither are countries whose
+ * share of the total weighting does not exceed minShare.
+ */
+static bool isQualifyingSecondary(
+	const CountryWeights* weights,
+	int entry,
+	uint16_t primaryIndex,
+	double minShare) {
+	return weights->indexes[entry] != primaryIndex &&
+		weights->indexes[entry] != COUNTRY_UNKNOWN &&
+		weights->weights[entry] > weights->total * minShare;
 }
 
 /**
@@ -462,81 +536,62 @@ static const char* highestWeighted(
 
 /**
  * Fills the shared country indexes of the resolved values with the
- * countries in the geographic weighted list other than the most probable
- * country, ordered with the highest weighted first. The weightings for
- * each distinct country are summed first, and countries whose share of
- * the list's total weighting does not exceed minShare are ignored,
- * because the geographic areas can include countries with negligible
- * weightings where the area shape extends beyond the evidence.
+ * qualifying secondary countries in the weighted list, ordered with the
+ * highest weighted first. Countries whose share of the list's total
+ * weighting does not exceed minShare are ignored, because the areas can
+ * include countries with negligible weightings where the area shape
+ * extends beyond the evidence. SHARED_STORE equals MAX_LIST_VALUES so
+ * every qualifying country held in the weights fits.
  */
 static void setSharedCountries(
 	Resolved* resolved,
-	const WeightedValuesCollection* collection,
-	int requiredPropertyIndex,
+	const CountryWeights* weights,
 	double minShare) {
-	uint16_t indexes[MAX_LIST_VALUES];
-	double weights[MAX_LIST_VALUES];
 	bool used[MAX_LIST_VALUES];
-	int count = 0;
-	double total = 0;
-
-	// Sum the weighting for each distinct country in the list.
-	for (uint32_t i = 0; i < collection->itemsCount; i++) {
-		const fiftyoneDegreesWeightedValueHeader* header =
-			collection->items[i];
-		if (header->requiredPropertyIndex != requiredPropertyIndex ||
-			header->valueType !=
-			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING) {
-			continue;
-		}
-		const double weight = (double)header->rawWeighting;
-		total += weight;
-		const uint16_t index = (uint16_t)countryIndex(
-			((const fiftyoneDegreesWeightedString*)header)->value);
-		bool found = false;
-		for (int s = 0; s < count && found == false; s++) {
-			if (indexes[s] == index) {
-				weights[s] += weight;
-				found = true;
-			}
-		}
-		if (found == false && count < MAX_LIST_VALUES) {
-			indexes[count] = index;
-			weights[count] = weight;
-			count++;
-		}
-	}
-
-	// Store the qualifying countries in descending weighting order.
-	const double threshold = total * minShare;
 	memset(used, 0, sizeof(used));
 	int stored = 0;
 	for (;;) {
 		int best = -1;
 		double bestWeight = 0;
-		for (int s = 0; s < count; s++) {
+		for (int s = 0; s < weights->count; s++) {
 			if (used[s] == false &&
-				indexes[s] != resolved->countryIndex &&
-				indexes[s] != COUNTRY_UNKNOWN &&
-				weights[s] > threshold &&
-				(best < 0 || weights[s] > bestWeight)) {
+				isQualifyingSecondary(
+					weights,
+					s,
+					resolved->countryIndex,
+					minShare) == true &&
+				(best < 0 || weights->weights[s] > bestWeight)) {
 				best = s;
-				bestWeight = weights[s];
+				bestWeight = weights->weights[s];
 			}
 		}
 		if (best < 0) {
 			break;
 		}
 		used[best] = true;
-		if (stored < SHARED_STORE) {
-			resolved->shared[stored++] = (uint16_t)indexes[best];
-		}
-		else {
-			resolved->flags |= 4;
-			break;
-		}
+		resolved->shared[stored++] = weights->indexes[best];
 	}
 	resolved->sharedCount = (uint8_t)stored;
+}
+
+/**
+ * Returns true when at least one secondary country in the weights
+ * qualifies, applying the same rules as setSharedCountries.
+ */
+static bool hasQualifyingSecondary(
+	const CountryWeights* weights,
+	uint16_t primaryIndex,
+	double minShare) {
+	for (int s = 0; s < weights->count; s++) {
+		if (isQualifyingSecondary(
+			weights,
+			s,
+			primaryIndex,
+			minShare) == true) {
+			return true;
+		}
+	}
+	return false;
 }
 
 /**
@@ -606,25 +661,27 @@ static Resolved resolveAddress(ThreadState* state, uint32_t address) {
 	// territory, are about people rather than land. A country's share
 	// of the people living within the area is therefore the meaningful
 	// measure, not its share of the area itself.
-	setSharedCountries(
-		&resolved,
-		&collection,
-		shared->reqIndexPop,
-		shared->minShare);
+	CountryWeights weights;
+	sumCountryWeights(&weights, &collection, shared->reqIndexPop);
+	setSharedCountries(&resolved, &weights, shared->minShare);
 	// The address is multi country when at least one qualifying
 	// secondary country exists, so the classification always agrees
 	// with the pair rows in the CSV.
 	if (resolved.sharedCount > 0) {
-		resolved.flags |= 1;
+		resolved.flags |= RESOLVED_MULTI_COUNTRY;
 	}
-	if (countDistinctAbove(
-		&collection,
-		shared->reqIndexGeo,
-		shared->minShare) > 1) {
-		resolved.flags |= 2;
-	}
-	if (resolved.flags & 4) {
+	if (weights.truncated == true) {
+		resolved.flags |= RESOLVED_TRUNCATED;
 		state->truncations++;
+	}
+	// The area weighted list is classified with the same rules so the
+	// two figures in the summary are directly comparable.
+	sumCountryWeights(&weights, &collection, shared->reqIndexGeo);
+	if (hasQualifyingSecondary(
+		&weights,
+		resolved.countryIndex,
+		shared->minShare) == true) {
+		resolved.flags |= RESOLVED_MULTI_COUNTRY_AREA;
 	}
 
 	// Capture the display name for the country the first time the
@@ -646,42 +703,63 @@ static Resolved resolveAddress(ThreadState* state, uint32_t address) {
 }
 
 /**
+ * Returns the values used for addresses whose graph evaluation failed,
+ * so they are counted in the Failed row rather than lost.
+ */
+static Resolved failedResolved(ThreadState* state) {
+	Resolved failed;
+	memset(&failed, 0, sizeof(failed));
+	failed.countryIndex = COUNTRY_FAILED;
+	failed.confidenceIndex = (uint8_t)valueIndex(
+		&state->confidence,
+		"Failed");
+	failed.connectionIndex = (uint8_t)valueIndex(
+		&state->connection,
+		"Failed");
+	return failed;
+}
+
+/** Returns the starting cache slot for the key. */
+static uint32_t cacheSlot(
+	const ThreadState* state,
+	const SegmentKey* key) {
+	uint64_t hash = 0;
+	for (int c = 0; c < state->shared->componentCount; c++) {
+		hash = (hash ^ key->offsets[c]) * 0x9E3779B97F4A7C15ull;
+	}
+	return (uint32_t)(hash >> 32) & state->cacheMask;
+}
+
+/**
  * Returns the resolved values for the combined graph offsets, using the
  * thread's cache so that each distinct combination is resolved only once
  * per thread where cache capacity allows.
  */
 static Resolved resolveKey(
 	ThreadState* state,
-	uint64_t key,
+	const SegmentKey* key,
 	uint32_t address) {
-	if (key == FAILED_KEY) {
-		Resolved failed;
-		memset(&failed, 0, sizeof(failed));
-		failed.key = FAILED_KEY;
-		failed.countryIndex = COUNTRY_FAILED;
-		failed.confidenceIndex = (uint8_t)valueIndex(
-			&state->confidence,
-			"Failed");
-		failed.connectionIndex = (uint8_t)valueIndex(
-			&state->connection,
-			"Failed");
-		return failed;
-	}
-	const uint64_t stored = key + 1;
-	uint32_t slot = (uint32_t)(
-		(key * 0x9E3779B97F4A7C15ull) >> 40) & (CACHE_SIZE - 1);
+	uint32_t slot = cacheSlot(state, key);
 	for (uint32_t probes = 0; probes < 64; probes++) {
 		Resolved* entry = &state->cache[slot];
-		if (entry->key == stored) {
+		if (entry->occupied == true &&
+			memcmp(&entry->key, key, sizeof(SegmentKey)) == 0) {
 			return *entry;
 		}
-		if (entry->key == 0) {
+		if (entry->occupied == false) {
 			Resolved resolved = resolveAddress(state, address);
-			resolved.key = stored;
-			*entry = resolved;
+			// A failed resolution can be transient, for example a read
+			// error from the data file, so it is not cached. Caching it
+			// would count every later segment with the same offsets as
+			// failed for the rest of the thread's sweep.
+			if (resolved.countryIndex != COUNTRY_FAILED) {
+				resolved.key = *key;
+				resolved.occupied = true;
+				*entry = resolved;
+			}
 			return resolved;
 		}
-		slot = (slot + 1) & (CACHE_SIZE - 1);
+		slot = (slot + 1) & state->cacheMask;
 	}
 	// The cache neighbourhood is full. Resolve without caching, which is
 	// slower but still correct.
@@ -699,13 +777,13 @@ static void addSegment(
 		[resolved->connectionIndex];
 	cell->segments++;
 	cell->addresses += addresses;
-	if (resolved->flags & 1) {
+	if ((resolved->flags & RESOLVED_MULTI_COUNTRY) != 0) {
 		cell->multi += addresses;
 	}
 	else {
 		cell->single += addresses;
 	}
-	if (resolved->flags & 2) {
+	if ((resolved->flags & RESOLVED_MULTI_COUNTRY_AREA) != 0) {
 		cell->multiArea += addresses;
 	}
 	else {
@@ -728,17 +806,20 @@ static void addSegment(
 
 /**
  * Evaluates each of the required component graphs for the address and
- * combines the offsets into a single key. Returns FAILED_KEY when any
- * evaluation fails.
+ * records the offsets in the key. Returns false when any evaluation
+ * fails. Failure is returned separately from the key because every
+ * offset value, including the one a graph returns when the address has
+ * no match, is a valid result that must not be mistaken for a failure.
  */
-static uint64_t evaluateKey(
+static bool evaluateKey(
 	ThreadState* state,
-	fiftyoneDegreesIpAddress address) {
+	fiftyoneDegreesIpAddress address,
+	SegmentKey* key) {
 	SharedState* shared = state->shared;
 	const fiftyoneDegreesIpiCgArray* graphs =
 		shared->dataSet->graphsArray;
 	EXCEPTION_CREATE;
-	uint64_t key = 0;
+	memset(key, 0, sizeof(SegmentKey));
 	for (int c = 0; c < shared->componentCount; c++) {
 		fiftyoneDegreesIpiCgResult result =
 			fiftyoneDegreesIpiGraphEvaluate(
@@ -750,27 +831,45 @@ static uint64_t evaluateKey(
 		if (EXCEPTION_FAILED) {
 			EXCEPTION_CLEAR;
 			state->failures++;
-			return FAILED_KEY;
+			return false;
 		}
-		key = (key << 32) | (uint64_t)result.rawOffset;
+		key->offsets[c] = result.rawOffset;
 	}
-	return key;
+	return true;
 }
 
 /**
- * Sweeps a single /8 chunk of the IPv4 address space evaluating the
+ * Adds the segment that starts at the address to the matrix, resolving
+ * its values unless the graph evaluation failed.
+ */
+static void completeSegment(
+	ThreadState* state,
+	bool evaluated,
+	const SegmentKey* key,
+	uint64_t segmentStart,
+	uint64_t addresses) {
+	const Resolved resolved = evaluated == true ?
+		resolveKey(state, key, (uint32_t)segmentStart) :
+		failedResolved(state);
+	addSegment(state, &resolved, addresses);
+}
+
+/**
+ * Sweeps a single chunk of the IPv4 address space evaluating the
  * component graphs for every address. Full value resolution only happens
  * when the combined graph offsets change from one address to the next.
  */
 static void sweepChunk(ThreadState* state, uint32_t chunk) {
-	uint64_t start = (uint64_t)chunk << 24;
-	uint64_t end = start + 0x00FFFFFF;
+	const uint64_t start = (uint64_t)chunk << COUNTRY_OVERLAP_CHUNK_BITS;
+	const uint64_t end = start + CHUNK_SIZE - 1;
 
 	fiftyoneDegreesIpAddress address;
 	memset(&address, 0, sizeof(address));
 	address.type = FIFTYONE_DEGREES_IP_TYPE_IPV4;
 
-	uint64_t segmentKey = 0;
+	SegmentKey segmentKey = { { 0 } };
+	SegmentKey key = { { 0 } };
+	bool segmentEvaluated = false;
 	bool segmentValid = false;
 	uint64_t segmentStart = start;
 
@@ -780,20 +879,25 @@ static void sweepChunk(ThreadState* state, uint32_t chunk) {
 		address.value[2] = (byte)(ip >> 8);
 		address.value[3] = (byte)ip;
 
-		const uint64_t key = evaluateKey(state, address);
+		const bool evaluated = evaluateKey(state, address, &key);
 
 		if (segmentValid == false) {
 			segmentKey = key;
+			segmentEvaluated = evaluated;
 			segmentValid = true;
 			segmentStart = ip;
 		}
-		else if (key != segmentKey) {
-			const Resolved resolved = resolveKey(
+		else if (evaluated != segmentEvaluated ||
+			(evaluated == true &&
+			memcmp(&key, &segmentKey, sizeof(SegmentKey)) != 0)) {
+			completeSegment(
 				state,
-				segmentKey,
-				(uint32_t)segmentStart);
-			addSegment(state, &resolved, ip - segmentStart);
+				segmentEvaluated,
+				&segmentKey,
+				segmentStart,
+				ip - segmentStart);
 			segmentKey = key;
+			segmentEvaluated = evaluated;
 			segmentStart = ip;
 		}
 
@@ -802,12 +906,16 @@ static void sweepChunk(ThreadState* state, uint32_t chunk) {
 			state->addressesDone += 0x100000;
 		}
 	}
-	if (segmentValid) {
-		const Resolved resolved = resolveKey(
+	// Count any addresses the periodic update did not, which happens
+	// when the chunk is smaller than the update interval.
+	state->addressesDone += CHUNK_SIZE & 0xFFFFF;
+	if (segmentValid == true) {
+		completeSegment(
 			state,
-			segmentKey,
-			(uint32_t)segmentStart);
-		addSegment(state, &resolved, end - segmentStart + 1);
+			segmentEvaluated,
+			&segmentKey,
+			segmentStart,
+			end - segmentStart + 1);
 	}
 }
 
@@ -833,7 +941,8 @@ static bool spotCheck(ThreadState* state, uint32_t address) {
 	ip.value[1] = (byte)(address >> 16);
 	ip.value[2] = (byte)(address >> 8);
 	ip.value[3] = (byte)address;
-	const uint64_t key = evaluateKey(state, ip);
+	SegmentKey key;
+	const bool evaluated = evaluateKey(state, ip, &key);
 
 	// Walk back to the start of the run of addresses sharing the
 	// offsets, bounded so that very large runs do not slow the check.
@@ -844,7 +953,12 @@ static bool spotCheck(ThreadState* state, uint32_t address) {
 		ip.value[1] = (byte)(previous >> 16);
 		ip.value[2] = (byte)(previous >> 8);
 		ip.value[3] = (byte)previous;
-		if (evaluateKey(state, ip) != key) {
+		SegmentKey previousKey;
+		const bool previousEvaluated =
+			evaluateKey(state, ip, &previousKey);
+		if (previousEvaluated != evaluated ||
+			(evaluated == true &&
+			memcmp(&previousKey, &key, sizeof(SegmentKey)) != 0)) {
 			break;
 		}
 		start = previous;
@@ -861,7 +975,7 @@ static bool spotCheck(ThreadState* state, uint32_t address) {
 		atStart.connectionIndex == atAddress.connectionIndex &&
 		atStart.flags == atAddress.flags &&
 		atStart.sharedCount == atAddress.sharedCount;
-	for (int s = 0; match && s < atStart.sharedCount; s++) {
+	for (int s = 0; match == true && s < atStart.sharedCount; s++) {
 		match = atStart.shared[s] == atAddress.shared[s];
 	}
 	char bufferA[8];
@@ -876,12 +990,14 @@ static bool spotCheck(ThreadState* state, uint32_t address) {
 		countryCode(atStart.countryIndex, bufferA),
 		state->confidence.names[atStart.confidenceIndex],
 		state->connection.names[atStart.connectionIndex],
-		(atStart.flags & 1) ? "multi-country" : "single-country",
+		(atStart.flags & RESOLVED_MULTI_COUNTRY) != 0 ?
+		"multi-country" : "single-country",
 		countryCode(atAddress.countryIndex, bufferB),
 		state->confidence.names[atAddress.confidenceIndex],
 		state->connection.names[atAddress.connectionIndex],
-		(atAddress.flags & 1) ? "multi-country" : "single-country",
-		match ? "MATCH" : "MISMATCH");
+		(atAddress.flags & RESOLVED_MULTI_COUNTRY) != 0 ?
+		"multi-country" : "single-country",
+		match == true ? "MATCH" : "MISMATCH");
 	return match;
 }
 
@@ -892,12 +1008,72 @@ static void sweepThread(void* statePointer) {
 	for (;;) {
 		long chunk =
 			FIFTYONE_DEGREES_INTERLOCK_INC(&shared->nextChunk) - 1;
-		if (chunk >= shared->totalChunks) {
+		if (chunk >= shared->endChunk) {
 			break;
 		}
 		sweepChunk(state, (uint32_t)chunk);
 	}
 	FIFTYONE_DEGREES_INTERLOCK_INC(&shared->threadsDone);
+}
+
+/**
+ * Allocates the thread's cache of resolved graph offsets. When the full
+ * size cannot be allocated the size is halved until it can, down to
+ * MIN_CACHE_BITS, because a smaller cache only slows the sweep whereas
+ * failing to allocate stops it. Returns false when even the smallest
+ * cache cannot be allocated.
+ */
+static bool threadCacheCreate(ThreadState* state) {
+	for (uint32_t size = CACHE_SIZE;
+		size >= (1u << MIN_CACHE_BITS);
+		size >>= 1) {
+		state->cache = (Resolved*)Malloc(sizeof(Resolved) * size);
+		if (state->cache != NULL) {
+			// Every entry must start unoccupied for the cache probe.
+			memset(state->cache, 0, sizeof(Resolved) * size);
+			state->cacheMask = size - 1;
+			if (size < CACHE_SIZE) {
+				printf(
+					"Using a reduced cache of %u entries for a thread "
+					"because memory is short. The sweep will be "
+					"slower.\n",
+					size);
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * Frees the resources held by the thread state. Country names that were
+ * moved into the merged table are owned by that table and are skipped.
+ * @param state to free, which may be partially created.
+ * @param mergedNames country names now owned by the merged table, or
+ * null when nothing was merged.
+ */
+static void threadStateFree(
+	ThreadState* state,
+	char* const mergedNames[COUNTRY_SLOTS]) {
+	if (state->results != NULL) {
+		ResultsIpiFree(state->results);
+		state->results = NULL;
+	}
+	if (state->cache != NULL) {
+		Free(state->cache);
+		state->cache = NULL;
+	}
+	sharedBlocksFree(&state->sharedBlocks);
+	valueTableFree(&state->confidence);
+	valueTableFree(&state->connection);
+	for (int c = 0; c < COUNTRY_SLOTS; c++) {
+		if (state->countryNames[c] != NULL &&
+			(mergedNames == NULL ||
+			state->countryNames[c] != mergedNames[c])) {
+			Free(state->countryNames[c]);
+		}
+		state->countryNames[c] = NULL;
+	}
 }
 
 /**
@@ -925,13 +1101,23 @@ static bool addComponentForProperty(
 		propertyIndex,
 		&item,
 		exception);
-	if (property == NULL || EXCEPTION_FAILED) {
+	if (property == NULL) {
 		return false;
 	}
-	const Component* component = (const Component*)
-		dataSet->componentsList.items[property->componentIndex].data.ptr;
-	const byte componentId = component->componentId;
+	// The item holds the property whenever it is returned, even when the
+	// exception is also set, so it is released before checking for the
+	// failure to avoid leaking it.
+	const bool failed = EXCEPTION_FAILED;
+	byte componentId = 0;
+	if (failed == false) {
+		const Component* component = (const Component*)dataSet
+			->componentsList.items[property->componentIndex].data.ptr;
+		componentId = component->componentId;
+	}
 	COLLECTION_RELEASE(dataSet->properties, &item);
+	if (failed == true) {
+		return false;
+	}
 	for (int c = 0; c < shared->componentCount; c++) {
 		if (shared->componentIds[c] == componentId) {
 			return true;
@@ -1105,7 +1291,7 @@ static void printTop(
 		uint64_t bestAddresses = 0;
 		uint64_t bestOverlapping = 0;
 		for (int c = 0; c < COUNTRY_UNKNOWN; c++) {
-			if (printed[c]) {
+			if (printed[c] == true) {
 				continue;
 			}
 			uint64_t addresses = 0;
@@ -1153,7 +1339,7 @@ static void printTop(
 				int best = -1;
 				uint64_t bestCount = 0;
 				for (int s = 0; s < COUNTRY_SLOTS; s++) {
-					if (used[s]) {
+					if (used[s] == true) {
 						continue;
 					}
 					uint64_t value = 0;
@@ -1198,11 +1384,13 @@ static void printSummary(
 	ValueTable* connection) {
 	uint64_t total = 0;
 	uint64_t multi = 0;
+	uint64_t multiArea = 0;
 	for (int c = 0; c < COUNTRY_UNKNOWN; c++) {
 		for (int f = 0; f < confidence->count; f++) {
 			for (int n = 0; n < connection->count; n++) {
 				total += cells[c][f][n].addresses;
 				multi += cells[c][f][n].multi;
+				multiArea += cells[c][f][n].multiArea;
 			}
 		}
 	}
@@ -1210,10 +1398,18 @@ static void printSummary(
 		"\nIPv4 addresses that resolved to a country: %llu\n",
 		(unsigned long long)total);
 	printf(
-		"Of which the area also overlaps one or more additional "
-		"countries: %llu (%.2f%%)\n",
+		"Of which the people within the area also include one or more "
+		"additional countries: %llu (%.2f%%)\n",
 		(unsigned long long)multi,
 		total > 0 ? 100.0 * (double)multi / (double)total : 0);
+	// The area weighted figure is shown for comparison only. The two
+	// differ most where an area covers sparsely populated terrain
+	// across a border.
+	printf(
+		"For comparison, by share of the area rather than of the "
+		"people: %llu (%.2f%%)\n",
+		(unsigned long long)multiArea,
+		total > 0 ? 100.0 * (double)multiArea / (double)total : 0);
 
 	// Overall share for each connection type.
 	printf("\nBy connection type:\n");
@@ -1275,10 +1471,12 @@ static void printSummary(
  * available.
  * @param outputPath path for the output CSV.
  * @param threadCount number of worker threads.
- * @param totalChunks number of /8 chunks of the IPv4 address space to
- * process starting at 0.0.0.0, up to 256 for the whole space.
+ * @param firstChunk first chunk of the IPv4 address space to process,
+ * where chunk 0 starts at 0.0.0.0 and each chunk is a /8 by default.
+ * @param totalChunks number of chunks to process starting at
+ * firstChunk, 256 with a firstChunk of 0 for the whole space.
  * @param minSecondaryPercent secondary countries whose share of the
- * area weighting is this percentage or lower are ignored. Zero
+ * population weighting is this percentage or lower are ignored. Zero
  * includes every listed country.
  * @return COUNTRY_OVERLAP_OK on success,
  * COUNTRY_OVERLAP_PROPERTIES_MISSING when the data file does not include
@@ -1290,12 +1488,24 @@ int fiftyoneDegreesIpiCountryOverlap(
 	fiftyoneDegreesConfigIpi* configProvided,
 	const char* outputPath,
 	int threadCount,
+	int firstChunk,
 	int totalChunks,
 	double minSecondaryPercent) {
-	if (threadCount < 1) threadCount = 1;
-	if (totalChunks < 1 || totalChunks > 256) totalChunks = 256;
-	if (minSecondaryPercent < 0) minSecondaryPercent = 0;
-	if (minSecondaryPercent > 100) minSecondaryPercent = 100;
+	if (threadCount < 1) {
+		threadCount = 1;
+	}
+	if (firstChunk < 0 || firstChunk >= MAX_CHUNKS) {
+		firstChunk = 0;
+	}
+	if (totalChunks < 1 || totalChunks > MAX_CHUNKS - firstChunk) {
+		totalChunks = MAX_CHUNKS - firstChunk;
+	}
+	if (minSecondaryPercent < 0) {
+		minSecondaryPercent = 0;
+	}
+	if (minSecondaryPercent > 100) {
+		minSecondaryPercent = 100;
+	}
 
 	ResourceManager manager;
 	EXCEPTION_CREATE;
@@ -1343,7 +1553,7 @@ int fiftyoneDegreesIpiCountryOverlap(
 			COUNTRY_OVERLAP_MIN_CACHE(components, 100)
 			COUNTRY_OVERLAP_MIN_CACHE(maps, 100)
 #undef COUNTRY_OVERLAP_MIN_CACHE
-			if (adjusted) {
+			if (adjusted == true) {
 				printf(
 					"The provided configuration leaves collections "
 					"without caches, using minimum caches for the "
@@ -1431,7 +1641,8 @@ int fiftyoneDegreesIpiCountryOverlap(
 	memset(&shared, 0, sizeof(shared));
 	shared.manager = &manager;
 	shared.dataSet = dataSet;
-	shared.totalChunks = totalChunks;
+	shared.nextChunk = firstChunk;
+	shared.endChunk = firstChunk + totalChunks;
 	shared.minShare = minSecondaryPercent / 100.0;
 	shared.reqIndexCountryCode = getRequiredIndex(
 		dataSet, PROPERTY_COUNTRY_CODE);
@@ -1453,53 +1664,83 @@ int fiftyoneDegreesIpiCountryOverlap(
 		return COUNTRY_OVERLAP_PROPERTIES_MISSING;
 	}
 
-	// Determine the distinct component graphs that the dimension
-	// properties depend on.
-	if (addComponentForProperty(
-		&shared, PROPERTY_COUNTRY_CODE) == false ||
-		addComponentForProperty(&shared, PROPERTY_CONNECTION) == false) {
-		printf("Could not determine the required components.\n");
-		DataSetIpiRelease(dataSet);
-		ResourceManagerFree(&manager);
-		return COUNTRY_OVERLAP_FAILED;
-	}
-
-	// The segment key packs each component's 32 bit graph offset into a
-	// 64 bit value, which is exact for up to two components. More would
-	// silently discard offsets and corrupt the segment detection, so stop
-	// rather than produce wrong counts.
-	if (shared.componentCount > 2) {
-		printf(
-			"The required properties span %d component graphs which "
-			"exceeds the two the segment key supports.\n",
-			shared.componentCount);
-		DataSetIpiRelease(dataSet);
-		ResourceManagerFree(&manager);
-		return COUNTRY_OVERLAP_FAILED;
+	// Determine the distinct component graphs that the properties read
+	// by the analysis depend on. Values are reused for every address in
+	// a segment with the same graph offsets, so a component left out of
+	// the key would let a cached result stand in for an address whose
+	// values from that component differ.
+	const char* keyProperties[] = {
+		PROPERTY_COUNTRY_CODE,
+		PROPERTY_COUNTRY,
+		PROPERTY_CONFIDENCE,
+		PROPERTY_CONNECTION,
+		PROPERTY_GEO,
+		PROPERTY_POP
+	};
+	for (size_t i = 0;
+		i < sizeof(keyProperties) / sizeof(keyProperties[0]);
+		i++) {
+		if (addComponentForProperty(&shared, keyProperties[i]) == false) {
+			printf(
+				"Could not determine the component for property '%s', "
+				"or the required properties span more than the %d "
+				"component graphs the segment key supports.\n",
+				keyProperties[i],
+				MAX_COMPONENTS);
+			DataSetIpiRelease(dataSet);
+			ResourceManagerFree(&manager);
+			return COUNTRY_OVERLAP_FAILED;
+		}
 	}
 
 	printf(
-		"Sweeping %d /8 chunks of the IPv4 address space with %d "
+		"Sweeping %d /%d chunks of the IPv4 address space with %d "
 		"threads evaluating %d component graphs per address. Secondary "
 		"countries with a weighting share of %g%% or lower are "
-		"ignored.\n",
+		"ignored. Each thread uses a cache of up to %.0f MB.\n",
 		totalChunks,
+		32 - COUNTRY_OVERLAP_CHUNK_BITS,
 		threadCount,
 		shared.componentCount,
-		minSecondaryPercent);
+		minSecondaryPercent,
+		(double)sizeof(Resolved) * CACHE_SIZE / (1024.0 * 1024.0));
 
-	// Create the thread states and start the workers.
+	// Create the thread states and start the workers. Each allocation is
+	// checked because the caches alone need several GB at the default
+	// thread count, and a machine short of memory must get a clear
+	// message rather than a crash.
 	ThreadState* states = (ThreadState*)Malloc(
 		sizeof(ThreadState) * threadCount);
 	FIFTYONE_DEGREES_THREAD* threads = (FIFTYONE_DEGREES_THREAD*)Malloc(
 		sizeof(FIFTYONE_DEGREES_THREAD) * threadCount);
-	for (int t = 0; t < threadCount; t++) {
+	bool created = states != NULL && threads != NULL;
+	if (states != NULL) {
+		// Zeroed first so the free below is safe for states that were
+		// never fully created.
+		memset(states, 0, sizeof(ThreadState) * threadCount);
+	}
+	for (int t = 0; t < threadCount && created == true; t++) {
 		ThreadState* state = &states[t];
-		memset(state, 0, sizeof(ThreadState));
 		state->shared = &shared;
 		state->results = ResultsIpiCreate(&manager);
-		state->cache = (Resolved*)Malloc(sizeof(Resolved) * CACHE_SIZE);
-		memset(state->cache, 0, sizeof(Resolved) * CACHE_SIZE);
+		created = state->results != NULL && threadCacheCreate(state);
+	}
+	if (created == false) {
+		printf(
+			"Not enough memory for %d threads. Try fewer threads.\n",
+			threadCount);
+		if (states != NULL) {
+			for (int t = 0; t < threadCount; t++) {
+				threadStateFree(&states[t], NULL);
+			}
+			Free(states);
+		}
+		if (threads != NULL) {
+			Free(threads);
+		}
+		DataSetIpiRelease(dataSet);
+		ResourceManagerFree(&manager);
+		return COUNTRY_OVERLAP_FAILED;
 	}
 	time_t started = time(NULL);
 	for (int t = 0; t < threadCount; t++) {
@@ -1524,7 +1765,7 @@ int fiftyoneDegreesIpiCountryOverlap(
 			done += states[t].addressesDone;
 		}
 		double progress = (double)done /
-			(TOTAL_IPV4 * totalChunks / 256.0);
+			((double)CHUNK_SIZE * totalChunks);
 		double elapsed = difftime(time(NULL), started);
 		double remaining = progress > 0 ?
 			elapsed * (1 - progress) / progress : 0;
@@ -1661,11 +1902,14 @@ int fiftyoneDegreesIpiCountryOverlap(
 	srand(42);
 	int matches = 0;
 	for (int i = 0; i < SPOT_CHECKS; i++) {
-		const uint32_t chunk = (uint32_t)(rand() % totalChunks);
+		const uint32_t chunk =
+			(uint32_t)(firstChunk + rand() % totalChunks);
 		const uint32_t withinChunk =
 			(((uint32_t)rand() << 9) | ((uint32_t)rand() & 0x1FF)) &
-			0x00FFFFFF;
-		if (spotCheck(&states[0], (chunk << 24) | withinChunk)) {
+			(uint32_t)(CHUNK_SIZE - 1);
+		if (spotCheck(
+			&states[0],
+			(chunk << COUNTRY_OVERLAP_CHUNK_BITS) | withinChunk) == true) {
 			matches++;
 		}
 	}
@@ -1678,20 +1922,7 @@ int fiftyoneDegreesIpiCountryOverlap(
 
 	// Free all the resources.
 	for (int t = 0; t < threadCount; t++) {
-		ThreadState* state = &states[t];
-		ResultsIpiFree(state->results);
-		Free(state->cache);
-		sharedBlocksFree(&state->sharedBlocks);
-		valueTableFree(&state->confidence);
-		valueTableFree(&state->connection);
-		// Country names moved into the global table are freed below, so
-		// only free names that were not selected.
-		for (int c = 0; c < COUNTRY_SLOTS; c++) {
-			if (state->countryNames[c] != NULL &&
-				state->countryNames[c] != names[c]) {
-				Free(state->countryNames[c]);
-			}
-		}
+		threadStateFree(&states[t], names);
 	}
 	for (int c = 0; c < COUNTRY_SLOTS; c++) {
 		if (names[c] != NULL) {
@@ -1722,6 +1953,26 @@ static const char* dataFileNames[] = {
 	"51Degrees-EnterpriseIpiV41.ipi",
 	"51Degrees-LiteV41.ipi",
 };
+
+/**
+ * Counts the distinct countries for the required property index whose
+ * summed share of the list's total weighting exceeds minShare. Used by
+ * probe mode to show how many countries each list contains.
+ */
+static int countDistinctAbove(
+	const WeightedValuesCollection* collection,
+	int requiredPropertyIndex,
+	double minShare) {
+	CountryWeights weights;
+	sumCountryWeights(&weights, collection, requiredPropertyIndex);
+	int above = 0;
+	for (int s = 0; s < weights.count; s++) {
+		if (weights.weights[s] > weights.total * minShare) {
+			above++;
+		}
+	}
+	return above;
+}
 
 /**
  * Prints the resolved values for a single IPv4 address so the results
@@ -1872,7 +2123,16 @@ int main(int argc, char* argv[]) {
 	char dataFilePath[FILE_MAX_PATH];
 	dataFilePath[0] = '\0';
 	if (argc > 1) {
-		strcpy(dataFilePath, argv[1]);
+		// The path is checked against the buffer because a longer
+		// argument would otherwise overrun it.
+		if (strlen(argv[1]) >= sizeof(dataFilePath)) {
+			printf(
+				"The data file path is longer than the %d characters "
+				"supported.\n",
+				(int)sizeof(dataFilePath) - 1);
+			return COUNTRY_OVERLAP_FAILED;
+		}
+		snprintf(dataFilePath, sizeof(dataFilePath), "%s", argv[1]);
 	}
 	else {
 		for (int i = 0;
@@ -1899,7 +2159,16 @@ int main(int argc, char* argv[]) {
 	// Probe mode prints the values for the supplied addresses so
 	// results can be verified against other 51Degrees APIs.
 	// Usage: CountryOverlap <data file> --probe <ip> [ip...]
-	if (argc > 3 && strcmp(argv[2], "--probe") == 0) {
+	// Without any addresses this is an error rather than a sweep, which
+	// would otherwise run for an hour and write its CSV to a file named
+	// --probe.
+	if (argc > 2 && strcmp(argv[2], "--probe") == 0) {
+		if (argc < 4) {
+			printf(
+				"Provide at least one IP address to probe. Usage: "
+				"CountryOverlap <data file> --probe <ip> [ip...]\n");
+			return COUNTRY_OVERLAP_FAILED;
+		}
 		return runProbe(dataFilePath, argc, argv);
 	}
 
@@ -1915,6 +2184,7 @@ int main(int argc, char* argv[]) {
 		NULL,
 		outputPath,
 		threadCount,
+		0,
 		totalChunks,
 		minSecondaryPercent);
 }

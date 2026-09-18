@@ -22,17 +22,30 @@
 
 #include <cstdio>
 #include "ExampleIpIntelligenceTests.hpp"
+
+// Sweep /16 chunks with a small cache rather than the /8 chunks and
+// 600 MB per thread cache of a full run. CI provides the enterprise data
+// file for every platform, so these tests always run there, and at /8
+// chunks each configuration took over a minute and several GB. Every
+// code path is still exercised because only the size of the work unit
+// changes.
+#define COUNTRY_OVERLAP_CHUNK_BITS 16
+#define COUNTRY_OVERLAP_CACHE_BITS 16
 #include "../examples/C/IpIntelligence/CountryOverlap.c"
 
 /** CSV written by the test and removed afterwards. */
 static const char testOutputPath[] = "country-overlap-test.csv";
 
+/** First /16 chunk swept, 1.0.0.0. The chunks from 0.0.0.0 are reserved
+and hold no locations, so starting there would exercise little. */
+static const int testFirstChunk = 256;
+
 /**
  * The country overlap example requires an enterprise data file with the
  * weighted country code properties, so the test skips rather than fails
- * when only the Lite data file is available. Two /8 chunks are swept with
- * two threads so the test completes quickly whilst still exercising real
- * data, the spot checks, and the CSV output.
+ * when only the Lite data file is available. Two /16 chunks are swept
+ * with two threads so the test completes quickly whilst still exercising
+ * real data, the spot checks, and the CSV output.
  *
  * The tests are declared explicitly rather than via EXAMPLE_TESTS
  * because the low memory configuration is skipped. The sweep evaluates
@@ -53,6 +66,7 @@ public:
             &config,
             testOutputPath,
             2,
+            testFirstChunk,
             2,
             DEFAULT_MIN_SECONDARY_PERCENT);
 
