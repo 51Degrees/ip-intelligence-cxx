@@ -88,6 +88,8 @@ public:
             output.find("spot checks match the normal lookup process"),
             std::string::npos) << output;
         EXPECT_EQ(output.find("MISMATCH"), std::string::npos) << output;
+        EXPECT_EQ(output.find("LOOKUP FAILED"), std::string::npos) <<
+            output;
 
         // The CSV file must exist and have the expected header row.
         expectCsvWithHeader(
@@ -152,6 +154,37 @@ TEST_F(ExampleTestCountryOverlap, HighPerformance) {
         GTEST_SKIP() << "Skipping temp file test on CI";
     }
     run(fiftyoneDegreesIpiHighPerformanceConfig);
+}
+/**
+ * An output path that cannot be written must fail the run before the
+ * sweep starts. Previously the CSV was only opened after the sweep, so a
+ * full run took an hour and then reported success without its output.
+ */
+TEST_F(ExampleTestCountryOverlap, UnwritableOutputFails) {
+    if (fiftyoneDegreesCollectionGetIsMemoryOnly() == true) {
+        GTEST_SKIP() << "Requires a file based configuration.";
+    }
+    testing::internal::CaptureStdout();
+    const int result = fiftyoneDegreesIpiCountryOverlap(
+        dataFilePath.c_str(),
+        &fiftyoneDegreesIpiBalancedConfig,
+        "missing-directory-for-country-overlap/output.csv",
+        2,
+        testFirstChunk,
+        2,
+        DEFAULT_MIN_SECONDARY_PERCENT);
+    std::string output = testing::internal::GetCapturedStdout();
+    if (result == COUNTRY_OVERLAP_PROPERTIES_MISSING) {
+        GTEST_SKIP() <<
+            "The data file does not include the weighted country "
+            "code properties. An enterprise data file is required "
+            "for the country overlap example.";
+    }
+    EXPECT_EQ(COUNTRY_OVERLAP_FAILED, result) << output;
+    EXPECT_NE(output.find("Could not open"), std::string::npos) << output;
+    EXPECT_EQ(output.find("Sweeping"), std::string::npos) <<
+        "The sweep must not start when the output cannot be written. " <<
+        output;
 }
 TEST_F(ExampleTestCountryOverlap, InMemory) {
     if (shouldSkipTempFileTestOnCI(fiftyoneDegreesIpiInMemoryConfig)) {

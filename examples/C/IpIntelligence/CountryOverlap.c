@@ -127,9 +127,9 @@ CountryOverlap <data file> --probe <ip> [ip...]
   areas can include countries with negligible weightings where the area
   shape extends beyond the evidence, so the default focuses the output
   on meaningful overlap. Set to 0 to include every listed country.
-- --probe: print the resolved values for the addresses provided so they
-  can be compared against other 51Degrees APIs. At least one address is
-  required.
+- --probe: print the resolved values for the IPv4 or IPv6 addresses
+  provided so they can be compared against other 51Degrees APIs. At
+  least one address is required.
 */
 
 #ifdef _MSC_VER
@@ -344,6 +344,9 @@ typedef struct country_overlap_shared_state_t {
 					 of 1, a secondary country must exceed to count */
 	volatile long nextChunk; /**< Next chunk to be claimed by a thread */
 	volatile long threadsDone;
+	volatile long stopRequested; /**< Non zero when the workers must stop
+								 early, because not every worker could
+								 be started */
 } SharedState;
 
 /** State private to a single worker thread. */
@@ -901,9 +904,14 @@ static void sweepChunk(ThreadState* state, uint32_t chunk) {
 			segmentStart = ip;
 		}
 
-		// Periodically update the progress counter.
+		// Periodically update the progress counter, and stop part way
+		// through the chunk when asked so that a failed start does not
+		// wait for a whole chunk to finish.
 		if ((ip & 0xFFFFF) == 0xFFFFF) {
 			state->addressesDone += 0x100000;
+			if (state->shared->stopRequested != 0) {
+				return;
+			}
 		}
 	}
 	// Count any addresses the periodic update did not, which happens
@@ -969,7 +977,13 @@ static bool spotCheck(ThreadState* state, uint32_t address) {
 	// list.
 	const Resolved atStart = resolveAddress(state, start);
 	const Resolved atAddress = resolveAddress(state, address);
+	// Two failed lookups return identical Failed values, so without this
+	// check they would report a match when nothing was compared.
+	const bool resolved =
+		atStart.countryIndex != COUNTRY_FAILED &&
+		atAddress.countryIndex != COUNTRY_FAILED;
 	bool match =
+		resolved == true &&
 		atStart.countryIndex == atAddress.countryIndex &&
 		atStart.confidenceIndex == atAddress.confidenceIndex &&
 		atStart.connectionIndex == atAddress.connectionIndex &&
@@ -997,6 +1011,7 @@ static bool spotCheck(ThreadState* state, uint32_t address) {
 		state->connection.names[atAddress.connectionIndex],
 		(atAddress.flags & RESOLVED_MULTI_COUNTRY) != 0 ?
 		"multi-country" : "single-country",
+		resolved == false ? "LOOKUP FAILED" :
 		match == true ? "MATCH" : "MISMATCH");
 	return match;
 }
@@ -1006,6 +1021,9 @@ static void sweepThread(void* statePointer) {
 	ThreadState* state = (ThreadState*)statePointer;
 	SharedState* shared = state->shared;
 	for (;;) {
+		if (shared->stopRequested != 0) {
+			break;
+		}
 		long chunk =
 			FIFTYONE_DEGREES_INTERLOCK_INC(&shared->nextChunk) - 1;
 		if (chunk >= shared->endChunk) {
@@ -1014,6 +1032,36 @@ static void sweepThread(void* statePointer) {
 		sweepChunk(state, (uint32_t)chunk);
 	}
 	FIFTYONE_DEGREES_INTERLOCK_INC(&shared->threadsDone);
+}
+
+/**
+ * Starts a worker thread for the state. Returns false when the operating
+ * system could not create the thread. The create macro assigns a handle
+ * on Windows and returns an error code elsewhere, so each is checked in
+ * its own way.
+ */
+static bool threadStart(FIFTYONE_DEGREES_THREAD* thread, ThreadState* state) {
+#ifdef _MSC_VER
+	FIFTYONE_DEGREES_THREAD_CREATE(
+		*thread,
+		(FIFTYONE_DEGREES_THREAD_ROUTINE)&sweepThread,
+		state);
+	return *thread != NULL;
+#else
+	return FIFTYONE_DEGREES_THREAD_CREATE(
+		*thread,
+		(FIFTYONE_DEGREES_THREAD_ROUTINE)&sweepThread,
+		state) == 0;
+#endif
+}
+
+/** Sleeps the calling thread for one second. */
+static void sleepOneSecond(void) {
+#ifdef _MSC_VER
+	Sleep(1000);
+#else
+	sleep(1);
+#endif
 }
 
 /**
@@ -1073,6 +1121,25 @@ static void threadStateFree(
 			Free(state->countryNames[c]);
 		}
 		state->countryNames[c] = NULL;
+	}
+}
+
+/**
+ * Frees every thread state and the thread arrays after a failure before
+ * any results were merged. Either array may be null.
+ */
+static void threadStatesFree(
+	ThreadState* states,
+	FIFTYONE_DEGREES_THREAD* threads,
+	int threadCount) {
+	if (states != NULL) {
+		for (int t = 0; t < threadCount; t++) {
+			threadStateFree(&states[t], NULL);
+		}
+		Free(states);
+	}
+	if (threads != NULL) {
+		Free(threads);
 	}
 }
 
@@ -1693,6 +1760,16 @@ int fiftyoneDegreesIpiCountryOverlap(
 		}
 	}
 
+	// Open the output before the sweep so that a path that cannot be
+	// written fails at once rather than after an hour of work.
+	FILE* file = fopen(outputPath, "w");
+	if (file == NULL) {
+		printf("Could not open '%s' for writing.\n", outputPath);
+		DataSetIpiRelease(dataSet);
+		ResourceManagerFree(&manager);
+		return COUNTRY_OVERLAP_FAILED;
+	}
+
 	printf(
 		"Sweeping %d /%d chunks of the IPv4 address space with %d "
 		"threads evaluating %d component graphs per address. Secondary "
@@ -1729,37 +1806,54 @@ int fiftyoneDegreesIpiCountryOverlap(
 		printf(
 			"Not enough memory for %d threads. Try fewer threads.\n",
 			threadCount);
-		if (states != NULL) {
-			for (int t = 0; t < threadCount; t++) {
-				threadStateFree(&states[t], NULL);
-			}
-			Free(states);
-		}
-		if (threads != NULL) {
-			Free(threads);
-		}
+		threadStatesFree(states, threads, threadCount);
+		fclose(file);
+		remove(outputPath);
 		DataSetIpiRelease(dataSet);
 		ResourceManagerFree(&manager);
 		return COUNTRY_OVERLAP_FAILED;
 	}
 	time_t started = time(NULL);
-	for (int t = 0; t < threadCount; t++) {
-		FIFTYONE_DEGREES_THREAD_CREATE(
-			threads[t],
-			(FIFTYONE_DEGREES_THREAD_ROUTINE)&sweepThread,
-			&states[t]);
+	int startedThreads = 0;
+	while (startedThreads < threadCount &&
+		threadStart(&threads[startedThreads], &states[startedThreads]) ==
+		true) {
+		startedThreads++;
+	}
+	if (startedThreads < threadCount) {
+		// The progress loop waits for every worker to finish, so without
+		// this it would wait forever for a thread that never ran. The
+		// workers that did start are told to stop and are joined before
+		// everything is freed.
+		printf(
+			"Could not start thread %d of %d. Try fewer threads.\n",
+			startedThreads + 1,
+			threadCount);
+		FIFTYONE_DEGREES_INTERLOCK_INC(&shared.stopRequested);
+		for (int t = 0; t < startedThreads; t++) {
+			FIFTYONE_DEGREES_THREAD_JOIN(threads[t]);
+			FIFTYONE_DEGREES_THREAD_CLOSE(threads[t]);
+		}
+		threadStatesFree(states, threads, threadCount);
+		fclose(file);
+		remove(outputPath);
+		DataSetIpiRelease(dataSet);
+		ResourceManagerFree(&manager);
+		return COUNTRY_OVERLAP_FAILED;
 	}
 
-	// Report progress until all the threads have finished.
+	// Report progress every 30 seconds until all the threads have
+	// finished. The wait is taken one second at a time so that a short
+	// sweep, such as the one the tests run, is not held up for the full
+	// reporting interval.
+	int secondsSinceReport = 0;
 	while (shared.threadsDone < threadCount) {
-#ifdef _MSC_VER
-		Sleep(30000);
-#else
-		sleep(30);
-#endif
-		if (shared.threadsDone >= threadCount) {
-			break;
+		sleepOneSecond();
+		secondsSinceReport++;
+		if (shared.threadsDone >= threadCount || secondsSinceReport < 30) {
+			continue;
 		}
+		secondsSinceReport = 0;
 		uint64_t done = 0;
 		for (int t = 0; t < threadCount; t++) {
 			done += states[t].addressesDone;
@@ -1876,20 +1970,31 @@ int fiftyoneDegreesIpiCountryOverlap(
 			SHARED_STORE);
 	}
 
-	FILE* file = fopen(outputPath, "w");
-	if (file != NULL) {
-		writeCombinedCsv(
-			file,
-			totals,
-			&totalShared,
-			names,
-			&confidence,
-			&connection);
-		fclose(file);
+	writeCombinedCsv(
+		file,
+		totals,
+		&totalShared,
+		names,
+		&confidence,
+		&connection);
+	// A write error, such as a full disk, is only visible through the
+	// stream's error flag and the result of closing it.
+	bool csvWritten = ferror(file) == 0;
+	if (fclose(file) != 0) {
+		csvWritten = false;
+	}
+	if (csvWritten == true) {
 		printf("Results written to '%s'.\n", outputPath);
 	}
 	else {
-		printf("Could not open '%s' for writing.\n", outputPath);
+		printf("Could not write the results to '%s'.\n", outputPath);
+	}
+	if (failures > 0) {
+		printf(
+			"%llu graph evaluations or resolutions failed, so those "
+			"addresses are counted in the Failed rows and the results "
+			"are incomplete.\n",
+			(unsigned long long)failures);
 	}
 
 	// Spot check randomly selected addresses against the normal lookup
@@ -1937,7 +2042,9 @@ int fiftyoneDegreesIpiCountryOverlap(
 	Free(threads);
 	DataSetIpiRelease(dataSet);
 	ResourceManagerFree(&manager);
-	return matches == SPOT_CHECKS ?
+	// The run only succeeds when the complete results were written and
+	// the spot checks confirm them.
+	return csvWritten == true && failures == 0 && matches == SPOT_CHECKS ?
 		COUNTRY_OVERLAP_OK : COUNTRY_OVERLAP_FAILED;
 }
 
@@ -1975,8 +2082,37 @@ static int countDistinctAbove(
 }
 
 /**
- * Prints the resolved values for a single IPv4 address so the results
- * can be compared against other 51Degrees APIs for verification.
+ * Returns false when the text is written as an IPv4 address but is not
+ * four decimal octets of at most 255 each. Text containing a colon is
+ * IPv6 and is left for the library parser to validate.
+ */
+static bool isValidIpv4OrOther(const char* ip) {
+	if (strchr(ip, ':') != NULL) {
+		return true;
+	}
+	unsigned int octets[4];
+	char trailing;
+	if (sscanf(
+		ip,
+		"%u.%u.%u.%u%c",
+		&octets[0],
+		&octets[1],
+		&octets[2],
+		&octets[3],
+		&trailing) != 4) {
+		return false;
+	}
+	for (int i = 0; i < 4; i++) {
+		if (octets[i] > 255) {
+			return false;
+		}
+	}
+	return true;
+}
+
+/**
+ * Prints the resolved values for a single IPv4 or IPv6 address so the
+ * results can be compared against other 51Degrees APIs for verification.
  */
 static void probeAddress(
 	SharedState* shared,
@@ -1984,21 +2120,29 @@ static void probeAddress(
 	ValueTable* confidence,
 	ValueTable* connection,
 	const char* ip) {
-	unsigned a, b, c, d;
 	(void)confidence;
 	(void)connection;
-	if (sscanf(ip, "%u.%u.%u.%u", &a, &b, &c, &d) != 4) {
-		printf("'%s' is not an IPv4 address.\n", ip);
+	// The library parser is used because it handles IPv6 as well as
+	// IPv4. It clamps an IPv4 octet above 255 to 255 rather than
+	// rejecting it, which would probe a different address from the one
+	// requested, so IPv4 octets are checked first.
+	fiftyoneDegreesIpAddress address;
+	memset(&address, 0, sizeof(address));
+	if (isValidIpv4OrOther(ip) == false ||
+		fiftyoneDegreesIpAddressParse(
+			ip,
+			ip + strlen(ip),
+			&address) == false) {
+		printf("'%s' is not an IPv4 or IPv6 address.\n", ip);
 		return;
 	}
 	EXCEPTION_CREATE;
-	byte bytes[4] = {
-		(byte)a, (byte)b, (byte)c, (byte)d };
 	ResultsIpiFromIpAddress(
 		results,
-		bytes,
-		sizeof(bytes),
-		FIFTYONE_DEGREES_IP_TYPE_IPV4,
+		address.value,
+		address.type == FIFTYONE_DEGREES_IP_TYPE_IPV4 ?
+		FIFTYONE_DEGREES_IPV4_LENGTH : FIFTYONE_DEGREES_IPV6_LENGTH,
+		(fiftyoneDegreesIpType)address.type,
 		exception);
 	EXCEPTION_THROW;
 	WeightedValuesCollection collection = ResultsIpiGetValuesCollection(
