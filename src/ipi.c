@@ -111,6 +111,15 @@ typedef struct state_with_unique_header_index_t {
 } stateWithUniqueHeaderIndex;
 
 /**
+ * Used to pass the results being populated together with the mask of
+ * components whose graphs are evaluated. See COMPONENT_MASK_ENABLED.
+ */
+typedef struct results_with_component_mask_t {
+	ResultsIpi* results; /* Results being populated */
+	uint32_t componentMask; /* Components whose graphs are evaluated */
+} resultsWithComponentMask;
+
+/**
  * Used to represent the structure within a profile groups item
  */
 #pragma pack(push, 2)
@@ -533,6 +542,10 @@ static StatusCode initComponentsAvailable(
 			return COLLECTION_FAILURE;
 		}
 		dataSet->componentsAvailable[property->componentIndex] = true;
+		// Record the component so required property indexes can be turned
+		// into a component mask without reading the property again.
+		dataSet->b.b.available->items[i].componentIndex =
+			property->componentIndex;
 		COLLECTION_RELEASE(dataSet->properties, &item);
 	}
 
@@ -1449,6 +1462,7 @@ static bool addResultsFromIpAddressNoChecks(
 	ResultsIpi* results,
 	const unsigned char* ipAddress,
 	fiftyoneDegreesIpType type,
+	uint32_t componentMask,
 	fiftyoneDegreesException* exception) {
 	const DataSetIpi * const dataSet = (DataSetIpi*)results->b.dataSet;
 	for (uint32_t componentIndex = 0;
@@ -1480,23 +1494,30 @@ static bool addResultsFromIpAddressNoChecks(
 			memcpy(nextResult->targetIpAddress.value, ipAddress, IPV6_LENGTH);
 		}
 
-		setResultFromIpAddress(
-			nextResult,
-			dataSet,
-			component->componentId,
-			exception);
-		if (EXCEPTION_FAILED) {
-			return false;
+		// Only evaluate the graph for a component the caller will read. The
+		// result slot is kept so the positional mapping to components is
+		// unchanged, and the slot reads as a null profile.
+		if (COMPONENT_MASK_ENABLED(componentMask, componentIndex)) {
+			setResultFromIpAddress(
+				nextResult,
+				dataSet,
+				component->componentId,
+				exception);
+			if (EXCEPTION_FAILED) {
+				return false;
+			}
 		}
 	}
 	return true;
 }
 
-void fiftyoneDegreesResultsIpiFromIpAddress(
+void fiftyoneDegreesResultsIpiFromIpAddressForProperties(
 	fiftyoneDegreesResultsIpi* results,
 	const unsigned char* ipAddress,
 	size_t ipAddressLength,
 	fiftyoneDegreesIpType type,
+	const int *requiredPropertyIndexes,
+	int requiredPropertyIndexesCount,
 	fiftyoneDegreesException* exception) {
 
 	// Make sure the input is always in the correct format
@@ -1516,13 +1537,35 @@ void fiftyoneDegreesResultsIpiFromIpAddress(
 		results,
 		ipAddress,
 		type,
+		PropertiesGetComponentMask(
+			((DataSetIpi*)results->b.dataSet)->b.b.available,
+			requiredPropertyIndexes,
+			requiredPropertyIndexesCount),
 		exception);
 }
 
-void fiftyoneDegreesResultsIpiFromIpAddressString(
+void fiftyoneDegreesResultsIpiFromIpAddress(
+	fiftyoneDegreesResultsIpi* results,
+	const unsigned char* ipAddress,
+	size_t ipAddressLength,
+	fiftyoneDegreesIpType type,
+	fiftyoneDegreesException* exception) {
+	fiftyoneDegreesResultsIpiFromIpAddressForProperties(
+		results,
+		ipAddress,
+		ipAddressLength,
+		type,
+		NULL,
+		-1,
+		exception);
+}
+
+void fiftyoneDegreesResultsIpiFromIpAddressStringForProperties(
 	fiftyoneDegreesResultsIpi* results,
 	const char* ipAddress,
 	size_t ipLength,
+	const int *requiredPropertyIndexes,
+	int requiredPropertyIndexesCount,
 	fiftyoneDegreesException* exception) {
 	IpAddress ip;
 	const bool parsed =
@@ -1536,19 +1579,23 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 	// Perform the search on the IP address byte array
 	switch(ip.type) {
 	case IP_TYPE_IPV4:
-		fiftyoneDegreesResultsIpiFromIpAddress(
+		fiftyoneDegreesResultsIpiFromIpAddressForProperties(
 			results,
 			ip.value,
 			IPV4_LENGTH,
 			IP_TYPE_IPV4,
+			requiredPropertyIndexes,
+			requiredPropertyIndexesCount,
 			exception);
 		break;
 	case IP_TYPE_IPV6:
-		fiftyoneDegreesResultsIpiFromIpAddress(
+		fiftyoneDegreesResultsIpiFromIpAddressForProperties(
 			results,
 			ip.value,
 			IPV6_LENGTH,
 			IP_TYPE_IPV6,
+			requiredPropertyIndexes,
+			requiredPropertyIndexesCount,
 			exception);
 		break;
 	case IP_TYPE_INVALID:
@@ -1558,12 +1605,28 @@ void fiftyoneDegreesResultsIpiFromIpAddressString(
 	}
 }
 
+void fiftyoneDegreesResultsIpiFromIpAddressString(
+	fiftyoneDegreesResultsIpi* results,
+	const char* ipAddress,
+	size_t ipLength,
+	fiftyoneDegreesException* exception) {
+	fiftyoneDegreesResultsIpiFromIpAddressStringForProperties(
+		results,
+		ipAddress,
+		ipLength,
+		NULL,
+		-1,
+		exception);
+}
+
 static bool setResultsFromEvidence(
 	void* state,
 	EvidenceKeyValuePair* pair) {
 	const stateWithUniqueHeaderIndex* indexState = (stateWithUniqueHeaderIndex*)state;
 	const stateWithException* exceptionState = (stateWithException*)indexState->subState;
-	ResultsIpi* results = (ResultsIpi*)exceptionState->state;
+	const resultsWithComponentMask* masked =
+		(resultsWithComponentMask*)exceptionState->state;
+	ResultsIpi* results = masked->results;
 	Exception* exception = exceptionState->exception;
 	// We should not look further if a 
 	// result has already been found
@@ -1593,6 +1656,7 @@ static bool setResultsFromEvidence(
 				results,
 				ipAddress.value,
 				ipAddress.type,
+				masked->componentMask,
 				exception);
 		}
 	}
@@ -1624,13 +1688,21 @@ static void fiftyoneDegreesIterateHeadersWithEvidence(
 	}
 }
 
-void fiftyoneDegreesResultsIpiFromEvidence(
+void fiftyoneDegreesResultsIpiFromEvidenceForProperties(
 	fiftyoneDegreesResultsIpi* results,
 	fiftyoneDegreesEvidenceKeyValuePairArray* evidence,
+	const int *requiredPropertyIndexes,
+	int requiredPropertyIndexesCount,
 	fiftyoneDegreesException* exception) {
 	stateWithException subState;
 	stateWithUniqueHeaderIndex state;
-	subState.state = results;
+	resultsWithComponentMask masked;
+	masked.results = results;
+	masked.componentMask = PropertiesGetComponentMask(
+		((DataSetIpi*)results->b.dataSet)->b.b.available,
+		requiredPropertyIndexes,
+		requiredPropertyIndexesCount);
+	subState.state = &masked;
 	subState.exception = exception;
 	state.subState = &subState;
 
@@ -1660,6 +1732,18 @@ void fiftyoneDegreesResultsIpiFromEvidence(
 			}
 		}
 	}
+}
+
+void fiftyoneDegreesResultsIpiFromEvidence(
+	fiftyoneDegreesResultsIpi* results,
+	fiftyoneDegreesEvidenceKeyValuePairArray* evidence,
+	fiftyoneDegreesException* exception) {
+	fiftyoneDegreesResultsIpiFromEvidenceForProperties(
+		results,
+		evidence,
+		NULL,
+		-1,
+		exception);
 }
 
 static bool addWeightedValue(
