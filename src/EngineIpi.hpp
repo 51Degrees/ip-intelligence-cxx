@@ -205,9 +205,13 @@ namespace FiftyoneDegrees {
 			 * only the graphs needed by the required properties whose indexes
 			 * are supplied. NULL or a negative count evaluates every graph. A
 			 * count of zero evaluates none. A property whose graph was not
-			 * evaluated has no value with the NULL_PROFILE reason. The native
-			 * mask is 32 bits, so components beyond index 31 are always
-			 * evaluated.
+			 * evaluated has no value with the NULL_PROFILE reason, except that
+			 * a property which is mandatory with a default value reads as that
+			 * default. The native mask is 32 bits, so components beyond index
+			 * 31 are always evaluated. Indexes are positions in
+			 * getRequiredProperties(), which move when a refresh loads a data
+			 * file that gains or loses a required property, so look them up
+			 * again after a refresh.
 			 * @param evidence to process
 			 * @param requiredPropertyIndexes the caller will read
 			 * @param requiredPropertyIndexesCount entries in the array

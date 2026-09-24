@@ -730,15 +730,26 @@ EXTERNAL void fiftyoneDegreesResultsIpiFromEvidence(
 /**
  * Processes the IP address exactly as #fiftyoneDegreesResultsIpiFromIpAddress,
  * but evaluates only the graphs needed by the required properties whose
- * indexes are supplied. The result shape is unchanged, one item per available
- * component in component order. A component whose graph was not evaluated
- * keeps a null profile offset, so its properties report no value with the
- * NULL_PROFILE reason.
+ * indexes are supplied. It is meant for a service that knows, for every
+ * request, which properties it will read. Other callers should use
+ * #fiftyoneDegreesResultsIpiFromIpAddress.
+ *
+ * The result shape is unchanged, one item per available component in
+ * component order. A component whose graph was not evaluated keeps a null
+ * profile offset, so its properties report no value with the NULL_PROFILE
+ * reason. A property that is mandatory with a default value reads as that
+ * default instead, as it does for a component that produced no profile.
  *
  * The indexes are turned into a 32 bit mask, bit i meaning the graph for
  * component i in componentsList. Components at index 32 and above are beyond
  * the mask and are always evaluated, so a data file with more than 32
  * components is filtered for the first 32 only.
+ *
+ * An index is a position in the required properties of the data set the
+ * results use, which are sorted by name. A reloaded data file that gains or
+ * loses a required property moves the indexes of the properties after it, so
+ * look them up again after a reload, for example with
+ * #fiftyoneDegreesPropertiesGetRequiredPropertyIndexFromName.
  * @param results preallocated results structure to populate
  * @param ipAddress byte array to process
  * @param ipAddressLength of the IP address byte array
