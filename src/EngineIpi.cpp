@@ -270,32 +270,56 @@ void EngineIpi::refreshData(
 
 IpIntelligence::ResultsIpi* EngineIpi::process(
 	IpIntelligence::EvidenceIpi *evidence) {
-	EXCEPTION_CREATE;
-	fiftyoneDegreesResultsIpi *results = ResultsIpiCreate(
-		manager.get());
-	ResultsIpiFromEvidence(
-		results, 
-		evidence == nullptr ? nullptr : evidence->get(),
-		exception);
-	if (exception->status != 
-		FIFTYONE_DEGREES_STATUS_INCORRECT_IP_ADDRESS_FORMAT) {
-		EXCEPTION_THROW;
-	}
-
-	return new ResultsIpi(results, manager);
+	return process(evidence, nullptr, -1);
 }
 
 IpIntelligence::ResultsIpi* EngineIpi::process(
 	const char *ipAddress) {
+	return process(ipAddress, nullptr, -1);
+}
+
+IpIntelligence::ResultsIpi *EngineIpi::process(
+	unsigned char ipAddress[], 
+	long length,
+	fiftyoneDegreesIpType type) {
+	return process(ipAddress, length, type, nullptr, -1);
+}
+
+IpIntelligence::ResultsIpi* EngineIpi::process(
+	IpIntelligence::EvidenceIpi *evidence,
+	const int *requiredPropertyIndexes,
+	int requiredPropertyIndexesCount) {
 	EXCEPTION_CREATE;
 	fiftyoneDegreesResultsIpi *results = ResultsIpiCreate(
 		manager.get());
-	ResultsIpiFromIpAddressString(
+	ResultsIpiFromEvidenceForProperties(
+		results,
+		evidence == nullptr ? nullptr : evidence->get(),
+		requiredPropertyIndexes,
+		requiredPropertyIndexesCount,
+		exception);
+	if (exception->status !=
+		FIFTYONE_DEGREES_STATUS_INCORRECT_IP_ADDRESS_FORMAT) {
+		EXCEPTION_THROW;
+	}
+	return new ResultsIpi(results, manager);
+}
+
+IpIntelligence::ResultsIpi* EngineIpi::process(
+	const char *ipAddress,
+	const int *requiredPropertyIndexes,
+	int requiredPropertyIndexesCount) {
+	EXCEPTION_CREATE;
+	fiftyoneDegreesResultsIpi *results = ResultsIpiCreate(
+		manager.get());
+	ResultsIpiFromIpAddressStringForProperties(
 		results,
 		ipAddress,
 		ipAddress == nullptr ? 0 : strlen(ipAddress),
+		requiredPropertyIndexes,
+		requiredPropertyIndexesCount,
 		exception);
-	if (exception->status != 
+	if (exception->status !=
 		FIFTYONE_DEGREES_STATUS_INCORRECT_IP_ADDRESS_FORMAT) {
 		EXCEPTION_THROW;
 	}
@@ -303,18 +327,22 @@ IpIntelligence::ResultsIpi* EngineIpi::process(
 }
 
 IpIntelligence::ResultsIpi *EngineIpi::process(
-	unsigned char ipAddress[], 
+	unsigned char ipAddress[],
 	long length,
-	fiftyoneDegreesIpType type) {
+	fiftyoneDegreesIpType type,
+	const int *requiredPropertyIndexes,
+	int requiredPropertyIndexesCount) {
 	EXCEPTION_CREATE;
 	fiftyoneDegreesResultsIpi *results = ResultsIpiCreate(manager.get());
-	ResultsIpiFromIpAddress(
-		results, 
+	ResultsIpiFromIpAddressForProperties(
+		results,
 		ipAddress,
 		length,
-        type,
+		type,
+		requiredPropertyIndexes,
+		requiredPropertyIndexesCount,
 		exception);
-	if (exception->status != 
+	if (exception->status !=
 		FIFTYONE_DEGREES_STATUS_INCORRECT_IP_ADDRESS_FORMAT) {
 		EXCEPTION_THROW;
 	}
