@@ -405,25 +405,31 @@ TEST_F(EngineIpiGraphFilterTests, NullIndexesGiveEveryValue) {
 TEST_F(EngineIpiGraphFilterTests, EmptyIndexesGiveNoValue) {
 	vector<string> names = engine->getRequiredProperties();
 	int none[] = { 0 };
+	unique_ptr<Ipi::ResultsIpi> all(engine->process(graphFilterIpAddress));
 	unique_ptr<Ipi::ResultsIpi> results(
 		engine->process(graphFilterIpAddress, none, 0));
-	int checked = 0;
+	int changed = 0;
 	for (size_t i = 0; i < names.size(); i++) {
+		Common::Value<string> unfiltered = all->getValueAsString(names[i]);
+		Common::Value<string> value = results->getValueAsString(names[i]);
+		if (unfiltered.hasValue() != value.hasValue() ||
+			(unfiltered.hasValue() &&
+				unfiltered.getValue() != value.getValue())) {
+			changed++;
+		}
 		if (mandatoryWithDefault(names[i])) {
-			// The default stands in, as for an unmatched component today.
+			// The default stands in, as for a component that produced no
+			// profile.
 			continue;
 		}
-		Common::Value<string> value = results->getValueAsString(names[i]);
 		EXPECT_FALSE(value.hasValue()) << names[i];
 		EXPECT_EQ(
 			FIFTYONE_DEGREES_RESULTS_NO_VALUE_REASON_NULL_PROFILE,
 			value.getNoValueReason()) << names[i];
-		checked++;
 	}
-	if (checked == 0) {
-		GTEST_SKIP() << "Every property has a mandatory default, so values cannot "
-			"show a skipped graph. The C tests check the raw offsets instead.";
-	}
+	// Properties with a mandatory default read as that default, so compare
+	// with the unfiltered detection to show the graphs were skipped.
+	EXPECT_GT(changed, 0) << "No value changed when every graph was skipped.";
 }
 
 TEST_F(EngineIpiGraphFilterTests, EvidenceOverloadMatchesStringOverload) {
