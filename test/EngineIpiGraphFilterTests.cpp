@@ -361,10 +361,10 @@ protected:
 	// True when the property is mandatory with a default value, which reads
 	// as that default when its component produced no profile.
 	bool mandatoryWithDefault(const string &name) {
-		unique_ptr<Common::Collection<string, Common::PropertyMetaData>> properties(
+		unique_ptr<Common::Collection<string, Common::PropertyMetaData>> allProperties(
 			engine->getMetaData()->getProperties());
 		unique_ptr<Common::PropertyMetaData> property(
-			properties->getByKey(name));
+			allProperties->getByKey(name));
 		return property != nullptr &&
 			property->getIsMandatory() &&
 			property->getDefaultValue().empty() == false;
