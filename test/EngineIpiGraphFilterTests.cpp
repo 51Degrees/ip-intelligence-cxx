@@ -130,6 +130,22 @@ protected:
 		return -1;
 	}
 
+	// First required property on a component other than the one given,
+	// whether or not it has a mandatory default. Returns -1 when every
+	// property is on that component.
+	static int propertyOnAnotherComponent(
+		fiftyoneDegreesResultsIpi* results,
+		int notOnComponent) {
+		fiftyoneDegreesPropertiesAvailable* available =
+			dataSetOf(results)->b.b.available;
+		for (uint32_t i = 0; i < available->count; i++) {
+			if (available->items[i].componentIndex != notOnComponent) {
+				return (int)i;
+			}
+		}
+		return -1;
+	}
+
 	// The slot in the results that holds the component of the required
 	// property index, following the positional mapping over available
 	// components.
@@ -224,12 +240,11 @@ TEST_F(IpiGraphFilterCTests, OnePropertyEvaluatesOnlyItsComponent) {
 	int first = 0;
 	int firstComponent =
 		dataSetOf(all)->b.b.available->items[first].componentIndex;
-	int second = optionalProperty(all, firstComponent);
+	int second = propertyOnAnotherComponent(all, firstComponent);
 	if (second < 0) {
 		fiftyoneDegreesResultsIpiFree(all);
 		fiftyoneDegreesResultsIpiFree(filtered);
-		GTEST_SKIP() << "The data file has no property without a mandatory "
-			"default on a second component.";
+		GTEST_SKIP() << "The data file has properties on one component only.";
 	}
 	detectString(all, NULL, -1);
 	int indexes[] = { first };
@@ -240,6 +255,9 @@ TEST_F(IpiGraphFilterCTests, OnePropertyEvaluatesOnlyItsComponent) {
 	ASSERT_GE(keptSlot, 0);
 	ASSERT_GE(skippedSlot, 0);
 	ASSERT_NE(keptSlot, skippedSlot);
+	ASSERT_NE(graphFilterNullOffset, all->items[skippedSlot].graphResult.rawOffset)
+		<< "The address must give the second component a profile when "
+		"unfiltered, or the check below proves nothing.";
 	EXPECT_EQ(
 		all->items[keptSlot].graphResult.rawOffset,
 		filtered->items[keptSlot].graphResult.rawOffset) <<
@@ -248,7 +266,12 @@ TEST_F(IpiGraphFilterCTests, OnePropertyEvaluatesOnlyItsComponent) {
 		graphFilterNullOffset,
 		filtered->items[skippedSlot].graphResult.rawOffset) <<
 		"The skipped component must hold a null profile.";
-	expectNullProfile(filtered, second);
+	// A property with a mandatory default reads as that default, so only a
+	// property without one can show the null profile reason.
+	int optional = optionalProperty(filtered, firstComponent);
+	if (optional >= 0) {
+		expectNullProfile(filtered, optional);
+	}
 	fiftyoneDegreesResultsIpiFree(all);
 	fiftyoneDegreesResultsIpiFree(filtered);
 }
@@ -311,6 +334,10 @@ public:
 			dataFilePath = GetFilePath(_dataFolderName, _IpiFileNames[i]);
 		}
 		config = new Ipi::ConfigIpi();
+		// Balanced rather than the in memory default, so a test does not
+		// hold the whole data file, which is several gigabytes for the
+		// enterprise file.
+		config->setBalanced();
 		properties = new Common::RequiredPropertiesConfig();
 		engine = new Ipi::EngineIpi(dataFilePath, config, properties);
 	}
@@ -321,9 +348,9 @@ public:
 		Base::TearDown();
 	}
 protected:
-	Ipi::ConfigIpi* config;
-	Common::RequiredPropertiesConfig* properties;
-	Ipi::EngineIpi* engine;
+	Ipi::ConfigIpi* config = nullptr;
+	Common::RequiredPropertiesConfig* properties = nullptr;
+	Ipi::EngineIpi* engine = nullptr;
 
 	// The first evidence key the engine accepts, used to hand it an address.
 	string evidenceKey() {
