@@ -21,6 +21,7 @@
  * ********************************************************************* */
 
 #include <cstdio>
+#include <string>
 #include "ExampleIpIntelligenceTests.hpp"
 
 // Sweep /16 chunks with a small cache rather than the /8 chunks and
@@ -191,4 +192,62 @@ TEST_F(ExampleTestCountryOverlap, InMemory) {
         GTEST_SKIP() << "Skipping temp file test on CI";
     }
     run(fiftyoneDegreesIpiInMemoryConfig);
+}
+
+/**
+ * Every index valueIndex returns must name a printable value, because the
+ * console summary and every CSV row print the name for the index they were
+ * recorded against. The names used to be allocated per entry, so a failed
+ * allocation stored a null that the reporting then dereferenced. They are
+ * now copied into the table, which removes the failure case; this test
+ * holds the invariant so the table cannot quietly go back to pointers.
+ *
+ * Needs no data file, so unlike the sweep tests it runs everywhere.
+ */
+TEST(CountryOverlapValueTable, EveryIndexNamesAPrintableValue) {
+    ValueTable table;
+    memset(&table, 0, sizeof(table));
+
+    // Fill past the table's capacity so the saturating path is covered.
+    for (int value = 0; value < VALUE_SLOTS + 4; value++) {
+        char name[32];
+        snprintf(name, sizeof(name), "Value%d", value);
+        const int index = valueIndex(&table, name);
+        ASSERT_GE(index, 0);
+        ASSERT_LT(index, VALUE_SLOTS);
+        EXPECT_NE('\0', table.names[index][0]) <<
+            "valueIndex returned slot " << index <<
+            " for '" << name << "' but that slot holds no name.";
+    }
+    EXPECT_EQ(VALUE_SLOTS, table.count);
+}
+
+/** A name already in the table must return its existing index rather than
+consume another slot, because the merge relies on equal names mapping to
+one index across threads. */
+TEST(CountryOverlapValueTable, RepeatedNameReusesItsIndex) {
+    ValueTable table;
+    memset(&table, 0, sizeof(table));
+
+    const int first = valueIndex(&table, "Broadband");
+    const int second = valueIndex(&table, "Cellular");
+    EXPECT_EQ(first, valueIndex(&table, "Broadband"));
+    EXPECT_EQ(second, valueIndex(&table, "Cellular"));
+    EXPECT_EQ(2, table.count);
+}
+
+/** A name longer than the table's storage must be truncated into it and
+stay NUL terminated rather than overrun the slot. */
+TEST(CountryOverlapValueTable, OverlongNameIsTruncatedNotOverrun) {
+    ValueTable table;
+    memset(&table, 0, sizeof(table));
+
+    std::string overlong(VALUE_NAME_MAX * 2, 'x');
+    const int index = valueIndex(&table, overlong.c_str());
+    ASSERT_GE(index, 0);
+    ASSERT_LT(index, VALUE_SLOTS);
+    EXPECT_EQ(
+        VALUE_NAME_MAX - 1,
+        (int)strlen(table.names[index])) <<
+        "The name should fill the slot and stop short of its last byte.";
 }

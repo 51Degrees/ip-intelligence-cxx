@@ -114,11 +114,14 @@ CountryOverlap <data file> --probe <ip> [ip...]
 - data file: path to an enterprise .ipi data file.
 - output csv: path for the CSV, default country-overlap.csv.
 - threads: number of worker threads, default 10. Each thread holds its
-  own cache of resolved locations of about 600 MB, so 10 threads need
-  about 6 GB in addition to the memory used by the data file. Choose
-  fewer threads on machines with less memory. When a cache cannot be
-  allocated at full size a smaller one is used, which is slower but
-  produces the same results.
+  own cache of resolved locations of about 600 MB, and a country pair
+  block of about 3.5 MB for each combination of location confidence and
+  connection type it meets. Merging the results allocates one further
+  set of pair blocks. Ten threads therefore need something over 7 GB in
+  addition to the memory used by the data file, so choose fewer threads
+  on machines with less memory. When a cache cannot be allocated at full
+  size a smaller one is used, which is slower but produces the same
+  results.
 - chunks: number of /8 chunks of the IPv4 space to process starting at
   0.0.0.0, default 256 which is the whole space. Small values are useful
   for testing.
@@ -205,6 +208,18 @@ small part of the address space in seconds. */
 #define CHUNK_SIZE ((uint64_t)1 << COUNTRY_OVERLAP_CHUNK_BITS)
 #define MAX_CHUNKS (1 << (32 - COUNTRY_OVERLAP_CHUNK_BITS))
 
+/** Addresses between progress counter updates, and the mask that spots
+them. Measured from the start of a chunk rather than from the start of
+the address space, so the total a chunk reports is exactly its size
+whatever the chunk size. */
+#define PROGRESS_INTERVAL ((uint64_t)1 << 20)
+#define PROGRESS_MASK (PROGRESS_INTERVAL - 1)
+
+/** Addresses between checks for an early stop request. Shorter than the
+progress interval so that a chunk smaller than that interval, which the
+tests use, still notices a stop request part way through. */
+#define STOP_CHECK_MASK (((uint64_t)1 << 16) - 1)
+
 /** Number of bits in the size of each thread's cache of resolved graph
 offsets. The default of 22 gives 4,194,304 entries, about 600 MB per
 thread, which keeps the cache well below full for the distinct
@@ -268,18 +283,23 @@ typedef struct country_overlap_cell_t {
 	uint64_t single; /**< Addresses whose people are all in the primary
 					 country */
 	uint64_t multi; /**< Addresses that also relate to other countries */
-	uint64_t singleArea; /**< The same split using the area weighted
-						 list, reported in the summary for
-						 comparison */
-	uint64_t multiArea;
+	uint64_t multiArea; /**< Addresses that also relate to other countries
+						by share of the area rather than of the people,
+						reported in the summary for comparison */
 } Cell;
 
 /** Cells for all the combinations of the three dimensions. */
 typedef Cell Matrix[COUNTRY_SLOTS][VALUE_SLOTS][VALUE_SLOTS];
 
+/** Longest value name held in a value table. The location confidence and
+connection type values are short words, so the names are copied into the
+table's own storage. Allocating them instead meant a failed allocation
+could leave a null in a table that every reader prints. */
+#define VALUE_NAME_MAX 128
+
 /** Value names for a dimension, built dynamically from the data. */
 typedef struct country_overlap_value_table_t {
-	char* names[VALUE_SLOTS];
+	char names[VALUE_SLOTS][VALUE_NAME_MAX];
 	int count;
 } ValueTable;
 
@@ -298,8 +318,9 @@ typedef struct country_overlap_shared_blocks_t {
 /**
  * Returns the pair count block for the confidence and connection type,
  * allocating a zeroed block on first use. Returns null when the
- * allocation fails, in which case the pair counts are not recorded but
- * the sweep continues.
+ * allocation fails. Callers must count the failure, because a missing
+ * block removes every secondary country row for the combination from the
+ * CSV, which is incomplete output rather than a different result.
  */
 static uint64_t* sharedBlockGet(SharedBlocks* sharedBlocks, int f, int n) {
 	uint64_t* block = sharedBlocks->blocks[f][n];
@@ -367,6 +388,8 @@ typedef struct country_overlap_thread_state_t {
 	uint64_t failures;
 	uint64_t truncations; /**< Distinct locations whose population list
 						  had more distinct countries than SHARED_STORE */
+	uint64_t pairBlockFailures; /**< Segments whose pair counts were lost
+								because a block could not be allocated */
 } ThreadState;
 
 static void countryOverlapReportStatus(
@@ -375,6 +398,23 @@ static void countryOverlapReportStatus(
 	const char* message = StatusGetMessage(status, fileName);
 	printf("%s\n", message);
 	Free((void*)message);
+}
+
+/**
+ * Returns the status code carried by the exception, or NOT_SET when the
+ * exception holds no failure. Wrapped in a function because the exception
+ * type is a void pointer when FIFTYONE_DEGREES_EXCEPTIONS_DISABLED is
+ * defined, and both arms of a conditional expression are compiled whatever
+ * the condition, so reading the status member inline broke the build for
+ * that supported option.
+ */
+static StatusCode countryOverlapExceptionStatus(Exception* exception) {
+#ifdef FIFTYONE_DEGREES_EXCEPTIONS_DISABLED
+	(void)exception;
+	return NOT_SET;
+#else
+	return EXCEPTION_FAILED ? exception->status : NOT_SET;
+#endif
 }
 
 static char* countryOverlapDuplicate(const char* value) {
@@ -398,17 +438,14 @@ static int valueIndex(ValueTable* table, const char* name) {
 		}
 	}
 	if (table->count < VALUE_SLOTS) {
-		table->names[table->count] = countryOverlapDuplicate(name);
+		snprintf(
+			table->names[table->count],
+			VALUE_NAME_MAX,
+			"%s",
+			name);
 		return table->count++;
 	}
 	return VALUE_SLOTS - 1;
-}
-
-static void valueTableFree(ValueTable* table) {
-	for (int i = 0; i < table->count; i++) {
-		Free(table->names[i]);
-	}
-	table->count = 0;
 }
 
 /**
@@ -789,9 +826,6 @@ static void addSegment(
 	if ((resolved->flags & RESOLVED_MULTI_COUNTRY_AREA) != 0) {
 		cell->multiArea += addresses;
 	}
-	else {
-		cell->singleArea += addresses;
-	}
 	if (resolved->sharedCount > 0) {
 		uint64_t* block = sharedBlockGet(
 			&state->sharedBlocks,
@@ -803,6 +837,12 @@ static void addSegment(
 			for (int s = 0; s < resolved->sharedCount; s++) {
 				row[resolved->shared[s]] += addresses;
 			}
+		}
+		else {
+			// Counted so the run reports the gap and fails, rather than
+			// writing a CSV that silently has no secondary country rows
+			// for this combination.
+			state->pairBlockFailures++;
 		}
 	}
 }
@@ -904,19 +944,25 @@ static void sweepChunk(ThreadState* state, uint32_t chunk) {
 			segmentStart = ip;
 		}
 
-		// Periodically update the progress counter, and stop part way
-		// through the chunk when asked so that a failed start does not
-		// wait for a whole chunk to finish.
-		if ((ip & 0xFFFFF) == 0xFFFFF) {
-			state->addressesDone += 0x100000;
-			if (state->shared->stopRequested != 0) {
-				return;
-			}
+		// Stop part way through the chunk when asked, so that a failed
+		// start does not wait for a whole chunk to finish, and update the
+		// progress counter on a longer interval. Both intervals count from
+		// the start of the chunk. Counting from the start of the address
+		// space meant a chunk shorter than the progress interval reported
+		// a whole interval whenever it happened to contain an aligned
+		// address, and its own size again below.
+		const uint64_t covered = ip - start + 1;
+		if ((covered & STOP_CHECK_MASK) == 0 &&
+			state->shared->stopRequested != 0) {
+			return;
+		}
+		if ((covered & PROGRESS_MASK) == 0) {
+			state->addressesDone += PROGRESS_INTERVAL;
 		}
 	}
-	// Count any addresses the periodic update did not, which happens
-	// when the chunk is smaller than the update interval.
-	state->addressesDone += CHUNK_SIZE & 0xFFFFF;
+	// Count the addresses left over when the chunk is not a whole number
+	// of progress intervals.
+	state->addressesDone += CHUNK_SIZE & PROGRESS_MASK;
 	if (segmentValid == true) {
 		completeSegment(
 			state,
@@ -1112,8 +1158,6 @@ static void threadStateFree(
 		state->cache = NULL;
 	}
 	sharedBlocksFree(&state->sharedBlocks);
-	valueTableFree(&state->confidence);
-	valueTableFree(&state->connection);
 	for (int c = 0; c < COUNTRY_SLOTS; c++) {
 		if (state->countryNames[c] != NULL &&
 			(mergedNames == NULL ||
@@ -1239,7 +1283,7 @@ static void writeCombinedCsv(
 	// Total addresses for each primary country in any variant of
 	// location confidence and connection type. Used as the denominator
 	// for every percentage.
-	static uint64_t primaryTotals[COUNTRY_SLOTS];
+	uint64_t primaryTotals[COUNTRY_SLOTS];
 	memset(primaryTotals, 0, sizeof(primaryTotals));
 	for (int c = 0; c < COUNTRY_SLOTS; c++) {
 		for (int f = 0; f < confidence->count; f++) {
@@ -1675,7 +1719,7 @@ int fiftyoneDegreesIpiCountryOverlap(
 			break;
 		}
 		if (status == SUCCESS) {
-			status = EXCEPTION_FAILED ? exception->status : NOT_SET;
+			status = countryOverlapExceptionStatus(exception);
 		}
 		// When none of the required properties exist in the data file
 		// there is no point retrying with another configuration. This
@@ -1774,13 +1818,17 @@ int fiftyoneDegreesIpiCountryOverlap(
 		"Sweeping %d /%d chunks of the IPv4 address space with %d "
 		"threads evaluating %d component graphs per address. Secondary "
 		"countries with a weighting share of %g%% or lower are "
-		"ignored. Each thread uses a cache of up to %.0f MB.\n",
+		"ignored. Each thread uses a cache of up to %.0f MB, plus %.1f MB "
+		"for every combination of location confidence and connection type "
+		"it meets.\n",
 		totalChunks,
 		32 - COUNTRY_OVERLAP_CHUNK_BITS,
 		threadCount,
 		shared.componentCount,
 		minSecondaryPercent,
-		(double)sizeof(Resolved) * CACHE_SIZE / (1024.0 * 1024.0));
+		(double)sizeof(Resolved) * CACHE_SIZE / (1024.0 * 1024.0),
+		(double)sizeof(uint64_t) * COUNTRY_SLOTS * COUNTRY_SLOTS /
+		(1024.0 * 1024.0));
 
 	// Create the thread states and start the workers. Each allocation is
 	// checked because the caches alone need several GB at the default
@@ -1877,6 +1925,17 @@ int fiftyoneDegreesIpiCountryOverlap(
 	}
 	double elapsed = difftime(time(NULL), started);
 
+	// The caches are not read again. The merge, the CSV, the spot checks
+	// and the summary all work from the matrices and the normal lookup
+	// process, so freeing the caches here keeps the peak below the sum of
+	// the caches and the pair count blocks the merge is about to allocate.
+	for (int t = 0; t < threadCount; t++) {
+		if (states[t].cache != NULL) {
+			Free(states[t].cache);
+			states[t].cache = NULL;
+		}
+	}
+
 	// Merge the thread results using global dimension tables so the
 	// indexes align across threads. The merge tables are static because
 	// they are too large for the stack.
@@ -1894,12 +1953,14 @@ int fiftyoneDegreesIpiCountryOverlap(
 	uint64_t resolutions = 0;
 	uint64_t failures = 0;
 	uint64_t truncations = 0;
+	uint64_t pairBlockFailures = 0;
 	for (int t = 0; t < threadCount; t++) {
 		ThreadState* state = &states[t];
 		evaluations += state->evaluations;
 		resolutions += state->resolutions;
 		failures += state->failures;
 		truncations += state->truncations;
+		pairBlockFailures += state->pairBlockFailures;
 		for (int c = 0; c < COUNTRY_SLOTS; c++) {
 			if (names[c] == NULL && state->countryNames[c] != NULL) {
 				names[c] = state->countryNames[c];
@@ -1923,7 +1984,6 @@ int fiftyoneDegreesIpiCountryOverlap(
 					target->addresses += cell->addresses;
 					target->single += cell->single;
 					target->multi += cell->multi;
-					target->singleArea += cell->singleArea;
 					target->multiArea += cell->multiArea;
 				}
 			}
@@ -1950,6 +2010,12 @@ int fiftyoneDegreesIpiCountryOverlap(
 						target[i] += source[i];
 					}
 				}
+				else {
+					// As in addSegment: without the block the merged CSV
+					// silently loses the secondary country rows for this
+					// combination.
+					pairBlockFailures++;
+				}
 			}
 		}
 	}
@@ -1968,6 +2034,13 @@ int fiftyoneDegreesIpiCountryOverlap(
 			"the lowest weighted countries.\n",
 			(unsigned long long)truncations,
 			SHARED_STORE);
+	}
+	if (pairBlockFailures > 0) {
+		printf(
+			"%llu pair count updates were lost because a country pair "
+			"block could not be allocated, so the CSV is missing secondary "
+			"country rows. Try fewer threads.\n",
+			(unsigned long long)pairBlockFailures);
 	}
 
 	writeCombinedCsv(
@@ -2035,16 +2108,19 @@ int fiftyoneDegreesIpiCountryOverlap(
 			names[c] = NULL;
 		}
 	}
-	valueTableFree(&confidence);
-	valueTableFree(&connection);
 	sharedBlocksFree(&totalShared);
 	Free(states);
 	Free(threads);
 	DataSetIpiRelease(dataSet);
 	ResourceManagerFree(&manager);
 	// The run only succeeds when the complete results were written and
-	// the spot checks confirm them.
-	return csvWritten == true && failures == 0 && matches == SPOT_CHECKS ?
+	// the spot checks confirm them. A lost pair count block leaves the CSV
+	// without the secondary country rows it exists to report, so it fails
+	// the run in the same way as a write error.
+	return csvWritten == true &&
+		failures == 0 &&
+		pairBlockFailures == 0 &&
+		matches == SPOT_CHECKS ?
 		COUNTRY_OVERLAP_OK : COUNTRY_OVERLAP_FAILED;
 }
 
@@ -2117,11 +2193,7 @@ static bool isValidIpv4OrOther(const char* ip) {
 static void probeAddress(
 	SharedState* shared,
 	ResultsIpi* results,
-	ValueTable* confidence,
-	ValueTable* connection,
 	const char* ip) {
-	(void)confidence;
-	(void)connection;
 	// The library parser is used because it handles IPv6 as well as
 	// IPv4. It clamps an IPv4 octet above 255 to 255 rather than
 	// rejecting it, which would probe a different address from the one
@@ -2247,16 +2319,16 @@ static int runProbe(const char* dataFilePath, int argc, char* argv[]) {
 		return COUNTRY_OVERLAP_PROPERTIES_MISSING;
 	}
 	ResultsIpi* results = ResultsIpiCreate(&manager);
-	ValueTable confidence;
-	ValueTable connection;
-	memset(&confidence, 0, sizeof(confidence));
-	memset(&connection, 0, sizeof(connection));
+	if (results == NULL) {
+		printf("Not enough memory to probe addresses.\n");
+		DataSetIpiRelease(dataSet);
+		ResourceManagerFree(&manager);
+		return COUNTRY_OVERLAP_FAILED;
+	}
 	for (int i = 3; i < argc; i++) {
-		probeAddress(&shared, results, &confidence, &connection, argv[i]);
+		probeAddress(&shared, results, argv[i]);
 	}
 	ResultsIpiFree(results);
-	valueTableFree(&confidence);
-	valueTableFree(&connection);
 	DataSetIpiRelease(dataSet);
 	ResourceManagerFree(&manager);
 	return COUNTRY_OVERLAP_OK;
