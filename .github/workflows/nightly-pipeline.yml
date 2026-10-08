@@ -6,6 +6,9 @@ on:
       dryrun:
         type: boolean
         default: false
+      common-ci-ref:
+        type: string
+        default: ''
   schedule:
     - cron: '35 0 * * *'
 
@@ -17,6 +20,7 @@ jobs:
       repo-name: ${{ github.event.repository.name }}
       org-name: ${{ github.event.repository.owner.login }}
       dryrun: ${{ inputs.dryrun || false }}
+      common-ci-ref: ${{ inputs.common-ci-ref || '' }}
     secrets:
       token: ${{ secrets.ACCESS_TOKEN }}
 
@@ -29,6 +33,7 @@ jobs:
       repo-name: ${{ github.event.repository.name }}
       org-name: ${{ github.event.repository.owner.login }}
       dryrun: ${{ inputs.dryrun || false }}
+      common-ci-ref: ${{ inputs.common-ci-ref || '' }}
       cache-assets: true
       build-test-timeout-minutes: 240
     secrets:
@@ -44,6 +49,7 @@ jobs:
       repo-name: ${{ github.event.repository.name }}
       org-name: ${{ github.event.repository.owner.login }}
       dryrun: ${{ inputs.dryrun || false }}
+      common-ci-ref: ${{ inputs.common-ci-ref || '' }}
       cache-assets: true
     secrets:
       token: ${{ secrets.ACCESS_TOKEN }}
