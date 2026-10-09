@@ -5,8 +5,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.17.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<meta name="description" content="fiftyoneDegreesWeightedValueHeader Struct Reference - IP intelligence services for 51Degrees Pipeline - 51Degrees documentation."/>
-<title>51Degrees IP Intelligence C/C++: fiftyoneDegreesWeightedValueHeader Struct Reference</title>
+<meta name="description" content="Cell Struct Reference - IP intelligence services for 51Degrees Pipeline - 51Degrees documentation."/>
+<title>51Degrees IP Intelligence C/C++: Cell Struct Reference</title>
 <!-- Stylesheets ahead of scripts and inline CLS reservations; see HEADER-NOTES.md. -->
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
@@ -58,33 +58,37 @@
   </nav>
 </div>
 <script type="text/javascript">
-document.addEventListener('DOMContentLoaded',() => { initNavTree('structfiftyone_degrees_weighted_value_header.html','',''); });
+document.addEventListener('DOMContentLoaded',() => { initNavTree('struct_cell.html','',''); });
 </script>
 <div id="doc-content" class="g-docs__content">
 <div class="g-docs__header">
-<h1 class="g-docs__page-title">fiftyoneDegreesWeightedValueHeader Struct Reference</h1></div><!--header-->
+<h1 class="g-docs__page-title">Cell Struct Reference</h1></div><!--header-->
 <div class="g-docs__inner">
 <div class="g-docs__primary" id="primary">
 <a name="details" id="details"></a><h2 id="header-details" class="g-docs__section-heading">Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="group___fifty_one_degrees_synonyms.html#gaead00debc1ea5066dfb07617645860c1" title="Synonym for fiftyoneDegreesHeader type.">Header</a> structure for all weighted value types. </p>
-<p>This structure serves as the common header for all weighted value types, containing the value type, property index, and raw weighting information. </p>
-<dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd><a class="el" href="_ip_intelligence_2_country_overlap_8c-example.html#_a20">IpIntelligence/CountryOverlap.c</a>, and <a class="el" href="_ip_intelligence_2_getting_started_8c-example.html#_a21">IpIntelligence/GettingStarted.c</a>.</dd>
+<div class="textblock"><p>A cell of the output matrix. </p>
+<dl class="c-list-definition examples"><dt class="c-list-definition__title">Examples</dt><dd><a class="el" href="_ip_intelligence_2_country_overlap_8c-example.html#_a2">IpIntelligence/CountryOverlap.c</a>.</dd>
 </dl>
 </div><table class="c-table c-table--directory">
 <tr class="c-table__row heading"><td class="c-table__cell" colspan="2"><h2 id="header-pub-attribs" class="g-docs__section-heading"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="c-table__row memitem:a7c06bc7d4ab45fd367f36caa242a7329" id="r_a7c06bc7d4ab45fd367f36caa242a7329"><td class="c-table__cell"><a id="a7c06bc7d4ab45fd367f36caa242a7329" name="a7c06bc7d4ab45fd367f36caa242a7329"></a>
-fiftyoneDegreesPropertyValueType&#160;</td><td class="c-table__cell"><b>valueType</b></td></tr>
-<tr class="c-table__row memdesc:a7c06bc7d4ab45fd367f36caa242a7329"><td class="c-table__cell">&#160;</td><td class="c-table__cell">The type of the property value. <br /></td></tr>
-<tr class="c-table__row memitem:afd3b870dee198a9cb9e6054f673b6f53" id="r_afd3b870dee198a9cb9e6054f673b6f53"><td class="c-table__cell"><a id="afd3b870dee198a9cb9e6054f673b6f53" name="afd3b870dee198a9cb9e6054f673b6f53"></a>
-int&#160;</td><td class="c-table__cell"><b>requiredPropertyIndex</b></td></tr>
-<tr class="c-table__row memdesc:afd3b870dee198a9cb9e6054f673b6f53"><td class="c-table__cell">&#160;</td><td class="c-table__cell">Index of the required property. <br /></td></tr>
-<tr class="c-table__row memitem:a5fe2905ab1a017e11194bacca7cec35d" id="r_a5fe2905ab1a017e11194bacca7cec35d"><td class="c-table__cell"><a id="a5fe2905ab1a017e11194bacca7cec35d" name="a5fe2905ab1a017e11194bacca7cec35d"></a>
-uint32_t&#160;</td><td class="c-table__cell"><b>rawWeighting</b></td></tr>
-<tr class="c-table__row memdesc:a5fe2905ab1a017e11194bacca7cec35d"><td class="c-table__cell">&#160;</td><td class="c-table__cell">Raw confidence weighting value. <br /></td></tr>
+<tr class="c-table__row memitem:a2e77ebff0bf8f6d2d1ad4f51a46e4548" id="r_a2e77ebff0bf8f6d2d1ad4f51a46e4548"><td class="c-table__cell"><a id="a2e77ebff0bf8f6d2d1ad4f51a46e4548" name="a2e77ebff0bf8f6d2d1ad4f51a46e4548"></a>
+uint64_t&#160;</td><td class="c-table__cell"><b>segments</b></td></tr>
+<tr class="c-table__row memdesc:a2e77ebff0bf8f6d2d1ad4f51a46e4548"><td class="c-table__cell">&#160;</td><td class="c-table__cell">Number of contiguous segments of addresses. <br /></td></tr>
+<tr class="c-table__row memitem:ad3ad28564b71a3a5fa787c301b4591dc" id="r_ad3ad28564b71a3a5fa787c301b4591dc"><td class="c-table__cell"><a id="ad3ad28564b71a3a5fa787c301b4591dc" name="ad3ad28564b71a3a5fa787c301b4591dc"></a>
+uint64_t&#160;</td><td class="c-table__cell"><b>addresses</b></td></tr>
+<tr class="c-table__row memitem:a28370beb6e8dd71bea6bccabffd6c46c" id="r_a28370beb6e8dd71bea6bccabffd6c46c"><td class="c-table__cell"><a id="a28370beb6e8dd71bea6bccabffd6c46c" name="a28370beb6e8dd71bea6bccabffd6c46c"></a>
+uint64_t&#160;</td><td class="c-table__cell"><b>single</b></td></tr>
+<tr class="c-table__row memdesc:a28370beb6e8dd71bea6bccabffd6c46c"><td class="c-table__cell">&#160;</td><td class="c-table__cell">Addresses whose people are all in the primary country. <br /></td></tr>
+<tr class="c-table__row memitem:a28a6d14787f07d5c2a1e5ef766449f21" id="r_a28a6d14787f07d5c2a1e5ef766449f21"><td class="c-table__cell"><a id="a28a6d14787f07d5c2a1e5ef766449f21" name="a28a6d14787f07d5c2a1e5ef766449f21"></a>
+uint64_t&#160;</td><td class="c-table__cell"><b>multi</b></td></tr>
+<tr class="c-table__row memdesc:a28a6d14787f07d5c2a1e5ef766449f21"><td class="c-table__cell">&#160;</td><td class="c-table__cell">Addresses that also relate to other countries. <br /></td></tr>
+<tr class="c-table__row memitem:ae3c8c8a4d850fd53189ac21e0ae8de9c" id="r_ae3c8c8a4d850fd53189ac21e0ae8de9c"><td class="c-table__cell"><a id="ae3c8c8a4d850fd53189ac21e0ae8de9c" name="ae3c8c8a4d850fd53189ac21e0ae8de9c"></a>
+uint64_t&#160;</td><td class="c-table__cell"><b>multiArea</b></td></tr>
+<tr class="c-table__row memdesc:ae3c8c8a4d850fd53189ac21e0ae8de9c"><td class="c-table__cell">&#160;</td><td class="c-table__cell">Addresses that also relate to other countries by share of the area rather than of the people, reported in the summary for comparison. <br /></td></tr>
 </table>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li><a class="el" href="ipi__weighted__results_8h_source.html">ipi_weighted_results.h</a></li>
+<li><b>CountryOverlap.c</b></li>
 </ul>
 </div><!-- primary -->
 </div><!-- inner -->
