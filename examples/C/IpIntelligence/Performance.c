@@ -78,30 +78,62 @@ static const char* evidenceFileName = "evidence.yml";
 /**
  * Configuration to use when building the dataset for benchmarking.
  */
+/**
+ * How a benchmark reads each property of a result.
+ */
+typedef enum e_value_read {
+	// The weighted items list the results own, through
+	// fiftyoneDegreesResultsIpiGetValues.
+	READ_WEIGHTED_ITEMS,
+	// Each value written out as text through
+	// fiftyoneDegreesResultsIpiGetValuesStringByRequiredPropertyIndex, the
+	// work of a caller that reads every property as a string.
+	READ_TEXT,
+	// A weighted values collection for the one property through
+	// fiftyoneDegreesResultsIpiGetValuesCollection, allocated and released
+	// for each property, the shape of a caller that reads typed values.
+	READ_COLLECTION
+} valueRead;
+
 typedef struct performanceConfig_t {
 	// Base configuration
 	ConfigIpi *config;
 	// True if all properties should be initialized and fetched
 	bool allProperties;
+	// How each property is read from the result
+	valueRead read;
 } performanceConfig;
 
 /**
  * Dataset configurations to run benchmarking against. Only InMemory is used
  * in default performance example.
- * 
- * The compiler directive FIFTYONE_DEGREES_MEMORY_ONLY (which is not part of 
- * configuration) to compile out considerations for file based operation and 
+ *
+ * The compiler directive FIFTYONE_DEGREES_MEMORY_ONLY (which is not part of
+ * configuration) to compile out considerations for file based operation and
  * thus provide maximum performance can be used to further improve performance.
- * 
+ *
  * InMemory - all the data is loaded into memory and file closed. Fast.
- * Balanced - popular data is loaded into memory, other cached and loaded from 
+ * Balanced - popular data is loaded into memory, other cached and loaded from
  *   data file. Quite slow, but okay for web sites.
  * LowMemory - all data loaded from data file when needed. Slow.
  */
 performanceConfig performanceConfigs[] = {
-	{ &IpiInMemoryConfig, false },
-	{ &IpiInMemoryConfig, true },
+	{ &IpiInMemoryConfig, false, READ_WEIGHTED_ITEMS },
+	{ &IpiInMemoryConfig, true, READ_WEIGHTED_ITEMS },
+	{ &IpiInMemoryConfig, true, READ_TEXT },
+	{ &IpiInMemoryConfig, true, READ_COLLECTION },
 };
+
+// Names of the ways a benchmark reads values, in the order of valueRead.
+static const char* valueReadNames[] = {
+	"WeightedItems",
+	"Text",
+	"Collection"
+};
+
+// Length of the buffer each thread writes a value's text into. Long enough for
+// the polygon properties, whose text runs to tens of thousands of characters.
+#define VALUE_TEXT_LENGTH 65536
 
 /**
  * Pointer to evidence, and the next item in the list. 
@@ -183,6 +215,11 @@ typedef struct performanceState_t {
 	threadState* threadStates;
 	// Index in threadStates that should be used when preparing evidence.
 	int threadIndex;
+	// Number of times each thread works through its evidence, so a short
+	// evidence file can still give a run long enough to time.
+	int repeats;
+	// How the benchmark being run reads each property.
+	valueRead read;
 } performanceState;
 
 static const char* getOrAddSharedString(
@@ -338,7 +375,14 @@ void runPerformanceThread(void* state) {
 		evidence->items[i].header = NULL;
 	}
 
-	// Execute the performance test moving through the linked list.
+	// Thread specific buffer for the text of a value.
+	const valueRead read = thisState->mainState->read;
+	char* valueText = read == READ_TEXT ?
+		(char*)Malloc(VALUE_TEXT_LENGTH) : NULL;
+
+	// Execute the performance test moving through the linked list, as many
+	// times as the repeats ask for.
+	for (int repeat = 0; repeat < thisState->mainState->repeats; repeat++) {
 	evidenceNode* node = thisState->evidenceFirst;
 
 	for(; node != NULL; node = node->next) {
@@ -362,10 +406,36 @@ void runPerformanceThread(void* state) {
 		// Update the total number of lookups performed by the thread.
 		thisState->iterations += results->count;
 
-		// Get the all properties from the results if this is part of the
-		// performance evaluation.
+		// Get all the properties from the results in the way the benchmark
+		// reads them.
 		for (uint32_t j = 0; j < dataSet->b.b.available->count; j++) {
-			if (ResultsIpiGetValues(
+			if (read == READ_TEXT) {
+				// The characters the text needed, counted even where the
+				// buffer was too short to hold them all.
+				thisState->checkSum +=
+					ResultsIpiGetValuesStringByRequiredPropertyIndex(
+						results,
+						(int)j,
+						valueText,
+						VALUE_TEXT_LENGTH,
+						"|",
+						exception);
+				EXCEPTION_THROW;
+			}
+			else if (read == READ_COLLECTION) {
+				const int index = (int)j;
+				WeightedValuesCollection collection =
+					ResultsIpiGetValuesCollection(
+						results,
+						&index,
+						1,
+						NULL,
+						exception);
+				EXCEPTION_THROW;
+				thisState->checkSum += collection.itemsCount;
+				WeightedValuesCollectionRelease(&collection);
+			}
+			else if (ResultsIpiGetValues(
 				results,
 				j,
 				exception) != NULL && EXCEPTION_OKAY) {
@@ -378,7 +448,11 @@ void runPerformanceThread(void* state) {
 			}
 		}
 	}
+	}
 
+	if (valueText != NULL) {
+		Free(valueText);
+	}
 	EvidenceFree(evidence);
 	ResultsIpiFree(results);
 
@@ -443,10 +517,11 @@ void doReport(performanceState *state) {
 	}
 
 	// output the results from the benchmark to the console
-	double millisPerTest = state->elapsedMilliSeconds / (double)state->evidenceCount;
+	const int lookups = state->evidenceCount * state->repeats;
+	double millisPerTest = state->elapsedMilliSeconds / (double)lookups;
 	fprintf(state->output,
 		"%d lookups, Average ms per lookup: %f, Lookups per second: %.0lf\n",
-		state->evidenceCount,
+		lookups,
 		millisPerTest,
 		round(1000.0 / millisPerTest));
 	fprintf(state->output,
@@ -480,10 +555,12 @@ void executeBenchmark(
 	ConfigIpi dataSetConfig = *config.config;
 
 	// Output the name of the stock configuration before changing parameters.
-	fprintf(state->output, 
-		"Benchmarking with profile: %s AllProperties: %s\n",
+	fprintf(state->output,
+		"Benchmarking with profile: %s AllProperties: %s Read: %s\n",
 		fiftyoneDegreesExampleGetConfigName(dataSetConfig),
-		config.allProperties ? "True" : "False");
+		config.allProperties ? "True" : "False",
+		valueReadNames[config.read]);
+	state->read = config.read;
 
 	EXCEPTION_CREATE;
 
@@ -604,6 +681,7 @@ void fiftyoneDegreesIpiPerformance(
 	const char* evidenceFilePath,
 	uint16_t numberOfThreads,
 	int iterations,
+	int repeats,
 	FILE* output,
 	FILE* resultsOutput) {
 	performanceState state;
@@ -641,6 +719,8 @@ void fiftyoneDegreesIpiPerformance(
 		state.threadStates[i].mainState = &state;
 	}
 	state.iterations = iterations;
+	state.repeats = repeats > 0 ? repeats : 1;
+	state.read = READ_WEIGHTED_ITEMS;
 
 	// Allocate working memory for iterating over the YAML evidence source.
 	char buffer[MAX_EVIDENCE * (SIZE_OF_KEY + SIZE_OF_VALUE)];
@@ -698,10 +778,13 @@ void fiftyoneDegreesIpiPerformance(
 			config.config->b.allInMemory == true) {
 			
 			if (state.resultsOutput != NULL) {
-				fprintf(state.resultsOutput, "%s\n\"%s%s\": {\n",
+				fprintf(state.resultsOutput, "%s\n\"%s%s%s%s\": {\n",
 					i > 0 ? "," : "",
 					fiftyoneDegreesExampleGetConfigName(*(config.config)),
-					config.allProperties ? "_All" : "");
+					config.allProperties ? "_All" : "",
+					config.read == READ_WEIGHTED_ITEMS ? "" : "_",
+					config.read == READ_WEIGHTED_ITEMS ?
+						"" : valueReadNames[config.read]);
 			}
 
 			executeBenchmark(&state, config);
@@ -728,6 +811,9 @@ void fiftyoneDegreesIpiPerformance(
 	fprintf(output, "Finished Performance example\n");
 }
 
+// Times each thread repeats its iterations, from the command line.
+static int repeats = 1;
+
 /**
  * Implementation of function fiftyoneDegreesExampleRunPtr.
  */
@@ -738,6 +824,7 @@ void fiftyoneDegreesExampleCPerformanceRun(ExampleParameters* params) {
 		params->evidenceFilePath,
 		params->numberOfThreads,
 		params->iterations,
+		repeats,
 		params->output,
 		params->resultsOutput);
 }
@@ -754,6 +841,8 @@ void fiftyoneDegreesExampleCPerformanceRun(ExampleParameters* params) {
 #define JSON_OPTION_SHORT "-j"
 #define ITERATIONS_OPTION "--iterations"
 #define ITERATIONS_OPTION_SHORT "-i"
+#define REPEATS_OPTION "--repeats"
+#define REPEATS_OPTION_SHORT "-r"
 #define HELP_OPTION "--help"
 #define HELP_OPTION_SHORT "-h"
 #define OPTION_PADDING(o) ((int)(30 - strlen(o)))
@@ -768,6 +857,7 @@ void printHelp() {
 	OPTION_MESSAGE("Path to a IP Addresses YAML file", IP_ADDRESSES_OPTION, IP_ADDRESSES_OPTION_SHORT);
 	OPTION_MESSAGE("Number of threads to run in parallel", THREAD_OPTION, THREAD_OPTION_SHORT);
 	OPTION_MESSAGE("Number of iterations", ITERATIONS_OPTION, ITERATIONS_OPTION_SHORT);
+	OPTION_MESSAGE("Times each thread repeats its iterations", REPEATS_OPTION, REPEATS_OPTION_SHORT);
 	OPTION_MESSAGE("Path to a file to output JSON format results to", JSON_OPTION, JSON_OPTION_SHORT);
 	OPTION_MESSAGE("Print this help", HELP_OPTION, HELP_OPTION_SHORT);
 }
@@ -817,6 +907,11 @@ int main(int argc, char* argv[]) {
 			strcmp(argv[i], ITERATIONS_OPTION_SHORT) == 0) {
 			// Set the iterations per thread
 			iterations = atoi(argv[i + 1]);
+		}
+		else if (strcmp(argv[i], REPEATS_OPTION) == 0 ||
+			strcmp(argv[i], REPEATS_OPTION_SHORT) == 0) {
+			// Set the times each thread repeats its iterations
+			repeats = atoi(argv[i + 1]);
 		}
 		else if (strcmp(argv[i], HELP_OPTION) == 0 ||
 			strcmp(argv[i], HELP_OPTION_SHORT) == 0) {

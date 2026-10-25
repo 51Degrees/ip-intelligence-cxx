@@ -34,6 +34,7 @@ public:
             evidenceFilePath.c_str(),
             4,
             10000,
+            1,
             stdout,
             nullptr);
 
