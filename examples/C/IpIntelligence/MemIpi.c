@@ -382,6 +382,12 @@ void fiftyoneDegreesMemIpiRun(
 		reportStatus(status, dataFilePath);
 	}
 	else {
+		// Report where the bytes of the data file are, so the memory a
+		// configuration needs can be related to the properties it serves.
+		DataSetIpi* dataSet = DataSetIpiGet(&manager);
+		fiftyoneDegreesExamplePrintDataFileLayout(dataSet);
+		DataSetIpiRelease(dataSet);
+
 		// Run the performance tests.
 		run(&manager, ipAddressFilePath);
 

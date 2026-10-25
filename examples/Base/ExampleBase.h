@@ -105,6 +105,15 @@ EXTERNAL void fiftyoneDegreesExampleCheckDataFile(
     fiftyoneDegreesDataSetIpi *dataset);
 
 /**
+ * Prints the bytes of the data file by collection, and the bytes of profiles
+ * and graph data by component, so the memory a configuration or a property
+ * set would need can be seen before choosing one.
+ * @param dataset pointer to the dataset structure
+ */
+EXTERNAL void fiftyoneDegreesExamplePrintDataFileLayout(
+    fiftyoneDegreesDataSetIpi *dataset);
+
+/**
  * Function pointer for generic function to be handle IP address.
  * @param ipAddress IP address
  * @param state callback-specific state

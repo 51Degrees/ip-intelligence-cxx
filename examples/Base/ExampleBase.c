@@ -22,6 +22,7 @@
 
 #include "ExampleBase.h"
 #include "../../src/fiftyone.h"
+#include "../../src/common-cxx/collectionKeyTypes.h"
 #include <string.h>
 
 #define CONFIG_EQUALS(h) memcmp(&config, &h, sizeof(ConfigIpi)) == 0
@@ -149,6 +150,157 @@ void fiftyoneDegreesExampleCheckDataFile(
 	}
 	if (!CollectionGetIsMemoryOnly()) {
 		COLLECTION_RELEASE(dataset->strings, &item);
+	}
+}
+
+// Bytes of the profiles collection, or of a range within it, from a length or
+// offset in the units the data file header declares.
+static uint64_t profileUnitsToBytes(
+	const fiftyoneDegreesDataSetIpi *dataset,
+	uint64_t units) {
+	return units << dataset->header.profilesOffsetShift;
+}
+
+// Byte position within the profiles collection of the profile at the index in
+// the profile offsets collection, or the end of the collection for an index
+// one past the last.
+static uint64_t profilePosition(
+	fiftyoneDegreesDataSetIpi *dataset,
+	uint32_t index,
+	fiftyoneDegreesException *exception) {
+	if (index >= dataset->header.profileOffsets.count) {
+		return profileUnitsToBytes(dataset, dataset->header.profiles.length);
+	}
+	Item item;
+	DataReset(&item.data);
+	const CollectionKey key = { index, CollectionKeyType_Integer };
+	const uint32_t *offset = (const uint32_t*)dataset->profileOffsets->get(
+		dataset->profileOffsets,
+		&key,
+		&item,
+		exception);
+	uint64_t position = 0;
+	if (offset != NULL && EXCEPTION_OKAY) {
+		position = profileUnitsToBytes(dataset, *offset);
+		EXAMPLE_COLLECTION_RELEASE(dataset->profileOffsets, item);
+	}
+	return position;
+}
+
+// Bytes of the four collections that hold a graph's data.
+static uint64_t graphBytes(const fiftyoneDegreesIpiCgInfo *info) {
+	return (uint64_t)info->spanBytes.length +
+		info->spans.length +
+		info->clusters.length +
+		info->nodes.collection.length;
+}
+
+static void printLayoutLine(
+	const char *name,
+	uint64_t bytes,
+	uint64_t total) {
+	printf("  %-16s %12.1f MB %6.1f%%\n",
+		name,
+		(double)bytes / (1024.0 * 1024.0),
+		total > 0 ? (double)bytes * 100.0 / (double)total : 0.0);
+}
+
+void fiftyoneDegreesExamplePrintDataFileLayout(
+	fiftyoneDegreesDataSetIpi *dataset) {
+	EXCEPTION_CREATE;
+	const fiftyoneDegreesDataSetIpiHeader *header = &dataset->header;
+	const fiftyoneDegreesIpiCgArray *graphs = dataset->graphsArray;
+	const uint32_t componentCount = dataset->componentsList.count;
+
+	// Sum the graph data, which the graphs collection only points to.
+	uint64_t graphDataBytes = 0;
+	for (uint32_t i = 0; i < graphs->count; i++) {
+		graphDataBytes += graphBytes(&graphs->items[i].info);
+	}
+
+	const uint64_t profilesBytes = profileUnitsToBytes(
+		dataset,
+		header->profiles.length);
+	const uint64_t total = sizeof(fiftyoneDegreesDataSetIpiHeader) +
+		header->strings.length +
+		header->components.length +
+		header->maps.length +
+		header->properties.length +
+		header->values.length +
+		profilesBytes +
+		header->graphs.length +
+		header->profileGroups.length +
+		header->propertyTypes.length +
+		header->profileOffsets.length +
+		graphDataBytes;
+
+	printf("Data file of %.1f MB by collection:\n",
+		(double)total / (1024.0 * 1024.0));
+	printLayoutLine("strings", header->strings.length, total);
+	printLayoutLine("values", header->values.length, total);
+	printLayoutLine("profiles", profilesBytes, total);
+	printLayoutLine("profileOffsets", header->profileOffsets.length, total);
+	printLayoutLine("graph data", graphDataBytes, total);
+	printLayoutLine("other", total - header->strings.length -
+		header->values.length - profilesBytes -
+		header->profileOffsets.length - graphDataBytes, total);
+
+	// Profiles and graph data belong to one component each. Strings and
+	// values are shared, so they are not attributed.
+	printf("Profiles and graph data by component:\n");
+	for (uint32_t c = 0; c < componentCount; c++) {
+		const fiftyoneDegreesComponent *component =
+			(const fiftyoneDegreesComponent*)
+			dataset->componentsList.items[c].data.ptr;
+		uint64_t componentGraphBytes = 0;
+		uint64_t profilesStart = UINT64_MAX;
+		uint64_t profilesEnd = 0;
+		for (uint32_t i = 0; i < graphs->count; i++) {
+			const fiftyoneDegreesIpiCgInfo *info = &graphs->items[i].info;
+			if (info->componentId != component->componentId) {
+				continue;
+			}
+			componentGraphBytes += graphBytes(info);
+			const uint64_t start = profilePosition(
+				dataset,
+				info->firstProfileIndex,
+				exception);
+			const uint64_t end = profilePosition(
+				dataset,
+				info->firstProfileIndex + info->profileCount,
+				exception);
+			EXCEPTION_THROW;
+			if (start < profilesStart) {
+				profilesStart = start;
+			}
+			if (end > profilesEnd) {
+				profilesEnd = end;
+			}
+		}
+		const uint64_t componentProfilesBytes =
+			profilesEnd > profilesStart ? profilesEnd - profilesStart : 0;
+
+		Item nameItem;
+		DataReset(&nameItem.data);
+		const char *name = "";
+		if (StoredBinaryValueGet(
+			dataset->strings,
+			component->nameOffset,
+			FIFTYONE_DEGREES_PROPERTY_VALUE_TYPE_STRING,
+			&nameItem,
+			exception) != NULL && EXCEPTION_OKAY) {
+			name = STRING(nameItem.data.ptr);
+		}
+		EXCEPTION_THROW;
+		printf("  %-16s profiles %10.1f MB %6.1f%%   graph data %8.1f MB %6.1f%%\n",
+			name,
+			(double)componentProfilesBytes / (1024.0 * 1024.0),
+			(double)componentProfilesBytes * 100.0 / (double)total,
+			(double)componentGraphBytes / (1024.0 * 1024.0),
+			(double)componentGraphBytes * 100.0 / (double)total);
+		if (nameItem.data.ptr != NULL) {
+			EXAMPLE_COLLECTION_RELEASE(dataset->strings, nameItem);
+		}
 	}
 }
 
